@@ -8,6 +8,7 @@ import { SegmentTimeline } from './SegmentTimeline';
 
 const LOOKAHEAD_SECONDS = 30;
 const SEEK_PREFETCH_COUNT = 3;
+const STARTUP_PREFETCH_COUNT = 3;
 
 export type MseSessionParts = {
   attachment: MediaSourceAttachment;
@@ -57,7 +58,13 @@ export class MseSession {
       return;
     }
 
-    await this.fetchAndAppendSegment(0);
+    const prefetchCount = Math.min(STARTUP_PREFETCH_COUNT, this.timeline.length);
+    for (let segmentIndex = 0; segmentIndex < prefetchCount; segmentIndex++) {
+      if (this.signal.aborted) {
+        return;
+      }
+      await this.fetchAndAppendSegment(segmentIndex);
+    }
   }
 
   dispose(): void {
