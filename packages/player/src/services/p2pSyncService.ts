@@ -1,4 +1,4 @@
-
+import { i18n } from '@nuclearplayer/i18n';
 
 import { defaultQueryClient } from '../App';
 import { useFavoritesStore } from '../stores/favoritesStore';
@@ -6,12 +6,13 @@ import { usePlaylistStore } from '../stores/playlistStore';
 import { useProvidersStore } from '../stores/providersStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { changeLanguage } from './languageService';
+import { mergeListenRecords } from './listeningProfile.mjs';
 import {
   personalizationEngine,
   type UserListenRecord,
 } from './personalizationEngine';
 import { playlistFileService } from './playlistFileService';
-import { createUniversalStore } from './universalStore';
+import { createUniversalStore, isTauriEnvironment } from './universalStore';
 
 const SYNC_STORE_FILE = 'p2p_sync.json';
 const syncStore = createUniversalStore(SYNC_STORE_FILE);
@@ -95,7 +96,6 @@ function mergeFavEntries(
   return { merged: Array.from(merged.values()), hadLocalExtras };
 }
 
-
 async function safeFetchJson<T>(
   url: string,
   optionsOrTimeout?: RequestInit | number,
@@ -131,17 +131,24 @@ export class P2PSyncService {
   private isSyncing = false;
   private isApplyingRemote = false;
   private pushDebounceTimer: number | null = null;
+  private profilePushTimer: number | null = null;
+  private isPushingProfile = false;
+  private lastAppliedLibrary = '';
   private lastSyncFinishedAt = 0;
   private static readonly PUSH_DEBOUNCE_MS = 5000;
   private static readonly SYNC_INTERVAL_MS = 120_000;
   private static readonly POST_SYNC_COOLDOWN_MS = 10_000;
-
 
   constructor() {
     this.setupLocalSubscribers();
   }
 
   private setupLocalSubscribers(): void {
+    personalizationEngine.subscribe((origin) => {
+      if (origin === 'local') {
+        this.scheduleProfilePush();
+      }
+    });
     useFavoritesStore.subscribe(() => {
       if (this.isApplyingRemote) {
         return;
@@ -165,15 +172,60 @@ export class P2PSyncService {
   }
 
   private schedulePushToPc(): void {
-    if (Date.now() - this.lastSyncFinishedAt < P2PSyncService.POST_SYNC_COOLDOWN_MS) {
-      return;
-    }
     if (this.pushDebounceTimer) {
       clearTimeout(this.pushDebounceTimer);
     }
-    this.pushDebounceTimer = window.setTimeout(() => {
-      void this.pushLocalChangesToPc();
+    this.pushDebounceTimer = window.setTimeout(
+      async () => {
+        if (await this.isAutoSyncEnabled()) {
+          void this.pushLocalChangesToPc();
+        }
+      },
+      Math.max(
+        P2PSyncService.PUSH_DEBOUNCE_MS,
+        P2PSyncService.POST_SYNC_COOLDOWN_MS -
+          (Date.now() - this.lastSyncFinishedAt),
+      ),
+    );
+  }
+
+  private scheduleProfilePush(): void {
+    if (this.profilePushTimer !== null) {
+      return;
+    }
+    this.profilePushTimer = window.setTimeout(async () => {
+      this.profilePushTimer = null;
+      if (await this.isAutoSyncEnabled()) {
+        await this.pushListeningProfile();
+      }
     }, P2PSyncService.PUSH_DEBOUNCE_MS);
+  }
+
+  async pushListeningProfile(serverUrl?: string): Promise<boolean> {
+    if (this.isPushingProfile) {
+      this.scheduleProfilePush();
+      return false;
+    }
+    this.isPushingProfile = true;
+    try {
+      const workingUrl = serverUrl ?? (await this.getWorkingServerUrl());
+      if (!workingUrl) {
+        return false;
+      }
+      const listens = await personalizationEngine.getListenRecords();
+      const response = await safeFetchJson<{ success: boolean }>(
+        `${workingUrl}/api/sync/push`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_profile: listens }),
+        },
+        6000,
+      );
+      return response?.success === true;
+    } finally {
+      this.isPushingProfile = false;
+    }
   }
 
   async pushLocalChangesToPc(): Promise<boolean> {
@@ -189,7 +241,9 @@ export class P2PSyncService {
 
       const allPlaylists = [];
       for (const entry of playlistStoreState.index) {
-        const playlist = await usePlaylistStore.getState().loadPlaylist(entry.id);
+        const playlist = await usePlaylistStore
+          .getState()
+          .loadPlaylist(entry.id);
         if (playlist) {
           allPlaylists.push(playlist);
         }
@@ -219,11 +273,18 @@ export class P2PSyncService {
 
       if (res.ok) {
         try {
-          const responseBody = await res.json() as { deletedKeys?: Record<string, number> };
-          if (responseBody?.deletedKeys && typeof responseBody.deletedKeys === 'object') {
+          const responseBody = (await res.json()) as {
+            deletedKeys?: Record<string, number>;
+          };
+          if (
+            responseBody?.deletedKeys &&
+            typeof responseBody.deletedKeys === 'object'
+          ) {
             const localDeletedKeys = useFavoritesStore.getState().deletedKeys;
             const merged: Record<string, number> = { ...localDeletedKeys };
-            for (const [key, timestamp] of Object.entries(responseBody.deletedKeys)) {
+            for (const [key, timestamp] of Object.entries(
+              responseBody.deletedKeys,
+            )) {
               if (!merged[key] || (merged[key] ?? 0) < (timestamp as number)) {
                 merged[key] = timestamp as number;
               }
@@ -243,7 +304,6 @@ export class P2PSyncService {
       return false;
     }
   }
-
 
   async getSyncServerUrl(): Promise<string> {
     const saved = await syncStore.get<string>('server_url');
@@ -282,6 +342,7 @@ export class P2PSyncService {
     const host = hostMatch ? hostMatch[1] : '192.168.0.12';
 
     const candidates = [
+      ...(isTauriEnvironment() ? ['http://127.0.0.1:4122'] : []),
       `http://${host}:4122`,
       savedUrl,
       `http://${host}:4120`,
@@ -302,7 +363,9 @@ export class P2PSyncService {
   async checkPcHealth(targetUrl?: string): Promise<boolean> {
     if (targetUrl) {
       try {
-        const response = await fetch(`${targetUrl}/api/health`, { signal: AbortSignal.timeout(2000) });
+        const response = await fetch(`${targetUrl}/api/health`, {
+          signal: AbortSignal.timeout(2000),
+        });
         return response.ok;
       } catch {
         return false;
@@ -406,14 +469,46 @@ export class P2PSyncService {
         queue?: { items?: Array<{ track?: unknown }> };
       }>(`${workingUrl}/api/sync`, undefined, 3500);
 
-      if (syncData?.favorites) {
+      if (!syncData) {
+        return {
+          success: false,
+          error: i18n.t('common:sync.profileDownloadFailed'),
+        };
+      }
+
+      await personalizationEngine.mergeRemoteListens(
+        syncData.user_profile ?? [],
+      );
+      const mergedProfile = await personalizationEngine.getListenRecords();
+      const remoteProfile = mergeListenRecords(syncData.user_profile, []);
+      if (JSON.stringify(mergedProfile) !== JSON.stringify(remoteProfile)) {
+        const pushed = await this.pushListeningProfile(workingUrl);
+        if (!pushed) {
+          return {
+            success: false,
+            error: i18n.t('common:sync.profileUploadFailed'),
+          };
+        }
+      }
+
+      const librarySnapshot = JSON.stringify({
+        favorites: syncData.favorites,
+        settings: syncData.settings,
+        playlists: syncData.playlists,
+        plugins: syncData.plugins,
+        activeProviders: syncData.activeProviders,
+      });
+      if (syncData.favorites && librarySnapshot !== this.lastAppliedLibrary) {
         this.isApplyingRemote = true;
 
         const rawArtists = syncData.favorites.artists ?? [];
         const rawTracks = syncData.favorites.tracks ?? [];
         const rawAlbums = syncData.favorites.albums ?? [];
 
-        const toEntry = (item: { ref?: Record<string, unknown>; addedAtIso?: string }): FavEntry => ({
+        const toEntry = (item: {
+          ref?: Record<string, unknown>;
+          addedAtIso?: string;
+        }): FavEntry => ({
           addedAtIso: item.addedAtIso ?? new Date().toISOString(),
           ref: (item.ref ?? item) as Record<string, unknown>,
         });
@@ -424,29 +519,37 @@ export class P2PSyncService {
         // Merge PC's deletedKeys with local tombstones — bidirectional
         const remoteDeletedKeys = syncData.favorites.deletedKeys ?? {};
 
-        const mergedDeletedKeys: Record<string, number> = { ...localState.deletedKeys };
+        const mergedDeletedKeys: Record<string, number> = {
+          ...localState.deletedKeys,
+        };
         for (const [key, timestamp] of Object.entries(remoteDeletedKeys)) {
-          if (!mergedDeletedKeys[key] || (mergedDeletedKeys[key] ?? 0) < timestamp) {
+          if (
+            !mergedDeletedKeys[key] ||
+            (mergedDeletedKeys[key] ?? 0) < timestamp
+          ) {
             mergedDeletedKeys[key] = timestamp;
           }
         }
 
         // Bidirectional merge: union of local + remote, respecting deletion tombstones
-        const { merged: mergedArtists, hadLocalExtras: artistExtras } = mergeFavEntries(
-          (localState.artists as unknown as FavEntry[]) ?? [],
-          rawArtists.map(toEntry),
-          mergedDeletedKeys,
-        );
-        const { merged: mergedTracks, hadLocalExtras: trackExtras } = mergeFavEntries(
-          (localState.tracks as unknown as FavEntry[]) ?? [],
-          rawTracks.map(toEntry),
-          mergedDeletedKeys,
-        );
-        const { merged: mergedAlbums, hadLocalExtras: albumExtras } = mergeFavEntries(
-          (localState.albums as unknown as FavEntry[]) ?? [],
-          rawAlbums.map(toEntry),
-          mergedDeletedKeys,
-        );
+        const { merged: mergedArtists, hadLocalExtras: artistExtras } =
+          mergeFavEntries(
+            (localState.artists as unknown as FavEntry[]) ?? [],
+            rawArtists.map(toEntry),
+            mergedDeletedKeys,
+          );
+        const { merged: mergedTracks, hadLocalExtras: trackExtras } =
+          mergeFavEntries(
+            (localState.tracks as unknown as FavEntry[]) ?? [],
+            rawTracks.map(toEntry),
+            mergedDeletedKeys,
+          );
+        const { merged: mergedAlbums, hadLocalExtras: albumExtras } =
+          mergeFavEntries(
+            (localState.albums as unknown as FavEntry[]) ?? [],
+            rawAlbums.map(toEntry),
+            mergedDeletedKeys,
+          );
 
         needsPushBack = artistExtras || trackExtras || albumExtras;
 
@@ -468,7 +571,6 @@ export class P2PSyncService {
         await favDiskStore.set('favorites.deletedKeys', mergedDeletedKeys);
         await favDiskStore.save();
 
-
         // If local had items the PC didn't know about, push back so the PC stays in sync
         if (needsPushBack) {
           this.isApplyingRemote = false;
@@ -483,8 +585,24 @@ export class P2PSyncService {
         ) {
           for (const rawPl of syncData.playlists) {
             const pl =
-              (rawPl as { playlist?: { id?: string; name?: string; items?: unknown[]; artwork?: unknown; description?: string } }).playlist ||
-              (rawPl as { id?: string; name?: string; items?: unknown[]; artwork?: unknown; description?: string });
+              (
+                rawPl as {
+                  playlist?: {
+                    id?: string;
+                    name?: string;
+                    items?: unknown[];
+                    artwork?: unknown;
+                    description?: string;
+                  };
+                }
+              ).playlist ||
+              (rawPl as {
+                id?: string;
+                name?: string;
+                items?: unknown[];
+                artwork?: unknown;
+                description?: string;
+              });
             if (pl && (pl.name || pl.id)) {
               const playlistId = pl.id || `synced-${pl.name}`;
               const playlistObj = {
@@ -542,10 +660,20 @@ export class P2PSyncService {
 
         // Active providers — sync from PC so Android knows which metadata
         // provider to use (e.g. Spotify) for artist page redirects.
-        if (syncData.activeProviders && typeof syncData.activeProviders === 'object') {
-          const providersDiskStore = createUniversalStore('active-providers.json');
-          const existing = (await providersDiskStore.get<Record<string, string>>('active')) ?? {};
-          const merged = { ...existing, ...syncData.activeProviders as Record<string, string> };
+        if (
+          syncData.activeProviders &&
+          typeof syncData.activeProviders === 'object'
+        ) {
+          const providersDiskStore = createUniversalStore(
+            'active-providers.json',
+          );
+          const existing =
+            (await providersDiskStore.get<Record<string, string>>('active')) ??
+            {};
+          const merged = {
+            ...existing,
+            ...(syncData.activeProviders as Record<string, string>),
+          };
           await providersDiskStore.set('active', merged);
           await providersDiskStore.save();
           await useProvidersStore.getState().loadFromDisk();
@@ -560,16 +688,8 @@ export class P2PSyncService {
           await pluginsDiskStore.save();
         }
 
-        // User Profile & Adaptive Listening Intelligence
-        if (
-          syncData.user_profile &&
-          Array.isArray(syncData.user_profile) &&
-          syncData.user_profile.length > 0
-        ) {
-          await personalizationEngine.mergeRemoteListens(syncData.user_profile);
-        }
-
         this.isApplyingRemote = false;
+        this.lastAppliedLibrary = librarySnapshot;
       }
 
       // 2. Also query /api/settings on port 4120 if available
@@ -605,11 +725,9 @@ export class P2PSyncService {
       this.isSyncing = false;
       this.lastSyncFinishedAt = Date.now();
 
-      try {
-        defaultQueryClient.invalidateQueries({ queryKey: ['history'] });
-        defaultQueryClient.invalidateQueries({ queryKey: ['favorites'] });
-        defaultQueryClient.invalidateQueries({ queryKey: ['playlists'] });
-      } catch {}
+      void defaultQueryClient.invalidateQueries({ queryKey: ['history'] });
+      void defaultQueryClient.invalidateQueries({ queryKey: ['favorites'] });
+      void defaultQueryClient.invalidateQueries({ queryKey: ['playlists'] });
 
       // Start real-time SSE listener if not running
       this.ensureRealtimeSseConnection(workingUrl);
@@ -627,6 +745,9 @@ export class P2PSyncService {
       this.isApplyingRemote = false;
       this.lastSyncFinishedAt = Date.now();
       return { success: false, error: String(err) };
+    } finally {
+      this.isSyncing = false;
+      this.isApplyingRemote = false;
     }
   }
 
@@ -641,9 +762,11 @@ export class P2PSyncService {
     try {
       this.eventSource = new EventSource(`${serverUrl}/api/sync/events`);
       this.eventSource.addEventListener('sync:update', () => {
-        if (this.sseDebounceTimer) clearTimeout(this.sseDebounceTimer);
-        this.sseDebounceTimer = window.setTimeout(() => {
-          if (!this.isSyncing) {
+        if (this.sseDebounceTimer) {
+          clearTimeout(this.sseDebounceTimer);
+        }
+        this.sseDebounceTimer = window.setTimeout(async () => {
+          if (!this.isSyncing && (await this.isAutoSyncEnabled())) {
             void this.syncNow();
           }
         }, 3000);
@@ -668,7 +791,9 @@ export class P2PSyncService {
       return;
     }
 
-    void this.syncNow();
+    void this.resumeSync();
+    window.addEventListener('online', this.resumeSync);
+    window.addEventListener('focus', this.resumeSync);
 
     this.syncIntervalTimer = window.setInterval(async () => {
       const autoEnabled = await this.isAutoSyncEnabled();
@@ -679,6 +804,16 @@ export class P2PSyncService {
   }
 
   stopBackgroundSyncWatcher(): void {
+    window.removeEventListener('online', this.resumeSync);
+    window.removeEventListener('focus', this.resumeSync);
+    if (this.profilePushTimer !== null) {
+      clearTimeout(this.profilePushTimer);
+    }
+    if (this.pushDebounceTimer !== null) {
+      clearTimeout(this.pushDebounceTimer);
+    }
+    this.profilePushTimer = null;
+    this.pushDebounceTimer = null;
     if (this.syncIntervalTimer) {
       clearInterval(this.syncIntervalTimer);
       this.syncIntervalTimer = null;
@@ -692,6 +827,12 @@ export class P2PSyncService {
       this.eventSource = null;
     }
   }
+
+  private resumeSync = async (): Promise<void> => {
+    if (await this.isAutoSyncEnabled()) {
+      await this.syncNow();
+    }
+  };
 }
 
 export const p2pSyncService = new P2PSyncService();

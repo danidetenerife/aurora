@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 
 export type HistoryRowLabels = {
   favorite: string;
@@ -17,6 +17,7 @@ export type HistoryRowClasses = {
 export type HistoryRowProps = ComponentProps<'div'> & {
   title: string;
   artist: string;
+  artistContent?: ReactNode;
   time: string;
   artworkUrl?: string | null;
   isFavorite?: boolean;

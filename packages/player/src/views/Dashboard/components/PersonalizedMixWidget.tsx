@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { SparklesIcon } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
+import { useTranslation } from '@nuclearplayer/i18n';
 import type { Track, TrackRef } from '@nuclearplayer/model';
 import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
 import { Badge, Loader } from '@nuclearplayer/ui';
@@ -19,6 +20,8 @@ type TaggedCandidate = {
   track: Track;
   source: 'topTracks' | 'related' | 'radio' | 'search';
 };
+
+const PERSONALIZED_MIX_QUERY_KEY = ['dashboard', 'personalized-mix-v2'];
 
 const trackRefToTrack = (ref: TrackRef): Track => ({
   title: ref.title,
@@ -41,7 +44,9 @@ const fetchTopTracksForArtists = async (
   for (const artist of artists.slice(0, limit)) {
     try {
       const artistUri = artist.spotifyUri;
-      if (!artistUri || !provider.fetchArtistTopTracks) continue;
+      if (!artistUri || !provider.fetchArtistTopTracks) {
+        continue;
+      }
 
       const topTracks = await provider.fetchArtistTopTracks(artistUri);
       for (const trackRef of topTracks.slice(0, 5)) {
@@ -69,13 +74,22 @@ const fetchRelatedArtistTracks = async (
   for (const artist of artists.slice(0, limit)) {
     try {
       const artistUri = artist.spotifyUri;
-      if (!artistUri || !provider.fetchArtistRelatedArtists || !provider.fetchArtistTopTracks) continue;
+      if (
+        !artistUri ||
+        !provider.fetchArtistRelatedArtists ||
+        !provider.fetchArtistTopTracks
+      ) {
+        continue;
+      }
 
-      const relatedArtists = await provider.fetchArtistRelatedArtists(artistUri);
+      const relatedArtists =
+        await provider.fetchArtistRelatedArtists(artistUri);
 
       for (const relatedArtist of relatedArtists.slice(0, 3)) {
         const relatedUri = relatedArtist.source?.id;
-        if (!relatedUri || seenArtistUris.has(relatedUri)) continue;
+        if (!relatedUri || seenArtistUris.has(relatedUri)) {
+          continue;
+        }
         seenArtistUris.add(relatedUri);
 
         try {
@@ -103,7 +117,9 @@ const fetchRadioRecommendations = async (
 ): Promise<TaggedCandidate[]> => {
   try {
     const activeDiscoveryId = providersHost.getActive('discovery');
-    if (!activeDiscoveryId) return [];
+    if (!activeDiscoveryId) {
+      return [];
+    }
 
     const recommendations = await discoveryHost.getRecommendations(
       seedTracks.slice(0, 5),
@@ -131,7 +147,9 @@ const fetchSearchFallback = async (
 
   for (const query of queries) {
     try {
-      if (!provider.search) continue;
+      if (!provider.search) {
+        continue;
+      }
       const results = await provider.search({
         query,
         types: ['tracks'],
@@ -150,24 +168,53 @@ const fetchSearchFallback = async (
 };
 
 export const PersonalizedMixWidget: FC = () => {
+  const { t } = useTranslation('dashboard');
+  const queryClient = useQueryClient();
+  const [visibleTracks, setVisibleTracks] = useState<Track[]>();
   const metadataProviders = useProviders('metadata') as MetadataProvider[];
-  const activeProviderId = metadataProviders[0]?.id ?? null;
+  const discoveryProviders = useProviders('discovery');
+  const activeProviderId =
+    providersHost.getActive('metadata') ?? metadataProviders[0]?.id ?? null;
+  const activeDiscoveryId =
+    providersHost.getActive('discovery') ?? discoveryProviders[0]?.id ?? null;
+  const metadataProvider =
+    metadataProviders.find((provider) => provider.id === activeProviderId) ??
+    metadataProviders[0];
 
-  const { data: tracks, isLoading } = useQuery<Track[]>({
-    queryKey: ['dashboard', 'personalized-mix-v2', activeProviderId],
-    enabled: metadataProviders.length > 0,
+  useEffect(
+    () =>
+      personalizationEngine.subscribe(() => {
+        void queryClient.invalidateQueries({
+          queryKey: PERSONALIZED_MIX_QUERY_KEY,
+          refetchType: 'none',
+        });
+      }),
+    [queryClient],
+  );
+
+  const {
+    data: tracks,
+    isLoading,
+    isFetching,
+  } = useQuery<Track[]>({
+    queryKey: [
+      ...PERSONALIZED_MIX_QUERY_KEY,
+      activeProviderId,
+      activeDiscoveryId,
+    ],
+    enabled: metadataProviders.length > 0 && visibleTracks === undefined,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     queryFn: async () => {
       const topArtists = await personalizationEngine.getTopArtists();
       const seedTracks = await personalizationEngine.getSeedTracks(5);
-      const metadataProvider = metadataProviders[0];
+      const listens = await personalizationEngine.getListenRecords();
 
       const hasSpotifyCapabilities =
         metadataProvider?.fetchArtistTopTracks &&
         metadataProvider?.fetchArtistRelatedArtists;
 
-      const artistsWithUris = topArtists.filter(
-        (artist) => artist.spotifyUri,
-      );
+      const artistsWithUris = topArtists.filter((artist) => artist.spotifyUri);
 
       const candidateSources = await Promise.allSettled([
         hasSpotifyCapabilities && artistsWithUris.length > 0
@@ -196,10 +243,17 @@ export const PersonalizedMixWidget: FC = () => {
       return personalizationEngine.scoreAndRankTracks(
         allCandidates,
         topArtists,
+        listens,
       );
     },
     staleTime: 60 * 1000,
   });
+
+  useEffect(() => {
+    if (tracks !== undefined && !isFetching) {
+      setVisibleTracks((current) => current ?? tracks);
+    }
+  }, [tracks, isFetching]);
 
   return (
     <div
@@ -209,24 +263,23 @@ export const PersonalizedMixWidget: FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <SparklesIcon className="text-primary size-5" />
-          <h2 className="text-lg font-bold">Recomendado para ti</h2>
+          <h2 className="text-lg font-bold">{t('personalizedMix.title')}</h2>
         </div>
         <Badge variant="pill" className="text-xs">
-          Algoritmo Adaptativo
+          {t('personalizedMix.badge')}
         </Badge>
       </div>
       <p className="text-foreground-secondary text-xs">
-        Música personalizada que aprende automáticamente de tus reproducciones y
-        favoritos.
+        {t('personalizedMix.description')}
       </p>
 
-      {isLoading ? (
+      {visibleTracks === undefined && (isLoading || isFetching) ? (
         <div className="flex items-center justify-center p-8">
           <Loader data-testid="dashboard-personalized-loader" size="lg" />
         </div>
       ) : (
         <ConnectedTrackTable
-          tracks={tracks || []}
+          tracks={visibleTracks ?? []}
           features={{ filterable: true, playAll: true, addAllToQueue: true }}
           display={{ displayDuration: false }}
         />

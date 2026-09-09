@@ -1,6 +1,6 @@
 param(
     [string]$Version = "1.47.1",
-    [string]$Notes = "Aurora Music Player con reproducción fluida en segundo plano, sincronización PC-móvil y auto-actualizador universal."
+    [string]$Notes = "Aurora Music Player con soporte para Google TV / Android TV (interfaz 10-foot con navegación D-pad), reproducción fluida en segundo plano y sincronización PC-móvil."
 )
 
 $Root = Resolve-Path "$PSScriptRoot\.."

@@ -10,6 +10,7 @@ import { useDayMarker } from '../hooks/useDayMarker';
 import { useHistoryRowActions } from '../hooks/useHistoryRowActions';
 import { groupEntriesByDay } from '../utils/groupEntriesByDay';
 import { HistoryEmptyState } from './HistoryEmptyState';
+import { HistoryArtistLinks } from './HistoryLink';
 
 type HistoryBodyProps = {
   isPending: boolean;
@@ -46,6 +47,7 @@ export const HistoryBody: FC<HistoryBodyProps> = ({ isPending, entries }) => {
               key={entry.playId}
               title={entry.title}
               artist={entry.artists.join(', ')}
+              artistContent={<HistoryArtistLinks artists={entry.artists} />}
               time={formatTimeOfDay(entry.startedAt)}
               artworkUrl={entry.artworkUrl}
               labels={rowLabels}

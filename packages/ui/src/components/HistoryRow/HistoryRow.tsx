@@ -9,6 +9,7 @@ import type { HistoryRowProps } from './types';
 export const HistoryRow: FC<HistoryRowProps> = ({
   title,
   artist,
+  artistContent,
   time,
   artworkUrl,
   isFavorite = false,
@@ -68,7 +69,7 @@ export const HistoryRow: FC<HistoryRowProps> = ({
       data-testid="history-row-artist"
       className={cn('truncate px-2', classes?.artist)}
     >
-      {artist}
+      {artistContent ?? artist}
     </div>
 
     <div className="truncate px-2">

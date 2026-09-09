@@ -2,9 +2,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { pathToFileURL } = require('url');
+let mergeListenRecords;
 
-const PORT = 4122;
-const APP_DATA = path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer');
+const PORT = Number(process.env.AURORA_SYNC_PORT || 4122);
+const APP_DATA = process.env.AURORA_SYNC_APP_DATA || path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer');
 
 // Connected SSE clients
 const sseClients = new Set();
@@ -27,7 +29,7 @@ try {
   if (fs.existsSync(APP_DATA)) {
     let debounceTimer = null;
     fs.watch(APP_DATA, { recursive: true }, (eventType, filename) => {
-      if (filename && (filename.endsWith('.json') || filename.includes('playlists'))) {
+      if (filename && filename !== 'p2p_sync.json' && (filename.endsWith('.json') || filename.includes('playlists'))) {
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           broadcastUpdate();
@@ -62,9 +64,12 @@ function writeJsonFile(filename, data) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    const temporaryPath = filePath + '.tmp';
+    fs.writeFileSync(temporaryPath, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(temporaryPath, filePath);
   } catch (err) {
     console.error(`Error writing ${filename}:`, err);
+    throw err;
   }
 }
 
@@ -118,6 +123,7 @@ function getFullSyncPayload() {
   const playlists = readPlaylists();
   const playlistIndex = readPlaylistIndex();
   const userProfile = readJsonFile('user_profile.json', { listens: [] });
+  const syncedProfile = readJsonFile('user_profile_sync.json', { listens: [] });
 
   const tracks = rawFavs['favorites.tracks'] || [];
   const artists = rawFavs['favorites.artists'] || [];
@@ -137,7 +143,7 @@ function getFullSyncPayload() {
     queue: rawQueue,
     playlists,
     playlistIndex,
-    user_profile: userProfile.listens || [],
+    user_profile: mergeListenRecords(userProfile.listens, syncedProfile.listens),
     timestamp: Date.now(),
   };
 }
@@ -189,6 +195,7 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const pushData = JSON.parse(body);
+        let profileChanged = false;
 
         // 1. Merge Favorites from mobile into PC favorites.json
         if (pushData.favorites) {
@@ -258,31 +265,17 @@ const server = http.createServer((req, res) => {
           }
         }
 
-        // 4. Merge user_profile (listening data & adaptive AI intelligence)
-        if (pushData.user_profile && Array.isArray(pushData.user_profile)) {
-          const currentProfile = readJsonFile('user_profile.json', { listens: [] });
-          const currentListens = currentProfile.listens || [];
-          const mergedMap = new Map();
-          for (const item of currentListens) {
-            if (item && item.trackId) {
-              mergedMap.set(item.trackId, item);
-            }
+        if (Array.isArray(pushData.user_profile)) {
+          const localProfile = readJsonFile('user_profile.json', { listens: [] });
+          const syncedProfile = readJsonFile('user_profile_sync.json', { listens: [] });
+          const merged = mergeListenRecords(
+            mergeListenRecords(localProfile.listens, syncedProfile.listens),
+            pushData.user_profile,
+          );
+          if (JSON.stringify(merged) !== JSON.stringify(syncedProfile.listens)) {
+            writeJsonFile('user_profile_sync.json', { listens: merged });
+            profileChanged = true;
           }
-          for (const item of pushData.user_profile) {
-            if (item && item.trackId) {
-              if (mergedMap.has(item.trackId)) {
-                const existing = mergedMap.get(item.trackId);
-                existing.playCount = Math.max(existing.playCount, item.playCount);
-                existing.lastPlayedAt = Math.max(existing.lastPlayedAt, item.lastPlayedAt);
-              } else {
-                mergedMap.set(item.trackId, item);
-              }
-            }
-          }
-          currentProfile.listens = Array.from(mergedMap.values())
-            .sort((a, b) => b.lastPlayedAt - a.lastPlayedAt)
-            .slice(0, 300);
-          writeJsonFile('user_profile.json', currentProfile);
         }
 
         // 5. Merge Plugins & Active Providers from mobile into PC
@@ -301,7 +294,7 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ success: true }));
 
         // Notify other clients
-        broadcastUpdate();
+        if (profileChanged || Object.keys(pushData).some((key) => key !== 'user_profile')) broadcastUpdate();
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: err.message }));
@@ -328,6 +321,13 @@ const server = http.createServer((req, res) => {
   res.end(JSON.stringify({ error: 'Not found' }));
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Nuclear PC Bidirectional Sync Server running on http://0.0.0.0:${PORT}`);
+const profileModule = fs.existsSync(path.join(__dirname, 'listeningProfile.mjs'))
+  ? path.join(__dirname, 'listeningProfile.mjs')
+  : path.join(__dirname, 'packages/player/src/services/listeningProfile.mjs');
+
+import(pathToFileURL(profileModule).href).then((profile) => {
+  mergeListenRecords = profile.mergeListenRecords;
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Nuclear PC Bidirectional Sync Server running on http://0.0.0.0:${server.address().port}`);
+  });
 });

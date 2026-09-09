@@ -1,5 +1,33 @@
 [
   {
+    "date": "2026-09-08T20:00",
+    "description": "Make history rankings interactive: play songs and open artist and album pages by clicking their names, including individual artist credits.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "History", "color": "green" }]
+  },
+  {
+    "date": "2026-09-08T18:00",
+    "description": "Restore Spanish recommendation text and keep the Panel list fixed while playing. Apply newly learned recommendations on the next visit instead of reshuffling the visible list.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Panel", "color": "green" }]
+  },
+  {
+    "date": "2026-09-08T19:00",
+    "description": "Keep listening preferences learning across mobile and desktop, including partial plays and skips. Merge offline listening without losing or duplicating plays, and refresh personalized recommendations when preferences change.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Personalization & Sync", "color": "purple" }]
+  },
+  {
+    "date": "2026-09-08T18:00",
+    "description": "Prefer AAC-LC and stereo HLS audio renditions over the first low-quality HE-AAC track when resolving songs on Android.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android Audio", "color": "green" }]
+  },
+  {
     "date": "2026-09-03T22:00",
     "description": "Complete rebranding from Nuclear to Aurora. Fixed desktop audio playback by prioritizing yt-dlp on Tauri. Added audio focus handling to pause music during phone calls. Filtered YouTube Music search to exclude live streams and long videos. Removed TV/Google TV support. Updated all Android app icons to Aurora design.",
     "type": "feature",

@@ -11,6 +11,7 @@ import {
   artistEntries,
   trackEntries,
 } from '../utils/topListEntries';
+import { HistoryArtistLinks, HistoryLink } from './HistoryLink';
 import { StatsTopList } from './StatsTopList';
 
 const TOP_LIST_SIZE = 10;
@@ -34,17 +35,44 @@ export const HistoryTopLists: FC<HistoryTopListsProps> = ({ range }) => {
       <StatsTopList
         testId="history-top-artists"
         title={t('stats.topArtists')}
-        entries={artistEntries(artists ?? [])}
+        entries={artistEntries(artists ?? []).map((entry) => ({
+          ...entry,
+          labelContent: <HistoryLink kind="artist" name={entry.label} />,
+        }))}
       />
       <StatsTopList
         testId="history-top-albums"
         title={t('stats.topAlbums')}
-        entries={albumEntries(albums ?? [])}
+        entries={albumEntries(albums ?? []).map((entry, index) => ({
+          ...entry,
+          labelContent: (
+            <HistoryLink
+              kind="album"
+              name={entry.label}
+              artists={[albums![index].artist]}
+            />
+          ),
+          sublabelContent: (
+            <HistoryArtistLinks artists={[albums![index].artist]} />
+          ),
+        }))}
       />
       <StatsTopList
         testId="history-top-tracks"
         title={t('stats.topTracks')}
-        entries={trackEntries(tracks ?? [])}
+        entries={trackEntries(tracks ?? []).map((entry, index) => ({
+          ...entry,
+          labelContent: (
+            <HistoryLink
+              kind="track"
+              name={entry.label}
+              artists={tracks![index].artists}
+            />
+          ),
+          sublabelContent: (
+            <HistoryArtistLinks artists={tracks![index].artists} />
+          ),
+        }))}
       />
     </div>
   );

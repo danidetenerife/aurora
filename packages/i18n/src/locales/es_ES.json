@@ -1,5 +1,9 @@
 {
   "common": {
+    "sync": {
+      "profileDownloadFailed": "No se han podido obtener los datos de sincronización.",
+      "profileUploadFailed": "No se han podido enviar tus preferencias musicales. Siguen guardadas en este dispositivo."
+    },
     "app": {
       "name": "Aurora",
       "description": "Reproductor de música Aurora"
@@ -37,6 +41,7 @@
     "sources": "Fuentes"
   },
   "history": {
+    "openError": "No se pudo abrir este elemento. Comprueba la conexión y la fuente de metadatos e inténtalo de nuevo.",
     "title": "Historial",
     "empty": "Nada reproducido todavía",
     "emptyDescription": "Las canciones que reproduzcas aparecerán aquí",
@@ -243,6 +248,11 @@
     }
   },
   "dashboard": {
+    "personalizedMix": {
+      "title": "Recomendado para ti",
+      "badge": "Algoritmo adaptativo",
+      "description": "Las recomendaciones aprenden de tus escuchas, saltos y favoritos en tus dispositivos sincronizados."
+    },
     "title": "Panel",
     "empty-state": "No hay datos disponibles",
     "empty-state-description": "Activar un plugin que proporcione contenido en el tablero.",

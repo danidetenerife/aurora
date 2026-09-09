@@ -2,28 +2,25 @@ import type { Track } from '@nuclearplayer/model';
 
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { usePlaylistStore } from '../stores/playlistStore';
+import { useQueueStore } from '../stores/queueStore';
+import { useSoundStore } from '../stores/soundStore';
 import { eventBus } from './eventBus';
-import { createUniversalStore } from './universalStore';
+import {
+  mergeListenRecords,
+  type UserListenRecord,
+} from './listeningProfile.mjs';
+import { Logger } from './logger';
+import { createUniversalStore, type UniversalStore } from './universalStore';
 
-const USER_PROFILE_STORE = 'user_profile.json';
-const profileStore = createUniversalStore(USER_PROFILE_STORE);
+export type { UserListenRecord } from './listeningProfile.mjs';
 
-const MAX_RECORDS = 1000;
 const SKIP_THRESHOLD_MS = 30_000;
+const CHECKPOINT_MS = 15_000;
+const DEFAULT_DURATION_MS = 180_000;
+const MILLISECONDS_PER_SECOND = 1000;
+const MILLISECONDS_PER_DAY = 86_400_000;
 const RECENCY_HALF_LIFE_DAYS = 21;
 const MAX_TRACKS_PER_ARTIST = 3;
-
-export type UserListenRecord = {
-  trackId: string;
-  title: string;
-  artist: string;
-  playCount: number;
-  skipCount: number;
-  totalListenMs: number;
-  durationMs: number;
-  lastPlayedAt: number;
-  firstPlayedAt: number;
-};
 
 export type ArtistScore = {
   name: string;
@@ -31,63 +28,186 @@ export type ArtistScore = {
   spotifyUri?: string;
 };
 
+type ListeningSession = {
+  track: Track;
+  listenedMs: number;
+  savedMs: number;
+  countedPlay: boolean;
+  position: number;
+};
+
 const exponentialDecay = (daysAgo: number): number =>
   Math.exp((-Math.LN2 * daysAgo) / RECENCY_HALF_LIFE_DAYS);
 
 const completionRate = (record: UserListenRecord): number => {
-  if (record.durationMs <= 0 || record.playCount <= 0) return 0.5;
-  const totalExpected = record.playCount * record.durationMs;
-  return Math.min(1, record.totalListenMs / totalExpected);
-};
-
-const loyaltyBonus = (record: UserListenRecord): number => {
-  const daysSinceFirst = Math.max(
-    0,
-    (Date.now() - record.firstPlayedAt) / (1000 * 60 * 60 * 24),
+  if (record.durationMs <= 0 || record.playCount <= 0) {
+    return 0;
+  }
+  return Math.min(
+    1,
+    record.totalListenMs / (record.playCount * record.durationMs),
   );
-  return Math.log2(1 + daysSinceFirst);
 };
 
-const migrateRecord = (raw: Record<string, unknown>): UserListenRecord => ({
-  trackId: (raw.trackId as string) ?? '',
-  title: (raw.title as string) ?? '',
-  artist: (raw.artist as string) ?? 'Unknown',
-  playCount: (raw.playCount as number) ?? 1,
-  skipCount: (raw.skipCount as number) ?? 0,
-  totalListenMs: (raw.totalListenMs as number) ?? ((raw.playCount as number) ?? 1) * ((raw.durationMs as number) ?? 180_000) * 0.7,
-  durationMs: (raw.durationMs as number) ?? 180_000,
-  lastPlayedAt: (raw.lastPlayedAt as number) ?? Date.now(),
-  firstPlayedAt: (raw.firstPlayedAt as number) ?? (raw.lastPlayedAt as number) ?? Date.now(),
-});
+const loyaltyBonus = (record: UserListenRecord): number =>
+  Math.log2(
+    1 + Math.max(0, (Date.now() - record.firstPlayedAt) / MILLISECONDS_PER_DAY),
+  );
 
 export class PersonalizationEngine {
   private static instance: PersonalizationEngine;
-  private lastSkippedTrackId: string | null = null;
+  private pendingWrite: Promise<void> = Promise.resolve();
+  private session: ListeningSession | null = null;
+  private listeners = new Set<(origin: 'local' | 'remote') => void>();
+  private unsubscribe: Array<() => void> = [];
 
-  constructor() {
-    eventBus.on('trackStarted', async (track) => {
-      if (track) {
-        this.lastSkippedTrackId = null;
-      }
-    });
+  constructor(
+    private readonly profileStore: UniversalStore = createUniversalStore(
+      'user_profile.json',
+    ),
+  ) {}
 
-    eventBus.on('trackFinished', async (track) => {
-      if (track) {
-        await this.recordPlay(track, true);
-      }
-    });
+  start(): () => void {
+    if (this.unsubscribe.length) {
+      return () => this.stop();
+    }
+    this.unsubscribe = [
+      eventBus.on('trackStarted', async (track) => {
+        if (!track) {
+          return;
+        }
+        if (this.session?.track.source.id === track.source.id) {
+          return;
+        }
+        this.finishSession(false);
+        this.beginSession(track, useSoundStore.getState().seek);
+      }),
+      eventBus.on('trackFinished', async () => this.finishSession(true)),
+      eventBus.on('playbackSkipped', async () =>
+        this.finishSession(false, true),
+      ),
+      eventBus.on('playbackSeeked', async ({ toMs }) => {
+        if (this.session) {
+          this.session.position = toMs / MILLISECONDS_PER_SECOND;
+        }
+      }),
+      useSoundStore.subscribe((state, previous) => {
+        if (!this.session && state.status === 'playing' && state.src) {
+          const track = useQueueStore.getState().getCurrentItem()?.track;
+          if (track) {
+            this.beginSession(track, state.seek);
+          }
+        }
+        const session = this.session;
+        if (!session) {
+          return;
+        }
+        const deltaMs =
+          (state.seek - session.position) * MILLISECONDS_PER_SECOND;
+        if (
+          previous.status === 'playing' &&
+          state.src === previous.src &&
+          deltaMs > 0
+        ) {
+          session.listenedMs += deltaMs;
+        }
+        session.position = state.seek;
+        if (state.duration > 0) {
+          session.track = {
+            ...session.track,
+            durationMs: state.duration * MILLISECONDS_PER_SECOND,
+          };
+        }
+        if (state.status === 'stopped') {
+          this.finishSession(false);
+        } else if (
+          state.status === 'paused' ||
+          session.listenedMs - session.savedMs >= CHECKPOINT_MS
+        ) {
+          this.saveSession(session, false, false);
+        }
+      }),
+      useFavoritesStore.subscribe((state, previous) => {
+        if (
+          state.tracks !== previous.tracks ||
+          state.artists !== previous.artists
+        ) {
+          this.notify('local');
+        }
+      }),
+      usePlaylistStore.subscribe((state, previous) => {
+        if (state.playlists !== previous.playlists) {
+          this.notify('local');
+        }
+      }),
+    ];
+    return () => this.stop();
+  }
 
-    eventBus.on('playbackSkipped', async ({ positionMs }) => {
-      if (positionMs < SKIP_THRESHOLD_MS) {
-        this.lastSkippedTrackId = 'pending-skip';
-      }
-    });
+  stop(): void {
+    this.finishSession(false);
+    this.unsubscribe.forEach((unsubscribe) => unsubscribe());
+    this.unsubscribe = [];
+  }
 
-    eventBus.on('trackStarted', async (track) => {
-      if (track && this.lastSkippedTrackId === 'pending-skip') {
-        this.lastSkippedTrackId = null;
-      }
-    });
+  subscribe = (
+    listener: (origin: 'local' | 'remote') => void,
+  ): (() => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  private notify(origin: 'local' | 'remote'): void {
+    this.listeners.forEach((listener) => listener(origin));
+  }
+
+  private beginSession(track: Track, position: number): void {
+    this.session = {
+      track,
+      listenedMs: 0,
+      savedMs: 0,
+      countedPlay: false,
+      position,
+    };
+  }
+
+  private finishSession(completed: boolean, skipped = false): void {
+    const session = this.session;
+    this.session = null;
+    if (session) {
+      this.saveSession(session, completed, skipped);
+    }
+  }
+
+  private saveSession(
+    session: ListeningSession,
+    completed: boolean,
+    skipped: boolean,
+  ): void {
+    const playCount =
+      !session.countedPlay &&
+      session.listenedMs > 0 &&
+      (completed || session.listenedMs >= SKIP_THRESHOLD_MS)
+        ? 1
+        : 0;
+    const skipCount = skipped && session.listenedMs < SKIP_THRESHOLD_MS ? 1 : 0;
+    const listenMs = Math.max(0, session.listenedMs - session.savedMs);
+    session.savedMs = session.listenedMs;
+    session.countedPlay ||= playCount > 0;
+    if (listenMs || playCount || skipCount) {
+      void this.recordListening(
+        session.track,
+        listenMs,
+        playCount,
+        skipCount,
+      ).catch((error) => {
+        void Logger.history.error(
+          'Unable to save listening profile: ' + String(error),
+        );
+      });
+    }
   }
 
   static getInstance(): PersonalizationEngine {
@@ -98,87 +218,92 @@ export class PersonalizationEngine {
   }
 
   async getListenRecords(): Promise<UserListenRecord[]> {
-    const raw = (await profileStore.get<Record<string, unknown>[]>('listens')) || [];
-    return raw.map(migrateRecord);
+    await this.pendingWrite;
+    return mergeListenRecords(await this.profileStore.get('listens'), []);
+  }
+
+  private mutate(
+    update: (records: UserListenRecord[]) => Promise<UserListenRecord[]>,
+    origin: 'local' | 'remote',
+  ): Promise<void> {
+    const write = this.pendingWrite.then(async () => {
+      const records = mergeListenRecords(
+        await this.profileStore.get('listens'),
+        [],
+      );
+      const updated = await update(records);
+      if (JSON.stringify(updated) === JSON.stringify(records)) {
+        return;
+      }
+      await this.profileStore.set('listens', updated);
+      await this.profileStore.save();
+      this.notify(origin);
+    });
+    this.pendingWrite = write.catch(() => undefined);
+    return write;
   }
 
   async mergeRemoteListens(remoteListens: UserListenRecord[]): Promise<void> {
-    if (!Array.isArray(remoteListens) || remoteListens.length === 0) {
-      return;
-    }
-    const local = await this.getListenRecords();
-    const map = new Map<string, UserListenRecord>();
-
-    for (const item of local) {
-      if (item.trackId) {
-        map.set(item.trackId, item);
-      }
-    }
-
-    for (const item of remoteListens) {
-      if (item.trackId) {
-        const migrated = migrateRecord(item as unknown as Record<string, unknown>);
-        if (map.has(item.trackId)) {
-          const existing = map.get(item.trackId)!;
-          existing.playCount = Math.max(existing.playCount, migrated.playCount);
-          existing.skipCount = Math.max(existing.skipCount, migrated.skipCount);
-          existing.totalListenMs = Math.max(existing.totalListenMs, migrated.totalListenMs);
-          existing.lastPlayedAt = Math.max(existing.lastPlayedAt, migrated.lastPlayedAt);
-          existing.firstPlayedAt = Math.min(existing.firstPlayedAt, migrated.firstPlayedAt);
-        } else {
-          map.set(item.trackId, migrated);
-        }
-      }
-    }
-
-    const merged = Array.from(map.values())
-      .sort((a, b) => b.lastPlayedAt - a.lastPlayedAt)
-      .slice(0, MAX_RECORDS);
-
-    await profileStore.set('listens', merged);
-    await profileStore.save();
+    await this.mutate(
+      async (local) => mergeListenRecords(local, remoteListens),
+      'remote',
+    );
   }
 
-  async recordPlay(track: Track, completed: boolean): Promise<void> {
-    const records = await this.getListenRecords();
-    const artistName = track.artists?.[0]?.name || 'Unknown';
-    const trackId = track.source?.id || `${artistName}-${track.title}`;
-    const trackDuration = track.durationMs ?? 180_000;
-
-    const existingIndex = records.findIndex(
-      (record) =>
-        record.trackId === trackId ||
-        (record.title === track.title && record.artist === artistName),
+  async recordPlay(
+    track: Track,
+    completed: boolean,
+    listenMs = track.durationMs ?? DEFAULT_DURATION_MS,
+  ): Promise<void> {
+    await this.recordListening(
+      track,
+      listenMs,
+      completed ? 1 : 0,
+      completed ? 0 : 1,
     );
+  }
 
-    if (existingIndex >= 0) {
-      const existing = records[existingIndex];
-      if (completed) {
-        existing.playCount += 1;
-        existing.totalListenMs += trackDuration;
-      } else {
-        existing.skipCount += 1;
-        existing.totalListenMs += Math.min(SKIP_THRESHOLD_MS, trackDuration * 0.1);
+  private recordListening(
+    track: Track,
+    listenMs: number,
+    playCount: number,
+    skipCount: number,
+  ): Promise<void> {
+    return this.mutate(async (records) => {
+      let deviceId = await this.profileStore.get<string>('deviceId');
+      if (!deviceId) {
+        deviceId = crypto.randomUUID();
+        await this.profileStore.set('deviceId', deviceId);
       }
-      existing.lastPlayedAt = Date.now();
-      existing.durationMs = trackDuration;
-    } else {
-      records.unshift({
+      const artistName = track.artists[0]?.name || 'Unknown';
+      const trackId = track.source.id || artistName + '-' + track.title;
+      const existing = records.find((record) => record.trackId === trackId);
+      const counters = existing?.contributions?.[deviceId];
+      const now = Date.now();
+      const updated: UserListenRecord = {
+        ...existing,
         trackId,
         title: track.title,
         artist: artistName,
-        playCount: completed ? 1 : 0,
-        skipCount: completed ? 0 : 1,
-        totalListenMs: completed ? trackDuration : Math.min(SKIP_THRESHOLD_MS, trackDuration * 0.1),
-        durationMs: trackDuration,
-        lastPlayedAt: Date.now(),
-        firstPlayedAt: Date.now(),
-      });
-    }
-
-    const trimmed = records.slice(0, MAX_RECORDS);
-    await profileStore.set('listens', trimmed);
-    await profileStore.save();
+        source: track.source,
+        artistSource: track.artists[0]?.source,
+        durationMs: track.durationMs ?? DEFAULT_DURATION_MS,
+        firstPlayedAt: existing?.firstPlayedAt ?? now,
+        lastPlayedAt: now,
+        playCount: 0,
+        skipCount: 0,
+        totalListenMs: 0,
+        contributions: {
+          ...existing?.contributions,
+          [deviceId]: {
+            playCount: (counters?.playCount ?? 0) + playCount,
+            skipCount: (counters?.skipCount ?? 0) + skipCount,
+            totalListenMs: (counters?.totalListenMs ?? 0) + listenMs,
+          },
+        },
+      };
+      return mergeListenRecords(records, [updated]);
+    }, 'local');
   }
 
   async getTopArtists(): Promise<ArtistScore[]> {
@@ -198,9 +323,14 @@ export class PersonalizationEngine {
     const now = Date.now();
 
     for (const record of listens) {
-      if (!record.artist || record.artist === 'Unknown') continue;
+      if (!record.artist || record.artist === 'Unknown') {
+        continue;
+      }
 
-      const daysAgo = Math.max(0, (now - record.lastPlayedAt) / (1000 * 60 * 60 * 24));
+      const daysAgo = Math.max(
+        0,
+        (now - record.lastPlayedAt) / (1000 * 60 * 60 * 24),
+      );
       const recencyWeight = exponentialDecay(daysAgo);
       const completion = completionRate(record);
       const loyalty = loyaltyBonus(record);
@@ -211,18 +341,31 @@ export class PersonalizationEngine {
         recencyWeight *
         (1 + loyalty * 0.3);
 
-      const skipPenalty = record.skipCount > 0
-        ? Math.max(0.3, 1 - (record.skipCount / (record.playCount + record.skipCount)) * 0.5)
-        : 1;
+      const skipPenalty =
+        record.skipCount > 0
+          ? Math.max(
+              0.3,
+              1 -
+                (record.skipCount / (record.playCount + record.skipCount)) *
+                  0.5,
+            )
+          : 1;
 
       ensureArtist(record.artist).score += score * skipPenalty;
+      if (record.artistSource?.provider === 'spotify') {
+        ensureArtist(record.artist).spotifyUri = record.artistSource.id;
+      }
     }
 
     for (const favTrack of favState.tracks) {
       const artist = favTrack.ref.artists?.[0]?.name;
       if (artist) {
         const daysAgo = favTrack.addedAtIso
-          ? Math.max(0, (now - new Date(favTrack.addedAtIso).getTime()) / (1000 * 60 * 60 * 24))
+          ? Math.max(
+              0,
+              (now - new Date(favTrack.addedAtIso).getTime()) /
+                (1000 * 60 * 60 * 24),
+            )
           : 30;
         ensureArtist(artist).score += 15 * exponentialDecay(daysAgo);
       }
@@ -254,6 +397,7 @@ export class PersonalizationEngine {
     });
 
     return Object.values(artistScores)
+      .filter((artist) => artist.score > 0)
       .sort((a, b) => b.score - a.score);
   }
 
@@ -268,34 +412,47 @@ export class PersonalizationEngine {
     return listens
       .filter((record) => record.playCount > 0 && completionRate(record) > 0.5)
       .sort((a, b) => {
-        const aScore = a.playCount * completionRate(a) * exponentialDecay(
-          Math.max(0, (Date.now() - a.lastPlayedAt) / (1000 * 60 * 60 * 24)),
-        );
-        const bScore = b.playCount * completionRate(b) * exponentialDecay(
-          Math.max(0, (Date.now() - b.lastPlayedAt) / (1000 * 60 * 60 * 24)),
-        );
+        const aScore =
+          a.playCount *
+          completionRate(a) *
+          exponentialDecay(
+            Math.max(0, (Date.now() - a.lastPlayedAt) / (1000 * 60 * 60 * 24)),
+          );
+        const bScore =
+          b.playCount *
+          completionRate(b) *
+          exponentialDecay(
+            Math.max(0, (Date.now() - b.lastPlayedAt) / (1000 * 60 * 60 * 24)),
+          );
         return bScore - aScore;
       })
       .slice(0, limit)
       .map((record) => ({
         title: record.title,
-        artists: [{ name: record.artist, roles: [], source: { provider: 'unknown', id: record.trackId } }],
-        source: { provider: 'unknown', id: record.trackId },
+        artists: [
+          { name: record.artist, roles: [], source: record.artistSource },
+        ],
+        source: record.source ?? { provider: 'unknown', id: record.trackId },
+        durationMs: record.durationMs,
         artwork: undefined,
       }));
   }
 
   scoreAndRankTracks(
-    candidates: Array<{ track: Track; source: 'topTracks' | 'related' | 'radio' | 'search' }>,
+    candidates: Array<{
+      track: Track;
+      source: 'topTracks' | 'related' | 'radio' | 'search';
+    }>,
     topArtists: ArtistScore[],
+    listens: UserListenRecord[] = [],
   ): Track[] {
+    const listeningByTrack = new Map(
+      listens.map((record) => [record.trackId, record]),
+    );
     const artistAffinityMap = new Map<string, number>();
-    const maxScore = topArtists[0]?.score ?? 1;
+    const maxScore = Math.max(1, ...topArtists.map((artist) => artist.score));
     for (const artist of topArtists) {
-      artistAffinityMap.set(
-        artist.name.toLowerCase(),
-        artist.score / maxScore,
-      );
+      artistAffinityMap.set(artist.name.toLowerCase(), artist.score / maxScore);
     }
 
     const sourceWeights: Record<string, number> = {
@@ -313,36 +470,48 @@ export class PersonalizationEngine {
       const trackId =
         candidate.track.source?.id ||
         `${candidate.track.artists?.[0]?.name}-${candidate.track.title}`;
-      if (seenIds.has(trackId)) continue;
+      if (seenIds.has(trackId)) {
+        continue;
+      }
       seenIds.add(trackId);
 
-      const artistName = (candidate.track.artists?.[0]?.name || '').toLowerCase();
-      const currentCount = artistTrackCount.get(artistName) ?? 0;
-
-      if (currentCount >= MAX_TRACKS_PER_ARTIST) continue;
-      artistTrackCount.set(artistName, currentCount + 1);
-
+      const artistName = (
+        candidate.track.artists?.[0]?.name || ''
+      ).toLowerCase();
       const affinity = artistAffinityMap.get(artistName) ?? 0;
       const sourceBonus = sourceWeights[candidate.source] ?? 0.5;
-      const diversityBonus = 1 - (currentCount / MAX_TRACKS_PER_ARTIST) * 0.5;
       const freshnessNoise = 0.8 + Math.random() * 0.4;
+      const listen = listeningByTrack.get(trackId);
+      const skipRatio =
+        listen && listen.skipCount > 0
+          ? listen.skipCount / (listen.skipCount + listen.playCount)
+          : 0;
+      const skipWeight = 1 - skipRatio * 0.85;
 
       const finalScore =
-        affinity * 0.40 +
-        sourceBonus * 0.25 +
-        diversityBonus * 0.20 +
-        freshnessNoise * 0.15;
+        affinity * 0.4 + sourceBonus * 0.25 + 0.2 + freshnessNoise * 0.15;
 
-      scored.push({ track: candidate.track, score: finalScore });
+      scored.push({ track: candidate.track, score: finalScore * skipWeight });
     }
 
     scored.sort((a, b) => b.score - a.score);
 
-    return this.interleave(scored.map((entry) => entry.track));
+    const diverseTracks = scored.filter(({ track }) => {
+      const artist = (track.artists[0]?.name ?? '').toLowerCase();
+      const count = artistTrackCount.get(artist) ?? 0;
+      if (count >= MAX_TRACKS_PER_ARTIST) {
+        return false;
+      }
+      artistTrackCount.set(artist, count + 1);
+      return true;
+    });
+    return this.interleave(diverseTracks.map((entry) => entry.track));
   }
 
   private interleave(tracks: Track[]): Track[] {
-    if (tracks.length <= 4) return tracks;
+    if (tracks.length <= 4) {
+      return tracks;
+    }
 
     const result: Track[] = [];
     const byArtist = new Map<string, Track[]>();
@@ -355,8 +524,9 @@ export class PersonalizationEngine {
       byArtist.get(artist)!.push(track);
     }
 
-    const queues = Array.from(byArtist.values())
-      .sort((a, b) => b.length - a.length);
+    const queues = Array.from(byArtist.values()).sort(
+      (a, b) => b.length - a.length,
+    );
 
     let queueIndex = 0;
     while (result.length < tracks.length) {
@@ -371,7 +541,9 @@ export class PersonalizationEngine {
         queueIndex = (queueIndex + 1) % queues.length;
       } while (!added && queueIndex !== startIndex);
 
-      if (!added) break;
+      if (!added) {
+        break;
+      }
     }
 
     return result;

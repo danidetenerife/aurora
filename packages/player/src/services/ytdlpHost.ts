@@ -8,6 +8,7 @@ import type {
 } from '@nuclearplayer/plugin-sdk';
 
 import { httpHost } from './httpHost';
+import { selectHlsAudio } from './selectHlsAudio';
 import { isCapacitorEnvironment, isTauriEnvironment } from './universalStore';
 import { YtStreamExtractor } from './ytStreamExtractor';
 
@@ -112,12 +113,7 @@ async function extractAudioStreamDirect(videoId: string): Promise<YtdlpStreamInf
           headers: { 'User-Agent': 'Mozilla/5.0' },
         });
         if (m3u8Res.status === 200 && m3u8Res.body) {
-          const lines = m3u8Res.body.split('\n');
-          const audioLine = lines.find((l: string) => l.includes('sgoap/clen') && l.includes('URI='));
-          const match = audioLine ? audioLine.match(/URI="([^"]+)"/) : null;
-          if (match && match[1]) {
-            audioUrl = match[1];
-          }
+          audioUrl = selectHlsAudio(m3u8Res.body, hlsManifestUrl) ?? hlsManifestUrl;
         }
       } catch {
         // use hlsManifestUrl

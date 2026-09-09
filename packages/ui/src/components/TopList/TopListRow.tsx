@@ -40,14 +40,14 @@ export const TopListRow: FC<TopListRowProps> = ({
     </div>
     <div className="min-w-0">
       <div data-testid="top-list-label" className="truncate font-medium">
-        {entry.label}
+        {entry.labelContent ?? entry.label}
       </div>
       {entry.sublabel && (
         <div
           data-testid="top-list-sublabel"
           className="text-foreground-secondary truncate text-sm"
         >
-          {entry.sublabel}
+          {entry.sublabelContent ?? entry.sublabel}
         </div>
       )}
     </div>

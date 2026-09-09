@@ -35,6 +35,7 @@ fn find_sync_server_script(app: &AppHandle) -> Option<PathBuf> {
         PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .parent()
             .and_then(|player| player.parent())
+            .and_then(|packages| packages.parent())
             .map(|root| root.join("pc-sync-server.cjs")),
     ];
 
@@ -61,8 +62,15 @@ pub fn init_sync_server(app: &AppHandle) {
         script_path.display()
     );
 
-    match Command::new("node")
-        .arg(&script_path)
+    let mut command = Command::new("node");
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+
+    match command.arg(&script_path)
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::null())
         .spawn()
