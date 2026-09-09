@@ -1,0 +1,34 @@
+@custom-variant tv (&:where([data-platform=tv], [data-platform=tv] *));
+
+[data-platform="tv"] {
+  font-size: 16px;
+}
+
+[data-platform="tv"] *:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: 8px;
+  transition:
+    outline 150ms ease,
+    outline-offset 150ms ease,
+    transform 150ms ease;
+}
+
+[data-platform="tv"] button:focus-visible,
+[data-platform="tv"] [role="button"]:focus-visible {
+  transform: scale(1.03);
+}
+
+[data-platform="tv"] input:focus-visible {
+  outline-offset: 2px;
+  transform: none;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

@@ -33,14 +33,15 @@ import { ConnectedTopBar } from '../components/ConnectedTopBar';
 import { FlatpakWarningBanner } from '../components/FlatpakWarningBanner';
 import { SoundProvider } from '../components/SoundProvider';
 import { StreamResolver } from '../components/StreamResolver';
+import { TvShell } from '../components/TvShell';
+import { isGoogleTVEnvironment } from '../services/tvDetection';
+import { isTauriEnvironment } from '../services/universalStore';
 import { GlobalShortcuts } from '../shortcuts';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { useStartupStore } from '../stores/startupStore';
 
-import { isTauriEnvironment } from '../services/universalStore';
-
-const RootComponent = () => {
+const DesktopMobileRootComponent = () => {
   const { t } = useTranslation('navigation');
   const { t: tPrefs } = useTranslation('preferences');
   const isTauri = isTauriEnvironment();
@@ -57,7 +58,7 @@ const RootComponent = () => {
   return (
     <PlayerShell onContextMenu={(e) => e.preventDefault()}>
       <GlobalShortcuts />
-      <div className="pt-7 sm:pt-0 shrink-0">
+      <div className="shrink-0 pt-7 sm:pt-0">
         {isTauri && <ConnectedTitleBar />}
         {isTauri && <FlatpakWarningBanner />}
         <ConnectedTopBar />
@@ -135,7 +136,7 @@ const RootComponent = () => {
         </PlayerWorkspace>
       </SoundProvider>
 
-      <div className="flex flex-col shrink-0">
+      <div className="flex shrink-0 flex-col">
         <ConnectedPlayerBar />
         <ConnectedMobileNav />
       </div>
@@ -147,6 +148,13 @@ const RootComponent = () => {
       <CarModeOverlay />
     </PlayerShell>
   );
+};
+
+const RootComponent = () => {
+  if (isGoogleTVEnvironment()) {
+    return <TvShell />;
+  }
+  return <DesktopMobileRootComponent />;
 };
 
 export const Route = createRootRoute({

@@ -1,6 +1,6 @@
 import { createContext, FC, ReactNode, useContext } from 'react';
 
-export type Platform = 'macos' | 'windows' | 'linux';
+export type Platform = 'macos' | 'windows' | 'linux' | 'tv';
 
 const PlatformContext = createContext<Platform>('linux');
 

@@ -224,6 +224,9 @@ importers:
 
   packages/player:
     dependencies:
+      '@noriginmedia/norigin-spatial-navigation':
+        specifier: ^3.3.0
+        version: 3.3.0(react@18.3.1)
       '@nuclearplayer/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -1991,6 +1994,17 @@ packages:
 
   '@nodable/entities@2.2.0':
     resolution: {integrity: sha512-9uGyhaQavEUMC8AIddIjau4NsnsXhou+j5sBAGojCM1oxmQpVKTWR/9JxABD6UAv12vpIms55fPZKFQEhG6uBg==}
+
+  '@noriginmedia/norigin-spatial-navigation-core@4.1.1':
+    resolution: {integrity: sha512-hKPYTbKOnpfzCl5F4x2+/+xSYWpTjP4M7INgFTLU7IZgaQy50t19nOmzQX8JEaroDNGtLLCseCzfmfyRbV7eAg==}
+
+  '@noriginmedia/norigin-spatial-navigation-react@3.3.0':
+    resolution: {integrity: sha512-YmiXFkczmfRTz6vmVmQoNhryi0j/09Ez77RPdCM2/VmXo7XcTVIYhrrQIqXkslLe2BzM2/k6ITqwTGhl2B/GTg==}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  '@noriginmedia/norigin-spatial-navigation@3.3.0':
+    resolution: {integrity: sha512-8LfwMC3IRuDIntJpcNLEcf+nyXz9F52dCqnJBkLq1bypVibnAPE+uF3KReFFCHzH9VYZK7P0AWZvTtbx3vwjhQ==}
 
   '@octokit/auth-token@6.0.0':
     resolution: {integrity: sha512-P4YJBPdPSpWTQ1NU4XYdvHvXJJDxM6YwpS0FZHRgP7YFkdVxsWcpWGy/NVqlAA7PcPCnMacXlRm1y2PFZRWL/w==}
@@ -8762,6 +8776,23 @@ snapshots:
     optional: true
 
   '@nodable/entities@2.2.0': {}
+
+  '@noriginmedia/norigin-spatial-navigation-core@4.1.1':
+    dependencies:
+      lodash-es: 4.18.1
+
+  '@noriginmedia/norigin-spatial-navigation-react@3.3.0(react@18.3.1)':
+    dependencies:
+      '@noriginmedia/norigin-spatial-navigation-core': 4.1.1
+      lodash-es: 4.18.1
+      react: 18.3.1
+
+  '@noriginmedia/norigin-spatial-navigation@3.3.0(react@18.3.1)':
+    dependencies:
+      '@noriginmedia/norigin-spatial-navigation-core': 4.1.1
+      '@noriginmedia/norigin-spatial-navigation-react': 3.3.0(react@18.3.1)
+    transitivePeerDependencies:
+      - react
 
   '@octokit/auth-token@6.0.0': {}
 

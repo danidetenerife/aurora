@@ -1,5 +1,9 @@
 {
   "common": {
+    "sync": {
+      "profileDownloadFailed": "Could not retrieve synchronization data.",
+      "profileUploadFailed": "Could not upload local listening preferences. They remain saved on this device."
+    },
     "app": {
       "name": "Aurora",
       "description": "Aurora Music Player"
@@ -37,6 +41,7 @@
     "sources": "Sources"
   },
   "history": {
+    "openError": "Could not open this item. Check your connection and metadata source, then try again.",
     "title": "History",
     "empty": "Nothing played yet",
     "emptyDescription": "Tracks you play will appear here",
@@ -243,6 +248,11 @@
     }
   },
   "dashboard": {
+    "personalizedMix": {
+      "title": "Recommended for you",
+      "badge": "Learning from your tastes",
+      "description": "Recommendations learn from your listening, skips and favorites across your synced devices."
+    },
     "title": "Dashboard",
     "empty-state": "Welcome to Aurora",
     "empty-state-description": "Install a plugin to see top tracks, new releases, and recommendations here.",
@@ -608,5 +618,13 @@
       "plugin": "Plugin",
       "docs": "Docs"
     }
+  },
+  "tv": {
+    "nowPlaying": "Now Playing",
+    "nothingPlaying": "Nothing playing",
+    "openSearch": "Search",
+    "queue": "Queue",
+    "exitTvMode": "Exit TV mode",
+    "emptyDashboard": "Start exploring music to see your favorites here"
   }
 }

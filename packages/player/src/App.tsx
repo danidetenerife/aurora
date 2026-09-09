@@ -11,6 +11,7 @@ import { i18n } from '@nuclearplayer/i18n';
 import { Platform, PlatformProvider } from '@nuclearplayer/ui';
 
 import { routeTree } from './routeTree.gen';
+import { isGoogleTVEnvironment } from './services/tvDetection';
 import { isTauriEnvironment } from './services/universalStore';
 
 const history = isTauriEnvironment() ? undefined : createHashHistory();
@@ -33,6 +34,9 @@ type AppProps = {
 };
 
 const getAppPlatform = (): Platform => {
+  if (isGoogleTVEnvironment()) {
+    return 'tv';
+  }
   return isTauriEnvironment() ? 'windows' : 'linux';
 };
 

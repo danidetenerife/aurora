@@ -12,10 +12,13 @@ import {
 } from './services/languageService';
 import { initMediaSessionService } from './services/mediaSessionService';
 import { p2pSyncService } from './services/p2pSyncService';
+import { personalizationEngine } from './services/personalizationEngine';
 import { initPlaybackEventBridge } from './services/playbackEventBridge';
 import { hydratePluginsFromRegistry } from './services/plugins/pluginBootstrap';
 import { providersHost } from './services/providersHost';
+import { initSpatialNavigation } from './services/spatialNavigation';
 import { ytdlpEnsureInstalled } from './services/tauri/commands';
+import { isGoogleTVEnvironment } from './services/tvDetection';
 import { isTauriEnvironment } from './services/universalStore';
 import { initCarModeService } from './stores/carModeStore';
 import { initializeFavoritesStore } from './stores/favoritesStore';
@@ -57,6 +60,13 @@ export const initPlayerApp = async (
     } catch {}
   }
 
+  if (isGoogleTVEnvironment()) {
+    try {
+      initSpatialNavigation();
+      document.documentElement.setAttribute('data-platform', 'tv');
+    } catch {}
+  }
+
   try {
     if (isTauriEnvironment()) {
       initLogStream();
@@ -69,6 +79,7 @@ export const initPlayerApp = async (
     await initializePlaylistStore();
     await initializeProvidersStore();
     await registerBuiltInCoreSettings();
+    personalizationEngine.start();
     await initDiscoveryService();
 
     try {
