@@ -222,6 +222,32 @@ public class MainActivity extends BridgeActivity {
     }
 
     @Override
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        if (TvWebView.isTelevision(this) && event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
+            int keyCode = event.getKeyCode();
+            WebView webView = getBridge() != null ? getBridge().getWebView() : null;
+            if (webView != null) {
+                switch (keyCode) {
+                    case android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                    case android.view.KeyEvent.KEYCODE_MEDIA_PLAY:
+                    case android.view.KeyEvent.KEYCODE_MEDIA_PAUSE:
+                        webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('tv:playpause'))", null);
+                        return true;
+                    case android.view.KeyEvent.KEYCODE_MEDIA_NEXT:
+                    case android.view.KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+                        webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('tv:next'))", null);
+                        return true;
+                    case android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+                    case android.view.KeyEvent.KEYCODE_MEDIA_REWIND:
+                        webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('tv:prev'))", null);
+                        return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
     public void onDestroy() {
         try {
             if (screenStateReceiver != null) {

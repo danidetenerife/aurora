@@ -54,9 +54,15 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
       role="button"
       tabIndex={0}
       data-testid="tv-focusable-card"
+      data-focused={focused}
       onClick={onClick}
       onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (
+          event.key === 'Enter' ||
+          event.key === ' ' ||
+          event.keyCode === 23 ||
+          event.keyCode === 13
+        ) {
           event.preventDefault();
           onClick?.();
         }

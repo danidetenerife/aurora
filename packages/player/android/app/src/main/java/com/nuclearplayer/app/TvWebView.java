@@ -24,15 +24,20 @@ final class TvWebView {
         }
         WebSettings settings = webView.getSettings();
         settings.setUserAgentString(TV_USER_AGENT);
-        settings.setUseWideViewPort(true);
-        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(false);
+        settings.setLoadWithOverviewMode(false);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         settings.setTextZoom(100);
         settings.setSupportZoom(false);
         settings.setOffscreenPreRaster(false);
+        webView.setLayoutParams(new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        ));
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
         webView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
-        webView.requestFocus(View.FOCUS_DOWN);
+        webView.requestFocus();
         activity.getWindow().getDecorView().setSystemUiVisibility(
             View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION

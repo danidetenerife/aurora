@@ -1,5 +1,6 @@
 import {
   FocusContext,
+  setFocus,
   useFocusable,
 } from '@noriginmedia/norigin-spatial-navigation';
 import {
@@ -9,6 +10,7 @@ import {
   ListMusic,
   ListMusicIcon,
   MusicIcon,
+  PlayCircleIcon,
   SearchIcon,
   SettingsIcon,
 } from 'lucide-react';
@@ -47,19 +49,25 @@ const TvNavRailItem: FC<{
       role="button"
       tabIndex={0}
       data-testid={`tv-nav-item-${item.id}`}
+      data-focused={focused}
       onClick={item.action}
       onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (
+          event.key === 'Enter' ||
+          event.key === ' ' ||
+          event.keyCode === 23 ||
+          event.keyCode === 13
+        ) {
           event.preventDefault();
           item.action();
         }
       }}
       className={cn(
-        'flex min-w-[72px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl px-3 py-3 transition-all duration-150 outline-none',
+        'flex min-w-[72px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 transition-all duration-150 outline-none',
         isActive && 'bg-primary/20 text-primary',
         !isActive && 'text-zinc-400',
         focused &&
-          'bg-primary/30 shadow-primary/20 scale-110 text-white shadow-lg',
+          'bg-primary/40 shadow-primary/30 ring-primary scale-110 text-white shadow-xl ring-2',
       )}
     >
       <div className="[&>svg]:size-6">{item.icon}</div>
@@ -83,8 +91,6 @@ export const TvNavRail: FC = () => {
     focusKey: 'TV_NAV_RAIL',
     trackChildren: true,
     saveLastFocusedChild: true,
-    isFocusBoundary: true,
-    focusBoundaryDirections: ['up', 'down'],
   });
 
   const navItems: NavItem[] = [
@@ -130,6 +136,12 @@ export const TvNavRail: FC = () => {
       label: 'Queue',
       action: () => toggleQueue(),
     },
+    {
+      id: 'player',
+      icon: <PlayCircleIcon />,
+      label: 'Player',
+      action: () => setFocus('tv-control-play'),
+    },
   ];
 
   const settingsItem: NavItem = {
@@ -144,10 +156,10 @@ export const TvNavRail: FC = () => {
       <nav
         ref={ref}
         data-testid="tv-nav-rail"
-        className="flex w-[88px] shrink-0 flex-col items-center justify-between border-r border-zinc-800 bg-zinc-900/90 px-2 py-6 backdrop-blur-xl select-none"
+        className="flex w-[88px] shrink-0 flex-col items-center justify-between border-r border-zinc-800 bg-zinc-900/90 px-2 py-4 backdrop-blur-xl select-none"
       >
-        <div className="flex flex-col items-center gap-2">
-          <div className="mb-4 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-1.5">
+          <div className="mb-2 flex items-center justify-center">
             <span className="font-heading bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-xs font-extrabold tracking-wider text-transparent select-none">
               AURORA
             </span>

@@ -3,13 +3,14 @@ import {
   setFocus,
   useFocusable,
 } from '@noriginmedia/norigin-spatial-navigation';
-import { Music } from 'lucide-react';
-import { FC, useEffect, useMemo } from 'react';
+import { Music, PlayCircle, Search } from 'lucide-react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
+import { pickArtwork, Track } from '@nuclearplayer/model';
 import { Toaster } from '@nuclearplayer/ui';
 
+import { playbackManager } from '../../services/playback';
 import { initSpatialNavigation } from '../../services/spatialNavigation';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
@@ -29,6 +30,7 @@ const TvDashboardContent: FC = () => {
   const { t } = useTranslation('navigation');
   const favoriteAlbums = useFavoritesStore((state) => state.albums);
   const favoriteTracks = useFavoritesStore((state) => state.tracks);
+  const openSearch = useTvStore((state) => state.openSearch);
 
   const sortedAlbums = useMemo(
     () => sortByAddedAtDesc(favoriteAlbums).slice(0, 20),
@@ -43,8 +45,27 @@ const TvDashboardContent: FC = () => {
   const queueItems = useQueueStore((state) => state.items);
   const recentQueueItems = useMemo(() => queueItems.slice(0, 20), [queueItems]);
 
+  const handlePlayQueueItem = useCallback((index: number) => {
+    useQueueStore.getState().goToIndex(index);
+    playbackManager.play();
+  }, []);
+
+  const handlePlayTrack = useCallback((track: unknown) => {
+    useQueueStore.getState().addToQueue([track as Track]);
+    playbackManager.play();
+  }, []);
+
+  const handlePlayAlbum = useCallback((album: unknown) => {
+    const albumAny = album as { tracks?: Track[] };
+    if (albumAny.tracks && albumAny.tracks.length > 0) {
+      useQueueStore.getState().clearQueue();
+      useQueueStore.getState().addToQueue(albumAny.tracks);
+      playbackManager.play();
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col gap-8 py-6">
+    <div className="flex flex-col gap-8 py-4">
       {recentQueueItems.length > 0 && (
         <TvContentRow title="Queue" focusKey="tv-dashboard-queue">
           {recentQueueItems.map((item, index) => (
@@ -54,6 +75,7 @@ const TvDashboardContent: FC = () => {
               subtitle={item.track.artists?.[0]?.name}
               src={pickArtwork(item.track.artwork, 'thumbnail', 300)?.url}
               focusKey={`tv-queue-${index}`}
+              onClick={() => handlePlayQueueItem(index)}
             />
           ))}
         </TvContentRow>
@@ -71,6 +93,7 @@ const TvDashboardContent: FC = () => {
               title={entry.ref.title}
               src={pickArtwork(entry.ref.artwork, 'cover', 300)?.url}
               focusKey={`tv-album-${entry.ref.source.id}`}
+              onClick={() => handlePlayAlbum(entry.ref)}
             />
           ))}
         </TvContentRow>
@@ -89,6 +112,7 @@ const TvDashboardContent: FC = () => {
               subtitle={entry.ref.artists?.[0]?.name}
               src={pickArtwork(entry.ref.artwork, 'thumbnail', 300)?.url}
               focusKey={`tv-track-${entry.ref.source?.id}`}
+              onClick={() => handlePlayTrack(entry.ref)}
             />
           ))}
         </TvContentRow>
@@ -97,11 +121,29 @@ const TvDashboardContent: FC = () => {
       {sortedAlbums.length === 0 &&
         sortedTracks.length === 0 &&
         recentQueueItems.length === 0 && (
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 py-24 text-zinc-500">
-            <Music size={64} className="opacity-40" />
-            <p className="text-xl font-medium">
+          <div className="flex flex-1 flex-col items-center justify-center gap-6 py-16 text-zinc-400">
+            <Music size={56} className="text-zinc-600 opacity-60" />
+            <p className="text-xl font-medium text-white">
               Start exploring music to see your favorites here
             </p>
+            <div className="flex gap-4">
+              <TvFocusableCard
+                title="Search Music"
+                subtitle="Explore songs & artists"
+                focusKey="tv-empty-search"
+                onClick={() => openSearch()}
+              >
+                <Search size={32} />
+              </TvFocusableCard>
+              <TvFocusableCard
+                title="Now Playing"
+                subtitle="Open player controls"
+                focusKey="tv-empty-player"
+                onClick={() => setFocus('tv-control-play')}
+              >
+                <PlayCircle size={32} />
+              </TvFocusableCard>
+            </div>
           </div>
         )}
     </div>
@@ -123,8 +165,22 @@ const TvFavoritesContent: FC = () => {
     [favoriteTracks],
   );
 
+  const handlePlayTrack = useCallback((track: unknown) => {
+    useQueueStore.getState().addToQueue([track as Track]);
+    playbackManager.play();
+  }, []);
+
+  const handlePlayAlbum = useCallback((album: unknown) => {
+    const albumAny = album as { tracks?: Track[] };
+    if (albumAny.tracks && albumAny.tracks.length > 0) {
+      useQueueStore.getState().clearQueue();
+      useQueueStore.getState().addToQueue(albumAny.tracks);
+      playbackManager.play();
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col gap-8 py-6">
+    <div className="flex flex-col gap-8 py-4">
       {sortedAlbums.length > 0 && (
         <TvContentRow
           title={t('favoriteAlbums')}
@@ -136,6 +192,7 @@ const TvFavoritesContent: FC = () => {
               title={entry.ref.title}
               src={pickArtwork(entry.ref.artwork, 'cover', 300)?.url}
               focusKey={`tv-fav-album-${entry.ref.source.id}`}
+              onClick={() => handlePlayAlbum(entry.ref)}
             />
           ))}
         </TvContentRow>
@@ -153,6 +210,7 @@ const TvFavoritesContent: FC = () => {
               subtitle={entry.ref.artists?.[0]?.name}
               src={pickArtwork(entry.ref.artwork, 'thumbnail', 300)?.url}
               focusKey={`tv-fav-track-${entry.ref.source?.id}`}
+              onClick={() => handlePlayTrack(entry.ref)}
             />
           ))}
         </TvContentRow>
@@ -165,7 +223,7 @@ const TvPlaylistsContent: FC = () => {
   const { t } = useTranslation('navigation');
 
   return (
-    <div className="flex flex-col gap-8 py-6">
+    <div className="flex flex-col gap-8 py-4">
       <TvContentRow title={t('playlists')} focusKey="tv-playlists-list">
         <TvFocusableCard title="Coming soon" focusKey="tv-playlist-placeholder">
           <Music size={48} className="opacity-40" />
@@ -217,13 +275,13 @@ export const TvShell: FC = () => {
         ref={ref}
         data-testid="tv-shell"
         data-platform="tv"
-        className="tv-shell flex h-full w-full min-w-0 overflow-hidden bg-zinc-950 text-white select-none"
+        className="tv-shell box-border flex h-full w-full min-w-0 overflow-hidden bg-zinc-950 text-white select-none"
         onContextMenu={(event) => event.preventDefault()}
       >
         <TvNavRail />
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <main className="min-h-0 flex-1 overflow-y-auto">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          <main className="min-h-0 flex-1 overflow-y-auto px-4">
             <TvMainContent />
           </main>
 

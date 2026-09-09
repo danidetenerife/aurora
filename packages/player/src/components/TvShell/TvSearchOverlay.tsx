@@ -19,6 +19,8 @@ import { cn } from '@nuclearplayer/ui';
 
 import { useActiveProvider } from '../../hooks/useActiveProvider';
 import { metadataHost } from '../../services/metadataHost';
+import { playbackManager } from '../../services/playback';
+import { useQueueStore } from '../../stores/queueStore';
 import { useTvStore } from '../../stores/tvStore';
 import { TvContentRow } from './TvContentRow';
 import { TvFocusableCard } from './TvFocusableCard';
@@ -212,6 +214,11 @@ export const TvSearchOverlay: FC = () => {
                       subtitle={track.artists?.[0]?.name}
                       src={pickArtwork(track.artwork, 'thumbnail', 300)?.url}
                       focusKey={`tv-search-track-${track.source?.id}`}
+                      onClick={() => {
+                        useQueueStore.getState().addToQueue([track]);
+                        playbackManager.play();
+                        closeSearch();
+                      }}
                     />
                   ))}
                 </TvContentRow>
