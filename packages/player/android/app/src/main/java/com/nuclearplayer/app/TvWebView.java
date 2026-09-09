@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -28,6 +29,10 @@ final class TvWebView {
         settings.setTextZoom(100);
         settings.setSupportZoom(false);
         settings.setOffscreenPreRaster(false);
+        webView.setFocusable(true);
+        webView.setFocusableInTouchMode(true);
+        webView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+        webView.requestFocus(View.FOCUS_DOWN);
         activity.getWindow().getDecorView().setSystemUiVisibility(
             View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION

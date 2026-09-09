@@ -35,6 +35,9 @@ public class MainActivity extends BridgeActivity {
                 try {
                     WebView webView = instance.getBridge() != null ? instance.getBridge().getWebView() : null;
                     if (webView != null) {
+                        if (TvWebView.isTelevision(instance)) {
+                            TvWebView.configure(instance, webView);
+                        }
                         webView.resumeTimers();
                         webView.onResume();
                     }
