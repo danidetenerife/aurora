@@ -1,14 +1,16 @@
 import {
   FocusContext,
+  setFocus,
   useFocusable,
 } from '@noriginmedia/norigin-spatial-navigation';
 import { Music } from 'lucide-react';
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork } from '@nuclearplayer/model';
 import { Toaster } from '@nuclearplayer/ui';
 
+import { initSpatialNavigation } from '../../services/spatialNavigation';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { useStartupStore } from '../../stores/startupStore';
@@ -197,10 +199,17 @@ const TvMainContent: FC = () => {
 };
 
 export const TvShell: FC = () => {
+  initSpatialNavigation();
+  const isStartingUp = useStartupStore((state) => state.isStartingUp);
+  const isSearchOpen = useTvStore((state) => state.isSearchOpen);
   const { ref, focusKey } = useFocusable({
     focusKey: 'TV_ROOT',
     isFocusBoundary: true,
   });
+
+  useEffect(() => {
+    setFocus('tv-nav-dashboard');
+  }, []);
 
   return (
     <FocusContext.Provider value={focusKey}>
@@ -208,7 +217,7 @@ export const TvShell: FC = () => {
         ref={ref}
         data-testid="tv-shell"
         data-platform="tv"
-        className="flex h-[100dvh] w-full overflow-hidden bg-zinc-950 text-white select-none"
+        className="tv-shell flex h-full w-full min-w-0 overflow-hidden bg-zinc-950 text-white select-none"
         onContextMenu={(event) => event.preventDefault()}
       >
         <TvNavRail />
@@ -221,11 +230,9 @@ export const TvShell: FC = () => {
           <TvNowPlayingBar />
         </div>
 
-        <SoundProvider>
-          <StreamResolver />
-        </SoundProvider>
+        <SoundProvider>{!isStartingUp && <StreamResolver />}</SoundProvider>
 
-        <TvSearchOverlay />
+        {isSearchOpen && <TvSearchOverlay />}
 
         <Toaster position="top-right" />
         <ConnectedSettingsModal />

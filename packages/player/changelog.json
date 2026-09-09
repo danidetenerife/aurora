@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-09T13:00",
+    "description": "Fix Chromecast HD Google TV (Android TV 14) startup identification, fit the TV layout to the screen, initialize remote focus and avoid phone-only permissions and rendering overhead on TV.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Google TV", "color": "green" }]
+  },
+  {
     "date": "2026-09-08T20:00",
     "description": "Make history rankings interactive: play songs and open artist and album pages by clicking their names, including individual artist credits.",
     "type": "fix",

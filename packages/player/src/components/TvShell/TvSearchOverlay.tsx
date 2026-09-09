@@ -1,10 +1,13 @@
 import {
   FocusContext,
+  pause,
+  resume,
+  setFocus,
   useFocusable,
 } from '@noriginmedia/norigin-spatial-navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Search, X } from 'lucide-react';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork } from '@nuclearplayer/model';
@@ -19,6 +22,29 @@ import { metadataHost } from '../../services/metadataHost';
 import { useTvStore } from '../../stores/tvStore';
 import { TvContentRow } from './TvContentRow';
 import { TvFocusableCard } from './TvFocusableCard';
+
+const TvSearchCloseButton: FC = () => {
+  const closeSearch = useTvStore((state) => state.closeSearch);
+  const { t } = useTranslation('tv');
+  const { ref, focused } = useFocusable({
+    focusKey: 'tv-search-close',
+    onEnterPress: closeSearch,
+  });
+
+  return (
+    <button
+      ref={ref}
+      onClick={closeSearch}
+      className={cn(
+        'flex size-12 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-800 text-zinc-400 outline-none',
+        focused && 'ring-primary text-white ring-2',
+      )}
+      aria-label={t('closeSearch')}
+    >
+      <X size={24} />
+    </button>
+  );
+};
 
 export const TvSearchOverlay: FC = () => {
   const { t } = useTranslation('search');
@@ -46,19 +72,15 @@ export const TvSearchOverlay: FC = () => {
     preferredChildFocusKey: 'tv-search-input',
   });
 
-  const onClosePress = useCallback(() => {
-    closeSearch();
-  }, [closeSearch]);
-
-  const { ref: closeRef, focused: closeFocused } = useFocusable({
-    focusKey: 'tv-search-close',
-    onEnterPress: onClosePress,
-  });
-
   useEffect(() => {
     if (isSearchOpen && inputRef.current) {
+      pause();
       inputRef.current.focus();
     }
+    return () => {
+      resume();
+      setFocus('tv-nav-search');
+    };
   }, [isSearchOpen]);
 
   useEffect(() => {
@@ -105,6 +127,20 @@ export const TvSearchOverlay: FC = () => {
             <Search size={24} className="shrink-0 text-zinc-400" />
             <input
               ref={inputRef}
+              onFocus={pause}
+              onBlur={resume}
+              onKeyDown={(event) => {
+                if (event.key !== 'Escape' && event.key !== 'Back') {
+                  event.stopPropagation();
+                }
+                if (event.key === 'ArrowDown') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  inputRef.current?.blur();
+                  resume();
+                  setFocus('tv-search-close');
+                }
+              }}
               type="text"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -113,17 +149,7 @@ export const TvSearchOverlay: FC = () => {
               data-testid="tv-search-input"
             />
           </div>
-          <button
-            ref={closeRef}
-            onClick={closeSearch}
-            className={cn(
-              'flex size-12 cursor-pointer items-center justify-center rounded-full bg-zinc-800 text-zinc-400 transition-all outline-none',
-              closeFocused && 'ring-primary scale-110 text-white ring-2',
-            )}
-            aria-label="Close search"
-          >
-            <X size={24} />
-          </button>
+          <TvSearchCloseButton />
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">

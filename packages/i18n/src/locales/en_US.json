@@ -620,6 +620,7 @@
     }
   },
   "tv": {
+    "closeSearch": "Close search",
     "nowPlaying": "Now Playing",
     "nothingPlaying": "Nothing playing",
     "openSearch": "Search",

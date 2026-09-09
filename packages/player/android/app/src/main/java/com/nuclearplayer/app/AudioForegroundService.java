@@ -63,6 +63,7 @@ public class AudioForegroundService extends Service {
     @SuppressWarnings("deprecation")
     private void registerPhoneCallListener() {
         if (phoneCallListenerRegistered) return;
+        if (TvWebView.isTelevision(this)) return;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M &&
             checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "READ_PHONE_STATE not granted yet, skipping phone call listener");

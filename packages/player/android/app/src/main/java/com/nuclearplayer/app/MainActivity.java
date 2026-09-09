@@ -44,6 +44,14 @@ public class MainActivity extends BridgeActivity {
     }
 
     @Override
+    protected void load() {
+        if (TvWebView.isTelevision(this)) {
+            TvWebView.configure(this, findViewById(com.getcapacitor.android.R.id.webview));
+        }
+        super.load();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         instance = this;
         bridgeBuilder.addWebViewListener(new WebViewListener() {
@@ -70,7 +78,8 @@ public class MainActivity extends BridgeActivity {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 needed.add(android.Manifest.permission.POST_NOTIFICATIONS);
             }
-            if (checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (!TvWebView.isTelevision(this)
+                && checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 needed.add(android.Manifest.permission.READ_PHONE_STATE);
             }
             if (!needed.isEmpty()) {
@@ -116,8 +125,12 @@ public class MainActivity extends BridgeActivity {
                 settings.setDatabaseEnabled(true);
                 settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
                 settings.setJavaScriptEnabled(true);
-                settings.setUserAgentString(YtStreamExtractorPlugin.MOBILE_UA);
-                settings.setOffscreenPreRaster(true);
+                if (TvWebView.isTelevision(this)) {
+                    TvWebView.configure(this, webView);
+                } else {
+                    settings.setUserAgentString(YtStreamExtractorPlugin.MOBILE_UA);
+                    settings.setOffscreenPreRaster(true);
+                }
             }
         } catch (Throwable t) {
             // ignore

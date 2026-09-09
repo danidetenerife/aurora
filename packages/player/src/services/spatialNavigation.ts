@@ -6,10 +6,9 @@ export const initSpatialNavigation = (): void => {
   if (initialized) {
     return;
   }
-  initialized = true;
-
   init({
     debug: false,
     visualDebug: false,
   });
+  initialized = true;
 };

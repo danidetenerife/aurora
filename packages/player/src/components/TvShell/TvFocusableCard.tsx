@@ -36,7 +36,7 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
   useEffect(() => {
     if (focused && cardRef.current) {
       cardRef.current.scrollIntoView({
-        behavior: 'smooth',
+        behavior: 'auto',
         block: 'nearest',
         inline: 'nearest',
       });
@@ -72,6 +72,8 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
       <div className="aspect-square w-full overflow-hidden bg-zinc-900">
         {src ? (
           <img
+            loading="lazy"
+            decoding="async"
             src={src}
             alt={title}
             className={cn(
