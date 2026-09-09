@@ -84,6 +84,21 @@
   </requires>
 
   <releases>
+    <release version="1.48.0" date="2026-09-09">
+      <description>
+        <ul>
+          <li>Make history rankings interactive: play songs and open artist and album pages by clicking their names, including individual artist credits.</li>
+          <li>Restore Spanish recommendation text and keep the Panel list fixed while playing. Apply newly learned recommendations on the next visit instead of reshuffling the visible list.</li>
+          <li>Keep listening preferences learning across mobile and desktop, including partial plays and skips. Merge offline listening without losing or duplicating plays, and refresh personalized recommendations when preferences change.</li>
+          <li>Prefer AAC-LC and stereo HLS audio renditions over the first low-quality HE-AAC track when resolving songs on Android.</li>
+          <li>Complete rebranding from Nuclear to Aurora. Fixed desktop audio playback by prioritizing yt-dlp on Tauri. Added audio focus handling to pause music during phone calls. Filtered YouTube Music search to exclude live streams and long videos. Removed TV/Google TV support. Updated all Android app icons to Aurora design.</li>
+          <li>Enhanced MediaSession synchronization with decoupled web/native bridge initialization, non-blocking metadata subscriptions, and comprehensive Android AudioForegroundService diagnostics.</li>
+          <li>Added on-device hidden WebView YouTube stream extractor plugin with two-stage fallback (embed -&gt; m.youtube.com), robust MIME audio filtering, leak-free lifecycle cleanup, and unified mobile User-Agent synchronization.</li>
+          <li>Fixed infinite buffering by migrating YouTube direct audio stream resolution to VISIONOS HLS master manifest streams with sub-playlist parsing, eliminating 403 Forbidden errors and bot PoToken challenges across all songs.</li>
+          <li>Restored universal HTML5 audio playback across all platforms, enabled reliable static visitor ID fallback for instant YouTube stream extraction, and bound native low-latency silent AudioTrack keep-alive to ensure uninterrupted screen-off background playback and instant lockscreen widget response on Xiaomi HyperOS 3.</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.47.14" date="2026-09-02">
       <description>
         <p>Release 1.47.14.</p>
