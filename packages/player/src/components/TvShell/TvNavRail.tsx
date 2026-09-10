@@ -45,7 +45,11 @@ export const TvNavRail: FC = () => {
           destinations={{
             left: `tv-nav-${items[Math.max(0, index - 1)].id}`,
             right: `tv-nav-${items[Math.min(items.length - 1, index + 1)].id}`,
-            down: 'tv-control-play',
+            down:
+              item.id === 'player' ||
+              (item.id === 'dashboard' && activeSection === 'dashboard')
+                ? 'tv-control-play'
+                : 'TV_CONTENT',
           }}
           onClick={item.action}
         >

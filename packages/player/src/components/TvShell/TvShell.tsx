@@ -13,6 +13,7 @@ import { Toaster } from '@nuclearplayer/ui';
 
 import { playbackManager } from '../../services/playback';
 import { initSpatialNavigation } from '../../services/spatialNavigation';
+import { streamResolution } from '../../services/streamResolution';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { useQueueStore } from '../../stores/queueStore';
@@ -20,6 +21,7 @@ import { useStartupStore } from '../../stores/startupStore';
 import { useTvStore } from '../../stores/tvStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
 import { StreamResolver } from '../StreamResolver';
+import { TvAutoUpdater } from './TvAutoUpdater';
 import { TvButton } from './TvButton';
 import { TvFocusableCard } from './TvFocusableCard';
 import { tvI18n } from './tvI18n';
@@ -104,10 +106,29 @@ const TvMainContent: FC = () => {
                   focusKey={`tv-content-track-${index}`}
                   onClick={() => {
                     if (section === 'favorites') {
-                      playTvTracks([track]);
+                      playTvTracks(tracks, index);
                     } else {
-                      useQueueStore.getState().goToIndex(index);
-                      playbackManager.play();
+                      const queue = useQueueStore.getState();
+                      if (queue.currentIndex === index) {
+                        const current = queue.getCurrentItem();
+                        if (current && current.status !== 'success') {
+                          void streamResolution.resolve(current, {
+                            autoPlay: true,
+                          });
+                        } else {
+                          playbackManager.toggle();
+                        }
+                      } else {
+                        queue.goToIndex(index);
+                        const item = queue.items[index];
+                        if (item) {
+                          void streamResolution.resolve(item, {
+                            autoPlay: true,
+                          });
+                        } else {
+                          playbackManager.play();
+                        }
+                      }
                     }
                   }}
                 >
@@ -155,6 +176,7 @@ const TvShellContent: FC = () => {
       lang="es"
       onContextMenu={(event) => event.preventDefault()}
     >
+      <TvAutoUpdater />
       <TvNavRail />
       <TvMainContent />
       <TvNowPlayingBar />

@@ -34,6 +34,9 @@ final class TvWebView {
         settings.setTextZoom(100);
         settings.setSupportZoom(false);
         settings.setOffscreenPreRaster(false);
+        settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         ViewGroup.LayoutParams layout = webView.getLayoutParams();
         if (layout != null) {
             layout.width = ViewGroup.LayoutParams.MATCH_PARENT;

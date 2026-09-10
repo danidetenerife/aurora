@@ -1,11 +1,14 @@
 package com.nuclearplayer.app;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.core.content.FileProvider;
@@ -17,8 +20,10 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -124,19 +129,42 @@ public class ApkUpdaterPlugin extends Plugin {
                 finishProgress.put("totalBytes", total);
                 notifyListeners("downloadProgress", finishProgress);
 
-                // Launch Android Package Installer
-                Uri apkUri = FileProvider.getUriForFile(
-                    context,
-                    context.getPackageName() + ".fileprovider",
-                    apkFile
-                );
+                // Check permission to install unknown apps (Android 8+)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (!context.getPackageManager().canRequestPackageInstalls()) {
+                        Log.w(TAG, "canRequestPackageInstalls is false, opening permission settings");
+                        try {
+                            Intent settingsIntent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                            settingsIntent.setData(Uri.parse("package:" + context.getPackageName()));
+                            settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(settingsIntent);
+                        } catch (Exception ex) {
+                            Log.e(TAG, "Failed to launch unknown sources settings", ex);
+                        }
+                    }
+                }
 
-                Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-                installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                // 1. Try silent root install if su exists
+                boolean installedSilently = false;
+                if (tryRootInstall(apkFile)) {
+                    Log.i(TAG, "Silent root install succeeded");
+                    installedSilently = true;
+                    try {
+                        Intent launch = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+                        if (launch != null) {
+                            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            context.startActivity(launch);
+                        }
+                    } catch (Exception ignored) {}
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // 2. Android 12+ PackageInstaller with USER_ACTION_NOT_REQUIRED (Unattended install)
+                    installedSilently = installViaPackageInstaller(context, apkFile);
+                }
 
-                context.startActivity(installIntent);
+                // 3. Fallback to Intent.ACTION_VIEW if unattended install was not possible
+                if (!installedSilently) {
+                    fallbackIntentInstall(context, apkFile);
+                }
 
                 JSObject result = new JSObject();
                 result.put("success", true);
@@ -153,5 +181,89 @@ public class ApkUpdaterPlugin extends Plugin {
                 } catch (Exception ignored) {}
             }
         });
+    }
+
+    private boolean tryRootInstall(File apkFile) {
+        try {
+            File su = new File("/system/bin/su");
+            File suXbin = new File("/system/xbin/su");
+            if (!su.exists() && !suXbin.exists()) {
+                return false;
+            }
+            Process p = Runtime.getRuntime().exec(new String[]{
+                "su", "-c", "pm install -r \"" + apkFile.getAbsolutePath() + "\""
+            });
+            return p.waitFor() == 0;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    private boolean installViaPackageInstaller(Context context, File apkFile) {
+        try {
+            PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
+            PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(
+                PackageInstaller.SessionParams.MODE_FULL_INSTALL
+            );
+            params.setAppPackageName(context.getPackageName());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED);
+            }
+
+            int sessionId = packageInstaller.createSession(params);
+            PackageInstaller.Session session = packageInstaller.openSession(sessionId);
+
+            try (InputStream in = new FileInputStream(apkFile);
+                 OutputStream out = session.openWrite("aurora_update.apk", 0, apkFile.length())) {
+                byte[] buffer = new byte[65536];
+                int count;
+                while ((count = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, count);
+                }
+                session.fsync(out);
+            }
+
+            Intent statusIntent = new Intent(context, ApkInstallReceiver.class);
+            statusIntent.setAction("com.nuclearplayer.app.UPDATE_STATUS");
+
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                flags |= PendingIntent.FLAG_MUTABLE;
+            }
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                sessionId,
+                statusIntent,
+                flags
+            );
+
+            session.commit(pendingIntent.getIntentSender());
+            session.close();
+            Log.i(TAG, "PackageInstaller session committed with USER_ACTION_NOT_REQUIRED");
+            return true;
+        } catch (Throwable t) {
+            Log.e(TAG, "Unattended PackageInstaller session failed", t);
+            return false;
+        }
+    }
+
+    private void fallbackIntentInstall(Context context, File apkFile) {
+        try {
+            Uri apkUri = FileProvider.getUriForFile(
+                context,
+                context.getPackageName() + ".fileprovider",
+                apkFile
+            );
+
+            Intent installIntent = new Intent(Intent.ACTION_VIEW);
+            installIntent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            context.startActivity(installIntent);
+        } catch (Exception e) {
+            Log.e(TAG, "Fallback Intent install failed", e);
+        }
     }
 }

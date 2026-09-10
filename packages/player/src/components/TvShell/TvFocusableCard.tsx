@@ -25,11 +25,6 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
     className={`tv-card ${className ?? ''}`}
     data-testid="tv-focusable-card"
     onClick={onClick}
-    destinations={
-      focusKey?.startsWith('tv-search-')
-        ? undefined
-        : { down: 'tv-control-play', up: 'tv-nav-dashboard' }
-    }
   >
     <span className="tv-card-art">
       {src ? (

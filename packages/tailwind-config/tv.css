@@ -1,6 +1,6 @@
 @custom-variant tv (&:where([data-platform=tv], [data-platform=tv] *));
 html[data-platform="tv"] {
-  font-size: clamp(10px, min(1.25vw, 2.22vh), 24px);
+  font-size: clamp(9px, min(1.05vw, 1.85vh), 18px);
 }
 html[data-platform="tv"], [data-platform="tv"] body, [data-platform="tv"] #root {
   width: 100%; height: 100%; margin: 0; overflow: hidden;
@@ -8,7 +8,7 @@ html[data-platform="tv"], [data-platform="tv"] body, [data-platform="tv"] #root 
 [data-platform="tv"] .tv-shell {
   position: fixed; inset: 0; width: 100%; height: 100%;
   display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto;
-  gap: .75rem; padding: max(.75rem, env(safe-area-inset-top)) 2%;
+  gap: .75rem; padding: max(1.25rem, 3.5vh) max(2rem, 4.5vw);
   box-sizing: border-box; background: #101114; color: #f4f4f5;
 }
 [data-platform="tv"] .tv-navigation { display: flex; align-items: center; gap: .5rem; min-width: 0; }
@@ -20,7 +20,8 @@ html[data-platform="tv"], [data-platform="tv"] body, [data-platform="tv"] #root 
 }
 [data-platform="tv"] .tv-shell button[data-focused="true"],
 [data-platform="tv"] .tv-shell button:focus-visible {
-  outline: 3px solid #fff; outline-offset: 1px; border-color: #62e2bd; background: #185745;
+  outline: 3px solid #62e2bd; outline-offset: 2px; border-color: #62e2bd; background: #185745;
+  box-shadow: 0 0 12px rgba(98, 226, 189, 0.4);
 }
 [data-platform="tv"] .tv-shell button[aria-current="page"] { color: #62e2bd; }
 [data-platform="tv"] .tv-content { min-height: 0; min-width: 0; overflow: auto; padding: .4rem; }
@@ -41,7 +42,7 @@ html[data-platform="tv"], [data-platform="tv"] body, [data-platform="tv"] #root 
 [data-platform="tv"] .tv-controls button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3rem; min-width: 5rem; font-size: .85rem; }
 [data-platform="tv"] .tv-controls svg { width: 1.5rem; height: 1.5rem; }
 [data-platform="tv"] .tv-hint { margin: 0; text-align: center; color: #b5b8bf; font-size: .75rem; }
-[data-platform="tv"] .tv-search { position: absolute; inset: 0; z-index: 50; background: #101114; padding: 2%; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1rem; }
+[data-platform="tv"] .tv-search { position: absolute; inset: 0; z-index: 50; background: #101114; padding: max(1.25rem, 3.5vh) max(2rem, 4.5vw); display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 1rem; }
 [data-platform="tv"] .tv-search-header { display: flex; gap: .75rem; align-items: center; }
 [data-platform="tv"] .tv-search input { flex: 1; min-width: 0; padding: .7rem; border: 2px solid #777; color: #fff; background: #25272d; }
 [data-platform="tv"] .tv-search-results { overflow: auto; min-height: 0; padding: .4rem; }

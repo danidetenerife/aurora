@@ -109,7 +109,15 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
 
       const release: GitHubRelease = await response.json();
       const latestTag = release.tag_name.replace(/^v/, '');
-      const currentClean = CURRENT_VERSION.replace(/^v/, '');
+      let currentClean = CURRENT_VERSION.replace(/^v/, '');
+      try {
+        const appVer = await ApkUpdaterPlugin.getAppVersion();
+        if (appVer?.version) {
+          currentClean = appVer.version.replace(/^v/, '');
+        }
+      } catch {
+        // Fallback to CURRENT_VERSION
+      }
 
       const isNewer =
         semver.valid(latestTag) && semver.valid(currentClean)
