@@ -43,6 +43,20 @@
             </intent-filter>
         </service>
 
+        <!-- Isolated Android Auto MediaBrowserService -->
+        <service
+            android:name=".AuroraAutoMediaBrowserService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <!-- Android Auto automotive app descriptor -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
         <!-- Receiver for Bluetooth/headset media buttons -->
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
