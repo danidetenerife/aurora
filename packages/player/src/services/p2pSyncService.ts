@@ -213,12 +213,13 @@ export class P2PSyncService {
         return false;
       }
       const listens = await personalizationEngine.getListenRecords();
+      const blacklist = await personalizationEngine.getBlacklist();
       const response = await safeFetchJson<{ success: boolean }>(
         `${workingUrl}/api/sync/push`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_profile: listens }),
+          body: JSON.stringify({ user_profile: listens, blacklist }),
         },
         6000,
       );
@@ -250,6 +251,7 @@ export class P2PSyncService {
       }
 
       const userProfileListens = await personalizationEngine.getListenRecords();
+      const blacklist = await personalizationEngine.getBlacklist();
 
       const payload = {
         favorites: {
@@ -261,6 +263,7 @@ export class P2PSyncService {
         settings: settingsStoreState.values,
         playlists: allPlaylists,
         user_profile: userProfileListens,
+        blacklist,
         activeProviders: useProvidersStore.getState().active,
       };
 
@@ -466,6 +469,7 @@ export class P2PSyncService {
         activeProviders?: Record<string, unknown>;
         playlists?: Array<{ id: string; name: string; tracks?: unknown[] }>;
         user_profile?: UserListenRecord[];
+        blacklist?: { tracks?: string[]; artists?: string[] };
         queue?: { items?: Array<{ track?: unknown }> };
       }>(`${workingUrl}/api/sync`, undefined, 3500);
 
@@ -479,9 +483,29 @@ export class P2PSyncService {
       await personalizationEngine.mergeRemoteListens(
         syncData.user_profile ?? [],
       );
+      if (syncData.blacklist) {
+        await personalizationEngine.mergeRemoteBlacklist(
+          syncData.blacklist.tracks ?? [],
+          syncData.blacklist.artists ?? [],
+        );
+      }
+
       const mergedProfile = await personalizationEngine.getListenRecords();
       const remoteProfile = mergeListenRecords(syncData.user_profile, []);
-      if (JSON.stringify(mergedProfile) !== JSON.stringify(remoteProfile)) {
+
+      const localBlacklist = await personalizationEngine.getBlacklist();
+      const remoteTracks = syncData.blacklist?.tracks ?? [];
+      const remoteArtists = (syncData.blacklist?.artists ?? []).map((a) =>
+        a.trim().toLowerCase(),
+      );
+      const blacklistHadLocalExtras =
+        localBlacklist.tracks.some((t) => !remoteTracks.includes(t)) ||
+        localBlacklist.artists.some((a) => !remoteArtists.includes(a));
+
+      if (
+        JSON.stringify(mergedProfile) !== JSON.stringify(remoteProfile) ||
+        blacklistHadLocalExtras
+      ) {
         const pushed = await this.pushListeningProfile(workingUrl);
         if (!pushed) {
           return {

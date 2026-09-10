@@ -125,6 +125,15 @@ function getFullSyncPayload() {
   const userProfile = readJsonFile('user_profile.json', { listens: [] });
   const syncedProfile = readJsonFile('user_profile_sync.json', { listens: [] });
 
+  const mergedBlacklistTracks = Array.from(new Set([
+    ...(Array.isArray(userProfile.blacklistedTracks) ? userProfile.blacklistedTracks : []),
+    ...(Array.isArray(syncedProfile.blacklistedTracks) ? syncedProfile.blacklistedTracks : []),
+  ]));
+  const mergedBlacklistArtists = Array.from(new Set([
+    ...(Array.isArray(userProfile.blacklistedArtists) ? userProfile.blacklistedArtists : []),
+    ...(Array.isArray(syncedProfile.blacklistedArtists) ? syncedProfile.blacklistedArtists : []),
+  ]));
+
   const tracks = rawFavs['favorites.tracks'] || [];
   const artists = rawFavs['favorites.artists'] || [];
   const albums = rawFavs['favorites.albums'] || [];
@@ -144,6 +153,10 @@ function getFullSyncPayload() {
     playlists,
     playlistIndex,
     user_profile: mergeListenRecords(userProfile.listens, syncedProfile.listens),
+    blacklist: {
+      tracks: mergedBlacklistTracks,
+      artists: mergedBlacklistArtists,
+    },
     timestamp: Date.now(),
   };
 }
@@ -273,8 +286,61 @@ const server = http.createServer((req, res) => {
             pushData.user_profile,
           );
           if (JSON.stringify(merged) !== JSON.stringify(syncedProfile.listens)) {
-            writeJsonFile('user_profile_sync.json', { listens: merged });
+            writeJsonFile('user_profile_sync.json', { ...syncedProfile, listens: merged });
             profileChanged = true;
+          }
+        }
+
+        let blacklistChanged = false;
+        if (pushData.blacklist && typeof pushData.blacklist === 'object') {
+          const syncedProfile = readJsonFile('user_profile_sync.json', { listens: [] });
+          const userProfile = readJsonFile('user_profile.json', { listens: [] });
+
+          const currentSyncedTracks = Array.isArray(syncedProfile.blacklistedTracks)
+            ? syncedProfile.blacklistedTracks
+            : [];
+          const currentSyncedArtists = Array.isArray(syncedProfile.blacklistedArtists)
+            ? syncedProfile.blacklistedArtists
+            : [];
+          const currentLocalTracks = Array.isArray(userProfile.blacklistedTracks)
+            ? userProfile.blacklistedTracks
+            : [];
+          const currentLocalArtists = Array.isArray(userProfile.blacklistedArtists)
+            ? userProfile.blacklistedArtists
+            : [];
+
+          const incomingTracks = Array.isArray(pushData.blacklist.tracks)
+            ? pushData.blacklist.tracks.filter((t) => typeof t === 'string' && t.trim().length > 0)
+            : [];
+          const incomingArtists = Array.isArray(pushData.blacklist.artists)
+            ? pushData.blacklist.artists
+                .filter((a) => typeof a === 'string' && a.trim().length > 0)
+                .map((a) => String(a).trim().toLowerCase())
+            : [];
+
+          const mergedTracks = Array.from(
+            new Set([
+              ...currentSyncedTracks,
+              ...currentLocalTracks,
+              ...incomingTracks,
+            ]),
+          );
+          const mergedArtists = Array.from(
+            new Set([
+              ...currentSyncedArtists,
+              ...currentLocalArtists,
+              ...incomingArtists,
+            ]),
+          );
+
+          if (
+            mergedTracks.length !== currentSyncedTracks.length ||
+            mergedArtists.length !== currentSyncedArtists.length
+          ) {
+            syncedProfile.blacklistedTracks = mergedTracks;
+            syncedProfile.blacklistedArtists = mergedArtists;
+            writeJsonFile('user_profile_sync.json', syncedProfile);
+            blacklistChanged = true;
           }
         }
 
@@ -294,7 +360,13 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ success: true }));
 
         // Notify other clients
-        if (profileChanged || Object.keys(pushData).some((key) => key !== 'user_profile')) broadcastUpdate();
+        if (
+          profileChanged ||
+          blacklistChanged ||
+          Object.keys(pushData).some((key) => key !== 'user_profile' && key !== 'blacklist')
+        ) {
+          broadcastUpdate();
+        }
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: err.message }));

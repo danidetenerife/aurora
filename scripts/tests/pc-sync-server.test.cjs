@@ -55,4 +55,19 @@ test('packaged sync server merges devices without overwriting the live desktop s
   assert.equal(updated.playCount, 7);
   assert.equal(updated.totalListenMs, 1260000);
   assert.equal(JSON.parse(fs.readFileSync(localPath, 'utf8')).deviceId, 'desktop');
+
+  // Blacklist bidirectional merge
+  const blacklistPushResponse = await fetch(url + '/push', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      blacklist: { tracks: ['mobile-disliked-track'], artists: ['Mobile Annoying Band'] },
+    }),
+  });
+  assert.equal(blacklistPushResponse.status, 200);
+
+  const payloadWithBlacklist = await (await fetch(url)).json();
+  assert.ok(payloadWithBlacklist.blacklist);
+  assert.ok(payloadWithBlacklist.blacklist.tracks.includes('mobile-disliked-track'));
+  assert.ok(payloadWithBlacklist.blacklist.artists.includes('mobile annoying band'));
 });

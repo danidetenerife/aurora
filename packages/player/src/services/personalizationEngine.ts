@@ -408,6 +408,46 @@ export class PersonalizationEngine {
     this.notify('local');
   }
 
+  async mergeRemoteBlacklist(
+    tracks: string[] = [],
+    artists: string[] = [],
+  ): Promise<void> {
+    await this.pendingWrite;
+    const currentTracks =
+      (await this.profileStore.get<string[]>('blacklistedTracks')) ?? [];
+    const currentArtists =
+      (await this.profileStore.get<string[]>('blacklistedArtists')) ?? [];
+
+    const normalizedArtists = artists
+      .filter((a) => typeof a === 'string' && a.trim().length > 0)
+      .map((a) => a.trim().toLowerCase());
+    const validTracks = tracks.filter(
+      (t) => typeof t === 'string' && t.trim().length > 0,
+    );
+
+    const mergedTracks = Array.from(
+      new Set([...currentTracks, ...validTracks]),
+    );
+    const mergedArtists = Array.from(
+      new Set([...currentArtists, ...normalizedArtists]),
+    );
+
+    let changed = false;
+    if (mergedTracks.length !== currentTracks.length) {
+      await this.profileStore.set('blacklistedTracks', mergedTracks);
+      changed = true;
+    }
+    if (mergedArtists.length !== currentArtists.length) {
+      await this.profileStore.set('blacklistedArtists', mergedArtists);
+      changed = true;
+    }
+
+    if (changed) {
+      await this.profileStore.save();
+      this.notify('remote');
+    }
+  }
+
   async isBlacklisted(track: Track): Promise<boolean> {
     const { tracks, artists } = await this.getBlacklist();
     const trackId =

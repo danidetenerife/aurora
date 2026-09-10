@@ -3,7 +3,11 @@ import { personalizationEngine } from './personalizationEngine';
 
 describe('listening profile synchronization', () => {
   let remote: Record<string, unknown>[];
-  let uploads: Array<{ user_profile: unknown[] }>;
+  let remoteBlacklist: { tracks: string[]; artists: string[] };
+  let uploads: Array<{
+    user_profile: unknown[];
+    blacklist?: { tracks: string[]; artists: string[] };
+  }>;
   let online: boolean;
 
   beforeEach(() => {
@@ -23,6 +27,10 @@ describe('listening profile synchronization', () => {
         lastPlayedAt: 2000,
       },
     ];
+    remoteBlacklist = {
+      tracks: ['pc-disliked-track'],
+      artists: ['pc-bad-band'],
+    };
     vi.stubGlobal('fetch', async (input: string, options?: RequestInit) => {
       if (!online) {
         throw new Error('Offline');
@@ -33,11 +41,32 @@ describe('listening profile synchronization', () => {
       if (input.endsWith('/api/sync/push')) {
         const payload = JSON.parse(options!.body as string);
         uploads.push(payload);
-        remote = payload.user_profile;
+        if (payload.user_profile) {
+          remote = payload.user_profile;
+        }
+        if (payload.blacklist) {
+          remoteBlacklist = {
+            tracks: Array.from(
+              new Set([
+                ...remoteBlacklist.tracks,
+                ...(payload.blacklist.tracks || []),
+              ]),
+            ),
+            artists: Array.from(
+              new Set([
+                ...remoteBlacklist.artists,
+                ...(payload.blacklist.artists || []),
+              ]),
+            ),
+          };
+        }
         return Response.json({ success: true });
       }
       if (input.endsWith('/api/sync')) {
-        return Response.json({ user_profile: remote });
+        return Response.json({
+          user_profile: remote,
+          blacklist: remoteBlacklist,
+        });
       }
       return new Response(null, { status: 404 });
     });
@@ -94,5 +123,24 @@ describe('listening profile synchronization', () => {
         expect.objectContaining({ trackId: 'offline-track', playCount: 1 }),
       ]),
     );
+  });
+
+  it('synchronizes blacklisted tracks and artists bidirectionally', async () => {
+    await personalizationEngine.blacklistTrack('mobile-blocked-song');
+    await personalizationEngine.blacklistArtist('Mobile Annoying Band');
+
+    const result = await p2pSyncService.syncNow();
+    expect(result.success).toBe(true);
+
+    // Verify local personalization engine merged the remote blacklist
+    const localBlacklist = await personalizationEngine.getBlacklist();
+    expect(localBlacklist.tracks).toContain('pc-disliked-track');
+    expect(localBlacklist.tracks).toContain('mobile-blocked-song');
+    expect(localBlacklist.artists).toContain('pc-bad-band');
+    expect(localBlacklist.artists).toContain('mobile annoying band');
+
+    // Verify remote received the local blacklist additions
+    expect(remoteBlacklist.tracks).toContain('mobile-blocked-song');
+    expect(remoteBlacklist.artists).toContain('mobile annoying band');
   });
 });
