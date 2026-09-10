@@ -1,6 +1,6 @@
 const DEFAULT_DURATION_MS = 180_000;
 const LEGACY_COMPLETION = 0.7;
-const COUNTERS = ['playCount', 'skipCount', 'totalListenMs'];
+const COUNTERS = ['playCount', 'skipCount', 'immediateSkipCount', 'totalListenMs'];
 const nonnegative = (value, fallback = 0) =>
   typeof value === 'number' && Number.isFinite(value) && value >= 0
     ? value
@@ -27,6 +27,7 @@ export const normalizeListen = (raw) => {
             normalizeCounters({
               playCount,
               skipCount: raw.skipCount,
+              immediateSkipCount: raw.immediateSkipCount,
               totalListenMs: nonnegative(
                 raw.totalListenMs,
                 playCount * durationMs * LEGACY_COMPLETION,
@@ -39,11 +40,15 @@ export const normalizeListen = (raw) => {
     COUNTERS.map((key) => [
       key,
       Object.values(contributions).reduce(
-        (total, counters) => total + counters[key],
+        (total, counters) => total + (counters[key] ?? 0),
         0,
       ),
     ]),
   );
+  const genres = Array.isArray(raw.genres)
+    ? raw.genres.filter((g) => typeof g === 'string' && g.trim().length > 0)
+    : [];
+
   return {
     trackId: raw.trackId,
     title: typeof raw.title === 'string' ? raw.title : '',
@@ -56,6 +61,7 @@ export const normalizeListen = (raw) => {
     lastPlayedAt: nonnegative(raw.lastPlayedAt),
     ...(raw.source ? { source: raw.source } : {}),
     ...(raw.artistSource ? { artistSource: raw.artistSource } : {}),
+    ...(genres.length > 0 ? { genres } : {}),
     contributions,
     ...totals,
   };
@@ -81,12 +87,15 @@ export const mergeListenRecords = (local, remote) => {
       contributions[device] = Object.fromEntries(
         COUNTERS.map((key) => [
           key,
-          Math.max(contributions[device]?.[key] ?? 0, counters[key]),
+          Math.max(contributions[device]?.[key] ?? 0, counters[key] ?? 0),
         ]),
       );
     }
     const latest =
       incoming.lastPlayedAt > existing.lastPlayedAt ? incoming : existing;
+    const mergedGenres = Array.from(
+      new Set([...(existing.genres || []), ...(incoming.genres || [])]),
+    );
     records.set(
       incoming.trackId,
       normalizeListen({
@@ -95,6 +104,7 @@ export const mergeListenRecords = (local, remote) => {
         source: latest.source ?? existing.source ?? incoming.source,
         artistSource:
           latest.artistSource ?? existing.artistSource ?? incoming.artistSource,
+        genres: mergedGenres.length > 0 ? mergedGenres : undefined,
         contributions,
         firstPlayedAt: Math.min(existing.firstPlayedAt, incoming.firstPlayedAt),
         lastPlayedAt: Math.max(existing.lastPlayedAt, incoming.lastPlayedAt),

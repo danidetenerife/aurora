@@ -13,6 +13,7 @@ import { discoveryHost } from '../../../services/discoveryHost';
 import {
   personalizationEngine,
   type ArtistScore,
+  type GenreScore,
 } from '../../../services/personalizationEngine';
 import { providersHost } from '../../../services/providersHost';
 
@@ -138,12 +139,17 @@ const fetchRadioRecommendations = async (
 const fetchSearchFallback = async (
   provider: MetadataProvider,
   topArtists: ArtistScore[],
+  topGenres: GenreScore[],
 ): Promise<TaggedCandidate[]> => {
   const candidates: TaggedCandidate[] = [];
-  const queries =
+  const queries: string[] =
     topArtists.length > 0
       ? topArtists.slice(0, 3).map((artist) => artist.name)
       : ['Pop Hits', 'Rock Classics', 'Reggaeton Mix', 'Electronic Music'];
+
+  if (topGenres.length > 0) {
+    queries.push(...topGenres.slice(0, 2).map((g) => `${g.genre} mix`));
+  }
 
   for (const query of queries) {
     try {
@@ -171,6 +177,7 @@ export const PersonalizedMixWidget: FC = () => {
   const { t } = useTranslation('dashboard');
   const queryClient = useQueryClient();
   const [visibleTracks, setVisibleTracks] = useState<Track[]>();
+  const [topGenres, setTopGenres] = useState<GenreScore[]>([]);
   const metadataProviders = useProviders('metadata') as MetadataProvider[];
   const discoveryProviders = useProviders('discovery');
   const activeProviderId =
@@ -207,8 +214,11 @@ export const PersonalizedMixWidget: FC = () => {
     refetchOnReconnect: false,
     queryFn: async () => {
       const topArtists = await personalizationEngine.getTopArtists();
+      const fetchedGenres = await personalizationEngine.getTopGenres(5);
+      setTopGenres(fetchedGenres);
       const seedTracks = await personalizationEngine.getSeedTracks(5);
       const listens = await personalizationEngine.getListenRecords();
+      const blacklist = await personalizationEngine.getBlacklist();
 
       const hasSpotifyCapabilities =
         metadataProvider?.fetchArtistTopTracks &&
@@ -229,7 +239,7 @@ export const PersonalizedMixWidget: FC = () => {
           ? fetchRadioRecommendations(seedTracks)
           : Promise.resolve([]),
 
-        fetchSearchFallback(metadataProvider, topArtists),
+        fetchSearchFallback(metadataProvider, topArtists, fetchedGenres),
       ]);
 
       const allCandidates: TaggedCandidate[] = candidateSources.flatMap(
@@ -244,6 +254,7 @@ export const PersonalizedMixWidget: FC = () => {
         allCandidates,
         topArtists,
         listens,
+        blacklist,
       );
     },
     staleTime: 60 * 1000,
@@ -265,9 +276,16 @@ export const PersonalizedMixWidget: FC = () => {
           <SparklesIcon className="text-primary size-5" />
           <h2 className="text-lg font-bold">{t('personalizedMix.title')}</h2>
         </div>
-        <Badge variant="pill" className="text-xs">
-          {t('personalizedMix.badge')}
-        </Badge>
+        <div className="flex items-center gap-2">
+          {topGenres.slice(0, 3).map((g) => (
+            <Badge key={g.genre} variant="pill" className="text-xs capitalize">
+              {g.genre}
+            </Badge>
+          ))}
+          <Badge variant="pill" className="text-xs">
+            {t('personalizedMix.badge')}
+          </Badge>
+        </div>
       </div>
       <p className="text-foreground-secondary text-xs">
         {t('personalizedMix.description')}

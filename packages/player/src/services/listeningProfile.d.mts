@@ -3,6 +3,7 @@ import type { ProviderRef } from '@nuclearplayer/model';
 export type ListenCounters = {
   playCount: number;
   skipCount: number;
+  immediateSkipCount?: number;
   totalListenMs: number;
 };
 
@@ -15,6 +16,7 @@ export type UserListenRecord = ListenCounters & {
   firstPlayedAt: number;
   source?: ProviderRef;
   artistSource?: ProviderRef;
+  genres?: string[];
   contributions?: Record<string, ListenCounters>;
 };
 

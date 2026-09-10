@@ -191,4 +191,76 @@ describe('personalization learning across devices', () => {
     expect(merged).toHaveLength(1200);
     expect(mergeListenRecords(merged, records)).toEqual(merged);
   });
+
+  it('penalizes immediate skips (< 8s) much more heavily than normal skips', async () => {
+    const immediateTrack: Track = {
+      ...TRACK,
+      source: { provider: 'music', id: 'immediate-skip-song' },
+      artists: [{ name: 'Hated Artist', roles: [] }],
+    };
+    await mobile.recordPlay(immediateTrack, false, 3_000);
+    const records = await mobile.getListenRecords();
+    expect(records[0]).toMatchObject({
+      playCount: 0,
+      skipCount: 1,
+      immediateSkipCount: 1,
+      totalListenMs: 3_000,
+    });
+  });
+
+  it('counts listening >= 80% as completed even if skipped near the end', async () => {
+    const outroTrack: Track = {
+      ...TRACK,
+      source: { provider: 'music', id: 'outro-skip-song' },
+      artists: [{ name: 'Great Artist', roles: [] }],
+      durationMs: 100_000,
+    };
+    mobile.start();
+    useSoundStore.getState().play();
+    eventBus.emit('trackStarted', outroTrack);
+    useSoundStore.getState().updatePlayback(85, 100);
+    eventBus.emit('playbackSkipped', { positionMs: 85_000 });
+    const records = await mobile.getListenRecords();
+    expect(records[0]).toMatchObject({
+      playCount: 1,
+      skipCount: 0,
+      totalListenMs: 85_000,
+    });
+  });
+
+  it('supports blacklisting tracks and artists to completely exclude them from recommendations', async () => {
+    await mobile.blacklistTrack('bad-track-id');
+    await mobile.blacklistArtist('Terrible Band');
+
+    const blacklist = await mobile.getBlacklist();
+    expect(blacklist.tracks).toContain('bad-track-id');
+    expect(blacklist.artists).toContain('terrible band');
+
+    const badTrack: Track = {
+      title: 'Bad Song',
+      source: { provider: 'music', id: 'bad-track-id' },
+      artists: [{ name: 'Good Band', roles: [] }],
+    };
+    expect(await mobile.isBlacklisted(badTrack)).toBe(true);
+
+    const badArtistTrack: Track = {
+      title: 'Any Song',
+      source: { provider: 'music', id: 'some-id' },
+      artists: [{ name: 'Terrible Band', roles: [] }],
+    };
+    expect(await mobile.isBlacklisted(badArtistTrack)).toBe(true);
+
+    const ranked = mobile.scoreAndRankTracks(
+      [
+        { track: badTrack, source: 'topTracks' },
+        { track: badArtistTrack, source: 'related' },
+        { track: TRACK, source: 'topTracks' },
+      ],
+      [{ name: 'Favorite artist', score: 100 }],
+      [],
+      blacklist,
+    );
+    expect(ranked).toHaveLength(1);
+    expect(ranked[0].title).toBe(TRACK.title);
+  });
 });
