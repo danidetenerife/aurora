@@ -1,104 +1,74 @@
-<p align="center">
-  <picture>
-    <source alt="Aurora Music Player"  srcset="packages/docs/.gitbook/assets/readme-banner.png">
-    <img alt="Aurora Music Player"  srcset="packages/docs/.gitbook/assets/readme-banner.png">
-  </picture>
-
-
-</p>
-
 <div align="center">
 
-# Aurora 
+# Aurora Music Player
+
+Aurora is a free, modern, and open-source music streaming player without ads, tracking, or subscription paywalls. Search for any song or artist, build playlists, sync your listening preferences across devices, and enjoy high-fidelity audio on Windows, Android mobile, and Google TV / Android TV.
 
 </div>
 
-<div align="center">
+## Downloads
 
-  Aurora is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening.<br>
-  Runs on Windows, macOS, and Linux.
-  
-</div>
+Grab the latest official release for your platform from the [Releases page](https://github.com/danidetenerife/aurora/releases).
 
-## Screenshots
+| Platform | Format | Details |
+|----------|--------|---------|
+| **Windows** | `.exe` installer (x64) | Standalone setup with signed automatic background updates |
+| **Android (Mobile)** | `.apk` (`aurora-music-player.apk`) | Background playback, lock screen MediaSession & audio focus handling |
+| **Google TV / Android TV** | `.apk` (`aurora-google-tv.apk`) | 10-foot TV UI with D-pad remote navigation & optional music videos |
 
-<p align="center">
-  <img src="packages/docs/.gitbook/assets/dashboard-main.png" alt="Aurora Music Player - Dashboard" width="100%">
-</p>
+## What Aurora Offers
 
-Aurora comes with multiple built-in themes:
+### Google TV & Android TV Experience
+- **10-Foot Spatial Navigation**: Dedicated TV shell (`TvShell`) optimized for television screens and remote controls (D-pad).
+- **Deterministic D-pad Focus**: Reliable directional navigation through rails, search overlays, cards, and playback controls.
+- **Background Playback**: Music continues playing seamlessly while browsing categories or other apps.
+- **Optional Music Videos**: Toggle between pure high-fidelity audio streams and official music videos on TV.
 
-<p align="center">
-  <img src="packages/docs/.gitbook/assets/dashboard-green.png" alt="Green theme" width="32%">
-  <img src="packages/docs/.gitbook/assets/dashboard-aqua.png" alt="Aqua theme" width="32%">
-  <img src="packages/docs/.gitbook/assets/dashboard-mint.png" alt="Mint theme" width="32%">
-</p>
-<p align="center">
-  <img src="packages/docs/.gitbook/assets/dashboard-orange.png" alt="Orange theme" width="32%">
-  <img src="packages/docs/.gitbook/assets/dashboard-red.png" alt="Red theme" width="32%">
-  <img src="packages/docs/.gitbook/assets/dashboard-violet.png" alt="Violet theme" width="32%">
-</p>
+### Android Mobile
+- **Uninterrupted Background Play**: Native `AudioForegroundService` keeps music playing smoothly even with the screen turned off.
+- **MediaSession Integration**: Full lock-screen and notification bar controls (album art, play/pause, seek, next/previous).
+- **Smart Audio Focus**: Automatically pauses playback during incoming or outgoing calls and resumes when finished.
 
-| | |
-|:---:|:---:|
-| ![Search artists](packages/docs/.gitbook/assets/search-artists.png) | ![Search albums](packages/docs/.gitbook/assets/search-albums.png) |
-| Artist search | Album search |
-| ![Playlists](packages/docs/.gitbook/assets/playlists.png) | ![Plugin store](packages/docs/.gitbook/assets/plugin-store.png) |
-| Playlists | Plugin store |
-| ![Installed plugins](packages/docs/.gitbook/assets/installed-plugins.png) | ![Preferences](packages/docs/.gitbook/assets/preferences.png) |
-| Installed plugins | Preferences |
-| ![What's new](packages/docs/.gitbook/assets/whats-new.png) | ![Log viewer](packages/docs/.gitbook/assets/log-viewer.png) |
-| What's new | Log viewer |
+### High-Fidelity Streaming & Intelligent Search
+- **High-Quality Audio Renditions**: Automatically selects high-bitrate AAC-LC and stereo HLS streams, avoiding low-quality audio tracks.
+- **Desktop yt-dlp Engine**: Bundled and prioritized `yt-dlp` stream resolver in Tauri desktop for ultra-reliable streaming.
+- **Filtered YouTube Music Search**: Automatically excludes live streams, podcasts, and long non-song videos from search results.
 
-## Download
+### Cross-Device Sync & Personalized Recommendations
+- **Listening Preferences Learning**: Tracks partial plays, skips, and full listens to learn your musical taste across desktop, mobile, and TV.
+- **Smart History Merge**: Merges offline listening data without duplicating entries.
+- **Interactive Dashboard & Rankings**: Browse your most played tracks, albums, and artists with one-click direct playback and artist credit exploration.
+- **Fixed Recommendation Panel**: Clean, stable recommendations that update on your next visit without reshuffling while listening.
 
-Grab the latest release for your platform from the [Releases page](https://github.com/danidetenerife/aurora/releases).
+### Library & Queue Management
+- **Favorites**: Save and quickly access favorite songs, albums, and artists.
+- **Playlists**: Create custom playlists, import playlists from external services, and export your library.
+- **Advanced Queue**: Drag-and-drop queue reordering, shuffle mode, and loop/repeat controls.
 
-| Platform | Formats |
-|----------|---------|
-| Windows | `.exe` installer, `.msi` |
-| macOS | `.dmg` (Apple Silicon and Intel) |
-| Linux | `.AppImage`, `.deb`, `.rpm`, `.flatpak` |
+### Remote Control & AI Integrations
+- **Aurora Jam (Local Remote Control)**: Built-in HTTP API and SSE server that lets you control the player from any device on your local network.
+- **MCP Server (Model Context Protocol)**: Lets AI coding agents (Claude, Codex, Cursor, Windsurf, OpenCode) drive playback and interact with the player.
 
-## Features
+### Customization & Privacy
+- **Built-in Themes**: Multiple custom color schemes (Green, Aqua, Mint, Orange, Red, Violet, Dark/Light modes).
+- **Zero Ads & Zero Tracking**: Completely free and open-source under AGPL-3.0. No data telemetry or telemetry servers.
+- **Automated Signed Updates**: Built-in updater with cryptographic signatures so your desktop app is always up to date.
 
-- Search for music and stream it from any source
-- Browse artist pages with biographies, discographies, and similar artists
-- Browse album pages with track listings
-- Queue management with shuffle, repeat, and drag-and-drop reordering
-- Favorites (albums, artists, and tracks)
-- Playlists (create, import, export, import from varous services)
-- Powerful plugin system with a built-in plugin store
-- Themes (built-in and custom CSS themes)
-- MCP server lets your AI agent drive the player
-- Auto-updates
-- Keyboard shortcuts
-- Localized in multiple languages
+## MCP Integration (AI Control)
 
-## Plugins
+Enable the MCP server in **Settings → Integrations** (running on port `8800`).
 
-Aurora has a powerful plugin system now! Every functionality has been redesigned to be driven by plugins.
-
-Plugins can provide streaming sources, metadata, playlists, dashboard content, and more. Browse and install plugins from the built-in plugin store, or write your own using the [Aurora Plugin SDK](https://www.npmjs.com/package/@nuclearplayer/plugin-sdk).
-
-## MCP
-
-You can enable the MCP server in Settings → Integrations.
-
-Then to add it to **Claude Code:**
-
+### Claude Code
 ```bash
 claude mcp add aurora --transport http http://127.0.0.1:8800/mcp
 ```
 
-**Codex CLI:**
-
+### Codex CLI
 ```bash
 codex mcp add aurora --url http://127.0.0.1:8800/mcp
 ```
 
-**OpenCode:**
-
+### OpenCode
 ```json
 {
   "mcp": {
@@ -110,8 +80,7 @@ codex mcp add aurora --url http://127.0.0.1:8800/mcp
 }
 ```
 
-**Claude Desktop / Cursor / Windsurf:**
-
+### Claude Desktop / Cursor / Windsurf
 ```json
 {
   "mcpServers": {
@@ -121,9 +90,6 @@ codex mcp add aurora --url http://127.0.0.1:8800/mcp
   }
 }
 ```
-
-The MCP is designed to be discoverable, but there's a skill you can load to get your AI up to speed: [Aurora MCP Skill](./packages/docs/.gitbook/assets/aurora-mcp.zip)
-
 ## Development
 
 Aurora is a pnpm monorepo managed with Turborepo. The main app is built with Tauri (Rust + React).
