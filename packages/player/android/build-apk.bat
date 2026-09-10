@@ -6,5 +6,4 @@ call gradlew.bat assembleDebug
 if not exist "%~dp0..\..\..\ejecutables" mkdir "%~dp0..\..\..\ejecutables"
 if exist "app\build\outputs\apk\debug\app-debug.apk" (
     copy /y "app\build\outputs\apk\debug\app-debug.apk" "%~dp0..\..\..\ejecutables\aurora-music-player.apk"
-    copy /y "app\build\outputs\apk\debug\app-debug.apk" "%~dp0..\..\..\ejecutables\aurora-google-tv.apk"
 )

@@ -13,8 +13,7 @@ Grab the latest official release for your platform from the [Releases page](http
 | Platform | Format | Details |
 |----------|--------|---------|
 | **Windows** | `.exe` installer (x64) | Standalone setup with signed automatic background updates |
-| **Android (Mobile)** | `.apk` (`aurora-music-player.apk`) | Background playback, lock screen MediaSession & audio focus handling |
-| **Google TV / Android TV** | `.apk` (`aurora-google-tv.apk`) | 10-foot TV UI with D-pad remote navigation & optional music videos |
+| **Android (Universal)** | `.apk` (`aurora-music-player.apk`) | Single universal build: Touch UI on phones/tablets + 10-foot D-pad UI on Google TV / Android TV |
 
 ## What Aurora Offers
 

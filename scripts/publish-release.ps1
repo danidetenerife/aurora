@@ -73,12 +73,7 @@ $latestJsonContent = @"
 $LatestJsonPath = "$ExecutablesDir\latest.json"
 [System.IO.File]::WriteAllText($LatestJsonPath, $latestJsonContent, (New-Object System.Text.UTF8Encoding($false)))
 
-$TvApkPath = "$ExecutablesDir\aurora-google-tv.apk"
-$assetsToUpload = @($ApkPath)
-if (Test-Path $TvApkPath) {
-    $assetsToUpload += $TvApkPath
-}
-$assetsToUpload += @($ExePath, $SignaturePath, $LatestJsonPath)
+$assetsToUpload = @($ApkPath, $ExePath, $SignaturePath, $LatestJsonPath)
 
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host " Publicando Release $Tag en GitHub..." -ForegroundColor Green
