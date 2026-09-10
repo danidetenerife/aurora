@@ -45,51 +45,11 @@ Grab the latest official release for your platform from the [Releases page](http
 - **Playlists**: Create custom playlists, import playlists from external services, and export your library.
 - **Advanced Queue**: Drag-and-drop queue reordering, shuffle mode, and loop/repeat controls.
 
-### Remote Control & AI Integrations
-- **Aurora Jam (Local Remote Control)**: Built-in HTTP API and SSE server that lets you control the player from any device on your local network.
-- **MCP Server (Model Context Protocol)**: Lets AI coding agents (Claude, Codex, Cursor, Windsurf, OpenCode) drive playback and interact with the player.
-
 ### Customization & Privacy
 - **Built-in Themes**: Multiple custom color schemes (Green, Aqua, Mint, Orange, Red, Violet, Dark/Light modes).
 - **Zero Ads & Zero Tracking**: Completely free and open-source under AGPL-3.0. No data telemetry or telemetry servers.
 - **Automated Signed Updates**: Built-in updater with cryptographic signatures so your desktop app is always up to date.
 
-## MCP Integration (AI Control)
-
-Enable the MCP server in **Settings → Integrations** (running on port `8800`).
-
-### Claude Code
-```bash
-claude mcp add aurora --transport http http://127.0.0.1:8800/mcp
-```
-
-### Codex CLI
-```bash
-codex mcp add aurora --url http://127.0.0.1:8800/mcp
-```
-
-### OpenCode
-```json
-{
-  "mcp": {
-    "aurora": {
-      "type": "remote",
-      "url": "http://127.0.0.1:8800/mcp"
-    }
-  }
-}
-```
-
-### Claude Desktop / Cursor / Windsurf
-```json
-{
-  "mcpServers": {
-    "aurora": {
-      "url": "http://127.0.0.1:8800/mcp"
-    }
-  }
-}
-```
 ## Development
 
 Aurora is a pnpm monorepo managed with Turborepo. The main app is built with Tauri (Rust + React).
@@ -114,7 +74,7 @@ pnpm dev
 
 ```bash
 pnpm dev            # Run the player in dev mode
-pnpm dev:remote     # Same, but binds Vite to 0.0.0.0 so you can open the remote control UI from other devices on your LAN
+pnpm dev:remote     # Same, but binds Vite to 0.0.0.0 to test the web interface from other devices on your LAN
 pnpm build          # Build all packages
 pnpm test           # Run all tests
 pnpm lint           # Lint all packages
