@@ -8,8 +8,8 @@ $Root = Resolve-Path "$PSScriptRoot\.."
 Set-Location $Root
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host " Nuclear GitHub Auto-Sync Watcher Iniciado" -ForegroundColor Green
-Write-Host " Repositorio: https://github.com/danidetenerife/nucelar" -ForegroundColor Cyan
+Write-Host " Aurora GitHub Auto-Sync Watcher Iniciado" -ForegroundColor Green
+Write-Host " Repositorio: https://github.com/danidetenerife/aurora" -ForegroundColor Cyan
 Write-Host " Monitoreando cambios en packages/ y plugins/..." -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Cyan
 

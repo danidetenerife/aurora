@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Nuclear Documentation](README.md)
+* [Aurora Documentation](README.md)
 
 ## User Manual
 
@@ -10,7 +10,7 @@
 
 ## Core Concepts
 
-* [How Nuclear works](core-concepts/how-nuclear-works.md)
+* [How Aurora works](core-concepts/how-nuclear-works.md)
 * [Plugins and providers](core-concepts/plugins-and-providers.md)
 * [The queue](core-concepts/the-queue.md)
 * [Favorites](core-concepts/favorites.md)

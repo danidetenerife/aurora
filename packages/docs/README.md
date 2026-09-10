@@ -1,30 +1,27 @@
 ---
-description: Nuclear - Music streaming app for your desktop
+description: Aurora - Music streaming app for your desktop and TV
 ---
 
-# Nuclear Documentation
+# Aurora Documentation
 
-Nuclear is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening. This documentation is for both users and developers.
+Aurora is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening. This documentation is for both users and developers.
 
 ## Quick links
 
 | Site     | Website                                                                    |
 | -------- | -------------------------------------------------------------------------- |
-| Website  | [https://nuclearplayer.com/](https://nuclearplayer.com/)                   |
-| Github   | [https://github.com/nukeop/nuclear](https://github.com/nukeop/nuclear)     |
-| Discord  | [https://discord.gg/JqPjKxE](https://discord.gg/JqPjKxE)                   |
-| Mastodon | [https://fosstodon.org/@nuclearplayer](https://fosstodon.org/@nuclearplayer) |
-| Gitbook  | [https://docs.nuclearplayer.com](https://docs.nuclearplayer.com)   |
+| Github   | [https://github.com/danidetenerife/aurora](https://github.com/danidetenerife/aurora) |
+| Releases | [https://github.com/danidetenerife/aurora/releases](https://github.com/danidetenerife/aurora/releases) |
 
 ## For users
 
-New to Nuclear? Start here:
+New to Aurora? Start here:
 
-- [Getting started](user-manual/getting-started.md) - install Nuclear and play your first song
-- [How Nuclear works](core-concepts/how-nuclear-works.md) - understand the plugin model and how playback works
+- [Getting started](user-manual/getting-started.md) - install Aurora and play your first song
+- [How Aurora works](core-concepts/how-nuclear-works.md) - understand the plugin model and how playback works
 - [Plugins and providers](core-concepts/plugins-and-providers.md) - what plugins do and how to manage your sources
 - [Installation](user-manual/installation.md) - platform-specific download and install instructions
-- [Themes](themes/themes.md) - customize Nuclear's appearance with built-in, custom, or community themes
+- [Themes](themes/themes.md) - customize Aurora's appearance with built-in, custom, or community themes
 
 ## What is in this repo?
 

@@ -52,7 +52,7 @@ Aurora comes with multiple built-in themes:
 
 ## Download
 
-Grab the latest release for your platform from the [Releases page](https://github.com/danidetenerife/nucelar/releases).
+Grab the latest release for your platform from the [Releases page](https://github.com/danidetenerife/aurora/releases).
 
 | Platform | Formats |
 |----------|---------|
@@ -79,7 +79,7 @@ Grab the latest release for your platform from the [Releases page](https://githu
 
 Aurora has a powerful plugin system now! Every functionality has been redesigned to be driven by plugins.
 
-Plugins can provide streaming sources, metadata, playlists, dashboard content, and more. Browse and install plugins from the built-in plugin store, or write your own using the [@nuclearplayer/plugin-sdk](https://www.npmjs.com/package/@nuclearplayer/plugin-sdk).
+Plugins can provide streaming sources, metadata, playlists, dashboard content, and more. Browse and install plugins from the built-in plugin store, or write your own using the [Aurora Plugin SDK](https://www.npmjs.com/package/@nuclearplayer/plugin-sdk).
 
 ## MCP
 
@@ -88,13 +88,13 @@ You can enable the MCP server in Settings → Integrations.
 Then to add it to **Claude Code:**
 
 ```bash
-claude mcp add nuclear --transport http http://127.0.0.1:8800/mcp
+claude mcp add aurora --transport http http://127.0.0.1:8800/mcp
 ```
 
 **Codex CLI:**
 
 ```bash
-codex mcp add nuclear --url http://127.0.0.1:8800/mcp
+codex mcp add aurora --url http://127.0.0.1:8800/mcp
 ```
 
 **OpenCode:**
@@ -102,7 +102,7 @@ codex mcp add nuclear --url http://127.0.0.1:8800/mcp
 ```json
 {
   "mcp": {
-    "nuclear": {
+    "aurora": {
       "type": "remote",
       "url": "http://127.0.0.1:8800/mcp"
     }
@@ -115,14 +115,14 @@ codex mcp add nuclear --url http://127.0.0.1:8800/mcp
 ```json
 {
   "mcpServers": {
-    "nuclear": {
+    "aurora": {
       "url": "http://127.0.0.1:8800/mcp"
     }
   }
 }
 ```
 
-The MCP is designed to be discoverable, but there's a skill you can load to get your AI up to speed: [Nuclear MCP Skill](./packages/docs/public/skills/nuclear-mcp.zip)
+The MCP is designed to be discoverable, but there's a skill you can load to get your AI up to speed: [Aurora MCP Skill](./packages/docs/.gitbook/assets/aurora-mcp.zip)
 
 ## Development
 
@@ -138,8 +138,8 @@ Aurora is a pnpm monorepo managed with Turborepo. The main app is built with Tau
 ### Getting started
 
 ```bash
-git clone https://github.com/danidetenerife/nucelar.git
-cd nucelar
+git clone https://github.com/danidetenerife/aurora.git
+cd aurora
 pnpm install
 pnpm dev
 ```
@@ -158,9 +158,7 @@ pnpm storybook      # Run Storybook
 
 ## Community
 
-- [Discord](https://discord.gg/JqPjKxE)
-- [Mastodon](https://fosstodon.org/@nuclearplayer)
-- [Discussions](https://github.com/danidetenerife/nucelar/discussions)
+- [Discussions](https://github.com/danidetenerife/aurora/discussions)
 
 ## License
 

@@ -15,12 +15,16 @@ final class TvWebView {
     static boolean isTelevision(Context context) {
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_TYPE_MASK;
         return mode == Configuration.UI_MODE_TYPE_TELEVISION
+            || context.getPackageName().equals("com.nuclearplayer.app.tvpreview")
             || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
     }
 
     static void configure(Activity activity, WebView webView) {
         if (webView == null) {
             return;
+        }
+        if (activity.getPackageName().equals("com.nuclearplayer.app.tvpreview")) {
+            activity.setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
         WebSettings settings = webView.getSettings();
         settings.setUserAgentString(TV_USER_AGENT);
@@ -30,10 +34,12 @@ final class TvWebView {
         settings.setTextZoom(100);
         settings.setSupportZoom(false);
         settings.setOffscreenPreRaster(false);
-        webView.setLayoutParams(new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        ));
+        ViewGroup.LayoutParams layout = webView.getLayoutParams();
+        if (layout != null) {
+            layout.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            layout.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            webView.setLayoutParams(layout);
+        }
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
         webView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);

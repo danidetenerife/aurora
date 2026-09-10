@@ -6,227 +6,129 @@ import {
   useFocusable,
 } from '@noriginmedia/norigin-spatial-navigation';
 import { useQuery } from '@tanstack/react-query';
-import { Search, X } from 'lucide-react';
 import { FC, useEffect, useRef, useState } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork } from '@nuclearplayer/model';
-import type {
-  MetadataProvider,
-  SearchResults,
-} from '@nuclearplayer/plugin-sdk';
-import { cn } from '@nuclearplayer/ui';
 
 import { useActiveProvider } from '../../hooks/useActiveProvider';
 import { metadataHost } from '../../services/metadataHost';
-import { playbackManager } from '../../services/playback';
-import { useQueueStore } from '../../stores/queueStore';
 import { useTvStore } from '../../stores/tvStore';
-import { TvContentRow } from './TvContentRow';
+import { TvButton } from './TvButton';
 import { TvFocusableCard } from './TvFocusableCard';
+import { playTvTracks } from './tvPlayback';
 
-const TvSearchCloseButton: FC = () => {
-  const closeSearch = useTvStore((state) => state.closeSearch);
-  const { t } = useTranslation('tv');
-  const { ref, focused } = useFocusable({
-    focusKey: 'tv-search-close',
-    onEnterPress: closeSearch,
-  });
-
-  return (
-    <button
-      ref={ref}
-      onClick={closeSearch}
-      className={cn(
-        'flex size-12 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-800 text-zinc-400 outline-none',
-        focused && 'ring-primary text-white ring-2',
-      )}
-      aria-label={t('closeSearch')}
-    >
-      <X size={24} />
-    </button>
-  );
-};
-
+const SEARCH_DELAY_MS = 350;
+const SEARCH_LIMIT = 24;
 export const TvSearchOverlay: FC = () => {
-  const { t } = useTranslation('search');
-  const isSearchOpen = useTvStore((state) => state.isSearchOpen);
+  const { t } = useTranslation('tv');
   const closeSearch = useTvStore((state) => state.closeSearch);
   const [query, setQuery] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const provider = useActiveProvider('metadata') as
-    | MetadataProvider
-    | undefined;
-
-  const { data: results, isLoading } = useQuery<SearchResults>({
-    queryKey: ['tv-metadata-search', provider?.id, query],
-    queryFn: () =>
-      metadataHost.search({
-        query,
-      }),
-    enabled: Boolean(provider && query.length >= 2),
-  });
-
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const input = useRef<HTMLInputElement>(null);
+  const provider = useActiveProvider('metadata');
   const { ref, focusKey } = useFocusable({
     focusKey: 'TV_SEARCH_OVERLAY',
     isFocusBoundary: true,
-    preferredChildFocusKey: 'tv-search-input',
   });
-
   useEffect(() => {
-    if (isSearchOpen && inputRef.current) {
-      pause();
-      inputRef.current.focus();
-    }
-    return () => {
-      resume();
-      setFocus('tv-nav-search');
-    };
-  }, [isSearchOpen]);
-
+    const timer = window.setTimeout(
+      () => setDebouncedQuery(query.trim()),
+      SEARCH_DELAY_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [query]);
+  const { data, isFetching, isError } = useQuery({
+    queryKey: ['tv-search', provider?.id, debouncedQuery],
+    queryFn: () =>
+      metadataHost.search({
+        query: debouncedQuery,
+        types: ['tracks'],
+        limit: SEARCH_LIMIT,
+      }),
+    enabled: Boolean(provider && debouncedQuery.length >= 2),
+    retry: false,
+  });
   useEffect(() => {
-    if (!isSearchOpen) {
-      setQuery('');
-    }
-  }, [isSearchOpen]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    pause();
+    input.current?.focus();
+    const back = (event: KeyboardEvent) => {
       if (event.key === 'Escape' || event.key === 'Back') {
+        event.preventDefault();
         closeSearch();
       }
     };
-
-    if (isSearchOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-    }
-
+    document.addEventListener('keydown', back);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', back);
+      resume();
+      setFocus('tv-nav-search');
     };
-  }, [isSearchOpen, closeSearch]);
-
-  if (!isSearchOpen) {
-    return null;
-  }
-
-  const hasResults =
-    results &&
-    ((results.albums?.length ?? 0) > 0 ||
-      (results.artists?.length ?? 0) > 0 ||
-      (results.tracks?.length ?? 0) > 0);
-
+  }, [closeSearch]);
   return (
     <FocusContext.Provider value={focusKey}>
-      <div
-        ref={ref}
-        data-testid="tv-search-overlay"
-        className="fixed inset-0 z-50 flex flex-col bg-zinc-950/98 backdrop-blur-xl"
-      >
-        <div className="flex items-center gap-4 px-[5%] pt-8 pb-4">
-          <div className="flex flex-1 items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-800/80 px-4 py-3">
-            <Search size={24} className="shrink-0 text-zinc-400" />
-            <input
-              ref={inputRef}
-              onFocus={pause}
-              onBlur={resume}
-              onKeyDown={(event) => {
-                if (event.key !== 'Escape' && event.key !== 'Back') {
-                  event.stopPropagation();
-                }
-                if (event.key === 'ArrowDown') {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  inputRef.current?.blur();
-                  resume();
-                  setFocus('tv-search-close');
-                }
-              }}
-              type="text"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={t('title')}
-              className="flex-1 bg-transparent text-xl font-medium text-white outline-none placeholder:text-zinc-500"
-              data-testid="tv-search-input"
-            />
+      <section ref={ref} className="tv-search" data-testid="tv-search-overlay">
+        <div className="tv-search-header">
+          <input
+            ref={input}
+            data-testid="tv-search-input"
+            aria-label={t('search')}
+            placeholder={t('search')}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onFocus={pause}
+            onBlur={resume}
+            onKeyDown={(event) => {
+              if (event.key !== 'Escape' && event.key !== 'Back') {
+                event.stopPropagation();
+              }
+              if (event.key === 'ArrowDown' || event.key === 'Enter') {
+                event.preventDefault();
+                input.current?.blur();
+                resume();
+                setFocus('tv-search-close');
+              }
+            }}
+          />
+          <TvButton
+            focusKey="tv-search-close"
+            onClick={closeSearch}
+            destinations={{
+              down: data?.tracks?.length
+                ? 'tv-search-track-0'
+                : 'tv-search-close',
+            }}
+          >
+            {t('closeSearch')}
+          </TvButton>
+        </div>
+        <div className="tv-search-results">
+          {!provider && <p role="status">{t('noProvider')}</p>}
+          {isFetching && <p role="status">{t('loading')}</p>}
+          {isError && <p role="alert">{t('playbackError')}</p>}
+          {provider &&
+            !isFetching &&
+            debouncedQuery.length >= 2 &&
+            !data?.tracks?.length && <p>{t('noResults')}</p>}
+          <div className="tv-grid">
+            {data?.tracks?.slice(0, SEARCH_LIMIT).map((track, index) => (
+              <TvFocusableCard
+                key={`${track.source?.provider}-${track.source?.id}-${index}`}
+                focusKey={`tv-search-track-${index}`}
+                title={track.title ?? ''}
+                subtitle={track.artists
+                  ?.map((artist) => artist.name)
+                  .join(', ')}
+                src={pickArtwork(track.artwork, 'thumbnail', 200)?.url}
+                onClick={() => {
+                  playTvTracks([track]);
+                  closeSearch();
+                }}
+              />
+            ))}
           </div>
-          <TvSearchCloseButton />
         </div>
-
-        <div className="flex-1 overflow-y-auto py-4">
-          {isLoading && query.length >= 2 && (
-            <div className="flex items-center justify-center py-12">
-              <div className="border-primary size-8 animate-spin rounded-full border-2 border-t-transparent" />
-            </div>
-          )}
-
-          {!isLoading && query.length >= 2 && !hasResults && (
-            <div className="flex flex-col items-center justify-center py-12 text-zinc-500">
-              <Search size={48} className="mb-4 opacity-50" />
-              <p className="text-lg font-medium">{t('failedToLoad')}</p>
-            </div>
-          )}
-
-          {hasResults && (
-            <div className="flex flex-col gap-6">
-              {results.albums && results.albums.length > 0 && (
-                <TvContentRow
-                  title={t('results.albums')}
-                  focusKey="tv-search-albums"
-                >
-                  {results.albums.map((album) => (
-                    <TvFocusableCard
-                      key={album.source.id}
-                      title={album.title}
-                      src={pickArtwork(album.artwork, 'cover', 300)?.url}
-                      focusKey={`tv-search-album-${album.source.id}`}
-                    />
-                  ))}
-                </TvContentRow>
-              )}
-
-              {results.artists && results.artists.length > 0 && (
-                <TvContentRow
-                  title={t('results.artists')}
-                  focusKey="tv-search-artists"
-                >
-                  {results.artists.map((artist) => (
-                    <TvFocusableCard
-                      key={artist.source.id}
-                      title={artist.name}
-                      src={pickArtwork(artist.artwork, 'cover', 300)?.url}
-                      focusKey={`tv-search-artist-${artist.source.id}`}
-                    />
-                  ))}
-                </TvContentRow>
-              )}
-
-              {results.tracks && results.tracks.length > 0 && (
-                <TvContentRow
-                  title={t('results.tracks')}
-                  focusKey="tv-search-tracks"
-                >
-                  {results.tracks.map((track) => (
-                    <TvFocusableCard
-                      key={`${track.source?.provider}-${track.source?.id}`}
-                      title={track.title ?? ''}
-                      subtitle={track.artists?.[0]?.name}
-                      src={pickArtwork(track.artwork, 'thumbnail', 300)?.url}
-                      focusKey={`tv-search-track-${track.source?.id}`}
-                      onClick={() => {
-                        useQueueStore.getState().addToQueue([track]);
-                        playbackManager.play();
-                        closeSearch();
-                      }}
-                    />
-                  ))}
-                </TvContentRow>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      </section>
     </FocusContext.Provider>
   );
 };

@@ -223,6 +223,15 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        if (TvWebView.isTelevision(this)
+            && event.getKeyCode() == android.view.KeyEvent.KEYCODE_DPAD_CENTER) {
+            android.view.KeyEvent enter = new android.view.KeyEvent(
+                event.getDownTime(), event.getEventTime(), event.getAction(),
+                android.view.KeyEvent.KEYCODE_ENTER, event.getRepeatCount(), event.getMetaState(),
+                event.getDeviceId(), event.getScanCode(), event.getFlags(), event.getSource()
+            );
+            return super.dispatchKeyEvent(enter);
+        }
         if (TvWebView.isTelevision(this) && event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
             WebView webView = getBridge() != null ? getBridge().getWebView() : null;

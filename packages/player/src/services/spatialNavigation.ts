@@ -13,6 +13,8 @@ export const initSpatialNavigation = (): void => {
   init({
     debug: false,
     visualDebug: false,
+    shouldFocusDOMNode: true,
+    shouldUseNativeEvents: true,
   });
 
   setKeyMap({

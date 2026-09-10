@@ -295,7 +295,7 @@ packages/ui/src/components/Badge/
 The Tauri backend lives in `packages/player/src-tauri/src/`. Modules:
 
 - `bridge/` - bidirectional RPC. Lets Rust servers call into the frontend (`Bridge::call` emits a `bridge:request` event, frontend replies via the `bridge_respond` command).
-- `http_api/` - Axum REST + SSE server for Nuclear Jam remote control
+- `http_api/` - Axum REST + SSE server for Aurora Jam remote control
 - `mcp/` - MCP server exposing player functions as tools to LLM clients
 - `mpd/` - MPD-protocol TCP server for clients like ncmpcpp
 - `stream_server.rs` - local audio proxy adding CORS + Range so the browser can play blocked streams
@@ -341,7 +341,7 @@ When building a user-facing feature, fix, or improvement, add an entry to the to
 
 ## Releasing
 
-### Nuclear Player
+### Aurora Player
 
 Releases are triggered by git tags. The workflow builds for macOS (arm64/x64), Linux, and Windows. Release notes are auto-generated from `packages/player/changelog.json`.
 

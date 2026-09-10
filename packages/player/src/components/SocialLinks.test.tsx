@@ -20,7 +20,7 @@ describe('SocialLinks', () => {
     await userEvent.click(buttons[0]);
 
     expect(openUrl).toHaveBeenCalledWith(
-      'https://github.com/danidetenerife/nucelar',
+      'https://github.com/danidetenerife/aurora',
     );
   });
 });

@@ -122,7 +122,7 @@ describe('useUpdaterStore', () => {
           {
             name: 'nuclear-music-player.apk',
             browser_download_url:
-              'https://github.com/danidetenerife/nucelar/releases/download/v1.48.0/nuclear-music-player.apk',
+              'https://github.com/danidetenerife/aurora/releases/download/v1.48.0/nuclear-music-player.apk',
             size: 13000000,
           },
         ],
@@ -138,7 +138,7 @@ describe('useUpdaterStore', () => {
       const state = useUpdaterStore.getState();
       expect(state.isUpdateAvailable).toBe(true);
       expect(state.androidApkUrl).toBe(
-        'https://github.com/danidetenerife/nucelar/releases/download/v1.48.0/nuclear-music-player.apk',
+        'https://github.com/danidetenerife/aurora/releases/download/v1.48.0/nuclear-music-player.apk',
       );
       expect(state.newVersion).toBe('v1.48.0');
     });

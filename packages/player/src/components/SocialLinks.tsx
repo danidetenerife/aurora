@@ -8,7 +8,7 @@ const SOCIAL_LINKS = [
   {
     label: 'GitHub',
     icon: <SiGithub size={16} />,
-    url: 'https://github.com/danidetenerife/nucelar',
+    url: 'https://github.com/danidetenerife/aurora',
   },
 ] as const;
 

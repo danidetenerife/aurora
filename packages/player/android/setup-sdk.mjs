@@ -56,7 +56,7 @@ async function run() {
   console.log('Android Command-line Tools installed in:', latestDir);
 
   // Write local.properties
-  const localPropsPath = 'C:\\Users\\Danid\\Desktop\\proyectos\\nuclear-master\\packages\\player\\android\\local.properties';
+  const localPropsPath = path.join(__dirname, 'local.properties');
   const sdkDirEscaped = sdkDir.replace(/\\/g, '\\\\');
   fs.writeFileSync(localPropsPath, `sdk.dir=${sdkDirEscaped}\n`);
   console.log('Created local.properties pointing to:', sdkDir);

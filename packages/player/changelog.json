@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-10T07:00",
+    "description": "Rebuild Google TV with a lightweight Spanish interface, fixed playback controls, deterministic remote navigation, single button activation and optional music videos. Preserve mobile and desktop behavior.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Google TV", "color": "green" }]
+  },
+  {
     "date": "2026-09-09T13:00",
     "description": "Fix Chromecast HD Google TV (Android TV 14) startup identification, fit the TV layout to the screen, initialize remote focus and avoid phone-only permissions and rendering overhead on TV.",
     "type": "fix",

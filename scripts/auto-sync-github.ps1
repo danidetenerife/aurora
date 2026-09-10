@@ -1,4 +1,4 @@
-# Auto-sync local code changes to GitHub repository danidetenerife/nucelar
+# Auto-sync local code changes to GitHub repository danidetenerife/aurora
 $ErrorActionPreference = "Stop"
 
 $Root = Resolve-Path "$PSScriptRoot\.."
