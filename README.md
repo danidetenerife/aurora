@@ -84,7 +84,8 @@ pnpm storybook      # Run Storybook
 
 ## Community
 
-- [Discussions](https://github.com/danidetenerife/aurora/discussions)
+- [Discussions](https://github.com/danidetenerife/aurora/discussions) - Ask questions, share ideas, and connect with other users
+- [Issues](https://github.com/danidetenerife/aurora/issues) - Report bugs and submit feedback
 
 ## License
 
