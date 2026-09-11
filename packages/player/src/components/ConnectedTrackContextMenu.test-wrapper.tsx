@@ -60,6 +60,24 @@ export const ConnectedTrackContextMenuWrapper = {
     };
   },
 
+  dislikeAction: {
+    get element() {
+      return screen.getByTestId('track-blacklist-track');
+    },
+    async click() {
+      await user.click(this.element);
+    },
+  },
+
+  blacklistArtistAction: {
+    get element() {
+      return screen.getByTestId('track-blacklist-artist');
+    },
+    async click() {
+      await user.click(this.element);
+    },
+  },
+
   submenu: {
     get trigger() {
       return screen.queryByTestId('submenu-trigger');

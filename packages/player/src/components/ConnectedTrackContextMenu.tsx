@@ -1,5 +1,14 @@
-import { Heart, ListEnd, ListMusicIcon, ListStart, Play } from 'lucide-react';
+import {
+  Heart,
+  ListEnd,
+  ListMusicIcon,
+  ListStart,
+  Play,
+  ThumbsDown,
+  UserX,
+} from 'lucide-react';
 import { FC, ReactNode } from 'react';
+import { toast } from 'sonner';
 
 import { useTranslation } from '@nuclearplayer/i18n';
 import { pickArtwork, Track } from '@nuclearplayer/model';
@@ -7,6 +16,7 @@ import { Input, TrackContextMenu } from '@nuclearplayer/ui';
 
 import { usePlaylistSubmenu } from '../hooks/usePlaylistSubmenu';
 import { useTrackActions } from '../hooks/useTrackActions';
+import { personalizationEngine } from '../services/personalizationEngine';
 
 type ConnectedTrackContextMenuProps = {
   track: Track;
@@ -18,13 +28,44 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
   children,
 }) => {
   const { t } = useTranslation('track');
+  const { t: tCommon } = useTranslation('common');
   const { t: tPlaylists } = useTranslation('playlists');
   const trackActions = useTrackActions();
   const playlistSubmenu = usePlaylistSubmenu();
 
   const isFavorite = trackActions.isFavorite(track);
   const thumbnail = pickArtwork(track.artwork, 'thumbnail', 64)?.url;
-  const artistNames = track.artists.map((a) => a.name).join(', ');
+  const artistNames = track.artists.map((artist) => artist.name).join(', ');
+
+  const handleBlacklistTrack = () => {
+    const trackId =
+      track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
+    void personalizationEngine.blacklistTrack(trackId);
+    toast.success(t('actions.trackBlacklisted'), {
+      action: {
+        label: tCommon('actions.undo'),
+        onClick: () => {
+          void personalizationEngine.unblacklistTrack(trackId);
+        },
+      },
+    });
+  };
+
+  const handleBlacklistArtist = () => {
+    const artistName = track.artists[0]?.name;
+    if (!artistName) {
+      return;
+    }
+    void personalizationEngine.blacklistArtist(artistName);
+    toast.success(t('actions.artistBlacklisted'), {
+      action: {
+        label: tCommon('actions.undo'),
+        onClick: () => {
+          void personalizationEngine.unblacklistArtist(artistName);
+        },
+      },
+    });
+  };
 
   return (
     <TrackContextMenu>
@@ -61,6 +102,22 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
             ? t('actions.removeFromFavorites')
             : t('actions.addToFavorites')}
         </TrackContextMenu.Action>
+        <TrackContextMenu.Action
+          icon={<ThumbsDown size={16} />}
+          onClick={handleBlacklistTrack}
+          data-testid="track-blacklist-track"
+        >
+          {t('actions.dislike')}
+        </TrackContextMenu.Action>
+        {track.artists[0]?.name && (
+          <TrackContextMenu.Action
+            icon={<UserX size={16} />}
+            onClick={handleBlacklistArtist}
+            data-testid="track-blacklist-artist"
+          >
+            {t('actions.blacklistArtist')}
+          </TrackContextMenu.Action>
+        )}
         {playlistSubmenu.hasPlaylists && (
           <TrackContextMenu.Submenu>
             <TrackContextMenu.Submenu.Trigger

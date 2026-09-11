@@ -174,6 +174,14 @@ export const ConnectedPlayerBarWrapper = {
     async clickArtist() {
       await user.click(screen.getByTestId('player-now-playing-artist'));
     },
+    dislikeButton: {
+      get element() {
+        return screen.getByTestId('now-playing-dislike-button');
+      },
+      async click() {
+        await user.click(this.element);
+      },
+    },
   },
 
   controls: {

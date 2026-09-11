@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-11T16:45",
+    "description": "Add dislike button to now playing bar and track context menu actions to blacklist songs and artists, instantly skipping tracks, applying score penalties, and excluding them from recommendations across synced devices.",
+    "type": "feat",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Recommendations", "color": "green" }]
+  },
+  {
     "date": "2026-09-11T16:20",
     "description": "Make music discovery and queue autoplay completely automatic and seamless in the background; remove the misleading and redundant discovery button from the player controls bar.",
     "type": "feat",

@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { personalizationEngine } from '../../services/personalizationEngine';
 import { providersHost } from '../../services/providersHost';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSettingsStore } from '../../stores/settingsStore';
@@ -116,6 +117,30 @@ describe('ConnectedNowPlaying', () => {
     await Wrapper.nowPlaying.clickTitle();
 
     expect(router.state.location.pathname).toBe('/dashboard');
+  });
+
+  it('blacklists the track and advances queue when dislike button is clicked', async () => {
+    const blacklistTrackSpy = vi.spyOn(personalizationEngine, 'blacklistTrack');
+    const item1 = new Wrapper.QueueItemBuilder()
+      .withId('item-1')
+      .withTitle('Song One')
+      .build();
+    const item2 = new Wrapper.QueueItemBuilder()
+      .withId('item-2')
+      .withTitle('Song Two')
+      .build();
+    useQueueStore.setState({
+      items: [item1, item2],
+      currentIndex: 0,
+    });
+
+    await Wrapper.mount();
+
+    expect(Wrapper.nowPlaying.dislikeButton.element).toBeInTheDocument();
+    await Wrapper.nowPlaying.dislikeButton.click();
+
+    expect(blacklistTrackSpy).toHaveBeenCalledWith('t1');
+    expect(useQueueStore.getState().currentIndex).toBe(1);
   });
 });
 

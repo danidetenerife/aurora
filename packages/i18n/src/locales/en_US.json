@@ -22,7 +22,8 @@
       "clear": "Clear",
       "search": "Search",
       "loading": "Loading...",
-      "retry": "Retry"
+      "retry": "Retry",
+      "undo": "Undo"
     },
     "errors": {
       "network": "Network error. Please check your connection.",
@@ -505,7 +506,13 @@
       "playNext": "Play next",
       "addToQueue": "Add to queue",
       "addToFavorites": "Add to favorites",
-      "removeFromFavorites": "Remove from favorites"
+      "removeFromFavorites": "Remove from favorites",
+      "dislike": "I don't like this song",
+      "blacklistArtist": "Don't recommend this artist",
+      "trackBlacklisted": "Song added to blacklist",
+      "artistBlacklisted": "Artist added to blacklist",
+      "trackUnblacklisted": "Song removed from blacklist",
+      "artistUnblacklisted": "Artist removed from blacklist"
     }
   },
   "trackTable": {

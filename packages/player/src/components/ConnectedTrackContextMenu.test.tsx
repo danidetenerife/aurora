@@ -1,3 +1,4 @@
+import { personalizationEngine } from '../services/personalizationEngine';
 import { usePlaylistStore } from '../stores/playlistStore';
 import { PlaylistBuilder } from '../test/builders/PlaylistBuilder';
 import { ConnectedTrackContextMenuWrapper as Wrapper } from './ConnectedTrackContextMenu.test-wrapper';
@@ -88,6 +89,36 @@ describe('ConnectedTrackContextMenu', () => {
       expect(Wrapper.submenu.items).toHaveLength(2);
       expect(Wrapper.submenu.item('Rock Classics').element).toBeInTheDocument();
       expect(Wrapper.submenu.item('Rock Ballads').element).toBeInTheDocument();
+    });
+  });
+
+  describe('dislike and blacklist', () => {
+    it('blacklists the track when clicking dislike action', async () => {
+      const blacklistTrackSpy = vi.spyOn(
+        personalizationEngine,
+        'blacklistTrack',
+      );
+      Wrapper.mount();
+      await Wrapper.open();
+
+      expect(Wrapper.dislikeAction.element).toBeInTheDocument();
+      await Wrapper.dislikeAction.click();
+
+      expect(blacklistTrackSpy).toHaveBeenCalledWith('t1');
+    });
+
+    it('blacklists the artist when clicking blacklist artist action', async () => {
+      const blacklistArtistSpy = vi.spyOn(
+        personalizationEngine,
+        'blacklistArtist',
+      );
+      Wrapper.mount();
+      await Wrapper.open();
+
+      expect(Wrapper.blacklistArtistAction.element).toBeInTheDocument();
+      await Wrapper.blacklistArtistAction.click();
+
+      expect(blacklistArtistSpy).toHaveBeenCalledWith('Test Artist');
     });
   });
 });
