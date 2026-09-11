@@ -97,15 +97,6 @@ export const CORE_SETTINGS: SettingDefinition[] = [
     widget: { type: 'toggle' },
   },
   {
-    id: 'playback.showVideo',
-    title: 'preferences.playback.showVideo.title',
-    description: 'preferences.playback.showVideo.description',
-    category: 'playback',
-    kind: 'boolean',
-    default: false,
-    widget: { type: 'toggle' },
-  },
-  {
     id: 'playback.discoveryVariety',
     title: 'preferences.playback.discoveryVariety.title',
     description: 'preferences.playback.discoveryVariety.description',

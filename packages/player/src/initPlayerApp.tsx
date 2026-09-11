@@ -132,7 +132,9 @@ export const initPlayerApp = async (
     } catch {}
 
     try {
-      void useUpdaterStore.getState().checkForUpdate();
+      if (!isGoogleTVEnvironment()) {
+        void useUpdaterStore.getState().checkForUpdate();
+      }
     } catch {}
 
     if (isTauriEnvironment()) {

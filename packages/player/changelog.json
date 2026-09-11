@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-09-11T12:30",
+    "description": "Use direct audio output, respect playback interruptions, block playback during phone calls, restore selection of resolved queue tracks and simplify car controls. Keep video controls exclusive to Google TV, avoid competing TV update downloads, and wait for desktop installation before offering a restart.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Playback", "color": "green" }]
+  },
+  {
+    "date": "2026-09-11T12:00",
+    "description": "Refresh mobile and desktop presentation with clearer navigation, responsive playback controls and safe-area spacing. Remove full-screen blur transitions while preserving existing actions, themes and Google TV presentation.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Interface", "color": "green" }]
+  },
+  {
     "date": "2026-09-10T07:00",
     "description": "Rebuild Google TV with a lightweight Spanish interface, fixed playback controls, deterministic remote navigation, single button activation and optional music videos. Preserve mobile and desktop behavior.",
     "type": "fix",

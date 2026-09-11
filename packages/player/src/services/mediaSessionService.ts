@@ -145,6 +145,13 @@ export const initMediaSessionService = () => {
 
     NativeMediaSessionPlugin.addListener('mediaAction', (data) => {
       switch (data.action) {
+        case 'callstart':
+          useSoundStore.getState().setCallActive(true);
+          playbackManager.pause();
+          break;
+        case 'callend':
+          useSoundStore.getState().setCallActive(false);
+          break;
         case 'play':
           playbackManager.play();
           break;

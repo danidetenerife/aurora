@@ -177,6 +177,9 @@ export const ConnectedPlayerBarWrapper = {
   },
 
   controls: {
+    get videoButtons() {
+      return screen.queryAllByTestId('player-video-button');
+    },
     shuffleButton: {
       get element() {
         return screen.getByTestId('player-shuffle-button');

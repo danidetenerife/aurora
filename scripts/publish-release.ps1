@@ -1,6 +1,6 @@
 param(
-    [string]$Version = "1.48.4",
-    [string]$Notes = "Aurora Music Player v1.48.4: Rebranding oficial de la aplicación y repositorio a Aurora, interfaz ligera para Google TV / Android TV con navegación por mando a distancia D-pad, controles de reproducción fijos, sincronización PC-móvil y mejoras de estabilidad."
+    [string]$Version = "1.48.5",
+    [string]$Notes = ""
 )
 
 $Root = Resolve-Path "$PSScriptRoot\.."
@@ -8,6 +8,9 @@ Set-Location $Root
 
 $Tag = if ($Version.StartsWith("v")) { $Version } else { "v$Version" }
 $cleanVer = $Version.Replace("v", "")
+if ([string]::IsNullOrWhiteSpace($Notes)) {
+    $Notes = "Aurora Music Player $Tag: Actualización del reproductor Aurora, soporte y navegación Google TV, sincronización bidireccional y enlaces oficiales de descarga."
+}
 $ExecutablesDir = "$Root\ejecutables"
 
 # Support Aurora naming with Nuclear fallback

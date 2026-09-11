@@ -110,16 +110,8 @@ export const CarModeOverlay: FC = () => {
       data-testid="car-mode-overlay"
       className="fixed inset-0 z-50 flex flex-col justify-between bg-zinc-950 text-white select-none overflow-hidden"
     >
-      {/* Dynamic ambient backdrop blur */}
-      {artwork?.url && (
-        <div
-          className="absolute inset-0 opacity-20 blur-3xl scale-125 pointer-events-none transition-all duration-1000 bg-cover bg-center"
-          style={{ backgroundImage: `url(${artwork.url})` }}
-        />
-      )}
-
       {/* Top Header Bar */}
-      <div className="relative z-10 flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
+      <div className="aurora-car-header relative z-10 flex flex-wrap items-center justify-between gap-2 px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-zinc-800/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-zinc-700/60 shadow-lg">
             <Car size={18} className="text-emerald-400 animate-pulse" />
@@ -145,7 +137,7 @@ export const CarModeOverlay: FC = () => {
       </div>
 
       {/* Main Track Display (Center) */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-2 min-h-0">
+      <div className="aurora-car-track relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-2 min-h-0">
         {/* Giant Artwork */}
         <div className="relative aspect-square max-h-[36vh] sm:max-h-[44vh] w-auto rounded-2xl overflow-hidden shadow-2xl border-2 border-zinc-700/80 bg-zinc-900 mb-6 flex items-center justify-center">
           {artwork?.url ? (
@@ -173,7 +165,7 @@ export const CarModeOverlay: FC = () => {
       </div>
 
       {/* Bottom Controls Area */}
-      <div className="relative z-10 bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-800/80 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+2rem)] flex flex-col gap-4 max-w-2xl mx-auto w-full">
+      <div className="aurora-car-player relative z-10 bg-zinc-900 border-t border-zinc-800/80 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+2rem)] flex flex-col gap-4 max-w-2xl mx-auto w-full">
         {/* Scrubber / Progress Bar */}
         <div className="w-full space-y-1">
           <div className="relative flex items-center">
@@ -205,7 +197,7 @@ export const CarModeOverlay: FC = () => {
         </div>
 
         {/* Giant Primary Buttons */}
-        <div className="flex items-center justify-between gap-3 px-2 sm:px-6">
+        <div className="aurora-car-controls flex items-center justify-between gap-3 px-2 sm:px-6">
           {/* Shuffle */}
           <button
             onClick={() => setShuffleEnabled(!shuffleEnabled)}

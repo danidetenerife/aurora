@@ -19,9 +19,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
-import android.media.AudioAttributes;
-import android.media.AudioFormat;
-import android.media.AudioTrack;
 import android.media.MediaPlayer;
 
 import java.io.InputStream;
@@ -57,7 +54,7 @@ public class AudioForegroundService extends Service {
 
     private boolean currentlyPlaying = false;
     private android.telephony.TelephonyManager telephonyManager;
-    private boolean pausedByPhoneCall = false;
+    private android.telephony.PhoneStateListener phoneStateListener;
     private boolean phoneCallListenerRegistered = false;
 
     @SuppressWarnings("deprecation")
@@ -72,15 +69,14 @@ public class AudioForegroundService extends Service {
         telephonyManager = (android.telephony.TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (telephonyManager == null) return;
 
-        telephonyManager.listen(
-            new android.telephony.PhoneStateListener() {
+        phoneStateListener = new android.telephony.PhoneStateListener() {
                 @Override
                 public void onCallStateChanged(int state, String phoneNumber) {
                     handleCallState(state);
                 }
-            },
-            android.telephony.PhoneStateListener.LISTEN_CALL_STATE
-        );
+            };
+        telephonyManager.listen(phoneStateListener,
+            android.telephony.PhoneStateListener.LISTEN_CALL_STATE);
         phoneCallListenerRegistered = true;
         Log.i(TAG, "Phone call listener registered successfully");
     }
@@ -89,18 +85,11 @@ public class AudioForegroundService extends Service {
         switch (state) {
             case android.telephony.TelephonyManager.CALL_STATE_RINGING:
             case android.telephony.TelephonyManager.CALL_STATE_OFFHOOK:
-                if (currentlyPlaying) {
-                    pausedByPhoneCall = true;
-                    Log.d(TAG, "Phone call detected, pausing playback");
-                    notifyJsMediaAction("pause");
-                }
+                notifyJsMediaAction("callstart");
+                setOptimisticPlaybackState(false);
                 break;
             case android.telephony.TelephonyManager.CALL_STATE_IDLE:
-                if (pausedByPhoneCall) {
-                    pausedByPhoneCall = false;
-                    Log.d(TAG, "Phone call ended, resuming playback");
-                    notifyJsMediaAction("play");
-                }
+                notifyJsMediaAction("callend");
                 break;
         }
     }
@@ -381,82 +370,6 @@ public class AudioForegroundService extends Service {
         }
     }
 
-    private AudioTrack nativeAudioTrack;
-    private Thread audioKeepAliveThread;
-    private volatile boolean isKeepAliveRunning = false;
-
-    private synchronized void ensureNativeAudioTrack(boolean enable) {
-        if (enable) {
-            if (nativeAudioTrack == null) {
-                try {
-                    int sampleRate = 44100;
-                    int channelConfig = AudioFormat.CHANNEL_OUT_STEREO;
-                    int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-                    int bufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat);
-                    if (bufferSize < 2048) bufferSize = 2048;
-                    final int audioBufferSize = bufferSize;
-
-                    AudioAttributes attributes = new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build();
-
-                    AudioFormat format = new AudioFormat.Builder()
-                        .setSampleRate(sampleRate)
-                        .setEncoding(audioFormat)
-                        .setChannelMask(channelConfig)
-                        .build();
-
-                    nativeAudioTrack = new AudioTrack.Builder()
-                        .setAudioAttributes(attributes)
-                        .setAudioFormat(format)
-                        .setBufferSizeInBytes(audioBufferSize)
-                        .setTransferMode(AudioTrack.MODE_STREAM)
-                        .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
-                        .build();
-
-                    nativeAudioTrack.setVolume(0.0001f);
-                    nativeAudioTrack.play();
-                    isKeepAliveRunning = true;
-
-                    audioKeepAliveThread = new Thread(() -> {
-                        byte[] silentBuffer = new byte[audioBufferSize];
-                        while (isKeepAliveRunning && nativeAudioTrack != null) {
-                            try {
-                                if (nativeAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
-                                    nativeAudioTrack.write(silentBuffer, 0, silentBuffer.length);
-                                } else {
-                                    Thread.sleep(50);
-                                }
-                            } catch (Throwable t) {
-                                break;
-                            }
-                        }
-                    }, "AuroraAudioKeepAlive");
-                    audioKeepAliveThread.setDaemon(true);
-                    audioKeepAliveThread.start();
-                } catch (Throwable t) {
-                    // ignore
-                }
-            }
-        } else {
-            isKeepAliveRunning = false;
-            if (audioKeepAliveThread != null) {
-                try {
-                    audioKeepAliveThread.interrupt();
-                } catch (Throwable t) {}
-                audioKeepAliveThread = null;
-            }
-            if (nativeAudioTrack != null) {
-                try {
-                    nativeAudioTrack.stop();
-                    nativeAudioTrack.release();
-                } catch (Throwable t) {}
-                nativeAudioTrack = null;
-            }
-        }
-    }
-
     private void handlePlaybackStateUpdate(Intent intent) {
         boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
         long positionMs = intent.getLongExtra("positionMs", 0);
@@ -464,7 +377,6 @@ public class AudioForegroundService extends Service {
         boolean stateChanged = isPlaying != currentlyPlaying;
         if (stateChanged) {
             currentlyPlaying = isPlaying;
-            ensureNativeAudioTrack(isPlaying);
         }
 
         int state = isPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
@@ -540,7 +452,6 @@ public class AudioForegroundService extends Service {
                       isPlaying ? 1.0f : 0f)
             .build();
         mediaSession.setPlaybackState(playbackState);
-        ensureNativeAudioTrack(isPlaying);
         updateNotification(null, null);
     }
 
@@ -694,10 +605,9 @@ public class AudioForegroundService extends Service {
     @SuppressWarnings("deprecation")
     @Override
     public void onDestroy() {
-        ensureNativeAudioTrack(false);
         if (phoneCallListenerRegistered && telephonyManager != null) {
             try {
-                telephonyManager.listen(new android.telephony.PhoneStateListener() {}, android.telephony.PhoneStateListener.LISTEN_NONE);
+                telephonyManager.listen(phoneStateListener, android.telephony.PhoneStateListener.LISTEN_NONE);
             } catch (Throwable ignored) {}
         }
         if (mediaSession != null) {

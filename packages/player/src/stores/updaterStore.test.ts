@@ -1,4 +1,4 @@
-import { check, Update } from '@tauri-apps/plugin-updater';
+import { check, Update, type DownloadEvent } from '@tauri-apps/plugin-updater';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useUpdaterStore } from './updaterStore';
@@ -19,6 +19,9 @@ describe('useUpdaterStore', () => {
       updateInfo: null,
       lastChecked: null,
       isChecking: false,
+      isDownloading: false,
+      isInstalling: false,
+      isReadyToRestart: false,
       error: null,
     });
   });
@@ -37,6 +40,56 @@ describe('useUpdaterStore', () => {
       expect(state.lastChecked).toBe(null);
       expect(state.isChecking).toBe(false);
       expect(state.error).toBe(null);
+    });
+  });
+
+  describe('installation lifecycle', () => {
+    it('waits for installation and prevents duplicate downloads and checks', async () => {
+      let finishInstallation!: () => void;
+      const installation = new Promise<void>((resolve) => {
+        finishInstallation = resolve;
+      });
+      const downloadAndInstall = vi.fn(
+        (onEvent?: (event: DownloadEvent) => void) => {
+          onEvent?.({ event: 'Finished' });
+          return installation;
+        },
+      );
+      useUpdaterStore.setState({
+        updateInfo: { downloadAndInstall } as unknown as Update,
+      });
+
+      const pending = useUpdaterStore.getState().downloadUpdate();
+      expect(useUpdaterStore.getState().isInstalling).toBe(true);
+      expect(useUpdaterStore.getState().isReadyToRestart).toBe(false);
+      await useUpdaterStore.getState().downloadUpdate();
+      await useUpdaterStore.getState().checkForUpdate();
+      expect(downloadAndInstall).toHaveBeenCalledTimes(1);
+      expect(check).not.toHaveBeenCalled();
+
+      finishInstallation();
+      await pending;
+      expect(useUpdaterStore.getState().isInstalling).toBe(false);
+      expect(useUpdaterStore.getState().isReadyToRestart).toBe(true);
+      await useUpdaterStore.getState().downloadUpdate();
+      expect(downloadAndInstall).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not offer a restart when installation fails after downloading', async () => {
+      useUpdaterStore.setState({
+        updateInfo: {
+          downloadAndInstall: async (
+            onEvent?: (event: DownloadEvent) => void,
+          ) => {
+            onEvent?.({ event: 'Finished' });
+            throw new Error('Installation failed');
+          },
+        } as unknown as Update,
+      });
+      await useUpdaterStore.getState().downloadUpdate();
+      expect(useUpdaterStore.getState().isReadyToRestart).toBe(false);
+      expect(useUpdaterStore.getState().isInstalling).toBe(false);
+      expect(useUpdaterStore.getState().error).toBe('Installation failed');
     });
   });
 

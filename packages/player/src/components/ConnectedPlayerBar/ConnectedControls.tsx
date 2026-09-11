@@ -22,8 +22,6 @@ export const ConnectedControls: FC = () => {
     useCoreSetting<RepeatMode>('playback.repeat');
   const [discoveryEnabled, setDiscoveryEnabled] =
     useCoreSetting<boolean>('playback.discovery');
-  const [showVideo, setShowVideo] =
-    useCoreSetting<boolean>('playback.showVideo');
   const hasDiscoveryProviders = useProviders('discovery').length > 0;
   const { castState, openCastPicker } = useMediaRouter();
 
@@ -43,10 +41,6 @@ export const ConnectedControls: FC = () => {
     setDiscoveryEnabled(!discoveryEnabled);
   };
 
-  const handleToggleVideo = () => {
-    setShowVideo(!showVideo);
-  };
-
   const handleToggleRepeat = () => {
     const modes: Array<RepeatMode> = ['off', 'all', 'one'];
     const currentIndex = modes.indexOf(repeatMode ?? 'off');
@@ -55,8 +49,9 @@ export const ConnectedControls: FC = () => {
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="aurora-transport flex items-center gap-1">
       <PlayerBar.Controls
+        className="aurora-playback-controls"
         isPlaying={status === 'playing'}
         isShuffleActive={Boolean(shuffleEnabled)}
         repeatMode={repeatMode ?? 'off'}
@@ -70,8 +65,6 @@ export const ConnectedControls: FC = () => {
           hasDiscoveryProviders ? handleToggleDiscovery : undefined
         }
         showDiscovery={hasDiscoveryProviders}
-        isVideoActive={Boolean(showVideo)}
-        onVideoToggle={handleToggleVideo}
         labels={{
           shuffleOn: t('shuffleOn'),
           shuffleOff: t('shuffleOff'),
@@ -80,11 +73,10 @@ export const ConnectedControls: FC = () => {
           repeatOne: t('repeatOne'),
           discoveryOn: t('discoveryOn'),
           discoveryOff: t('discoveryOff'),
-          videoOn: 'Ocultar videoclip',
-          videoOff: 'Ver videoclip',
         }}
       />
       <Tooltip
+        wrapperClassName="aurora-cast-control"
         content={
           castState.isConnected
             ? `Cast: ${castState.connectedRouteName}`
@@ -102,7 +94,11 @@ export const ConnectedControls: FC = () => {
           <Airplay size={16} />
         </Button>
       </Tooltip>
-      <Tooltip content="Modo Coche" side="top">
+      <Tooltip
+        content="Modo Coche"
+        side="top"
+        wrapperClassName="aurora-car-control"
+      >
         <Button
           size="icon-sm"
           className="sm:size-10"

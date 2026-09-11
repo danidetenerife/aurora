@@ -120,6 +120,14 @@ describe('ConnectedNowPlaying', () => {
 });
 
 describe('ConnectedControls', () => {
+  it('does not offer music videos outside Google TV even with a saved preference', async () => {
+    useSettingsStore.setState({
+      values: { 'core.playback.showVideo': true },
+    });
+    await Wrapper.mount();
+    expect(Wrapper.controls.videoButtons).toHaveLength(0);
+  });
+
   it('clicking shuffle toggles shuffleEnabled in the settings store', async () => {
     Wrapper.seedShuffle(false);
     await Wrapper.mount();

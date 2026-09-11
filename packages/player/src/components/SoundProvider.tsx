@@ -13,7 +13,6 @@ import { useQueueStore } from '../stores/queueStore';
 import { useSoundStore } from '../stores/soundStore';
 import { errorMessage } from '../utils/errorMessage';
 
-
 const describePlaybackError = (error: Error, t: TFunction): string => {
   if (error instanceof SoundError) {
     return t(`errors.hifi.${error.code}`, { details: error.details });
@@ -25,8 +24,6 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('streaming');
   const { src, status, seek } = useSoundStore();
   const [crossfadeMs] = useCoreSetting<number>('playback.crossfadeMs');
-  const [showVideo, setShowVideo] =
-    useCoreSetting<boolean>('playback.showVideo');
   const preload: HTMLAudioElement['preload'] = 'auto';
   const crossOrigin = undefined;
   const [volume01] = useCoreSetting<number>('playback.volume');
@@ -92,8 +89,7 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
           src={src}
           status={status}
           seek={seek}
-          showVideo={Boolean(showVideo)}
-          onCloseVideo={() => setShowVideo(false)}
+          showVideo={false}
           volume={volumePercent}
           preload={preload}
           crossOrigin={crossOrigin}

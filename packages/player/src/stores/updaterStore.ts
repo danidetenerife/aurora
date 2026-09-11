@@ -10,7 +10,7 @@ import { errorMessage } from '../utils/errorMessage';
 import { reportError } from '../utils/logging';
 import { getSetting } from './settingsStore';
 
-const CURRENT_VERSION = '1.48.4';
+const CURRENT_VERSION = '1.48.5';
 const GITHUB_REPO = 'danidetenerife/aurora';
 const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
@@ -58,6 +58,10 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
   error: null,
 
   checkForUpdate: async () => {
+    const { isChecking, isDownloading, isInstalling, isReadyToRestart } = get();
+    if (isChecking || isDownloading || isInstalling || isReadyToRestart) {
+      return;
+    }
     const checkEnabled = getSetting('core.updates.checkForUpdates');
     if (checkEnabled === false) {
       return;
@@ -164,7 +168,16 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
   },
 
   downloadUpdate: async () => {
-    const { updateInfo, androidApkUrl } = get();
+    const {
+      updateInfo,
+      androidApkUrl,
+      isDownloading,
+      isInstalling,
+      isReadyToRestart,
+    } = get();
+    if (isDownloading || isInstalling || isReadyToRestart) {
+      return;
+    }
 
     if (isTauriEnvironment() && updateInfo) {
       set({ isDownloading: true, downloadProgress: 0, error: null });
@@ -185,11 +198,16 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
           } else if (event.event === 'Finished') {
             set({
               isDownloading: false,
-              isInstalling: false,
-              isReadyToRestart: true,
+              isInstalling: true,
               downloadProgress: 100,
             });
           }
+        });
+        set({
+          isDownloading: false,
+          isInstalling: false,
+          isReadyToRestart: true,
+          downloadProgress: 100,
         });
       } catch (error) {
         const message = errorMessage(error);
@@ -197,6 +215,7 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
         set({
           isDownloading: false,
           isInstalling: false,
+          isReadyToRestart: false,
           error: message,
         });
       }
@@ -243,6 +262,9 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
   },
 
   restartToUpdate: async () => {
+    if (!get().isReadyToRestart) {
+      return;
+    }
     if (isTauriEnvironment()) {
       try {
         await relaunch();

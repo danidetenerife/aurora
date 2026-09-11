@@ -32,14 +32,18 @@ export const PlaylistsToolbar: FC<PlaylistsToolbarProps> = ({
   const { openCreateDialog } = useCreatePlaylistContext();
 
   return (
-    <div className="mb-4 flex items-center gap-2">
-      <Button onClick={openCreateDialog} data-testid="create-playlist-button">
-        <Plus size={16} />
+    <div className="aurora-playlists-toolbar mb-4 flex flex-wrap items-center gap-2">
+      <Button
+        onClick={openCreateDialog}
+        data-testid="create-playlist-button"
+        className="h-auto min-h-10 min-w-0 gap-2 whitespace-normal"
+      >
+        <Plus size={16} className="shrink-0" />
         {t('create')}
       </Button>
       <ImportPlaylistMenu />
       {hasPlaylists && (
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex min-w-0 flex-wrap items-center gap-2">
           <PlaylistSortSelect
             sortBy={sortBy}
             onSortByChange={onSortByChange}

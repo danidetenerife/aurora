@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { useAudioEvents } from './hooks/useAudioEvents';
 import { useAudioLoader } from './hooks/useAudioLoader';
-import { useAudioOutputBridge } from './hooks/useAudioOutputBridge';
 import { useAudioSeek } from './hooks/useAudioSeek';
 import { useHlsSource } from './hooks/useHlsSource';
 import { useMseSource } from './hooks/useMseSource';
@@ -44,7 +43,6 @@ const NativeAudioPlayer: React.FC<SoundProps> = ({
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useAudioOutputBridge(audioRef);
   useAudioSeek(audioRef, seek);
   useStartPosition(audioRef, src);
   useAudioLoader(audioRef, src);
@@ -75,6 +73,7 @@ const NativeAudioPlayer: React.FC<SoundProps> = ({
 
   return (
     <audio
+      data-testid="audio-output"
       ref={audioRef}
       hidden
       preload={preload}

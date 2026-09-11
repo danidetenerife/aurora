@@ -1,4 +1,4 @@
-const response = await fetch('https://api.github.com/repos/nukeop/nuclear');
+const response = await fetch('https://api.github.com/repos/danidetenerife/aurora');
 const { stargazers_count } = await response.json();
 
 export const stars: string | null = stargazers_count

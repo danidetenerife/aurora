@@ -57,6 +57,14 @@ $code = [int]$partsVer[0]*10000 + [int]$partsVer[1]*100 + [int]$partsVer[2]
 $gradleStr = $rawGradle -replace 'versionName ".*?"', "versionName `"$NextVer`"" -replace 'versionCode \d+', "versionCode $code"
 [System.IO.File]::WriteAllText($BuildGradlePath, $gradleStr, $utf8NoBom)
 
+# 4b. Update packages/website/src/data/version.ts
+$WebsiteVersionPath = "$Root\packages\website\src\data\version.ts"
+if (Test-Path $WebsiteVersionPath) {
+    $rawWebVer = [System.IO.File]::ReadAllText($WebsiteVersionPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
+    $webVerStr = $rawWebVer -replace "export const version = '.*?';", "export const version = '$NextVer';"
+    [System.IO.File]::WriteAllText($WebsiteVersionPath, $webVerStr, $utf8NoBom)
+}
+
 # 5. Build frontend
 Write-Host "[1/4] Compilando Frontend..." -ForegroundColor Yellow
 npx pnpm --filter @nuclearplayer/player build:frontend

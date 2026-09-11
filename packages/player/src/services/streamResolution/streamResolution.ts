@@ -147,7 +147,7 @@ export class StreamResolution {
       if (this.activeItemId) {
         const { getItemById, updateItemState } = useQueueStore.getState();
         const previousItem = getItemById(this.activeItemId);
-        if (previousItem) {
+        if (previousItem && previousItem.id !== itemId) {
           updateItemState(this.activeItemId, {
             status: 'idle',
             error: undefined,

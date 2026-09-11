@@ -9,6 +9,7 @@ import { secondsToMs } from '../utils/time';
 type SoundState = {
   src: AudioSource | null;
   status: SoundStatus;
+  callActive: boolean;
   seek: number;
   duration: number;
   crossfadeMs: number;
@@ -20,6 +21,7 @@ type SoundActions = {
   setSrc: (src: AudioSource | null) => void;
   play: () => void;
   pause: () => void;
+  setCallActive: (active: boolean) => void;
   stop: () => void;
   toggle: () => void;
   seekTo: (seconds: number) => void;
@@ -32,6 +34,7 @@ type SoundActions = {
 export const useSoundStore = create<SoundState & SoundActions>((set, get) => ({
   src: null,
   status: 'stopped',
+  callActive: false,
   seek: 0,
   duration: 0,
   crossfadeMs: 0,
@@ -42,12 +45,20 @@ export const useSoundStore = create<SoundState & SoundActions>((set, get) => ({
     Logger.playback.debug(`Set source: ${src?.url ?? 'null'}`);
   },
   play: () => {
+    if (get().callActive) {
+      return;
+    }
     set({ status: 'playing' });
     Logger.playback.debug('Play');
   },
   pause: () => {
     set({ status: 'paused' });
     Logger.playback.debug('Pause');
+  },
+  setCallActive: (active) => {
+    set(
+      active ? { callActive: true, status: 'paused' } : { callActive: false },
+    );
   },
   stop: () => {
     set({ status: 'stopped', seek: 0 });

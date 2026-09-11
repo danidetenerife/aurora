@@ -45,20 +45,21 @@ export const ConnectedMobileNav: FC = () => {
   ];
 
   return (
-    <nav className="bg-background-secondary border-border flex md:hidden items-center justify-around border-t-(length:--border-width) px-1 pt-2 pb-16 min-h-[96px] shrink-0 select-none z-50">
+    <nav className="aurora-mobile-nav bg-background-secondary border-border z-50 flex shrink-0 items-center justify-around border-t-(length:--border-width) select-none md:hidden">
       {navItems.map((item) => (
         <Link
           key={item.to}
           to={item.to}
+          aria-current={item.isActive ? 'page' : undefined}
           className={cn(
-            'flex flex-1 flex-col items-center justify-center gap-1 py-1 rounded-xl transition-all font-medium',
+            'flex flex-1 flex-col items-center justify-center gap-1 rounded-xl py-1 font-medium transition-all',
             item.isActive
-              ? 'text-primary font-bold scale-105'
+              ? 'text-primary scale-105 font-bold'
               : 'text-foreground-secondary hover:text-foreground active:scale-95',
           )}
         >
           {item.icon}
-          <span className="whitespace-nowrap text-center leading-tight text-[11px] sm:text-xs">
+          <span className="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs">
             {item.label}
           </span>
         </Link>
@@ -66,10 +67,10 @@ export const ConnectedMobileNav: FC = () => {
 
       <button
         onClick={() => openSettings()}
-        className="flex flex-1 flex-col items-center justify-center gap-1 py-1 rounded-xl transition-all font-medium text-foreground-secondary hover:text-foreground active:scale-95 cursor-pointer"
+        className="text-foreground-secondary hover:text-foreground flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl py-1 font-medium transition-all active:scale-95"
       >
         <SettingsIcon className="size-6" />
-        <span className="whitespace-nowrap text-center leading-tight text-[11px] sm:text-xs">
+        <span className="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs">
           Ajustes
         </span>
       </button>

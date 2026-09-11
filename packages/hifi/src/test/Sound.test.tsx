@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { Sound } from '../Sound';
 import { AudioSource } from '../types';
@@ -12,6 +12,27 @@ import {
 const httpSource: AudioSource = { url: '/a.mp3', protocol: 'http' };
 
 describe('Sound', () => {
+  it('does not restart playback in response to a system pause or focus change', () => {
+    render(<Sound src={httpSource} status="playing" />);
+    const audio = screen.getByTestId('audio-output');
+    const { playMock } = resetMediaSpies();
+    act(() => {
+      audio.dispatchEvent(new Event('pause'));
+      window.dispatchEvent(new Event('blur'));
+      window.dispatchEvent(new Event('focus'));
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    expect(playMock).not.toHaveBeenCalled();
+  });
+
+  it('plays direct audio without requiring a Web Audio context', () => {
+    const { playMock } = resetMediaSpies();
+    render(<Sound src={httpSource} status="playing" volume={65} />);
+    const audio = screen.getByTestId('audio-output') as HTMLAudioElement;
+    expect(audio.volume).toBe(0.65);
+    expect(audio.getAttribute('crossorigin')).toBeNull();
+    expect(playMock).toHaveBeenCalled();
+  });
   it('sets currentTime on the active audio element when seek changes', () => {
     const { restore } = setupAudioContextMock();
 

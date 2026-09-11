@@ -12,6 +12,7 @@ export const ConnectedPlayerBar: FC = () => {
     <>
       <ConnectedSeekBar />
       <PlayerBar
+        className="aurora-player"
         left={<ConnectedNowPlaying />}
         center={<ConnectedControls />}
         right={<ConnectedVolume />}

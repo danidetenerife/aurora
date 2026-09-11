@@ -271,12 +271,12 @@ export const PersonalizedMixWidget: FC = () => {
       data-testid="dashboard-personalized-mix"
       className="flex flex-col gap-2"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
           <SparklesIcon className="text-primary size-5" />
           <h2 className="text-lg font-bold">{t('personalizedMix.title')}</h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {topGenres.slice(0, 3).map((g) => (
             <Badge key={g.genre} variant="pill" className="text-xs capitalize">
               {g.genre}

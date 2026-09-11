@@ -1,5 +1,5 @@
-export const version = '1.46.3';
+export const version = '1.48.5';
 export const versionTag = `v${version}`;
-export const releaseTag = `player@${version}`;
+export const releaseTag = `v${version}`;
 export const releaseUrl = (filename: string) =>
-  `https://github.com/nukeop/nuclear/releases/download/${releaseTag}/${filename}`;
+  `https://github.com/danidetenerife/aurora/releases/download/${releaseTag}/${filename}`;

@@ -1,11 +1,7 @@
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { FC } from 'react';
 
-import {
-  TopBar,
-  TopBarLogo,
-  TopBarNavigation,
-} from '@nuclearplayer/ui';
+import { TopBar, TopBarLogo, TopBarNavigation } from '@nuclearplayer/ui';
 
 import { useCanGoForward } from '../hooks/useCanGoForward';
 import { SearchBox } from './SearchBox';
@@ -17,11 +13,11 @@ export const ConnectedTopBar: FC = () => {
   const canGoForward = useCanGoForward();
 
   return (
-    <TopBar draggable={false}>
+    <TopBar draggable={false} className="aurora-topbar">
       <div className="flex flex-row items-center gap-4">
         <div className="flex items-center gap-2">
           <TopBarLogo />
-          <span className="font-heading text-sm font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent hidden sm:inline select-none">
+          <span className="font-heading hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-sm font-extrabold tracking-wider text-transparent select-none sm:inline">
             AURORA
           </span>
         </div>

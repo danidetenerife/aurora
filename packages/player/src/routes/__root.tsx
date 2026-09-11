@@ -1,4 +1,4 @@
-import { createRootRoute } from '@tanstack/react-router';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import {
   CableIcon,
   DiscIcon,
@@ -14,7 +14,6 @@ import { useTranslation } from '@nuclearplayer/i18n';
 import {
   PlayerShell,
   PlayerWorkspace,
-  RouteTransition,
   SidebarNavigation,
   SidebarNavigationItem,
   Toaster,
@@ -35,11 +34,16 @@ import { SoundProvider } from '../components/SoundProvider';
 import { StreamResolver } from '../components/StreamResolver';
 import { TvShell } from '../components/TvShell';
 import { isGoogleTVEnvironment } from '../services/tvDetection';
-import { isTauriEnvironment } from '../services/universalStore';
+import {
+  isCapacitorEnvironment,
+  isTauriEnvironment,
+} from '../services/universalStore';
 import { GlobalShortcuts } from '../shortcuts';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { useStartupStore } from '../stores/startupStore';
+
+import '../styles/workspace.css';
 
 const DesktopMobileRootComponent = () => {
   const { t } = useTranslation('navigation');
@@ -56,9 +60,13 @@ const DesktopMobileRootComponent = () => {
   const openSettings = useSettingsModalStore((state) => state.open);
   const isStartingUp = useStartupStore((state) => state.isStartingUp);
   return (
-    <PlayerShell onContextMenu={(e) => e.preventDefault()}>
+    <PlayerShell
+      className="aurora-workspace"
+      data-native-mobile={isCapacitorEnvironment() || undefined}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <GlobalShortcuts />
-      <div className="shrink-0 pt-7 sm:pt-0">
+      <div className="aurora-header shrink-0 pt-7 sm:pt-0">
         {isTauri && <ConnectedTitleBar />}
         {isTauri && <FlatpakWarningBanner />}
         <ConnectedTopBar />
@@ -119,8 +127,8 @@ const DesktopMobileRootComponent = () => {
             </SidebarNavigation>
           </PlayerWorkspace.LeftSidebar>
 
-          <PlayerWorkspace.Main className="w-full min-w-0">
-            <RouteTransition />
+          <PlayerWorkspace.Main className="aurora-content w-full min-w-0">
+            <Outlet />
           </PlayerWorkspace.Main>
 
           <PlayerWorkspace.RightSidebar

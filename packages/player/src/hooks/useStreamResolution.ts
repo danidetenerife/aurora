@@ -34,7 +34,10 @@ export const useStreamResolution = (): void => {
       }
       resolutionKeyRef.current = resolutionKey;
 
-      if (currentItem.status === 'loading' || currentItem.status === 'success') {
+      if (
+        currentItem.status === 'loading' ||
+        (currentItem.status === 'success' && isSameItem)
+      ) {
         return;
       }
 

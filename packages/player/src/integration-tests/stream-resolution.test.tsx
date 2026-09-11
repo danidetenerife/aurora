@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 
 import { providersHost } from '../services/providersHost';
 import { useQueueStore } from '../stores/queueStore';
+import { useLayoutStore } from '../stores/layoutStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useSoundStore } from '../stores/soundStore';
 import { useStartupStore } from '../stores/startupStore';
@@ -22,6 +23,9 @@ vi.mock('@tauri-apps/api/core', () => ({
 
 describe('Stream Resolution Integration', () => {
   beforeEach(() => {
+    useLayoutStore.setState({
+      rightSidebar: { width: 300, isCollapsed: false },
+    });
     useQueueStore.setState({
       items: [],
       currentIndex: 0,
@@ -439,6 +443,15 @@ describe('Stream Resolution Integration', () => {
         url: 'http://127.0.0.1:9100/stream/aHR0cHM6Ly9leGFtcGxlLmNvbS95dC1HaWFudCBTdGVwcy5tcDM',
         protocol: 'https',
       });
+
+      await StreamResolutionWrapper.selectQueueItem('Countdown');
+      await waitFor(() => {
+        expect(StreamResolutionWrapper.getSoundState().src).toEqual({
+          url: 'http://127.0.0.1:9100/stream/aHR0cHM6Ly9leGFtcGxlLmNvbS95dC1Db3VudGRvd24ubXAz',
+          protocol: 'https',
+        });
+        expect(StreamResolutionWrapper.getSoundState().status).toBe('playing');
+      });
     });
   });
 
@@ -472,7 +485,7 @@ describe('Stream Resolution Integration', () => {
       const countdownItem = StreamResolutionWrapper.getQueueItems().find(
         (item) => item.track.title === 'Countdown',
       );
-      expect(countdownItem?.status).toBeUndefined();
+      expect(countdownItem?.status).toBe('idle');
       expect(countdownItem?.error).toBeUndefined();
       expect(countdownItem?.track.streamCandidates).toBeUndefined();
     });

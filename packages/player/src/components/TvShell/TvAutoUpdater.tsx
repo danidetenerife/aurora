@@ -3,6 +3,7 @@ import semver from 'semver';
 
 import { ApkUpdaterPlugin } from '../../services/apkUpdater';
 import { Logger } from '../../services/logger';
+import { useSoundStore } from '../../stores/soundStore';
 
 const CURRENT_FALLBACK_VERSION = '1.48.4';
 const GITHUB_REPO = 'danidetenerife/aurora';
@@ -33,8 +34,18 @@ export const TvAutoUpdater: FC = () => {
     }
 
     let isCancelled = false;
+    let checkInProgress = false;
+    let attemptedVersion: string | null = null;
 
     const checkForTvUpdate = async () => {
+      if (
+        isCancelled ||
+        checkInProgress ||
+        useSoundStore.getState().status === 'playing'
+      ) {
+        return;
+      }
+      checkInProgress = true;
       try {
         const response = await fetch(GITHUB_LATEST_RELEASE_URL, {
           headers: {
@@ -64,11 +75,20 @@ export const TvAutoUpdater: FC = () => {
             ? semver.gt(latestTag, currentClean)
             : latestTag !== currentClean;
 
-        const apkAsset = release.assets?.find((asset) =>
-          asset.name.toLowerCase().endsWith('.apk'),
+        const apkAsset = release.assets?.find(
+          (asset) =>
+            asset.name.toLowerCase().endsWith('.apk') &&
+            /(?:google[-_ ]?tv|android[-_ ]?tv|[-_.]tv[-_.])/i.test(asset.name),
         );
 
-        if (isNewer && apkAsset && !isCancelled) {
+        if (
+          isNewer &&
+          apkAsset &&
+          !isCancelled &&
+          attemptedVersion !== latestTag &&
+          useSoundStore.getState().status !== 'playing'
+        ) {
+          attemptedVersion = latestTag;
           Logger.updates.info(
             `TvAutoUpdater: New version ${release.tag_name} detected. Starting automatic background update...`,
           );
@@ -101,6 +121,11 @@ export const TvAutoUpdater: FC = () => {
         }
       } catch (err) {
         Logger.updates.warn(`TvAutoUpdater check failed: ${err}`);
+      } finally {
+        checkInProgress = false;
+        if (!isCancelled) {
+          setIsDownloading(false);
+        }
       }
     };
 

@@ -10,6 +10,8 @@ export const UpdateBadge: FC = () => {
   const { t } = useTranslation('updater');
   const isUpdateAvailable = useUpdaterStore((state) => state.isUpdateAvailable);
   const isDownloading = useUpdaterStore((state) => state.isDownloading);
+  const isInstalling = useUpdaterStore((state) => state.isInstalling);
+  const error = useUpdaterStore((state) => state.error);
   const isReadyToRestart = useUpdaterStore((state) => state.isReadyToRestart);
   const downloadProgress = useUpdaterStore((state) => state.downloadProgress);
   const downloadUpdate = useUpdaterStore((state) => state.downloadUpdate);
@@ -30,7 +32,7 @@ export const UpdateBadge: FC = () => {
     );
   }
 
-  if (isDownloading) {
+  if (isDownloading || isInstalling) {
     return (
       <Badge
         data-testid="update-badge"
@@ -38,7 +40,9 @@ export const UpdateBadge: FC = () => {
         color="green"
         className="ml-2"
       >
-        {t('downloading', { progress: downloadProgress })}
+        {isInstalling
+          ? t('themes:store.installing')
+          : t('downloading', { progress: downloadProgress })}
       </Badge>
     );
   }
@@ -46,7 +50,7 @@ export const UpdateBadge: FC = () => {
   if (isUpdateAvailable) {
     const autoInstall = getSetting('core.updates.autoInstall');
 
-    if (autoInstall) {
+    if (autoInstall && !error) {
       return (
         <Badge
           data-testid="update-badge"
