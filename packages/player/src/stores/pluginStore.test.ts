@@ -1,7 +1,8 @@
+import path from 'node:path';
 import { mockIPC } from '@tauri-apps/api/mocks';
 
 import { getRegistryEntry } from '../services/plugins/pluginRegistry';
-import { NuclearPluginBuilder } from '../test/builders/NuclearPluginBuilder';
+import { AuroraPluginBuilder } from '../test/builders/AuroraPluginBuilder';
 import { PluginStateBuilder } from '../test/builders/PluginStateBuilder';
 import { PluginFsMock } from '../test/mocks/plugin-fs';
 import { createPluginFolder } from '../test/utils/testPluginFolder';
@@ -57,7 +58,7 @@ describe('usePluginStore', () => {
             .withId('from-store')
             .withInstallationMethod('store')
             .withOriginalPath(undefined)
-            .withInstance(new NuclearPluginBuilder().build())
+            .withInstance(new AuroraPluginBuilder().build())
             .build(),
         },
       });
@@ -78,7 +79,7 @@ describe('usePluginStore', () => {
 
       const removeMock = PluginFsMock.setRemoveFor(
         '/plugins/removable/1.0.0',
-        '/home/user/.local/share/com.nuclearplayer',
+        '/home/user/.local/share/org.aurora.player',
         true,
       );
 
@@ -89,9 +90,9 @@ describe('usePluginStore', () => {
       const newCalls = removeMock.mock.calls.slice(callsBefore);
       expect(newCalls).toEqual([
         [
-          'plugins/removable/1.0.0',
+          path.posix.join('plugins', 'removable', '1.0.0'),
           {
-            baseDir: '/home/user/.local/share/com.nuclearplayer',
+            baseDir: '/home/user/.local/share/org.aurora.player',
             recursive: true,
           },
         ],
@@ -111,7 +112,7 @@ describe('usePluginStore', () => {
 
       const removeMock = PluginFsMock.setRemoveFor(
         '/plugins/orphan/1.0.0',
-        '/home/user/.local/share/com.nuclearplayer',
+        '/home/user/.local/share/org.aurora.player',
         true,
       );
       const callsBefore = removeMock.mock.calls.length;
@@ -121,9 +122,9 @@ describe('usePluginStore', () => {
       const newCalls = removeMock.mock.calls.slice(callsBefore);
       expect(newCalls).toEqual([
         [
-          'plugins/orphan/1.0.0',
+          path.posix.join('plugins', 'orphan', '1.0.0'),
           {
-            baseDir: '/home/user/.local/share/com.nuclearplayer',
+            baseDir: '/home/user/.local/share/org.aurora.player',
             recursive: true,
           },
         ],
@@ -220,7 +221,7 @@ describe('usePluginStore', () => {
           [id]: new PluginStateBuilder()
             .withId(id)
             .withInstance(
-              new NuclearPluginBuilder().withOnEnable(onEnable).build(),
+              new AuroraPluginBuilder().withOnEnable(onEnable).build(),
             )
             .build(),
         },
@@ -239,7 +240,7 @@ describe('usePluginStore', () => {
             .withId(id)
             .withEnabled(true)
             .withInstance(
-              new NuclearPluginBuilder().withOnDisable(onDisable).build(),
+              new AuroraPluginBuilder().withOnDisable(onDisable).build(),
             )
             .build(),
         },
@@ -293,7 +294,7 @@ describe('usePluginStore', () => {
             .withId(id)
             .withEnabled(true)
             .withInstance(
-              new NuclearPluginBuilder()
+              new AuroraPluginBuilder()
                 .withOnDisable(onDisable)
                 .withOnUnload(onUnload)
                 .build(),
@@ -313,7 +314,7 @@ describe('usePluginStore', () => {
         plugins: {
           [id]: new PluginStateBuilder()
             .withId(id)
-            .withInstance(new NuclearPluginBuilder().build())
+            .withInstance(new AuroraPluginBuilder().build())
             .build(),
         },
       });
@@ -336,7 +337,7 @@ describe('usePluginStore', () => {
             .withId(id)
             .withEnabled(true)
             .withInstance(
-              new NuclearPluginBuilder().withOnDisable(onDisable).build(),
+              new AuroraPluginBuilder().withOnDisable(onDisable).build(),
             )
             .build(),
         },

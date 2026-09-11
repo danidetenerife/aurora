@@ -4,7 +4,7 @@ description: How the plugin SDK connects to the player through hosts.
 
 # Host pattern
 
-Nuclear exposes player functionality to plugins through the **host pattern**. Every feature area the plugin system supports follows the same three-layer structure:
+Aurora exposes player functionality to plugins through the **host pattern**. Every feature area the plugin system supports follows the same three-layer structure:
 
 1. Host type - the contract (SDK, no implementation)
 2. API class - what plugins actually call (SDK, wraps the host)
@@ -54,7 +54,7 @@ export class QueueAPI {
 }
 ```
 
-All API classes are assembled into `NuclearAPI` in `packages/plugin-sdk/src/api/index.ts`, which is what plugins receive as their `api` object.
+All API classes are assembled into `AuroraAPI` in `packages/plugin-sdk/src/api/index.ts`, which is what plugins receive as their `api` object.
 
 ### 3. Host implementation (`packages/player/src/services/`)
 
@@ -62,7 +62,7 @@ Lives in the player. Implements the host interface and bridges it to whatever ba
 
 ```typescript
 // services/queueHost.ts
-import type { QueueHost } from '@nuclearplayer/plugin-sdk';
+import type { QueueHost } from '@aurora/plugin-sdk';
 import { useQueueStore } from '../stores/queueStore';
 
 export const createQueueHost = (): QueueHost => ({
@@ -74,7 +74,7 @@ export const createQueueHost = (): QueueHost => ({
 export const queueHost = createQueueHost();
 ```
 
-The singleton is passed into `NuclearPluginAPI` by `createPluginAPI` (`packages/player/src/services/plugins/createPluginAPI.ts`) when a plugin loads.
+The singleton is passed into `AuroraPluginAPI` by `createPluginAPI` (`packages/player/src/services/plugins/createPluginAPI.ts`) when a plugin loads.
 
 ## What hosts wrap
 
@@ -103,6 +103,6 @@ When a plugin calls `api.Metadata.search({ query: 'Radiohead' })`:
 
 1. Define the host interface in `packages/plugin-sdk/src/types/yourDomain.ts`
 2. Create the API class in `packages/plugin-sdk/src/api/yourDomain.ts` - wraps the host with `#withHost`
-3. Add the host option and API field to `NuclearAPI` in `packages/plugin-sdk/src/api/index.ts`
+3. Add the host option and API field to `AuroraAPI` in `packages/plugin-sdk/src/api/index.ts`
 4. Implement the host in `packages/player/src/services/yourDomainHost.ts`
-5. Pass the singleton into `NuclearPluginAPI` in `createPluginAPI.ts`
+5. Pass the singleton into `AuroraPluginAPI` in `createPluginAPI.ts`

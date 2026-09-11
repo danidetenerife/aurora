@@ -2,7 +2,7 @@ import type {
   EventsHost,
   PluginEventListener,
   PluginEventMap,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 type Listener = (payload: never) => Promise<void>;
 

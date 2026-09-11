@@ -4,7 +4,7 @@ description: How the MCP server works internally and how to extend it.
 
 # MCP architecture
 
-Nuclear's [MCP](https://modelcontextprotocol.io/) server lets your AI control the music player and do anything that plugins can do!
+Aurora's [MCP](https://modelcontextprotocol.io/) server lets your AI control the music player and do anything that plugins can do!
 
 The server runs on `localhost:8800/mcp` using the Streamable HTTP transport.
 
@@ -25,7 +25,7 @@ Rust defines four tools in `tools.rs`. Three are discovery tools that return met
 
 ## The IPC bridge
 
-Nuclear has a generic Rust-to-TypeScript bridge that the MCP server uses as an adapter. The bridge lives in `src-tauri/src/bridge/` (Rust) and `src/services/bridge/` (TypeScript).
+Aurora has a generic Rust-to-TypeScript bridge that the MCP server uses as an adapter. The bridge lives in `src-tauri/src/bridge/` (Rust) and `src/services/bridge/` (TypeScript).
 
 ### How `call` works
 
@@ -33,7 +33,7 @@ Nuclear has a generic Rust-to-TypeScript bridge that the MCP server uses as an a
 2. The MCP server passes the method name and params to `Bridge::call()`.
 3. The bridge generates a UUID trace ID, stores a `oneshot::Sender` in a pending map, and emits a `bridge:request` event to the webview with `{ traceId, method, params }`.
 4. TypeScript receives the event, validates the payload with Zod, and passes it to the bridge dispatcher.
-5. The dispatcher parses `"Queue.addToQueue"` into domain + method, looks up the `MethodMeta` (from `apiMeta` in the plugin SDK) to get the parameter order, converts named params to positional args, and calls the method on `NuclearPluginAPI`.
+5. The dispatcher parses `"Queue.addToQueue"` into domain + method, looks up the `MethodMeta` (from `apiMeta` in the plugin SDK) to get the parameter order, converts named params to positional args, and calls the method on `AuroraPluginAPI`.
 6. TypeScript calls `invoke('bridge_respond', { response: { traceId, status: 'success', data } })` (or `{ traceId, status: 'error', error }` on failure).
 7. The bridge looks up the trace ID in the pending map and sends the response through the oneshot channel back to the original `call`.
 

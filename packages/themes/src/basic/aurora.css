@@ -1,9 +1,11 @@
+:root[data-theme-id='aurora:aurora'],
 :root[data-theme-id='nuclear:aurora'] {
   --background: oklch(0.98 0.01 340);
   --primary: oklch(0.74 0.15 305);
   --foreground-secondary: oklch(0.42 0.1 305);
 }
 
+:root[data-theme-id='aurora:aurora'][data-theme='dark'],
 :root[data-theme-id='nuclear:aurora'][data-theme='dark'] {
   --background: oklch(0.22 0.03 305);
   --background-secondary: oklch(0.27 0.035 305);

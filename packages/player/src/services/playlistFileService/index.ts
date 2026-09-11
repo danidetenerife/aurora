@@ -1,4 +1,4 @@
-import type { Playlist, PlaylistIndexEntry } from '@nuclearplayer/model';
+import type { Playlist, PlaylistIndexEntry } from '@aurora/model';
 
 import { buildThumbnails } from './buildThumbnails';
 import { PlaylistFileStore } from './PlaylistFileStore';

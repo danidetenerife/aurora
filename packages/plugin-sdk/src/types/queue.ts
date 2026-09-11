@@ -1,4 +1,4 @@
-import type { Queue, QueueItem, RepeatMode, Track } from '@nuclearplayer/model';
+import type { Queue, QueueItem, RepeatMode, Track } from '@aurora/model';
 
 export type { Queue, QueueItem, RepeatMode };
 

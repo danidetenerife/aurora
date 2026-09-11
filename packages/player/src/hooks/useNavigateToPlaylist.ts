@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback } from 'react';
 
-import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
+import type { PlaylistProvider } from '@aurora/plugin-sdk';
 
 import { providersHost } from '../services/providersHost';
 

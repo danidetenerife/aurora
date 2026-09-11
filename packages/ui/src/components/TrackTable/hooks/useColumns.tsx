@@ -2,7 +2,7 @@ import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HashIcon, Heart, ImageIcon, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { pickArtwork, Track } from '@nuclearplayer/model';
+import { pickArtwork, Track } from '@aurora/model';
 
 import { formatTimeMillis } from '../../../utils/time';
 import { FavoriteCell } from '../Cells/FavoriteCell';

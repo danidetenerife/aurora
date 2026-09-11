@@ -1,12 +1,12 @@
 ---
-description: Register providers that supply metadata, audio streams, dashboard content, and more to Nuclear.
+description: Register providers that supply metadata, audio streams, dashboard content, and more to Aurora.
 ---
 
 # Providers
 
 ## Providers API for Plugins
 
-Providers are modules that fulfill specific data requests from Nuclear. When the player needs to search for tracks, stream audio, or populate the dashboard, it queries the providers for that kind of request. Different provider kinds serve different purposes, and plugins can register as many providers as they need.
+Providers are modules that fulfill specific data requests from Aurora. When the player needs to search for tracks, stream audio, or populate the dashboard, it queries the providers for that kind of request. Different provider kinds serve different purposes, and plugins can register as many providers as they need.
 
 All registration and lookup goes through `api.Providers`.
 
@@ -32,12 +32,12 @@ Register providers in your plugin's `onEnable` hook and unregister them in `onDi
 {% tabs %}
 {% tab title="Registering a provider" %}
 ```typescript
-import type { NuclearPluginAPI, MetadataProvider } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI, MetadataProvider } from '@aurora/plugin-sdk';
 
 let providerId: string;
 
 export default {
-  onEnable(api: NuclearPluginAPI) {
+  onEnable(api: AuroraPluginAPI) {
     const provider: MetadataProvider = {
       id: 'my-metadata-source',
       kind: 'metadata',
@@ -51,7 +51,7 @@ export default {
     providerId = api.Providers.register(provider);
   },
 
-  onDisable(api: NuclearPluginAPI) {
+  onDisable(api: AuroraPluginAPI) {
     api.Providers.unregister(providerId);
   },
 };
@@ -60,10 +60,10 @@ export default {
 
 {% tab title="Querying providers" %}
 ```typescript
-import type { NuclearPluginAPI, MetadataProvider } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI, MetadataProvider } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // List all metadata providers
     const metadataProviders = api.Providers.list('metadata');
     console.log(`Found ${metadataProviders.length} metadata providers`);
@@ -92,7 +92,7 @@ export default {
 
 ## Provider lifecycle
 
-Always register in `onEnable` and unregister in `onDisable`. If you skip unregistration, the provider stays in Nuclear's registry after your plugin is disabled, and the player may still pass queries to that phantom provider.
+Always register in `onEnable` and unregister in `onDisable`. If you skip unregistration, the provider stays in Aurora's registry after your plugin is disabled, and the player may still pass queries to that phantom provider.
 
 | Hook | Action |
 |------|--------|

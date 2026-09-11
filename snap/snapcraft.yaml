@@ -1,9 +1,9 @@
-name: nuclear
+name: aurora
 base: core22
 version: '${SNAP_VERSION}'
 summary: Free music streaming app
 description: |
-  Nuclear is a free, open-source music player without ads or tracking.
+  Aurora is a free, open-source music player without ads or tracking.
   Search for any song or artist, build playlists, and start listening.
 
 grade: stable
@@ -14,9 +14,9 @@ layout:
     bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.1
 
 apps:
-  nuclear:
-    command: usr/bin/nuclear-music-player
-    desktop: usr/share/applications/Nuclear.desktop
+  aurora:
+    command: usr/bin/aurora-music-player
+    desktop: usr/share/applications/Aurora.desktop
     extensions: [gnome]
     environment:
       ALWAYS_USE_PULSEAUDIO: "1"
@@ -71,5 +71,5 @@ parts:
       dpkg -x src-tauri/target/release/bundle/deb/*.deb $SNAPCRAFT_PART_INSTALL/
 
       sed -i \
-        "s|Icon=nuclear-music-player|Icon=/usr/share/icons/hicolor/512x512/apps/nuclear-music-player.png|g" \
-        $SNAPCRAFT_PART_INSTALL/usr/share/applications/Nuclear.desktop
+        "s|Icon=aurora-music-player|Icon=/usr/share/icons/hicolor/512x512/apps/aurora-music-player.png|g" \
+        $SNAPCRAFT_PART_INSTALL/usr/share/applications/Aurora.desktop

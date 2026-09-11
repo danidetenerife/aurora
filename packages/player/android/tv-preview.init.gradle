@@ -1,7 +1,7 @@
 allprojects {
     afterEvaluate { project ->
         if (project.name == 'app') {
-            project.android.defaultConfig.applicationId = 'com.nuclearplayer.app.tvpreview'
+            project.android.defaultConfig.applicationId = 'com.auroraplayer.app.tvpreview'
         }
     }
 }

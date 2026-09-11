@@ -1,7 +1,13 @@
-import { AlertTriangle, ChevronDown, ChevronUp, Copy, RefreshCw } from 'lucide-react';
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  RefreshCw,
+} from 'lucide-react';
 import { FC, useState } from 'react';
 
-import { Button } from '@nuclearplayer/ui';
+import { Button } from '@aurora/ui';
 
 import { useProviders } from '../../../hooks/useProviders';
 import { useProvidersStore } from '../../../stores/providersStore';
@@ -32,10 +38,18 @@ export const ArtistErrorBanner: FC<ArtistErrorBannerProps> = ({
   const activeMetadata = useProvidersStore((state) => state.active.metadata);
 
   const errorsList: { section: string; error: unknown }[] = [];
-  if (bioError) errorsList.push({ section: 'Biografía', error: bioError });
-  if (tracksError) errorsList.push({ section: 'Canciones populares', error: tracksError });
-  if (albumsError) errorsList.push({ section: 'Álbumes', error: albumsError });
-  if (relatedError) errorsList.push({ section: 'Artistas similares', error: relatedError });
+  if (bioError) {
+    errorsList.push({ section: 'Biografía', error: bioError });
+  }
+  if (tracksError) {
+    errorsList.push({ section: 'Canciones populares', error: tracksError });
+  }
+  if (albumsError) {
+    errorsList.push({ section: 'Álbumes', error: albumsError });
+  }
+  if (relatedError) {
+    errorsList.push({ section: 'Artistas similares', error: relatedError });
+  }
 
   if (errorsList.length === 0) {
     return null;
@@ -47,7 +61,10 @@ export const ArtistErrorBanner: FC<ArtistErrorBannerProps> = ({
       artistId,
       providerId,
       activeMetadata,
-      availableProviders: metadataProviders.map((p) => ({ id: p.id, name: p.name })),
+      availableProviders: metadataProviders.map((p) => ({
+        id: p.id,
+        name: p.name,
+      })),
       errors: errorsList.map((e) => ({
         section: e.section,
         message: e.error instanceof Error ? e.error.message : String(e.error),
@@ -71,12 +88,12 @@ export const ArtistErrorBanner: FC<ArtistErrorBannerProps> = ({
   return (
     <div
       data-testid="artist-error-banner"
-      className="m-4 rounded-md border border-accent-red/40 bg-accent-red/10 p-4 text-foreground"
+      className="border-accent-red/40 bg-accent-red/10 text-foreground m-4 rounded-md border p-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="size-5 text-accent-red shrink-0" />
-          <span className="font-semibold text-sm">
+          <AlertTriangle className="text-accent-red size-5 shrink-0" />
+          <span className="text-sm font-semibold">
             {errorsList.length === 1
               ? `Hubo un problema al cargar ${errorsList[0].section.toLowerCase()} para "${artistId}".`
               : `Hubo problemas al cargar información para "${artistId}".`}
@@ -114,22 +131,22 @@ export const ArtistErrorBanner: FC<ArtistErrorBannerProps> = ({
       </div>
 
       {isExpanded && (
-        <div className="mt-3 border-t border-accent-red/20 pt-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono text-foreground-secondary">
+        <div className="border-accent-red/20 mt-3 border-t pt-3">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-foreground-secondary font-mono text-xs">
               Detalle del error (proveedor: {providerId}):
             </span>
             <Button
               size="sm"
               variant="ghost"
               onClick={handleCopy}
-              className="h-7 text-xs flex items-center gap-1"
+              className="flex h-7 items-center gap-1 text-xs"
             >
               <Copy className="size-3" />
               {copied ? '¡Copiado!' : 'Copiar diagnóstico'}
             </Button>
           </div>
-          <pre className="max-h-60 overflow-auto rounded bg-background-secondary p-3 text-xs font-mono text-foreground-secondary whitespace-pre-wrap">
+          <pre className="bg-background-secondary text-foreground-secondary max-h-60 overflow-auto rounded p-3 font-mono text-xs whitespace-pre-wrap">
             {diagnosticText}
           </pre>
         </div>

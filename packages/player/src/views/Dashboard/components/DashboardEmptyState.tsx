@@ -1,8 +1,8 @@
 import { LayoutDashboard } from 'lucide-react';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Button, EmptyState } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Button, EmptyState } from '@aurora/ui';
 
 import { useSettingsModalStore } from '../../../stores/settingsModalStore';
 

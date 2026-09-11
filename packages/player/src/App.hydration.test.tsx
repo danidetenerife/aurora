@@ -19,13 +19,13 @@ describe('App plugin hydration', () => {
 
   it('(Hydration) loads a disabled plugin from registry and shows it disabled', async () => {
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/plain/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/plain/1.0.0',
       { id: 'plain', version: '1.0.0' },
     );
 
     await seedRegistryEntry({ id: 'plain', version: '1.0.0', enabled: false });
 
-    await hydratePluginsFromRegistry();
+    await hydratePluginsFromRegistry({ loadBundled: false });
     await PluginsWrapper.mount();
 
     const plugins = PluginsWrapper.getPlugins();
@@ -35,34 +35,31 @@ describe('App plugin hydration', () => {
 
   it('(Hydration) loads an enabled plugin from registry and enables it', async () => {
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/enabled/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/enabled/1.0.0',
       { id: 'enabled', version: '1.0.0' },
     );
     await seedRegistryEntry({ id: 'enabled', enabled: true });
 
-    await hydratePluginsFromRegistry();
+    await hydratePluginsFromRegistry({ loadBundled: false });
     await PluginsWrapper.mount();
 
     const plugins = PluginsWrapper.getPlugins();
-    expect(plugins.map((p) => ({ name: p.name, enabled: p.enabled })))
-      .toMatchInlineSnapshot(`
-      [
-        {
-          "enabled": true,
-          "name": "enabled",
-        },
-      ]
-    `);
+    expect(plugins.map((p) => ({ name: p.name, enabled: p.enabled }))).toEqual([
+      {
+        enabled: true,
+        name: 'enabled',
+      },
+    ]);
     expect(plugins[0].enabled).toBe(true);
   });
 
   it('(Hydration) loads multiple plugins in installedAt ascending order', async () => {
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/second/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/second/1.0.0',
       { id: 'second', version: '1.0.0' },
     );
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/first/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/first/1.0.0',
       { id: 'first', version: '1.0.0' },
     );
 
@@ -77,30 +74,27 @@ describe('App plugin hydration', () => {
       lastUpdatedAt: '2025-01-01T00:00:00.000Z',
     });
 
-    await hydratePluginsFromRegistry();
+    await hydratePluginsFromRegistry({ loadBundled: false });
     await PluginsWrapper.mount();
 
     const plugins = PluginsWrapper.getPlugins();
-    expect(plugins.map((p) => ({ name: p.name, enabled: p.enabled })))
-      .toMatchInlineSnapshot(`
-      [
-        {
-          "enabled": false,
-          "name": "first",
-        },
-        {
-          "enabled": false,
-          "name": "second",
-        },
-      ]
-    `);
+    expect(plugins.map((p) => ({ name: p.name, enabled: p.enabled }))).toEqual([
+      {
+        enabled: false,
+        name: 'first',
+      },
+      {
+        enabled: false,
+        name: 'second',
+      },
+    ]);
     // Should be in installedAt ascending order: 'first' then 'second'
     expect(plugins.map((p) => p.name)).toEqual(['first', 'second']);
   });
 
   it('(Hydration) ignores plugins outside the managed directory', async () => {
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/managed/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/managed/1.0.0',
       { id: 'managed', version: '1.0.0' },
     );
     await seedRegistryEntry({
@@ -110,10 +104,10 @@ describe('App plugin hydration', () => {
 
     await seedRegistryEntry({
       id: 'bundled',
-      path: '/opt/nuclear/plugins/bundled/1.0.0',
+      path: '/opt/aurora/plugins/bundled/1.0.0',
     });
 
-    await hydratePluginsFromRegistry();
+    await hydratePluginsFromRegistry({ loadBundled: false });
     await PluginsWrapper.mount();
 
     const plugins = PluginsWrapper.getPlugins();
@@ -122,21 +116,19 @@ describe('App plugin hydration', () => {
         name: plugin.name,
         enabled: plugin.enabled,
       })),
-    ).toMatchInlineSnapshot(`
-      [
-        {
-          "enabled": false,
-          "name": "managed",
-        },
-      ]
-    `);
+    ).toEqual([
+      {
+        enabled: false,
+        name: 'managed',
+      },
+    ]);
   });
 
   it('(Hydration) logs and persists warnings for failed plugin load but keeps the registry entry', async () => {
     // Seed a broken plugin (no files created under managed dir)
     await seedRegistryEntry({ id: 'broken', version: '1.0.0', enabled: false });
 
-    await hydratePluginsFromRegistry();
+    await hydratePluginsFromRegistry({ loadBundled: false });
 
     // Should not appear in UI
     await PluginsWrapper.mount();
@@ -153,11 +145,11 @@ describe('App plugin hydration', () => {
 
   it('(Hydration) exposes status flags and timings (total duration and per-plugin durations)', async () => {
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/first/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/first/1.0.0',
       { id: 'first', version: '1.0.0' },
     );
     createPluginFolder(
-      '/home/user/.local/share/com.nuclearplayer/plugins/second/1.0.0',
+      '/home/user/.local/share/org.aurora.player/plugins/second/1.0.0',
       { id: 'second', version: '1.0.0' },
     );
     await seedRegistryEntry({ id: 'first', version: '1.0.0' });
@@ -175,7 +167,7 @@ describe('App plugin hydration', () => {
       pluginDurations: {},
     });
 
-    await hydratePluginsFromRegistry();
+    await hydratePluginsFromRegistry({ loadBundled: false });
 
     const startupStoreState = useStartupStore.getState();
     expect(startupStoreState.isStartingUp).toBe(false);

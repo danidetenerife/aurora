@@ -25,7 +25,7 @@ export default defineConfig(({ command }) => {
       build: {
         lib: {
           entry: 'src/index.ts',
-          name: 'NuclearThemes',
+          name: 'AuroraThemes',
           formats: ['es'],
           fileName: 'index',
         },

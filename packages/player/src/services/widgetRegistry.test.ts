@@ -1,4 +1,4 @@
-import type { CustomWidgetComponent } from '@nuclearplayer/plugin-sdk';
+import type { CustomWidgetComponent } from '@aurora/plugin-sdk';
 
 import { createWidgetRegistry } from './widgetRegistry';
 

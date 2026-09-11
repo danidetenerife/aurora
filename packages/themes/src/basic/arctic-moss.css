@@ -1,9 +1,11 @@
+:root[data-theme-id='aurora:arctic-moss'],
 :root[data-theme-id='nuclear:arctic-moss'] {
-  --background: oklch(0.97 0.008 200);
-  --primary: oklch(0.7 0.12 175);
-  --foreground-secondary: oklch(0.42 0.1 175);
+  --background: oklch(0.985 0.015 145);
+  --primary: oklch(0.68 0.16 145);
+  --foreground-secondary: oklch(0.42 0.1 145);
 }
 
+:root[data-theme-id='aurora:arctic-moss'][data-theme='dark'],
 :root[data-theme-id='nuclear:arctic-moss'][data-theme='dark'] {
   --background: oklch(0.2 0.02 175);
   --background-secondary: oklch(0.25 0.025 175);

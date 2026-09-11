@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Toggle } from '@nuclearplayer/ui';
+import { Toggle } from '@aurora/ui';
 
 type Props = {
   label: string;

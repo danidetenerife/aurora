@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { cn, Popover } from '@nuclearplayer/ui';
+import { cn, Popover } from '@aurora/ui';
 
 const highlightClasses = 'bg-background-secondary border-border';
 

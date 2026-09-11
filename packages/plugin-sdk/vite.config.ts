@@ -26,19 +26,19 @@ export default defineConfig(({ command, mode }) => {
       build: {
         lib: {
           entry: 'src/index.ts',
-          name: 'NuclearPluginSDK',
+          name: 'AuroraPluginSDK',
           formats: ['es'],
           fileName: 'index',
         },
         rollupOptions: {
           external: isNpmBuild
             ? ['react', 'react-dom']
-            : ['react', 'react-dom', '@nuclearplayer/ui'],
+            : ['react', 'react-dom', '@aurora/ui'],
           output: {
             globals: {
               react: 'React',
               'react-dom': 'ReactDOM',
-              '@nuclearplayer/ui': 'NuclearUI',
+              '@aurora/ui': 'AuroraUI',
             },
           },
         },

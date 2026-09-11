@@ -2,8 +2,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { ListMusicIcon } from 'lucide-react';
 import { FC, useMemo } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Card, CardGrid } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Card, CardGrid } from '@aurora/ui';
 
 import { usePlaylistStore } from '../../../stores/playlistStore';
 import { PlaylistArtwork } from '../../Playlists/components/PlaylistArtwork';

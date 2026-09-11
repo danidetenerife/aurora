@@ -2,12 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import type { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import type {
-  MetadataProvider,
-  SearchResults,
-} from '@nuclearplayer/plugin-sdk';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import type { MetadataProvider, SearchResults } from '@aurora/plugin-sdk';
 import {
   Button,
   Card,
@@ -16,7 +13,7 @@ import {
   Tabs,
   TabsItem,
   ViewShell,
-} from '@nuclearplayer/ui';
+} from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { useActiveProvider } from '../../hooks/useActiveProvider';

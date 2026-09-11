@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 import { useQueueStore } from '../stores/queueStore';
 

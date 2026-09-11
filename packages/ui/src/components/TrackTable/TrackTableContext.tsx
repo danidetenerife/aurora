@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 import { TrackTableActions, TrackTableLabels, TrackTableProps } from './types';
 

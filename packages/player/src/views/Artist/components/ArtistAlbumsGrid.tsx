@@ -1,10 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { MetadataProvider } from '@nuclearplayer/plugin-sdk';
-import { Card, CardGrid, Loader } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { MetadataProvider } from '@aurora/plugin-sdk';
+import { Card, CardGrid, Loader } from '@aurora/ui';
 
 import { useActiveProvider } from '../../../hooks/useActiveProvider';
 import { useArtistAlbums } from '../hooks/useArtistAlbums';

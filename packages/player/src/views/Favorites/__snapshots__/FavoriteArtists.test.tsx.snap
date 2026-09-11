@@ -2,81 +2,69 @@
 
 exports[`FavoriteArtists view > (Snapshot) renders empty state 1`] = `
 <main
-  class="bg-background-secondary overflow-auto"
+  class="bg-background-secondary flex-1 min-h-0 overflow-y-auto aurora-content w-full min-w-0"
   data-testid="player-workspace-main"
 >
   <div
-    class="relative h-full w-full overflow-hidden"
+    class="bg-background relative flex h-full min-h-0 w-full flex-1 flex-col items-start justify-start px-6 pt-6"
+    data-testid="favorite-artists-view"
   >
+    <h1
+      class="mb-6 flex w-full flex-0 flex-row text-center text-3xl font-bold"
+      data-testid="title"
+    >
+      Favorite artists
+    </h1>
     <div
-      animate="center"
-      class="absolute inset-0 h-full w-full"
-      exit="exit"
-      initial="enter"
-      transition="[object Object]"
+      class="relative h-full flex min-h-0 w-full flex-1 flex-col"
     >
       <div
-        class="bg-background relative flex h-full min-h-0 w-full flex-1 flex-col items-start justify-start px-6 pt-6"
-        data-testid="favorite-artists-view"
+        class="scrollbar-hide flex h-full w-full flex-col overflow-auto"
+        style="scrollbar-width: none;"
       >
-        <h1
-          class="mb-6 flex w-full flex-0 flex-row text-center text-3xl font-bold"
-          data-testid="title"
-        >
-          Favorite artists
-        </h1>
         <div
-          class="relative h-full flex min-h-0 w-full flex-1 flex-col"
+          class="flex flex-col items-center justify-center text-center gap-4 p-8 flex-1"
+          data-testid="empty-state"
         >
           <div
-            class="scrollbar-hide flex h-full w-full flex-col overflow-auto"
-            style="scrollbar-width: none;"
+            class="text-foreground"
           >
-            <div
-              class="flex flex-col items-center justify-center text-center gap-4 p-8 flex-1"
-              data-testid="empty-state"
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-user"
+              fill="none"
+              height="48"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="48"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <div
-                class="text-foreground"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="lucide lucide-user"
-                  fill="none"
-                  height="48"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  width="48"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
-                  />
-                  <circle
-                    cx="12"
-                    cy="7"
-                    r="4"
-                  />
-                </svg>
-              </div>
-              <div
-                class="flex flex-col gap-1"
-              >
-                <h3
-                  class="text-foreground text-lg font-bold"
-                >
-                  No favorite artists yet
-                </h3>
-                <p
-                  class="text-foreground text-sm opacity-60"
-                >
-                  Artists you mark as favorites will appear here
-                </p>
-              </div>
-            </div>
+              <path
+                d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+              />
+              <circle
+                cx="12"
+                cy="7"
+                r="4"
+              />
+            </svg>
+          </div>
+          <div
+            class="flex flex-col gap-1"
+          >
+            <h3
+              class="text-foreground text-lg font-bold"
+            >
+              No favorite artists yet
+            </h3>
+            <p
+              class="text-foreground text-sm opacity-60"
+            >
+              Artists you mark as favorites will appear here
+            </p>
           </div>
         </div>
       </div>
@@ -87,42 +75,78 @@ exports[`FavoriteArtists view > (Snapshot) renders empty state 1`] = `
 
 exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
 <main
-  class="bg-background-secondary overflow-auto"
+  class="bg-background-secondary flex-1 min-h-0 overflow-y-auto aurora-content w-full min-w-0"
   data-testid="player-workspace-main"
 >
   <div
-    class="relative h-full w-full overflow-hidden"
+    class="bg-background relative flex h-full min-h-0 w-full flex-1 flex-col items-start justify-start px-6 pt-6"
+    data-testid="favorite-artists-view"
   >
+    <h1
+      class="mb-6 flex w-full flex-0 flex-row text-center text-3xl font-bold"
+      data-testid="title"
+    >
+      Favorite artists
+    </h1>
     <div
-      animate="center"
-      class="absolute inset-0 h-full w-full"
-      exit="exit"
-      initial="enter"
-      transition="[object Object]"
+      class="relative h-full flex min-h-0 w-full flex-1 flex-col"
     >
       <div
-        class="bg-background relative flex h-full min-h-0 w-full flex-1 flex-col items-start justify-start px-6 pt-6"
-        data-testid="favorite-artists-view"
+        class="scrollbar-hide flex h-full w-full flex-col overflow-auto"
+        style="scrollbar-width: none;"
       >
-        <h1
-          class="mb-6 flex w-full flex-0 flex-row text-center text-3xl font-bold"
-          data-testid="title"
-        >
-          Favorite artists
-        </h1>
         <div
-          class="relative h-full flex min-h-0 w-full flex-1 flex-col"
+          class="flex w-full flex-col gap-4"
         >
           <div
-            class="scrollbar-hide flex h-full w-full flex-col overflow-auto"
-            style="scrollbar-width: none;"
+            class="flex justify-end"
+          >
+            <button
+              class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 border border-current bg-transparent h-9 px-3 text-accent-red hover:bg-accent-red/10 text-xs font-semibold"
+              data-headlessui-state=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-trash2 lucide-trash-2 mr-1 inline"
+                fill="none"
+                height="14"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="14"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 11v6"
+                />
+                <path
+                  d="M14 11v6"
+                />
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+                />
+                <path
+                  d="M3 6h18"
+                />
+                <path
+                  d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                />
+              </svg>
+              Borrar todos
+            </button>
+          </div>
+          <div
+            class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
+            role="grid"
           >
             <div
-              class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
-              role="grid"
+              class="group relative w-42"
             >
               <button
-                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex flex-col items-stretch gap-2 p-2 text-left w-full"
                 data-headlessui-state=""
                 data-testid="card"
                 type="button"
@@ -188,7 +212,47 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
                 </div>
               </button>
               <button
-                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                aria-label="Eliminar de favoritos"
+                class="bg-black/60 hover:bg-accent-red text-white absolute top-3.5 right-3.5 z-20 flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 focus-visible:opacity-100 shadow-md cursor-pointer"
+                title="Eliminar de favoritos"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-trash2 lucide-trash-2"
+                  fill="none"
+                  height="13"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="13"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10 11v6"
+                  />
+                  <path
+                    d="M14 11v6"
+                  />
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+                  />
+                  <path
+                    d="M3 6h18"
+                  />
+                  <path
+                    d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div
+              class="group relative w-42"
+            >
+              <button
+                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex flex-col items-stretch gap-2 p-2 text-left w-full"
                 data-headlessui-state=""
                 data-testid="card"
                 type="button"
@@ -252,6 +316,42 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
                     Artist artist-2
                   </div>
                 </div>
+              </button>
+              <button
+                aria-label="Eliminar de favoritos"
+                class="bg-black/60 hover:bg-accent-red text-white absolute top-3.5 right-3.5 z-20 flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 focus-visible:opacity-100 shadow-md cursor-pointer"
+                title="Eliminar de favoritos"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-trash2 lucide-trash-2"
+                  fill="none"
+                  height="13"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="13"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10 11v6"
+                  />
+                  <path
+                    d="M14 11v6"
+                  />
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+                  />
+                  <path
+                    d="M3 6h18"
+                  />
+                  <path
+                    d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  />
+                </svg>
               </button>
             </div>
           </div>

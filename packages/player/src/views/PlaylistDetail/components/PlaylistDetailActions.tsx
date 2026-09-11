@@ -3,9 +3,9 @@ import { CopyIcon, ShareIcon, Trash2Icon } from 'lucide-react';
 import { useState, type FC } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { Playlist, Track } from '@nuclearplayer/model';
-import { Button, Dialog, Popover } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { Playlist, Track } from '@aurora/model';
+import { Button, Dialog, Popover } from '@aurora/ui';
 
 import { usePlaylistExport } from '../../../hooks/usePlaylistExport';
 import { usePlaylistStore } from '../../../stores/playlistStore';

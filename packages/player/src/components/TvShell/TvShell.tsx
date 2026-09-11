@@ -7,9 +7,9 @@ import { Music, Search } from 'lucide-react';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { Toaster } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { Toaster } from '@aurora/ui';
 
 import { playbackManager } from '../../services/playback';
 import { initSpatialNavigation } from '../../services/spatialNavigation';

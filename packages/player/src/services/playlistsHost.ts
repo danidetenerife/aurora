@@ -1,8 +1,5 @@
-import type { Playlist, Track } from '@nuclearplayer/model';
-import type {
-  PlaylistsHost,
-  PlaylistsListener,
-} from '@nuclearplayer/plugin-sdk';
+import type { Playlist, Track } from '@aurora/model';
+import type { PlaylistsHost, PlaylistsListener } from '@aurora/plugin-sdk';
 
 import { usePlaylistStore } from '../stores/playlistStore';
 

@@ -60,7 +60,7 @@ export const PluginItem: FC<PluginItemProps> = ({
   isLoading = false,
   labels = {},
 }) => (
-  <div className="flex w-full flex-col sm:flex-row gap-2">
+  <div className="flex w-full flex-col gap-2 sm:flex-row">
     <Box
       data-testid="plugin-item"
       variant={warning ? 'warning' : 'tertiary'}
@@ -70,7 +70,7 @@ export const PluginItem: FC<PluginItemProps> = ({
             warning,
           'opacity-30': disabled && !isLoading,
         },
-        'relative flex flex-1 cursor-default flex-col gap-2 p-3 sm:p-4 overflow-hidden transition-opacity duration-250',
+        'relative flex flex-1 cursor-default flex-col gap-2 overflow-hidden p-3 transition-opacity duration-250 sm:p-4',
         className,
       )}
       aria-busy={isLoading}
@@ -79,7 +79,7 @@ export const PluginItem: FC<PluginItemProps> = ({
         {icon && (
           <Box
             variant="tertiary"
-            className="h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center overflow-hidden p-0"
+            className="h-10 w-10 shrink-0 items-center justify-center overflow-hidden p-0 sm:h-12 sm:w-12"
           >
             {icon}
           </Box>
@@ -87,32 +87,34 @@ export const PluginItem: FC<PluginItemProps> = ({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base sm:text-lg leading-tight font-bold select-none">
+            <h3 className="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base leading-tight font-bold select-none sm:text-lg">
               <span data-testid="plugin-name">{name}</span>
-              <span className="text-foreground-secondary text-xs sm:text-sm font-normal select-none">
+              <span className="text-foreground-secondary text-xs font-normal select-none sm:text-sm">
                 <span className="mr-1 opacity-60">{labels.by ?? 'by'}</span>
                 <span data-testid="plugin-author">{author}</span>
               </span>
             </h3>
             {rightAccessory && (
-              <div className={cn('shrink-0', { 'pointer-events-none': isLoading })}>
+              <div
+                className={cn('shrink-0', { 'pointer-events-none': isLoading })}
+              >
                 {rightAccessory}
               </div>
             )}
           </div>
           <p
             data-testid="plugin-description"
-            className="text-foreground mt-1.5 text-xs sm:text-sm leading-relaxed select-none"
+            className="text-foreground mt-1.5 text-xs leading-relaxed select-none sm:text-sm"
           >
             {description}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-1 pt-2 border-t border-border/40">
+      <div className="border-border/40 mt-1 flex items-center justify-between border-t pt-2">
         <span
           data-testid="plugin-version"
-          className="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-normal"
+          className="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs font-normal sm:text-sm"
         >
           {loadTimeMs && (
             <Badge color="purple" variant="pill">
@@ -137,7 +139,7 @@ export const PluginItem: FC<PluginItemProps> = ({
           )}
         </span>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex shrink-0 items-center gap-1.5">
           {onViewDetails && (
             <Button
               data-testid="plugin-action-view-details"
@@ -153,7 +155,7 @@ export const PluginItem: FC<PluginItemProps> = ({
               data-testid="plugin-action-reload"
               size="icon-sm"
               onClick={onReload}
-              disabled={reloadDisabled || disabled}
+              disabled={reloadDisabled}
             >
               <RotateCwIcon size={16} />
             </Button>

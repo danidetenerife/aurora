@@ -1,5 +1,5 @@
-import type { AudioSource } from '@nuclearplayer/hifi';
-import type { QueueItem } from '@nuclearplayer/model';
+import type { AudioSource } from '@aurora/hifi';
+import type { QueueItem } from '@aurora/model';
 
 import { useQueueStore } from '../../stores/queueStore';
 import { getSetting } from '../../stores/settingsStore';

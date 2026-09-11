@@ -21,10 +21,10 @@ Access HTTP via `api.Http.fetch(url, init)` in your plugin's lifecycle hooks. Th
 {% tabs %}
 {% tab title="GET request" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const response = await api.Http.fetch(
       'https://api.example.com/tracks?q=radiohead'
     );
@@ -40,10 +40,10 @@ export default {
 
 {% tab title="POST request" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const response = await api.Http.fetch('https://api.example.com/scrobble', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

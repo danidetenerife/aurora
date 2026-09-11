@@ -1,15 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import type {
-  AlbumRef,
-  ArtistRef,
-  PlaylistRef,
-  Track,
-} from '@nuclearplayer/model';
-import type {
-  AttributedResult,
-  DashboardCapability,
-} from '@nuclearplayer/plugin-sdk';
+import type { AlbumRef, ArtistRef, PlaylistRef, Track } from '@aurora/model';
+import type { AttributedResult, DashboardCapability } from '@aurora/plugin-sdk';
 
 import { dashboardHost } from '../../../services/dashboardHost';
 

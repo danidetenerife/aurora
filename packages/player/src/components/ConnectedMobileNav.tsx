@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { FC } from 'react';
 
-import { cn } from '@nuclearplayer/ui';
+import { cn } from '@aurora/ui';
 
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 

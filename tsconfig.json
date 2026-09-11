@@ -24,22 +24,22 @@
     "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "@nuclearplayer/ui": [
+      "@aurora/ui": [
         "./packages/ui/src"
       ],
-      "@nuclearplayer/plugin-sdk": [
+      "@aurora/plugin-sdk": [
         "./packages/plugin-sdk/src"
       ],
-      "@nuclearplayer/tailwind-config": [
+      "@aurora/tailwind-config": [
         "./packages/tailwind-config/src"
       ],
-      "@nuclearplayer/eslint-config": [
+      "@aurora/eslint-config": [
         "./packages/eslint-config/src"
       ],
-      "@nuclearplayer/themes": [
+      "@aurora/themes": [
         "./packages/themes/src"
       ],
-      "@nuclearplayer/i18n": [
+      "@aurora/i18n": [
         "./packages/i18n/src"
       ]
     }

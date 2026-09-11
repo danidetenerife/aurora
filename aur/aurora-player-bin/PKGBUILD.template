@@ -1,0 +1,31 @@
+# Maintainer: danidetenerife
+
+pkgname=aurora-player-bin
+_pkgname=aurora-player
+pkgver=${PKGVER}
+pkgrel=1
+pkgdesc='Aurora is a free, open-source music player without ads or tracking.'
+arch=(x86_64)
+url='https://github.com/danidetenerife/aurora'
+license=('AGPL-3.0-only')
+provides=('aurora-player')
+conflicts=('aurora-player' 'aurora-player-git')
+options=('!strip' '!debug')
+depends=('webkit2gtk-4.1' 'gtk3' 'hicolor-icon-theme' 'gst-plugins-base' 'gst-plugins-good')
+optdepends=(
+    'gst-plugins-bad: Additional media codec support'
+    'gst-plugins-ugly: Patented codec support'
+    'gst-libav: FFmpeg-based codec support'
+)
+source=(
+    "aurora-player-${PKGVER}.deb::https://github.com/danidetenerife/aurora/releases/download/v${PKGVER}/Aurora_${PKGVER}_amd64.deb"
+    "https://raw.githubusercontent.com/danidetenerife/aurora/main/LICENSE"
+)
+noextract=("aurora-player-${PKGVER}.deb")
+sha256sums=('${SHA256SUM}'
+            'SKIP')
+
+package() {
+    bsdtar -O -xf "${srcdir}/aurora-player-${pkgver}.deb" 'data.tar*' | bsdtar -C "${pkgdir}" -xf -
+    install -Dm644 -t "${pkgdir}/usr/share/licenses/${_pkgname}" LICENSE
+}

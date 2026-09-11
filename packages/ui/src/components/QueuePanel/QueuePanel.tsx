@@ -2,7 +2,7 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { Music } from 'lucide-react';
 import { FC } from 'react';
 
-import type { QueueItem as QueueItemType } from '@nuclearplayer/model';
+import type { QueueItem as QueueItemType } from '@aurora/model';
 
 import { cn } from '../../utils';
 import { type QueueItemLabels } from '../QueueItem/types';

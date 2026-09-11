@@ -2,8 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-TEMPLATE="${SCRIPT_DIR}/nuclear-player-bin/PKGBUILD.template"
-WORK_DIR="/tmp/nuclear-aur-bin"
+TEMPLATE="${SCRIPT_DIR}/aurora-player-bin/PKGBUILD.template"
+WORK_DIR="/tmp/aurora-aur-bin"
 
 VERSION=""
 DRY_RUN=false
@@ -18,7 +18,7 @@ done
 
 [[ -z "${VERSION}" ]] && { echo "Usage: $0 --version <version> [--dry-run]"; exit 1; }
 
-DEB_URL="https://github.com/nukeop/nuclear/releases/download/player@${VERSION}/Nuclear_${VERSION}_amd64.deb"
+DEB_URL="https://github.com/nukeop/aurora/releases/download/player@${VERSION}/Aurora_${VERSION}_amd64.deb"
 
 export PKGVER="${VERSION}"
 export SHA256SUM=$(curl -fSL "${DEB_URL}" | sha256sum | cut -d' ' -f1)
@@ -41,13 +41,13 @@ if [[ "${DRY_RUN}" == true ]]; then
     exit 0
 fi
 
-AUR_REPO="/tmp/nuclear-aur-repo"
+AUR_REPO="/tmp/aurora-aur-repo"
 rm -rf "${AUR_REPO}"
-git clone ssh://aur@aur.archlinux.org/nuclear-player-bin.git "${AUR_REPO}"
+git clone ssh://aur@aur.archlinux.org/aurora-player-bin.git "${AUR_REPO}"
 cp "${WORK_DIR}/PKGBUILD" "${WORK_DIR}/.SRCINFO" "${AUR_REPO}/"
 cd "${AUR_REPO}"
 git add PKGBUILD .SRCINFO
 git diff --cached --quiet && { echo "Already up to date."; exit 0; }
-git -c user.name="nukeop" -c user.email="noreply@nuclearplayer.com" \
+git -c user.name="nukeop" -c user.email="noreply@auroraplayer.com" \
     commit -m "Update to ${VERSION}"
 git push origin master

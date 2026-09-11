@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FC } from 'react';
 import { fn } from 'storybook/test';
 
-import type { StreamCandidate, Track } from '@nuclearplayer/model';
-import { QueueItemPopover } from '@nuclearplayer/ui';
+import type { StreamCandidate, Track } from '@aurora/model';
+import { QueueItemPopover } from '@aurora/ui';
 
 const meta = {
   title: 'Components/QueueItemPopover',

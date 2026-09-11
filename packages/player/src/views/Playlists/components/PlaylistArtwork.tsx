@@ -1,7 +1,7 @@
 import { CassetteTape } from 'lucide-react';
 import type { FC } from 'react';
 
-import { cn, ImageReveal, Mosaic, MOSAIC_SIZE } from '@nuclearplayer/ui';
+import { cn, ImageReveal, Mosaic, MOSAIC_SIZE } from '@aurora/ui';
 
 type PlaylistArtworkProps = {
   name: string;

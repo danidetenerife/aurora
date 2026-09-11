@@ -21,7 +21,7 @@ export const TEST_CHANGELOG: ChangelogEntry[] = [
   },
   {
     date: '2026-02-20T14:00',
-    description: 'MCP server for controlling Nuclear from AI agents',
+    description: 'MCP server for controlling Aurora from AI agents',
     type: 'feature',
     tags: [{ label: 'MCP', color: 'green' }],
   },

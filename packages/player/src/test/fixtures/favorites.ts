@@ -1,9 +1,4 @@
-import type {
-  AlbumRef,
-  ArtistRef,
-  ProviderRef,
-  Track,
-} from '@nuclearplayer/model';
+import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
 
 export const createTrack = (provider: string, id: string): Track => ({
   title: `Track ${id}`,

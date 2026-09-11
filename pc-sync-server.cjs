@@ -6,7 +6,11 @@ const { pathToFileURL } = require('url');
 let mergeListenRecords;
 
 const PORT = Number(process.env.AURORA_SYNC_PORT || 4122);
-const APP_DATA = process.env.AURORA_SYNC_APP_DATA || path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer');
+const APP_DATA =
+  process.env.AURORA_SYNC_APP_DATA ||
+  (fs.existsSync(path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player'))
+    ? path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player')
+    : path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer'));
 
 // Connected SSE clients
 const sseClients = new Set();

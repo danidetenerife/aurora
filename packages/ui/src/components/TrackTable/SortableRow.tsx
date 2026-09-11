@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { flexRender, Row } from '@tanstack/react-table';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 import { cn } from '../../utils';
 import { useTrackTableContext } from './TrackTableContext';
@@ -46,7 +46,7 @@ export function SortableRow<T extends Track = Track>({
       style={style}
       onClick={() => actions.onPlayNow?.(row.original)}
       className={cn(
-        'border-border bg-background-secondary group border-b-(length:--border-width) select-none active:bg-background-tertiary cursor-pointer',
+        'border-border bg-background-secondary group active:bg-background-tertiary cursor-pointer border-b-(length:--border-width) select-none',
         {
           '': !isDragging,
           'z-50': isDragging,

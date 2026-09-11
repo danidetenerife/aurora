@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Slider } from '@nuclearplayer/ui';
+import { Slider } from '@aurora/ui';
 
 type Props = {
   label: string;

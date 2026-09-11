@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { PluginManifest } from '@nuclearplayer/plugin-sdk';
+import type { PluginManifest } from '@aurora/plugin-sdk';
 
 const PluginIconLinkSchema = z
   .object({ type: z.literal('link'), link: z.string().min(1) })
@@ -26,6 +26,7 @@ const PackageJsonSchema = z
     description: z.string().min(1),
     author: z.string().min(1),
     main: z.string().min(1).optional(),
+    aurora: NuclearSchema.optional(),
     nuclear: NuclearSchema.optional(),
   })
   .passthrough();
@@ -119,13 +120,19 @@ export const safeParsePluginManifest = (raw: unknown): SafeParseResult => {
     );
   }
 
+  const auroraMetadata = normalizeNuclear(
+    data.aurora ?? data.nuclear,
+    warnings,
+  );
+
   const manifest: PluginManifest = {
     name: data.name.trim(),
     version: data.version.trim(),
     description: data.description.trim(),
     author: data.author.trim(),
     main: data.main?.trim(),
-    nuclear: normalizeNuclear(data.nuclear, warnings),
+    aurora: auroraMetadata,
+    nuclear: auroraMetadata,
   };
 
   return { success: true, data: manifest, warnings };

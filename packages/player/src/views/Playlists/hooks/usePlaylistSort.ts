@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import type { PlaylistIndexEntry } from '@nuclearplayer/model';
+import type { PlaylistIndexEntry } from '@aurora/model';
 
 export type PlaylistSortBy =
   | 'name'

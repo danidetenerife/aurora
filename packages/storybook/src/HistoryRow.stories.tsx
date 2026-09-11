@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
 
-import { HistoryRow, HistoryRowLabels } from '@nuclearplayer/ui';
+import { HistoryRow, HistoryRowLabels } from '@aurora/ui';
 
 const meta = {
   title: 'Components/HistoryRow',

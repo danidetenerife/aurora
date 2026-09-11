@@ -26,7 +26,7 @@ description: Short description shown in search and link previews
 ```markdown
 # Table of contents
 
-* [Nuclear Documentation](README.md)
+* [Aurora Documentation](README.md)
 
 ## User Manual
 
@@ -158,7 +158,7 @@ Grid layout for landing pages. Uses a table with `data-view="cards"`:
 ### Annotations (footnotes)
 
 ```markdown
-Nuclear uses plugins[^1] to provide functionality.
+Aurora uses plugins[^1] to provide functionality.
 
 [^1]: Plugins are installed from the plugin store.
 ```

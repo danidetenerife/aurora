@@ -2,10 +2,12 @@ import { CellContext } from '@tanstack/react-table';
 import { Music } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Artwork, Track } from '@nuclearplayer/model';
+import { Artwork, Track } from '@aurora/model';
 
 const isYouTubeOrGeneric = (url?: string): boolean => {
-  if (!url) return true;
+  if (!url) {
+    return true;
+  }
   return (
     url.includes('i.ytimg.com') ||
     url.includes('img.youtube.com') ||

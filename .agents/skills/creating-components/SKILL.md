@@ -63,7 +63,7 @@ Create `packages/storybook/src/MyComponent.stories.tsx`.
 ```tsx
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { MyComponent } from '@nuclearplayer/ui';
+import { MyComponent } from '@aurora/ui';
 
 const meta = {
   title: 'Components/MyComponent',

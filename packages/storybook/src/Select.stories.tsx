@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Select } from '@nuclearplayer/ui';
+import { Select } from '@aurora/ui';
 
 const meta: Meta<typeof Select> = {
   title: 'Components/Select',

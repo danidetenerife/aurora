@@ -14,8 +14,8 @@ import {
 import { FC, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { pickArtwork } from '@nuclearplayer/model';
-import { RepeatMode } from '@nuclearplayer/plugin-sdk';
+import { pickArtwork } from '@aurora/model';
+import { RepeatMode } from '@aurora/plugin-sdk';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { playbackManager } from '../../services/playback';
@@ -25,7 +25,9 @@ import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 
 const formatSeconds = (seconds: number): string => {
-  if (isNaN(seconds) || seconds < 0) return '0:00';
+  if (isNaN(seconds) || seconds < 0) {
+    return '0:00';
+  }
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -74,7 +76,9 @@ export const CarModeOverlay: FC = () => {
   const isFav = currentTrack ? isTrackFavorite(currentTrack.source) : false;
 
   const handleToggleFavorite = () => {
-    if (!currentTrack) return;
+    if (!currentTrack) {
+      return;
+    }
     if (isFav) {
       void removeTrack(currentTrack.source);
     } else {
@@ -90,7 +94,9 @@ export const CarModeOverlay: FC = () => {
   };
 
   const artwork = useMemo(() => {
-    if (!currentTrack?.artwork) return undefined;
+    if (!currentTrack?.artwork) {
+      return undefined;
+    }
     return (
       pickArtwork(currentTrack.artwork, 'cover', 600) ??
       pickArtwork(currentTrack.artwork, 'thumbnail', 600)
@@ -108,18 +114,18 @@ export const CarModeOverlay: FC = () => {
   return (
     <div
       data-testid="car-mode-overlay"
-      className="fixed inset-0 z-50 flex flex-col justify-between bg-zinc-950 text-white select-none overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col justify-between overflow-hidden bg-zinc-950 text-white select-none"
     >
       {/* Top Header Bar */}
       <div className="aurora-car-header relative z-10 flex flex-wrap items-center justify-between gap-2 px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-zinc-800/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-zinc-700/60 shadow-lg">
-            <Car size={18} className="text-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-200">
+          <div className="flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-800/80 px-3.5 py-1.5 shadow-lg backdrop-blur-md">
+            <Car size={18} className="animate-pulse text-emerald-400" />
+            <span className="text-xs font-bold tracking-wider text-zinc-200 uppercase">
               Modo Coche
             </span>
             {isBluetoothConnected && (
-              <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-medium pl-1 border-l border-zinc-700">
+              <span className="flex items-center gap-1 border-l border-zinc-700 pl-1 text-[11px] font-medium text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 {bluetoothDeviceName || 'Bluetooth'}
               </span>
@@ -129,7 +135,7 @@ export const CarModeOverlay: FC = () => {
 
         <button
           onClick={exitCarMode}
-          className="flex items-center gap-2 bg-zinc-800/90 hover:bg-zinc-700 active:scale-95 text-zinc-200 px-4 py-2 rounded-full border border-zinc-700 shadow-md font-bold text-sm transition-all"
+          className="flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-800/90 px-4 py-2 text-sm font-bold text-zinc-200 shadow-md transition-all hover:bg-zinc-700 active:scale-95"
         >
           <ChevronDown size={18} />
           <span>Salir</span>
@@ -137,9 +143,9 @@ export const CarModeOverlay: FC = () => {
       </div>
 
       {/* Main Track Display (Center) */}
-      <div className="aurora-car-track relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-2 min-h-0">
+      <div className="aurora-car-track relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center px-6 py-2">
         {/* Giant Artwork */}
-        <div className="relative aspect-square max-h-[36vh] sm:max-h-[44vh] w-auto rounded-2xl overflow-hidden shadow-2xl border-2 border-zinc-700/80 bg-zinc-900 mb-6 flex items-center justify-center">
+        <div className="relative mb-6 flex aspect-square max-h-[36vh] w-auto items-center justify-center overflow-hidden rounded-2xl border-2 border-zinc-700/80 bg-zinc-900 shadow-2xl sm:max-h-[44vh]">
           {artwork?.url ? (
             <img
               src={artwork.url}
@@ -154,18 +160,18 @@ export const CarModeOverlay: FC = () => {
         </div>
 
         {/* Track Title & Artist */}
-        <div className="w-full max-w-lg text-center px-4 space-y-1.5">
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight truncate text-white drop-shadow-md">
+        <div className="w-full max-w-lg space-y-1.5 px-4 text-center">
+          <h1 className="truncate text-2xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-4xl">
             {currentTrack?.title ?? 'Sin reproducción'}
           </h1>
-          <p className="text-lg sm:text-2xl font-semibold text-zinc-300 truncate">
+          <p className="truncate text-lg font-semibold text-zinc-300 sm:text-2xl">
             {currentTrack?.artists?.[0]?.name ?? 'Aurora'}
           </p>
         </div>
       </div>
 
       {/* Bottom Controls Area */}
-      <div className="aurora-car-player relative z-10 bg-zinc-900 border-t border-zinc-800/80 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+2rem)] flex flex-col gap-4 max-w-2xl mx-auto w-full">
+      <div className="aurora-car-player relative z-10 mx-auto flex w-full max-w-2xl flex-col gap-4 border-t border-zinc-800/80 bg-zinc-900 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+2rem)]">
         {/* Scrubber / Progress Bar */}
         <div className="w-full space-y-1">
           <div className="relative flex items-center">
@@ -187,10 +193,10 @@ export const CarModeOverlay: FC = () => {
                   setSeekingValue(null);
                 }
               }}
-              className="w-full h-3 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              className="h-3 w-full cursor-pointer appearance-none rounded-lg bg-zinc-800 accent-emerald-500"
             />
           </div>
-          <div className="flex justify-between text-sm font-bold text-zinc-400 px-0.5">
+          <div className="flex justify-between px-0.5 text-sm font-bold text-zinc-400">
             <span>{formatSeconds(effectiveTime)}</span>
             <span>{formatSeconds(duration)}</span>
           </div>
@@ -201,10 +207,10 @@ export const CarModeOverlay: FC = () => {
           {/* Shuffle */}
           <button
             onClick={() => setShuffleEnabled(!shuffleEnabled)}
-            className={`p-3 rounded-full transition-all active:scale-90 ${
+            className={`rounded-full p-3 transition-all active:scale-90 ${
               shuffleEnabled
-                ? 'text-emerald-400 bg-emerald-950/60 border border-emerald-500/40'
-                : 'text-zinc-400 hover:text-white bg-zinc-800/60'
+                ? 'border border-emerald-500/40 bg-emerald-950/60 text-emerald-400'
+                : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
             }`}
             title="Aleatorio"
           >
@@ -214,7 +220,7 @@ export const CarModeOverlay: FC = () => {
           {/* Previous Track */}
           <button
             onClick={goToPrevious}
-            className="flex items-center justify-center size-16 sm:size-18 rounded-full bg-zinc-800 hover:bg-zinc-700 active:scale-90 text-white shadow-lg border border-zinc-700/80 transition-transform"
+            className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
             title="Anterior"
           >
             <SkipBack size={32} />
@@ -223,20 +229,20 @@ export const CarModeOverlay: FC = () => {
           {/* Play / Pause - HUGE */}
           <button
             onClick={playbackManager.toggle}
-            className="flex items-center justify-center size-20 sm:size-24 rounded-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-zinc-950 shadow-emerald-500/30 shadow-2xl transition-all font-bold"
+            className="flex size-20 items-center justify-center rounded-full bg-emerald-500 font-bold text-zinc-950 shadow-2xl shadow-emerald-500/30 transition-all hover:bg-emerald-400 active:scale-95 sm:size-24"
             title={isPlaying ? 'Pausa' : 'Reproducir'}
           >
             {isPlaying ? (
               <Pause size={44} className="fill-current" />
             ) : (
-              <Play size={44} className="fill-current translate-x-0.5" />
+              <Play size={44} className="translate-x-0.5 fill-current" />
             )}
           </button>
 
           {/* Next Track */}
           <button
             onClick={goToNext}
-            className="flex items-center justify-center size-16 sm:size-18 rounded-full bg-zinc-800 hover:bg-zinc-700 active:scale-90 text-white shadow-lg border border-zinc-700/80 transition-transform"
+            className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
             title="Siguiente"
           >
             <SkipForward size={32} />
@@ -245,23 +251,27 @@ export const CarModeOverlay: FC = () => {
           {/* Repeat */}
           <button
             onClick={handleToggleRepeat}
-            className={`p-3 rounded-full transition-all active:scale-90 ${
+            className={`rounded-full p-3 transition-all active:scale-90 ${
               repeatMode !== 'off'
-                ? 'text-emerald-400 bg-emerald-950/60 border border-emerald-500/40'
-                : 'text-zinc-400 hover:text-white bg-zinc-800/60'
+                ? 'border border-emerald-500/40 bg-emerald-950/60 text-emerald-400'
+                : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
             }`}
             title="Repetir"
           >
-            {repeatMode === 'one' ? <Repeat1 size={24} /> : <Repeat size={24} />}
+            {repeatMode === 'one' ? (
+              <Repeat1 size={24} />
+            ) : (
+              <Repeat size={24} />
+            )}
           </button>
 
           {/* Favorite */}
           <button
             onClick={handleToggleFavorite}
-            className={`p-3 rounded-full transition-all active:scale-90 ${
+            className={`rounded-full p-3 transition-all active:scale-90 ${
               isFav
-                ? 'text-red-500 bg-red-950/60 border border-red-500/40'
-                : 'text-zinc-400 hover:text-white bg-zinc-800/60'
+                ? 'border border-red-500/40 bg-red-950/60 text-red-500'
+                : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
             }`}
             title="Favorito"
           >

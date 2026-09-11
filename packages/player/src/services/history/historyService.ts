@@ -1,5 +1,5 @@
-import type { Track } from '@nuclearplayer/model';
-import { pickArtwork } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
+import { pickArtwork } from '@aurora/model';
 
 import { useHistoryStore } from '../../stores/historyStore';
 import { getSetting } from '../../stores/settingsStore';
@@ -62,7 +62,6 @@ const record = async (playId: string, fields: PlayEventFields) => {
 };
 
 const recordStarted = async (track: Track) => {
-
   if (!isEnabled()) {
     return;
   }

@@ -1,7 +1,7 @@
 import { BaseDirectory, remove } from '@tauri-apps/plugin-fs';
 
-import type { Playlist } from '@nuclearplayer/model';
-import { playlistSchema } from '@nuclearplayer/model';
+import type { Playlist } from '@aurora/model';
+import { playlistSchema } from '@aurora/model';
 
 import { Logger } from '../logger';
 import { createUniversalStore, UniversalStore } from '../universalStore';

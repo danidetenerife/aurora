@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-import { ListeningClock } from '@nuclearplayer/ui';
+import { ListeningClock } from '@aurora/ui';
 
 const meta = {
   title: 'Components/HistoryCharts/ListeningClock',

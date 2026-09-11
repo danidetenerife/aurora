@@ -15,7 +15,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { FC, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Badge, Button, Input, Toggle } from '@nuclearplayer/ui';
+import { Badge, Button, Input, Toggle } from '@aurora/ui';
 
 import { QrScannerModal } from '../../components/QrScannerModal';
 import { p2pSyncService } from '../../services/p2pSyncService';

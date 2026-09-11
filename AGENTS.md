@@ -8,19 +8,19 @@ Aurora is a free, open-source music player without ads or tracking. Search for a
 
 ### Packages
 
-- `@nuclearplayer/player` - Main Tauri app (React + Rust)
-- `@nuclearplayer/ui` - Shared UI components
-- `@nuclearplayer/plugin-sdk` - Plugin system (published to npm)
-- `@nuclearplayer/model` - Data model
-- `@nuclearplayer/themes` - Theming system
-- `@nuclearplayer/hifi` - Advanced HTML5 audio component
-- `@nuclearplayer/tailwind-config` - Shared Tailwind config
-- `@nuclearplayer/eslint-config` - Shared linting rules
-- `@nuclearplayer/i18n` - Internationalization
-- `@nuclearplayer/storybook` - Component demos
-- `@nuclearplayer/tools` - Build and maintenance utilities
-- `@nuclearplayer/docs` - Documentation
-- `@nuclearplayer/website` - Project website (Astro)
+- `@aurora/player` - Main Tauri app (React + Rust)
+- `@aurora/ui` - Shared UI components
+- `@aurora/plugin-sdk` - Plugin system (published to npm)
+- `@aurora/model` - Data model
+- `@aurora/themes` - Theming system
+- `@aurora/hifi` - Advanced HTML5 audio component
+- `@aurora/tailwind-config` - Shared Tailwind config
+- `@aurora/eslint-config` - Shared linting rules
+- `@aurora/i18n` - Internationalization
+- `@aurora/storybook` - Component demos
+- `@aurora/tools` - Build and maintenance utilities
+- `@aurora/docs` - Documentation
+- `@aurora/website` - Project website (Astro)
 
 ## Commands
 
@@ -43,8 +43,8 @@ pnpm test:coverage          # Run tests with coverage
 pnpm clean                  # Clean build artifacts
 
 # Package-specific testing
-pnpm --filter @nuclearplayer/ui test -- src/components/Badge/Badge.test.tsx
-pnpm --filter @nuclearplayer/ui test -- --testNamePattern="renders"
+pnpm --filter @aurora/ui test -- src/components/Badge/Badge.test.tsx
+pnpm --filter @aurora/ui test -- --testNamePattern="renders"
 
 # Update snapshots (run at root for all, or filter to a specific package)
 
@@ -52,7 +52,7 @@ pnpm --filter @nuclearplayer/ui test -- --testNamePattern="renders"
 pnpm test -- -u
 
 # Filtering for a specific package
-pnpm --filter @nuclearplayer/ui test -- -u
+pnpm --filter @aurora/ui test -- -u
 
 # After cd'ing into a package
 pnpm test -u
@@ -108,7 +108,7 @@ export const Component: FC<ComponentProps> = ({
 
 ### Adding UI Components
 
-When adding a new component to `@nuclearplayer/ui`:
+When adding a new component to `@aurora/ui`:
 
 1. Create component directory: `packages/ui/src/components/MyComponent/`
    - `MyComponent.tsx` - implementation
@@ -150,7 +150,7 @@ A "domain" is a feature area exposed to plugins (e.g., settings, queue, favorite
 
 2. **API class** (`packages/plugin-sdk/src/api/myDomain.ts`)
    - Create a class that wraps the host and exposes methods to plugins
-   - Add to `NuclearAPI` constructor in `packages/plugin-sdk/src/api/index.ts`
+   - Add to `AuroraAPI` constructor in `packages/plugin-sdk/src/api/index.ts`
 
 3. **Store** (`packages/player/src/stores/myDomainStore.ts`)
    - Zustand store holding the domain state
@@ -159,7 +159,7 @@ A "domain" is a feature area exposed to plugins (e.g., settings, queue, favorite
 4. **Host** (`packages/player/src/services/myDomainHost.ts`)
    - Implements the `MyDomainHost` interface
    - Bridges the SDK API to the Zustand store
-   - Passed to `NuclearAPI` when initializing plugins
+   - Passed to `AuroraAPI` when initializing plugins
 
 ### External API Clients
 
@@ -174,7 +174,7 @@ Live in `packages/player/src/apis/`. Use `ApiClient` base class (fetch→json→
 All user-facing strings go through i18n - no hardcoded UI text.
 
 ```tsx
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 const { t } = useTranslation();
 <span>{t('navigation.settings')}</span>

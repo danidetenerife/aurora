@@ -7,9 +7,9 @@ import {
 } from 'lucide-react';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
-import { ScrollableArea, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { MetadataProvider } from '@aurora/plugin-sdk';
+import { ScrollableArea, ViewShell } from '@aurora/ui';
 
 import { useProviders } from '../../hooks/useProviders';
 import { providersHost } from '../../services/providersHost';

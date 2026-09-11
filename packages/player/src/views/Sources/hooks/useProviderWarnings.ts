@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type {
-  MetadataProvider,
-  ProviderDescriptor,
-} from '@nuclearplayer/plugin-sdk';
+import { useTranslation } from '@aurora/i18n';
+import type { MetadataProvider, ProviderDescriptor } from '@aurora/plugin-sdk';
 
 export const useProviderWarnings = (
   metadataProviders: MetadataProvider[],

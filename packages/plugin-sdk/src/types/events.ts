@@ -1,4 +1,4 @@
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 export type PluginEventMap = {
   trackFinished: Track;

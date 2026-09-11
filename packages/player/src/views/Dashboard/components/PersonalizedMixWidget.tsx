@@ -2,10 +2,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { SparklesIcon } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { Track, TrackRef } from '@nuclearplayer/model';
-import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
-import { Badge, Loader } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { Track, TrackRef } from '@aurora/model';
+import type { MetadataProvider } from '@aurora/plugin-sdk';
+import { Badge, Loader } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../../components/ConnectedTrackTable';
 import { useProviders } from '../../../hooks/useProviders';

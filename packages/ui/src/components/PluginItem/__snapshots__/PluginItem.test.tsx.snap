@@ -69,7 +69,7 @@ exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
                 <span
                   data-testid="plugin-author"
                 >
-                  Nuclear Team
+                  Aurora Team
                 </span>
               </span>
             </h3>
@@ -136,7 +136,7 @@ exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
                 <span
                   data-testid="plugin-author"
                 >
-                  Nuclear Team
+                  Aurora Team
                 </span>
               </span>
             </h3>
@@ -241,7 +241,7 @@ exports[`PluginItem > (Snapshot) renders with all props 1`] = `
                 <span
                   data-testid="plugin-author"
                 >
-                  Nuclear Team
+                  Aurora Team
                 </span>
               </span>
             </h3>

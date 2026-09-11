@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { ProviderKind } from '@nuclearplayer/plugin-sdk';
+import type { ProviderKind } from '@aurora/plugin-sdk';
 
 import { createUniversalStore } from '../services/universalStore';
 

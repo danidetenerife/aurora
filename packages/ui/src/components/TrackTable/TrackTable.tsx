@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useRef } from 'react';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 import { cn } from '../../utils';
 import { ScrollableArea } from '../ScrollableArea';

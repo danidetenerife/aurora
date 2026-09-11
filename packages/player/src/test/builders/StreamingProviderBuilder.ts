@@ -1,5 +1,5 @@
-import type { Stream, StreamCandidate } from '@nuclearplayer/model';
-import type { StreamingProvider } from '@nuclearplayer/plugin-sdk';
+import type { Stream, StreamCandidate } from '@aurora/model';
+import type { StreamingProvider } from '@aurora/plugin-sdk';
 
 export class StreamingProviderBuilder {
   private provider: StreamingProvider;

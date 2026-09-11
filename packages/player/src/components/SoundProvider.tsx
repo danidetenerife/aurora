@@ -1,9 +1,9 @@
 import type { FC, PropsWithChildren } from 'react';
 import { useCallback, useEffect } from 'react';
 
-import { LoggerProvider, Sound, SoundError } from '@nuclearplayer/hifi';
-import type { TFunction } from '@nuclearplayer/i18n';
-import { useTranslation } from '@nuclearplayer/i18n';
+import { LoggerProvider, Sound, SoundError } from '@aurora/hifi';
+import type { TFunction } from '@aurora/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import { useCoreSetting } from '../hooks/useCoreSetting';
 import { eventBus } from '../services/eventBus';

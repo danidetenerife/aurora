@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { PluginItem, Toggle } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { PluginItem, Toggle } from '@aurora/ui';
 
 import { PluginIconComponent } from '../../components/PluginIcon';
 import { PluginState, usePluginStore } from '../../stores/pluginStore';
@@ -20,12 +20,12 @@ export const ConnectedPluginItem: FC<ConnectedPluginItemProps> = ({
 
   const handleReload = async () => {
     if (plugin.installationMethod === 'dev') {
-      await store.reloadPlugin(plugin.metadata.id);
+      await usePluginStore.getState().reloadPlugin(plugin.metadata.id);
     }
   };
 
   const handleRemove = async () => {
-    await store.removePlugin(plugin.metadata.id);
+    await usePluginStore.getState().removePlugin(plugin.metadata.id);
   };
 
   const handleToggle = (checked: boolean) =>

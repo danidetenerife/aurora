@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { TopBar } from '@nuclearplayer/ui';
+import { TopBar } from '@aurora/ui';
 
 const meta = {
   title: 'Layout/TopBar',
@@ -20,9 +20,7 @@ export const WithContent: Story = {
   args: {
     children: (
       <div className="ml-4 flex items-center gap-4">
-        <span className="text-muted-foreground text-sm">
-          Nuclear Music Player
-        </span>
+        <span className="text-muted-foreground text-sm">Aurora</span>
         <div className="flex gap-2">
           <button className="bg-secondary rounded-md px-2 py-1 text-xs">
             File

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { StreamCandidate, Track } from '@nuclearplayer/model';
-import type { StreamingProvider } from '@nuclearplayer/plugin-sdk';
+import type { StreamCandidate, Track } from '@aurora/model';
+import type { StreamingProvider } from '@aurora/plugin-sdk';
 
 import { useSettingsStore } from '../stores/settingsStore';
 import { providersHost } from './providersHost';

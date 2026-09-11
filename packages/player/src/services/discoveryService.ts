@@ -1,6 +1,6 @@
-import { i18n } from '@nuclearplayer/i18n';
-import type { Track, TrackRef } from '@nuclearplayer/model';
-import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
+import { i18n } from '@aurora/i18n';
+import type { Track, TrackRef } from '@aurora/model';
+import type { MetadataProvider } from '@aurora/plugin-sdk';
 
 import { useQueueStore } from '../stores/queueStore';
 import { useSettingsStore } from '../stores/settingsStore';

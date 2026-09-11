@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 import { initDiscoveryService } from '../services/discoveryService';
 import { providersHost } from '../services/providersHost';

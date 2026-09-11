@@ -1,4 +1,4 @@
-import type { NuclearPluginAPI } from './api';
+import type { AuroraPluginAPI } from './api';
 
 export type PluginIcon = { type: 'link'; link: string };
 
@@ -8,9 +8,15 @@ export type PluginManifest = {
   description: string;
   author: string;
   main?: string;
+  aurora?: {
+    displayName?: string;
+    category?: string;
+    categories?: string[];
+    icon?: PluginIcon;
+    permissions?: string[];
+  };
   nuclear?: {
     displayName?: string;
-    // TODO: Remove category after registry migration to categories
     category?: string;
     categories?: string[];
     icon?: PluginIcon;
@@ -18,12 +24,14 @@ export type PluginManifest = {
   };
 };
 
-export type NuclearPlugin = {
-  onLoad?(api: NuclearPluginAPI): void | Promise<void>;
-  onUnload?(api: NuclearPluginAPI): void | Promise<void>;
-  onEnable?(api: NuclearPluginAPI): void | Promise<void>;
-  onDisable?(api: NuclearPluginAPI): void | Promise<void>;
+export type AuroraPlugin = {
+  onLoad?(api: AuroraPluginAPI): void | Promise<void>;
+  onUnload?(api: AuroraPluginAPI): void | Promise<void>;
+  onEnable?(api: AuroraPluginAPI): void | Promise<void>;
+  onDisable?(api: AuroraPluginAPI): void | Promise<void>;
 };
+
+export type NuclearPlugin = AuroraPlugin;
 
 export type PluginMetadata = {
   id: string;
@@ -32,7 +40,6 @@ export type PluginMetadata = {
   version: string;
   description: string;
   author: string;
-  // TODO: Remove category after registry migration to categories
   category?: string;
   categories: string[];
   icon?: PluginIcon;
@@ -41,6 +48,6 @@ export type PluginMetadata = {
 
 export type LoadedPlugin = {
   metadata: PluginMetadata;
-  instance: NuclearPlugin;
+  instance: AuroraPlugin;
   path: string;
 };

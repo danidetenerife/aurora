@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FC } from 'react';
 
-import type { QueueItem as QueueItemType } from '@nuclearplayer/model';
+import type { QueueItem as QueueItemType } from '@aurora/model';
 
 import { cn } from '../../utils';
 import { QueueItem } from '../QueueItem';

@@ -2,9 +2,9 @@ import { useNavigate } from '@tanstack/react-router';
 import { UserIcon } from 'lucide-react';
 import { FC, useMemo } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { Card, CardGrid } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { Card, CardGrid } from '@aurora/ui';
 
 import { useFavoritesStore } from '../../../stores/favoritesStore';
 import { useProvidersStore } from '../../../stores/providersStore';

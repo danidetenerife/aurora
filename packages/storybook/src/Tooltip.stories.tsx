@@ -6,7 +6,7 @@ import {
   SettingsIcon,
 } from 'lucide-react';
 
-import { Button, Tooltip } from '@nuclearplayer/ui';
+import { Button, Tooltip } from '@aurora/ui';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Components/Tooltip',

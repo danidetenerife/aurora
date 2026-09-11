@@ -1,12 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import { FC } from 'react';
 
-import type { Track } from '@nuclearplayer/model';
-import {
-  TrackTable,
-  TrackTableActions,
-  TrackTableProps,
-} from '@nuclearplayer/ui';
+import type { Track } from '@aurora/model';
+import { TrackTable, TrackTableActions, TrackTableProps } from '@aurora/ui';
 
 import { useQueueActions } from '../hooks/useQueueActions';
 import { useTrackActions } from '../hooks/useTrackActions';
@@ -67,13 +63,15 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
           queueActions.addToQueue(restProps.tracks);
         },
         onArtistClick: (artistName) => {
-          const activeMetadata = useProvidersStore.getState().getActive('metadata') ?? 'spotify';
+          const activeMetadata =
+            useProvidersStore.getState().getActive('metadata') ?? 'spotify';
           void navigate({
             to: `/artist/${activeMetadata}/${encodeURIComponent(artistName)}`,
           });
         },
         onAlbumClick: (albumTitle) => {
-          const activeMetadata = useProvidersStore.getState().getActive('metadata') ?? 'spotify';
+          const activeMetadata =
+            useProvidersStore.getState().getActive('metadata') ?? 'spotify';
           void navigate({
             to: `/album/${activeMetadata}/${encodeURIComponent(albumTitle)}`,
           });

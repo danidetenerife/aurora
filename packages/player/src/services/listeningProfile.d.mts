@@ -1,4 +1,4 @@
-import type { ProviderRef } from '@nuclearplayer/model';
+import type { ProviderRef } from '@aurora/model';
 
 export type ListenCounters = {
   playCount: number;

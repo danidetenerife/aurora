@@ -8,7 +8,7 @@ import {
   Volume2,
 } from 'lucide-react';
 
-import { BottomBar, Button } from '@nuclearplayer/ui';
+import { BottomBar, Button } from '@aurora/ui';
 
 const meta = {
   title: 'Layout/BottomBar',

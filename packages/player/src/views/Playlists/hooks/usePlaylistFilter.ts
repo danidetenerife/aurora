@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import type { PlaylistIndexEntry } from '@nuclearplayer/model';
+import type { PlaylistIndexEntry } from '@aurora/model';
 
 export const usePlaylistFilter = (playlists: PlaylistIndexEntry[]) => {
   const [filter, setFilter] = useState('');
@@ -10,9 +10,13 @@ export const usePlaylistFilter = (playlists: PlaylistIndexEntry[]) => {
     // Deduplicate by name first
     const seen = new Set<string>();
     const unique = (playlists || []).filter((p) => {
-      if (!p || !p.name) return false;
+      if (!p || !p.name) {
+        return false;
+      }
       const name = p.name.toLowerCase().trim();
-      if (seen.has(name)) return false;
+      if (seen.has(name)) {
+        return false;
+      }
       seen.add(name);
       return true;
     });

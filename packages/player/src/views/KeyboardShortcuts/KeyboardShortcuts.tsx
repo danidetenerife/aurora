@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Button, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Button, ViewShell } from '@aurora/ui';
 
 import {
   getCommandsBySection,

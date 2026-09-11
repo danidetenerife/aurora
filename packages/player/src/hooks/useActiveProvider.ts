@@ -1,7 +1,4 @@
-import type {
-  ProviderDescriptor,
-  ProviderKind,
-} from '@nuclearplayer/plugin-sdk';
+import type { ProviderDescriptor, ProviderKind } from '@aurora/plugin-sdk';
 
 import { useProvidersStore } from '../stores/providersStore';
 import { useProviders } from './useProviders';

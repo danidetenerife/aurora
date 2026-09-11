@@ -66,10 +66,10 @@ These two domains divide playback responsibilities:
 {% tabs %}
 {% tab title="Reading state" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const state = await api.Playback.getState();
     api.Logger.info(`Status: ${state.status}`);
     api.Logger.info(`Position: ${state.seek}s / ${state.duration}s`);
@@ -80,10 +80,10 @@ export default {
 
 {% tab title="Transport controls" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     await api.Playback.play();
     await api.Playback.pause();
     await api.Playback.stop();
@@ -98,10 +98,10 @@ export default {
 
 {% tab title="Seeking" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Jump to 90 seconds into the current track
     await api.Playback.seekTo(90);
 
@@ -115,10 +115,10 @@ export default {
 
 {% tab title="Subscribing" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const unsubscribe = api.Playback.subscribe((state) => {
       if (state.status === 'playing') {
         api.Logger.debug(`${state.seek.toFixed(1)}s / ${state.duration.toFixed(1)}s`);

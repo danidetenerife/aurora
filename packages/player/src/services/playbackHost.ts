@@ -3,7 +3,7 @@ import type {
   PlaybackListener,
   PlaybackState,
   RepeatMode,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { getSetting, setSetting } from '../stores/settingsStore';
 import { useSoundStore } from '../stores/soundStore';

@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Pagination } from '@nuclearplayer/ui';
+import { Pagination } from '@aurora/ui';
 
 const meta = {
   title: 'Components/Pagination',

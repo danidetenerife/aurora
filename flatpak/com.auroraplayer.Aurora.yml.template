@@ -1,0 +1,66 @@
+id: com.auroraplayer.Aurora
+
+runtime: org.gnome.Platform
+runtime-version: "50"
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
+
+command: aurora-music-player
+
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --socket=pulseaudio
+
+build-options:
+  append-path: /run/build/aurora-music-player/.npm-global/bin:/usr/lib/sdk/node22/bin:/usr/lib/sdk/rust-stable/bin
+  env:
+    CARGO_HOME: /run/build/aurora-music-player/cargo
+    XDG_CACHE_HOME: /run/build/aurora-music-player/cache
+    npm_config_nodedir: /usr/lib/sdk/node22
+    npm_config_prefix: /run/build/aurora-music-player/.npm-global
+    npm_config_cache: /run/build/aurora-music-player/npm-cache
+
+modules:
+  - name: aurora-music-player
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/nukeop/aurora.git
+        tag: ${TAG}
+        commit: ${COMMIT}
+      - type: file
+        url: https://registry.npmjs.org/pnpm/-/pnpm-${PNPM_VERSION}.tgz
+        sha256: ${PNPM_SHA256}
+        dest-filename: pnpm-${PNPM_VERSION}.tgz
+      - pnpm-sources.json
+      - cargo-sources.json
+    build-commands:
+      - mkdir -p /run/build/aurora-music-player/.npm-global
+      - npm install -g pnpm-${PNPM_VERSION}.tgz
+
+      - pnpm install --offline --frozen-lockfile
+      - pnpm --filter @aurora/player build:frontend
+      - pnpm --filter @aurora/player tauri build --no-bundle
+        -c '{"build":{"beforeBuildCommand":""}}'
+
+      - install -Dm755 packages/player/src-tauri/target/release/aurora-music-player
+        /app/bin/aurora-music-player
+
+      - install -Dm644 packages/player/src-tauri/resources/com.auroraplayer.Aurora.desktop
+        /app/share/applications/com.auroraplayer.Aurora.desktop
+      - install -Dm644 packages/player/src-tauri/resources/com.auroraplayer.Aurora.metainfo.xml
+        /app/share/metainfo/com.auroraplayer.Aurora.metainfo.xml
+
+      - install -Dm644 flatpak/icons/512x512.png /app/share/icons/hicolor/512x512/apps/com.auroraplayer.Aurora.png
+      - install -Dm644 flatpak/icons/256x256.png /app/share/icons/hicolor/256x256/apps/com.auroraplayer.Aurora.png
+      - install -Dm644 flatpak/icons/128x128.png /app/share/icons/hicolor/128x128/apps/com.auroraplayer.Aurora.png
+      - install -Dm644 flatpak/icons/64x64.png /app/share/icons/hicolor/64x64/apps/com.auroraplayer.Aurora.png
+      - install -Dm644 flatpak/icons/32x32.png /app/share/icons/hicolor/32x32/apps/com.auroraplayer.Aurora.png
+
+      - install -Dm644 LICENSE /app/share/licenses/com.auroraplayer.Aurora/LICENSE

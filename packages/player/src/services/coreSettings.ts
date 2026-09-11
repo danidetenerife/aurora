@@ -1,4 +1,4 @@
-import type { SettingDefinition } from '@nuclearplayer/plugin-sdk';
+import type { SettingDefinition } from '@aurora/plugin-sdk';
 
 import { registerCoreSettings } from '../stores/settingsStore';
 

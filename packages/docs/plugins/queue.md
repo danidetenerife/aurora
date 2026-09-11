@@ -1,12 +1,12 @@
 ---
-description: Control playback order, manipulate the queue, and react to track changes in Nuclear.
+description: Control playback order, manipulate the queue, and react to track changes in Aurora.
 ---
 
 # Queue
 
 ## Queue API for Plugins
 
-The Queue API gives plugins control over Nuclear's playback queue. Add tracks, reorder items, control navigation, and subscribe to queue changes.
+The Queue API gives plugins control over Aurora's playback queue. Add tracks, reorder items, control navigation, and subscribe to queue changes.
 
 {% hint style="info" %}
 Access the queue via `api.Queue.*` in your plugin's lifecycle hooks. All queue operations are asynchronous and return Promises.
@@ -58,10 +58,10 @@ type QueueItem = {
 {% tabs %}
 {% tab title="Reading queue state" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Get the full queue
     const queue = await api.Queue.getQueue();
     console.log(`Queue has ${queue.items.length} items`);
@@ -80,10 +80,10 @@ export default {
 
 {% tab title="Adding tracks" %}
 ```typescript
-import type { NuclearPluginAPI, Track } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI, Track } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const tracks: Track[] = [
       // ... your track objects
     ];
@@ -103,10 +103,10 @@ export default {
 
 {% tab title="Navigation" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Move to next track (respects shuffle and repeat)
     await api.Queue.goToNext();
     
@@ -125,10 +125,10 @@ export default {
 
 {% tab title="Subscribing to changes" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Subscribe to any queue change
     const unsubscribe = api.Queue.subscribe((queue) => {
       console.log(`Queue updated: ${queue.items.length} items`);

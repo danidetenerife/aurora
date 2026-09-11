@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { useSetting, type SettingDefinition } from '@nuclearplayer/plugin-sdk';
+import { useSetting, type SettingDefinition } from '@aurora/plugin-sdk';
 
 import { SettingField } from './SettingField';
 import { useSettingsHost } from './useSettingsHost';

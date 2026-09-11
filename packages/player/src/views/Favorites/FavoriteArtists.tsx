@@ -2,9 +2,9 @@ import { useNavigate } from '@tanstack/react-router';
 import { Trash2, User } from 'lucide-react';
 import { FC, useMemo } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { Button, Card, CardGrid, EmptyState, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { Button, Card, CardGrid, EmptyState, ViewShell } from '@aurora/ui';
 
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useProvidersStore } from '../../stores/providersStore';
@@ -29,7 +29,12 @@ const ArtistCard: FC<ArtistCardProps> = ({
   const resolvedSrc = useArtistCardImage(name, localArtworkUrl);
   return (
     <div className="group relative w-42">
-      <Card title={name} src={resolvedSrc} onClick={onClick} className="w-full" />
+      <Card
+        title={name}
+        src={resolvedSrc}
+        onClick={onClick}
+        className="w-full"
+      />
       <button
         type="button"
         onClick={(event) => {
@@ -39,7 +44,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
         }}
         title={removeLabel}
         aria-label={removeLabel}
-        className="bg-black/60 hover:bg-accent-red text-white absolute top-3.5 right-3.5 z-20 flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 focus-visible:opacity-100 shadow-md cursor-pointer"
+        className="hover:bg-accent-red absolute top-3.5 right-3.5 z-20 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 active:scale-95"
       >
         <Trash2 size={13} />
       </button>
@@ -102,7 +107,9 @@ export const FavoriteArtists: FC = () => {
                     void removeArtist(entry.ref.source, artistName);
                   }}
                   onClick={() => {
-                    const activeMetadata = useProvidersStore.getState().getActive('metadata');
+                    const activeMetadata = useProvidersStore
+                      .getState()
+                      .getActive('metadata');
                     const targetProvider = activeMetadata ?? 'spotify';
                     void navigate({
                       to: `/artist/${targetProvider}/${encodeURIComponent(artistName)}`,

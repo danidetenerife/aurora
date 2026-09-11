@@ -10,7 +10,7 @@ import type {
   SearchResults,
   Track,
   TrackRef,
-} from '@nuclearplayer/model';
+} from '@aurora/model';
 
 import type { ProviderDescriptor } from './providers';
 

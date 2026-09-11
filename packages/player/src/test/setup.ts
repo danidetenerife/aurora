@@ -4,13 +4,14 @@ import path from 'node:path';
 import { Settings } from 'luxon';
 import { vi } from 'vitest';
 
-import { setupDomMocks } from '@nuclearplayer/ui';
+import { setupDomMocks } from '@aurora/ui';
 
 process.env.NODE_ENV = 'test';
 process.env.TZ = 'UTC';
 Settings.defaultLocale = 'en-US';
 
 setupDomMocks();
+(window as Window & { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ = {};
 
 // Silences react's pointless warning spam
 // give it a rest already
@@ -23,14 +24,21 @@ console.error = (...args) => {
 };
 
 vi.mock('@tauri-apps/api/path', () => ({
-  appDataDir: async () => '/home/user/.local/share/com.nuclearplayer',
-  join: async (...parts: string[]) => path.join(...parts),
-  dirname: async (p: string) => path.dirname(p),
-  basename: async (p: string, ext?: string) => path.basename(p, ext),
-  extname: async (p: string) => path.extname(p),
-  isAbsolute: async (p: string) => path.isAbsolute(p),
-  resolve: async (...parts: string[]) => path.resolve(...parts),
-  normalize: async (p: string) => path.normalize(p),
+  appDataDir: async () => '/home/user/.local/share/org.aurora.player',
+  join: async (...parts: string[]) =>
+    path.posix.join(...parts.map((part) => part.replace(/\\/g, '/'))),
+  dirname: async (targetPath: string) =>
+    path.posix.dirname(targetPath.replace(/\\/g, '/')),
+  basename: async (targetPath: string, ext?: string) =>
+    path.posix.basename(targetPath.replace(/\\/g, '/'), ext),
+  extname: async (targetPath: string) =>
+    path.posix.extname(targetPath.replace(/\\/g, '/')),
+  isAbsolute: async (targetPath: string) =>
+    path.posix.isAbsolute(targetPath.replace(/\\/g, '/')),
+  resolve: async (...parts: string[]) =>
+    path.posix.resolve(...parts.map((part) => part.replace(/\\/g, '/'))),
+  normalize: async (targetPath: string) =>
+    path.posix.normalize(targetPath.replace(/\\/g, '/')),
 }));
 
 vi.mock('esbuild-wasm', () => ({
@@ -90,7 +98,7 @@ vi.mock('uuid', async () => {
 vi.mock('motion/react', async (importOriginal) => {
   const mod = await importOriginal<typeof import('motion/react')>();
 
-  // Ugly as shit cross-package import but importing @nuclearplayer/ui here causes tests to hang indefinitely
+  // Ugly as shit cross-package import but importing @aurora/ui here causes tests to hang indefinitely
   const mockMod = await import('../../../ui/src/test/mockFramerMotion');
   const factory = mockMod.createFramerMotionMock;
   return factory(mod);

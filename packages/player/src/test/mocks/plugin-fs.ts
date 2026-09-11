@@ -19,7 +19,7 @@ vi.mock('@tauri-apps/plugin-fs', () => ({
     },
   ),
   BaseDirectory: {
-    AppData: '/home/user/.local/share/com.nuclearplayer',
+    AppData: '/home/user/.local/share/org.aurora.player',
   },
 }));
 
@@ -42,7 +42,10 @@ export const PluginFsMock = {
         checkedPath: string,
         { baseDir: checkedBaseDir }: { baseDir: string },
       ) => {
-        if (checkedPath === path && checkedBaseDir === baseDir) {
+        if (
+          checkedPath.replace(/\\/g, '/') === path.replace(/\\/g, '/') &&
+          checkedBaseDir === baseDir
+        ) {
           return value;
         }
         throw new Error('fs.exists called for unknown path');
@@ -65,9 +68,11 @@ export const PluginFsMock = {
   setReadTextFileByMap: (value: Record<string, string>) => {
     Object.assign(readTextFileMap, value);
     (fs.readTextFile as Mock).mockImplementation(async (path: string) => {
+      const normalizedPath = path.replace(/\\/g, '/');
       const keys = Object.keys(readTextFileMap);
       const keyToReturn = keys.find((key) => {
-        if (path.endsWith(key)) {
+        const normalizedKey = key.replace(/\\/g, '/');
+        if (normalizedPath.endsWith(normalizedKey)) {
           return true;
         }
       });
@@ -88,7 +93,10 @@ export const PluginFsMock = {
         checkedPath: string,
         { baseDir: checkedBaseDir }: { baseDir: string },
       ) => {
-        if (checkedPath === path && checkedBaseDir === baseDir) {
+        if (
+          checkedPath.replace(/\\/g, '/') === path.replace(/\\/g, '/') &&
+          checkedBaseDir === baseDir
+        ) {
           return value;
         }
         throw new Error('fs.remove called for unknown path');

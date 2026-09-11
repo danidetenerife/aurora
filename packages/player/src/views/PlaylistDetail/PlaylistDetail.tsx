@@ -2,8 +2,8 @@ import isEmpty from 'lodash-es/isEmpty';
 import { ListMusicIcon } from 'lucide-react';
 import type { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { EmptyState, ScrollableArea } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { EmptyState, ScrollableArea } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { PlaylistDetailHeader } from '../Playlists/components/PlaylistDetailHeader';

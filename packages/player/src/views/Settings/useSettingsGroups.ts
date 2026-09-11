@@ -1,7 +1,7 @@
 import groupBy from 'lodash-es/groupBy';
 import { useMemo } from 'react';
 
-import type { SettingDefinition } from '@nuclearplayer/plugin-sdk';
+import type { SettingDefinition } from '@aurora/plugin-sdk';
 
 import { useSettingsStore } from '../../stores/settingsStore';
 

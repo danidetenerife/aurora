@@ -1,5 +1,5 @@
 {
-  "name": "@nuclearplayer/tools",
+  "name": "@aurora/tools",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@nuclearplayer/eslint-config": "workspace:*",
+    "@aurora/eslint-config": "workspace:*",
     "@vitest/coverage-v8": "^4.0.0",
     "typescript": "^5.9.2",
     "vitest": "^4.0.0"

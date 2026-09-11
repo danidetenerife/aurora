@@ -1,4 +1,4 @@
-import { i18n } from '@nuclearplayer/i18n';
+import { i18n } from '@aurora/i18n';
 
 export const tvI18n: typeof i18n = i18n.cloneInstance({
   lng: 'es_ES',

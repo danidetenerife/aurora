@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { Track } from '@nuclearplayer/model';
-import { QueueItem } from '@nuclearplayer/ui';
+import type { Track } from '@aurora/model';
+import { QueueItem } from '@aurora/ui';
 
 const meta = {
   title: 'Components/QueueItem',

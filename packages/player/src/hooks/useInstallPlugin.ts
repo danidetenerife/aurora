@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import {
   pluginMarketplaceApi,

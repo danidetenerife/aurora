@@ -3,7 +3,7 @@ import type {
   PlaylistIndexEntry,
   PlaylistItem,
   Track,
-} from '@nuclearplayer/model';
+} from '@aurora/model';
 
 import type { PlaylistsHost, PlaylistsListener } from '../types/playlists';
 

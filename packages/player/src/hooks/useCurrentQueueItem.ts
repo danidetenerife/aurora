@@ -1,4 +1,4 @@
-import type { QueueItem } from '@nuclearplayer/model';
+import type { QueueItem } from '@aurora/model';
 
 import { useQueueStore } from '../stores/queueStore';
 

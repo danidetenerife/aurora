@@ -1,5 +1,5 @@
 {
-  "name": "@nuclearplayer/themes",
+  "name": "@aurora/themes",
   "version": "0.0.10",
   "description": "Theme engine and utilities for Aurora",
   "type": "module",
@@ -27,15 +27,15 @@
     "clean": "rm -rf dist build .turbo node_modules/.vite"
   },
   "dependencies": {
-    "@nuclearplayer/eslint-config": "workspace:*",
-    "@nuclearplayer/tailwind-config": "workspace:*",
+    "@aurora/eslint-config": "workspace:*",
+    "@aurora/tailwind-config": "workspace:*",
     "culori": "^4.0.2",
     "tailwindcss": "^4.1.11",
     "zod": "^4.0.0"
   },
   "devDependencies": {
-    "@nuclearplayer/eslint-config": "workspace:*",
-    "@nuclearplayer/tailwind-config": "workspace:*",
+    "@aurora/eslint-config": "workspace:*",
+    "@aurora/tailwind-config": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",

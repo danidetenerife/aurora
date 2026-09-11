@@ -1,0 +1,11 @@
+# YouTube Streaming Plugin for Aurora
+
+A streaming provider plugin that plays audio from Youtube using yt-dlp.
+
+## Requirements
+
+[yt-dlp](https://github.com/yt-dlp/yt-dlp) must be installed and available in your PATH.
+
+## Installation
+
+Install from the Aurora plugin browser.

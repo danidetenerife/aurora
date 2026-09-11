@@ -19,10 +19,10 @@ Access the Shell API via `api.Shell.*` in your plugin's lifecycle hooks.
 A typical use case is redirecting the user to an external auth page:
 
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const token = await getAuthToken();
     const authUrl = `https://example.com/auth?token=${token}`;
     await api.Shell.openExternal(authUrl);

@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type {
-  ProviderDescriptor,
-  ProviderKind,
-} from '@nuclearplayer/plugin-sdk';
+import type { ProviderDescriptor, ProviderKind } from '@aurora/plugin-sdk';
 
 import { providersHost } from '../services/providersHost';
 

@@ -1,11 +1,10 @@
+import { invoke } from '@tauri-apps/api/core';
 import { CheckCircle2, Copy, Laptop, RefreshCw, Wifi } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Badge, Button } from '@nuclearplayer/ui';
-
-import { invoke } from '@tauri-apps/api/core';
+import { Badge, Button } from '@aurora/ui';
 
 type SyncServerInfo = {
   ip: string;
@@ -60,9 +59,9 @@ export const DesktopSyncView: FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4 max-w-xl mx-auto">
+    <div className="mx-auto flex max-w-xl flex-col gap-6 p-4">
       {/* Header card */}
-      <div className="border-border bg-background-secondary rounded-xl border-(length:--border-width) p-4 flex flex-col gap-3">
+      <div className="border-border bg-background-secondary flex flex-col gap-3 rounded-xl border-(length:--border-width) p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Laptop className="text-primary size-6" />
@@ -92,23 +91,23 @@ export const DesktopSyncView: FC = () => {
 
       {/* QR Code */}
       {serverUrl && (
-        <div className="border-border bg-background-secondary rounded-xl border-(length:--border-width) p-6 flex flex-col items-center gap-4">
-          <div className="bg-white rounded-xl p-4">
+        <div className="border-border bg-background-secondary flex flex-col items-center gap-4 rounded-xl border-(length:--border-width) p-6">
+          <div className="rounded-xl bg-white p-4">
             <QRCodeSVG value={serverUrl} size={200} level="M" />
           </div>
-          <p className="text-foreground-secondary text-xs text-center">
+          <p className="text-foreground-secondary text-center text-xs">
             Abre Aurora en tu móvil → Ajustes → Sync → Escanear QR
           </p>
         </div>
       )}
 
       {/* Server URL */}
-      <div className="border-border bg-background-secondary/60 rounded-xl border-(length:--border-width) p-4 flex flex-col gap-3">
-        <h3 className="text-sm font-bold flex items-center gap-2">
+      <div className="border-border bg-background-secondary/60 flex flex-col gap-3 rounded-xl border-(length:--border-width) p-4">
+        <h3 className="flex items-center gap-2 text-sm font-bold">
           <Wifi size={16} className="text-primary" /> Dirección del servidor
         </h3>
-        <div className="flex gap-2 items-center">
-          <code className="bg-background border-border rounded-md border px-3 py-2 text-sm font-mono flex-1">
+        <div className="flex items-center gap-2">
+          <code className="bg-background border-border flex-1 rounded-md border px-3 py-2 font-mono text-sm">
             {serverUrl || 'Cargando...'}
           </code>
           <Button
@@ -129,15 +128,15 @@ export const DesktopSyncView: FC = () => {
       <Button
         variant="secondary"
         onClick={() => void loadInfo()}
-        className="flex items-center justify-center gap-2 py-2.5 h-auto text-xs font-semibold"
+        className="flex h-auto items-center justify-center gap-2 py-2.5 text-xs font-semibold"
       >
         <RefreshCw size={16} />
         Actualizar estado
       </Button>
 
       {/* Features list */}
-      <div className="flex flex-col gap-2 pt-2 text-xs text-foreground-secondary">
-        <span className="font-semibold text-foreground">
+      <div className="text-foreground-secondary flex flex-col gap-2 pt-2 text-xs">
+        <span className="text-foreground font-semibold">
           Datos que se sincronizan:
         </span>
         <div className="grid grid-cols-2 gap-2">

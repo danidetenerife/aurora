@@ -31,7 +31,7 @@ export const useLayoutStore = create<LayoutState>()(
         width: 200,
       },
       rightSidebar: {
-        isCollapsed: true,
+        isCollapsed: false,
         width: 200,
       },
       toggleLeftSidebar: () =>
@@ -64,7 +64,7 @@ export const useLayoutStore = create<LayoutState>()(
         })),
     }),
     {
-      name: 'nuclear-layout-store',
+      name: 'aurora-layout-store',
     },
   ),
 );

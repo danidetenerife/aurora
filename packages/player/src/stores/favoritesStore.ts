@@ -1,12 +1,7 @@
 import { create } from 'zustand';
 
-import type {
-  AlbumRef,
-  ArtistRef,
-  ProviderRef,
-  Track,
-} from '@nuclearplayer/model';
-import type { FavoriteEntry, FavoritesData } from '@nuclearplayer/plugin-sdk';
+import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
+import type { FavoriteEntry, FavoritesData } from '@aurora/plugin-sdk';
 
 import { createUniversalStore } from '../services/universalStore';
 

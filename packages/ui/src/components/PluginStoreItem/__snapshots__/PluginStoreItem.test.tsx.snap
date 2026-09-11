@@ -30,7 +30,7 @@ exports[`PluginStoreItem > (Snapshot) renders default state 1`] = `
           <span
             data-testid="plugin-store-item-author"
           >
-            Nuclear Team
+            Aurora Team
           </span>
         </span>
       </h3>
@@ -123,7 +123,7 @@ exports[`PluginStoreItem > (Snapshot) renders installed state 1`] = `
           <span
             data-testid="plugin-store-item-author"
           >
-            Nuclear Team
+            Aurora Team
           </span>
         </span>
       </h3>
@@ -212,7 +212,7 @@ exports[`PluginStoreItem > (Snapshot) renders installing state 1`] = `
           <span
             data-testid="plugin-store-item-author"
           >
-            Nuclear Team
+            Aurora Team
           </span>
         </span>
       </h3>
@@ -313,7 +313,7 @@ exports[`PluginStoreItem > (Snapshot) renders with custom labels 1`] = `
           <span
             data-testid="plugin-store-item-author"
           >
-            Nuclear Team
+            Aurora Team
           </span>
         </span>
       </h3>
@@ -406,7 +406,7 @@ exports[`PluginStoreItem > (Snapshot) renders with long description 1`] = `
           <span
             data-testid="plugin-store-item-author"
           >
-            Nuclear Team
+            Aurora Team
           </span>
         </span>
       </h3>

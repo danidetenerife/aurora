@@ -1,6 +1,6 @@
-import type { ArtworkSet, PlaylistItem } from '@nuclearplayer/model';
-import { pickArtwork } from '@nuclearplayer/model';
-import { MOSAIC_SIZE } from '@nuclearplayer/ui';
+import type { ArtworkSet, PlaylistItem } from '@aurora/model';
+import { pickArtwork } from '@aurora/model';
+import { MOSAIC_SIZE } from '@aurora/ui';
 
 type PlaylistWithItems = {
   artwork?: ArtworkSet;

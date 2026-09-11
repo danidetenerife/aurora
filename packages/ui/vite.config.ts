@@ -28,7 +28,7 @@ export default defineConfig(({ command }) => {
       build: {
         lib: {
           entry: 'src/index.ts',
-          name: 'NuclearUI',
+          name: 'AuroraUI',
           formats: ['es'],
           fileName: 'index',
         },

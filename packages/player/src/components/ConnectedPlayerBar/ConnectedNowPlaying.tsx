@@ -3,9 +3,9 @@ import { ThumbsDown } from 'lucide-react';
 import { FC } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { Button, FavoriteButton, PlayerBar } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { Button, FavoriteButton, PlayerBar } from '@aurora/ui';
 
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { useFavoritesStore } from '../../stores/favoritesStore';

@@ -1,6 +1,6 @@
 import { type VariantProps } from 'class-variance-authority';
 
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 import { queueItemVariants } from './variants';
 

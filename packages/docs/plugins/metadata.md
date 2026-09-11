@@ -1,16 +1,16 @@
 ---
-description: Build metadata providers that power search, artist pages, and album views in Nuclear.
+description: Build metadata providers that power search, artist pages, and album views in Aurora.
 ---
 
 # Metadata
 
 ## Metadata Providers
 
-Metadata providers supply Nuclear with information about artists, albums, and tracks. When a user searches for music or opens an artist page, Nuclear delegates to whatever metadata provider is active. Without one, there's nothing to search and nothing to display.
+Metadata providers supply Aurora with information about artists, albums, and tracks. When a user searches for music or opens an artist page, Aurora delegates to whatever metadata provider is active. Without one, there's nothing to search and nothing to display.
 
 Plugins can either add new providers, or use data from existing providers.
 
-Most plugins will add a new provider. Check out the [Discogs plugin](https://github.com/NuclearPlayer/nuclear-plugin-discogs) for a good reference implementation.
+Most plugins will add a new provider. Check out the [Discogs plugin](https://github.com/AuroraPlayer/aurora-plugin-discogs) for a good reference implementation.
 
 ---
 
@@ -21,7 +21,7 @@ Most plugins will add a new provider. Check out the [Discogs plugin](https://git
 A metadata provider is an object that you register with `api.Providers.register()`. At minimum, it needs an `id`, `kind: 'metadata'`, a `name`, and at least one search method:
 
 ```typescript
-import type { MetadataProvider, NuclearPlugin, NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { MetadataProvider, AuroraPlugin, AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 const provider: MetadataProvider = {
   id: 'my-metadata',
@@ -38,11 +38,11 @@ const provider: MetadataProvider = {
   },
 };
 
-const plugin: NuclearPlugin = {
-  onEnable(api: NuclearPluginAPI) {
+const plugin: AuroraPlugin = {
+  onEnable(api: AuroraPluginAPI) {
     api.Providers.register(provider);
   },
-  onDisable(api: NuclearPluginAPI) {
+  onDisable(api: AuroraPluginAPI) {
     api.Providers.unregister('my-metadata');
   },
 };
@@ -51,16 +51,16 @@ export default plugin;
 ```
 
 {% hint style="warning" %}
-Always unregister your provider in `onDisable`. If you don't, it stays registered and Nuclear may still route queries to it after the plugin is disabled.
+Always unregister your provider in `onDisable`. If you don't, it stays registered and Aurora may still route queries to it after the plugin is disabled.
 {% endhint %}
 
 ### Capabilities
 
-Capabilities tell Nuclear which methods your provider supports. Nuclear will never call a method you haven't declared a capability for.
+Capabilities tell Aurora which methods your provider supports. Aurora will never call a method you haven't declared a capability for.
 
 #### Search capabilities
 
-Declared via `searchCapabilities`. Controls which search methods Nuclear calls:
+Declared via `searchCapabilities`. Controls which search methods Aurora calls:
 
 | Capability | Method called | Returns |
 |------------|--------------|---------|
@@ -97,7 +97,7 @@ Declared via `albumMetadataCapabilities`:
 |------------|--------------|---------|
 | `'albumDetails'` | `fetchAlbumDetails(albumId)` | `Album` |
 
-You don't have to support everything. Declare only what your source can provide. Nuclear adapts the UI based on what's available - for example, if you don't declare `'artistTopTracks'`, the top tracks section won't appear on artist pages.
+You don't have to support everything. Declare only what your source can provide. Aurora adapts the UI based on what's available - for example, if you don't declare `'artistTopTracks'`, the top tracks section won't appear on artist pages.
 
 ### Streaming provider pairing
 
@@ -121,15 +121,15 @@ Only set this when the pairing is a hard requirement. If your metadata provider 
 
 ## Return types
 
-Your provider methods must return objects matching types from `@nuclearplayer/model` (also exported from `@nuclearplayer/plugin-sdk`). Every entity has a `source` field (`ProviderRef`) that identifies where it came from.
+Your provider methods must return objects matching types from `@aurora/model` (also exported from `@aurora/plugin-sdk`). Every entity has a `source` field (`ProviderRef`) that identifies where it came from.
 
 ## Thumbnails and artwork
 
-Nuclear picks the best artwork for each context. These include thumbnails, cover art, background images, or artist profile pictures. Provide multiple sizes when you can.
+Aurora picks the best artwork for each context. These include thumbnails, cover art, background images, or artist profile pictures. Provide multiple sizes when you can.
 
 ### ProviderRef
 
-Every entity needs a `source` that ties it back to your provider. This is how Nuclear navigates between search results and detail pages.
+Every entity needs a `source` that ties it back to your provider. This is how Aurora navigates between search results and detail pages.
 
 ```typescript
 type ProviderRef = {
@@ -154,7 +154,7 @@ Plugins can also query the active metadata provider. Use `api.Metadata.*` to sea
 
 ```typescript
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const results = await api.Metadata.search({
       query: 'Radiohead',
       types: ['artists', 'albums'],
@@ -186,7 +186,7 @@ api.Metadata.fetchArtistRelatedArtists(artistId: string, providerId?: string): P
 api.Metadata.fetchAlbumDetails(albumId: string, providerId?: string): Promise<Album>
 ```
 
-All methods accept an optional `providerId`. If omitted, Nuclear uses the active metadata provider (the one selected in the Sources view).
+All methods accept an optional `providerId`. If omitted, Aurora uses the active metadata provider (the one selected in the Sources view).
 
 {% hint style="warning" %}
 The `artistId` and `albumId` values are provider-specific. Always pass the `providerId` from the same `ProviderRef` that gave you the ID. Mixing IDs from one provider with a different `providerId` will produce errors or wrong results.

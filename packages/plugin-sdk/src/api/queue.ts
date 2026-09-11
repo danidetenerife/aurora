@@ -1,4 +1,4 @@
-import type { QueueItem, Track } from '@nuclearplayer/model';
+import type { QueueItem, Track } from '@aurora/model';
 
 import type { Queue, QueueHost, QueueItemStateUpdate } from '../types/queue';
 

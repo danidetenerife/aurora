@@ -1,7 +1,7 @@
 import { act, render, waitFor } from '@testing-library/react';
 
-import type { Track } from '@nuclearplayer/model';
-import { NuclearAPI } from '@nuclearplayer/plugin-sdk';
+import type { Track } from '@aurora/model';
+import { AuroraAPI } from '@aurora/plugin-sdk';
 
 import App from '../App';
 import { eventBus } from '../services/eventBus';
@@ -34,7 +34,7 @@ describe('Plugin events integration', () => {
   });
 
   it('notifies a plugin when a track finishes playing', async () => {
-    const api = new NuclearAPI({ eventsHost: eventBus });
+    const api = new AuroraAPI({ eventsHost: eventBus });
     const listener = vi.fn(async () => {});
     api.Events.on('trackFinished', listener);
 

@@ -1,12 +1,12 @@
 ---
-description: Resolve audio streams for tracks in Nuclear's queue.
+description: Resolve audio streams for tracks in Aurora's queue.
 ---
 
 # Streaming
 
 ## Streaming API for Plugins
 
-The Streaming API resolves playable audio URLs for tracks. When a user plays a track, Nuclear searches for stream candidates (e.g., YouTube videos) and then resolves the actual audio URL just-in-time.
+The Streaming API resolves playable audio URLs for tracks. When a user plays a track, Aurora searches for stream candidates (e.g., YouTube videos) and then resolves the actual audio URL just-in-time.
 
 {% hint style="info" %}
 Access streaming via `api.Streaming.*` in your plugin's lifecycle hooks.
@@ -23,7 +23,7 @@ Stream resolution happens in two phases:
 1. Candidate discovery - Search for potential sources (e.g., YouTube videos matching the track)
 2. Stream resolution - Extract the actual audio URL from the top candidate
 
-Nuclear uses the streaming provider selected by the user in the Sources view. If no streaming provider is active, resolution returns an error.
+Aurora uses the streaming provider selected by the user in the Sources view. If no streaming provider is active, resolution returns an error.
 
 ### Stream candidates
 
@@ -41,7 +41,7 @@ A candidate represents a potential audio source before the URL is resolved. Key 
 | `failed` | `boolean` | True if resolution failed permanently |
 
 {% hint style="info" %}
-See `StreamCandidate` in `@nuclearplayer/model` for the full type definition.
+See `StreamCandidate` in `@aurora/model` for the full type definition.
 {% endhint %}
 
 ### Streams
@@ -58,12 +58,12 @@ A resolved stream contains the actual playable URL. Key fields:
 | `qualityLabel` | `string?` | e.g., `'320kbps'`, `'FLAC'` |
 
 {% hint style="info" %}
-See `Stream` in `@nuclearplayer/model` for the full type definition.
+See `Stream` in `@aurora/model` for the full type definition.
 {% endhint %}
 
 ### Stream expiry
 
-Audio URLs from services like YouTube typically expire after a period (often as short as a few hours). Nuclear automatically re-resolves expired streams when needed. The expiry window is configurable via the `core.playback.streamExpiryMs` setting.
+Audio URLs from services like YouTube typically expire after a period (often as short as a few hours). Aurora automatically re-resolves expired streams when needed. The expiry window is configurable via the `core.playback.streamExpiryMs` setting.
 
 ---
 
@@ -75,7 +75,7 @@ Call `resolveCandidatesForTrack(track)` with a `Track` object containing at leas
 
 ### Resolving a stream
 
-Once we have a candidate, Nuclear calls `resolveStreamForCandidate(candidate)` to get the actual audio URL. The method returns an updated candidate with the `stream` field populated, or the same candidate if already resolved/failed. This happens when we try to play the track.
+Once we have a candidate, Aurora calls `resolveStreamForCandidate(candidate)` to get the actual audio URL. The method returns an updated candidate with the `stream` field populated, or the same candidate if already resolved/failed. This happens when we try to play the track.
 
 ---
 
@@ -90,7 +90,7 @@ Once we have a candidate, Nuclear calls `resolveStreamForCandidate(candidate)` t
 
 ### Provider methods
 
-A plugin that supplies streams registers a `StreamingProvider`. These are the methods Nuclear calls on it:
+A plugin that supplies streams registers a `StreamingProvider`. These are the methods Aurora calls on it:
 
 | Method | Required | Description |
 |--------|----------|-------------|

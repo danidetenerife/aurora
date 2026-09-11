@@ -8,8 +8,8 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import type { QueueItem } from '@nuclearplayer/model';
-import { DialogWrapper } from '@nuclearplayer/ui';
+import type { QueueItem } from '@aurora/model';
+import { DialogWrapper } from '@aurora/ui';
 
 import App from '../App';
 import { routeTree } from '../routeTree.gen';

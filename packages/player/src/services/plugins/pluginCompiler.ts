@@ -14,7 +14,7 @@
  * - Feed the entry file content to esbuild and handle ALL path resolutions/loads via
  *   Tauri's readTextFile (a virtual filesystem plugin), never touching the real fs.
  * - Only compile TS/TSX. For plain JS we skip compilation and just read the file.
- * - Externalize bare module imports (e.g., @nuclearplayer/plugin-sdk) so plugins don't
+ * - Externalize bare module imports (e.g., @aurora/plugin-sdk) so plugins don't
  *   accidentally try to bundle our runtime dependencies.
  * - Cache compiled bundles per entry path, invalidated by re-hashing every file
  *   that participated in the previous build (see CompileCacheEntry below).
@@ -33,7 +33,7 @@ type EsbuildGlobal = {
 };
 
 declare global {
-  var __NUCLEAR_ESBUILD_WASM__: EsbuildGlobal | undefined;
+  var __AURORA_ESBUILD_WASM__: EsbuildGlobal | undefined;
 }
 
 /**
@@ -52,14 +52,14 @@ declare global {
  *   any/unknown casts and keep the state strongly typed.
  */
 function getEsbuildState(): EsbuildGlobal {
-  if (!globalThis.__NUCLEAR_ESBUILD_WASM__) {
-    globalThis.__NUCLEAR_ESBUILD_WASM__ = {
+  if (!globalThis.__AURORA_ESBUILD_WASM__) {
+    globalThis.__AURORA_ESBUILD_WASM__ = {
       mod: null,
       initialized: false,
       initPromise: null,
     };
   }
-  return globalThis.__NUCLEAR_ESBUILD_WASM__;
+  return globalThis.__AURORA_ESBUILD_WASM__;
 }
 
 const es = getEsbuildState();
@@ -206,7 +206,7 @@ export async function compilePlugin(
     jsx: 'automatic',
     // Do not bundle our host SDK. Plugins import it at runtime from the app,
     // not from the plugin bundle.
-    external: ['@nuclearplayer/plugin-sdk'],
+    external: ['@aurora/plugin-sdk'],
 
     // Keep a neutral working directory. Real resolution happens inside our
     // virtual "tauri-fs" plugin (below).

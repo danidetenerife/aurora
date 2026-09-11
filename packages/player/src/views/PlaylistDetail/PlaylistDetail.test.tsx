@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, type Mock } from 'vitest';
 
-import type { PlaylistItem } from '@nuclearplayer/model';
+import type { PlaylistItem } from '@aurora/model';
 
 import { PlayerBarWrapper } from '../../integration-tests/PlayerBar.test-wrapper';
 import { QueueWrapper } from '../../integration-tests/Queue.test-wrapper';

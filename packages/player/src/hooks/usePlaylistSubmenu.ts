@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import type { PlaylistIndexEntry } from '@nuclearplayer/model';
+import type { PlaylistIndexEntry } from '@aurora/model';
 
 import { usePlaylistStore } from '../stores/playlistStore';
 

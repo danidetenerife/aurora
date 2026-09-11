@@ -4,7 +4,7 @@ description: Default keyboard shortcuts and how to customize them
 
 # Key shortcuts
 
-Nuclear comes with built-in keyboard shortcuts for common actions. You can customize any shortcut from the settings.
+Aurora comes with built-in keyboard shortcuts for common actions. You can customize any shortcut from the settings.
 
 ## Default shortcuts
 
@@ -37,8 +37,8 @@ Seek forward and backward skip by the number of seconds configured in the Playba
 4. Press the new key combination you want to use
 5. Press `Escape` to cancel recording without saving
 
-If the key combination you record is already used by another command, Nuclear will show an error and keep the previous binding.
+If the key combination you record is already used by another command, Aurora will show an error and keep the previous binding.
 
 To restore a single shortcut to its default, click the **Reset** button next to it. To restore all shortcuts at once, click **Reset all to defaults** at the bottom of the page.
 
-Custom shortcuts are saved to `shortcuts.json` in your Nuclear config directory and persist across restarts.
+Custom shortcuts are saved to `shortcuts.json` in your Aurora config directory and persist across restarts.

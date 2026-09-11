@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Button, Dialog, Input } from '@nuclearplayer/ui';
+import { Button, Dialog, Input } from '@aurora/ui';
 
 const meta: Meta<typeof Dialog> = {
   title: 'Components/Dialog',

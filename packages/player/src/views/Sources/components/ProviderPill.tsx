@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import { ComponentProps, FC, ReactNode } from 'react';
 
-import { Badge } from '@nuclearplayer/ui';
+import { Badge } from '@aurora/ui';
 
 type ProviderPillProps = {
   Icon: LucideIcon;

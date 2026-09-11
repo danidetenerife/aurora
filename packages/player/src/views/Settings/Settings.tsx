@@ -1,5 +1,5 @@
-import { useTranslation } from '@nuclearplayer/i18n';
-import { ScrollableArea, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { ScrollableArea, ViewShell } from '@aurora/ui';
 
 import { SettingsSection } from './SettingsSection';
 import { useSettingsGroups } from './useSettingsGroups';

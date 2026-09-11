@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { pickArtwork, type Track } from '@nuclearplayer/model';
+import { pickArtwork, type Track } from '@aurora/model';
 
 import {
   isYouTubeOrGenericArtwork,
@@ -15,7 +15,9 @@ export const useTrackArtwork = (
   const title = track?.title;
 
   const baseArtworkUrl = useMemo(() => {
-    if (!track) return undefined;
+    if (!track) {
+      return undefined;
+    }
     const picked =
       pickArtwork(track.artwork, 'thumbnail', targetPx) ??
       pickArtwork(track.album?.artwork, 'thumbnail', targetPx);

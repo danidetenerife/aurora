@@ -9,16 +9,16 @@ import type {
   SearchParams,
   SearchResults,
   TrackRef,
-} from '@nuclearplayer/model';
+} from '@aurora/model';
 import {
   type ArtistMetadataCapability,
   type MetadataHost,
   type MetadataProvider,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
-import { providersHost } from './providersHost';
-import { Logger } from './logger';
 import { errorMessage } from '../utils/errorMessage';
+import { Logger } from './logger';
+import { providersHost } from './providersHost';
 
 const ALL_CATEGORIES: SearchCategory[] = [
   'artists',
@@ -102,9 +102,16 @@ const executeMetadataSearch = async (
 export const createMetadataHost = (): MetadataHost => {
   const getProvider = (providerId?: string): MetadataProvider | undefined => {
     let targetId = providerId ?? providersHost.getActive('metadata');
-    if (targetId === 'youtube' || targetId === 'nuclear-plugin-youtube-music') {
+    if (
+      targetId === 'youtube' ||
+      targetId === 'aurora-plugin-youtube-music' ||
+      targetId === 'nuclear-plugin-youtube-music'
+    ) {
       targetId = 'youtube-music';
-    } else if (targetId === 'nuclear-plugin-something') {
+    } else if (
+      targetId === 'aurora-plugin-something' ||
+      targetId === 'nuclear-plugin-something'
+    ) {
       targetId = 'spotify';
     }
     return (
@@ -120,7 +127,8 @@ export const createMetadataHost = (): MetadataHost => {
     ) =>
     async (entityId: string, providerId?: string): Promise<TResult> => {
       const primaryProvider = getProvider(providerId);
-      const allProviders = (providersHost.list('metadata') as MetadataProvider[]) ?? [];
+      const allProviders =
+        (providersHost.list('metadata') as MetadataProvider[]) ?? [];
 
       const candidates: MetadataProvider[] = [];
       if (primaryProvider) {
@@ -143,12 +151,18 @@ export const createMetadataHost = (): MetadataHost => {
       let lastError: unknown;
       for (const provider of capableProviders) {
         try {
-          const fn = provider[method] as ((id: string) => Promise<TResult>) | undefined;
+          const fn = provider[method] as
+            | ((id: string) => Promise<TResult>)
+            | undefined;
           if (fn) {
             const result = await fn(entityId);
             if (result) {
               return result;
             }
+          } else {
+            throw new Error(
+              `Provider "${provider.name}" declared capability "${capability}" but does not implement it`,
+            );
           }
         } catch (error) {
           lastError = error;
@@ -203,7 +217,8 @@ export const createMetadataHost = (): MetadataHost => {
       providerId?: string,
     ): Promise<Album> => {
       const primaryProvider = getProvider(providerId);
-      const allProviders = (providersHost.list('metadata') as MetadataProvider[]) ?? [];
+      const allProviders =
+        (providersHost.list('metadata') as MetadataProvider[]) ?? [];
 
       const candidates: MetadataProvider[] = [];
       if (primaryProvider) {
@@ -231,6 +246,10 @@ export const createMetadataHost = (): MetadataHost => {
             if (result) {
               return result;
             }
+          } else {
+            throw new Error(
+              `Provider "${provider.name}" declared capability "albumDetails" but does not implement it`,
+            );
           }
         } catch (error) {
           lastError = error;

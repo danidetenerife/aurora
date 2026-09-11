@@ -1,9 +1,9 @@
 import { EllipsisVerticalIcon, PlayIcon, PlusIcon } from 'lucide-react';
 import type { FC, ReactNode } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { Track } from '@nuclearplayer/model';
-import { Button, cn, Popover } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { Track } from '@aurora/model';
+import { Button, cn, Popover } from '@aurora/ui';
 
 import { useQueueActions } from '../../../hooks/useQueueActions';
 import { playbackManager } from '../../../services/playback';

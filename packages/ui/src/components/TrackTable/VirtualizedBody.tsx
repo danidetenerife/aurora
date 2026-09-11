@@ -2,7 +2,7 @@ import type { Row } from '@tanstack/react-table';
 import type { VirtualItem } from '@tanstack/react-virtual';
 import { memo } from 'react';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 type Props<T extends Track> = {
   rows: Row<T>[];

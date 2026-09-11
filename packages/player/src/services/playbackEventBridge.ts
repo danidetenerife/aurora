@@ -1,5 +1,5 @@
-import type { SoundStatus } from '@nuclearplayer/hifi';
-import type { PluginEventMap } from '@nuclearplayer/plugin-sdk';
+import type { SoundStatus } from '@aurora/hifi';
+import type { PluginEventMap } from '@aurora/plugin-sdk';
 
 import { useSoundStore } from '../stores/soundStore';
 import { secondsToMs } from '../utils/time';

@@ -1,4 +1,4 @@
-import type { LoggerHost } from '@nuclearplayer/plugin-sdk';
+import type { LoggerHost } from '@aurora/plugin-sdk';
 
 import { createPluginLogger } from './logger';
 

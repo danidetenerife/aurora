@@ -1,9 +1,6 @@
 import { FC } from 'react';
 
-import type {
-  CustomSettingDefinition,
-  SettingValue,
-} from '@nuclearplayer/plugin-sdk';
+import type { CustomSettingDefinition, SettingValue } from '@aurora/plugin-sdk';
 
 import { widgetRegistry } from '../../services/widgetRegistry';
 import { usePluginStore } from '../../stores/pluginStore';

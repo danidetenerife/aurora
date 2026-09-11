@@ -1,6 +1,6 @@
 const DURATION_RE = /^(?:(\d+):)?(\d+):(\d\d)$|^(\d+(?:\.\d+)?)$/;
 
-// Supports formats used by old Nuclear.
+// Supports formats used by old Aurora.
 // Examples: 3:15, 03:15, 1:02:03
 export const parseLegacyDuration = (value: string): number => {
   const match = DURATION_RE.exec(value);

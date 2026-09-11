@@ -4,7 +4,7 @@ import type {
   SettingDefinition,
   SettingSource,
   SettingValue,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { createUniversalStore } from '../services/universalStore';
 

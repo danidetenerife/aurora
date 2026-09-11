@@ -7,7 +7,7 @@ import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://nuclearplayer.com',
+  site: 'https://auroraplayer.com',
   output: 'static',
   integrations: [react(), expressiveCode(), mdx(), sitemap(), icon()],
   vite: {

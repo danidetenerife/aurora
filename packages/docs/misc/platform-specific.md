@@ -6,12 +6,12 @@ description: Platform specific considerations
 
 ### Appdata
 
-- Linux: `~/.local/share/com.nuclearplayer/`
-- macOS: `~/Library/Application Support/com.nuclearplayer/`
-- Windows: `%APPDATA%/com.nuclearplayer/`
+- Linux: `~/.local/share/com.auroraplayer/`
+- macOS: `~/Library/Application Support/com.auroraplayer/`
+- Windows: `%APPDATA%/com.auroraplayer/`
 
 ### Config
 
-- Linux: `~/.config/com.nuclearplayer/`
-- macOS: `~/Library/Application Support/com.nuclearplayer/config`
-- Windows: `%APPDATA%/com.nuclearplayer/config`
+- Linux: `~/.config/com.auroraplayer/`
+- macOS: `~/Library/Application Support/com.auroraplayer/config`
+- Windows: `%APPDATA%/com.auroraplayer/config`

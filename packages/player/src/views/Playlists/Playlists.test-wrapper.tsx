@@ -2,8 +2,8 @@ import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import { render, RenderResult, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
-import { createSelectWrapper, DialogWrapper } from '@nuclearplayer/ui';
+import type { PlaylistProvider } from '@aurora/plugin-sdk';
+import { createSelectWrapper, DialogWrapper } from '@aurora/ui';
 
 import App from '../../App';
 import { routeTree } from '../../routeTree.gen';

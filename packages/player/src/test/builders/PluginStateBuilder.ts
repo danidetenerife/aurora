@@ -1,4 +1,4 @@
-import type { NuclearPlugin, PluginMetadata } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPlugin, PluginMetadata } from '@aurora/plugin-sdk';
 
 import type { PluginState } from '../../stores/pluginStore';
 
@@ -63,7 +63,7 @@ export class PluginStateBuilder {
     return this;
   }
 
-  withInstance(instance: NuclearPlugin): PluginStateBuilder {
+  withInstance(instance: AuroraPlugin): PluginStateBuilder {
     this.state.instance = instance;
     return this;
   }

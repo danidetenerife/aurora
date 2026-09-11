@@ -1,4 +1,4 @@
-import { PluginIcon } from '@nuclearplayer/plugin-sdk';
+import { PluginIcon } from '@aurora/plugin-sdk';
 
 interface PluginIconComponentProps {
   icon: PluginIcon | undefined;

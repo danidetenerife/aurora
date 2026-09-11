@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Input } from '@nuclearplayer/ui';
+import { Input } from '@aurora/ui';
 
 type Props = {
   label: string;

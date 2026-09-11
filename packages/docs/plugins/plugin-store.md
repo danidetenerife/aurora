@@ -4,17 +4,17 @@ description: Browse, install, and manage plugins from the built-in plugin store.
 
 # Plugin store
 
-Nuclear has a built-in plugin store. Open Preferences from the sidebar, and go to Plugins, and you'll see two tabs: **Installed** and **Store**.
+Aurora has a built-in plugin store. Open Preferences from the sidebar, and go to Plugins, and you'll see two tabs: **Installed** and **Store**.
 
 ## Browsing the store
 
-The Store tab lists plugins from the official plugin registry hosted at [github.com/NuclearPlayer/plugin-registry](https://github.com/NuclearPlayer/plugin-registry).
+The Store tab lists plugins from the official plugin registry hosted at [github.com/AuroraPlayer/plugin-registry](https://github.com/AuroraPlayer/plugin-registry).
 
 You can search by name, description, or author, and filter by category.
 
 ## Installing from the store
 
-Click the Install button on any plugin. Nuclear downloads the latest release from the plugin's GitHub repository, extracts it, and loads it automatically. The button shows a spinner during installation and a checkmark when done.
+Click the Install button on any plugin. Aurora downloads the latest release from the plugin's GitHub repository, extracts it, and loads it automatically. The button shows a spinner during installation and a checkmark when done.
 
 After installation, the plugin appears in the Installed tab. Toggle it on to enable it.
 
@@ -36,7 +36,7 @@ Toggle the switch on any installed plugin. Disabling a plugin disables its funct
 
 ### Remove
 
-Click the remove button to fully uninstall a plugin. This deletes its files and removes it from Nuclear.
+Click the remove button to fully uninstall a plugin. This deletes its files and removes it from Aurora.
 
 ### Reload (dev plugins only)
 
@@ -44,7 +44,7 @@ Dev plugins show a reload button that re-reads the source from the original fold
 
 ## Plugin updates
 
-Nuclear checks for updates when it starts. If a newer version is available in the registry and auto-update is enabled (the default), the update is downloaded and installed automatically. The old version's files remain on disk but the new version takes over.
+Aurora checks for updates when it starts. If a newer version is available in the registry and auto-update is enabled (the default), the update is downloaded and installed automatically. The old version's files remain on disk but the new version takes over.
 
 To disable auto-update, go to Settings and turn off "Auto-update plugins" under the Plugins section.
 
@@ -52,6 +52,6 @@ Dev plugins are never auto-updated. To update a dev plugin, edit the source and 
 
 ## Where plugins are stored
 
-Nuclear copies all plugins (both store and dev) into a managed directory inside your [app data folder](../misc/platform-specific.md#appdata) at `plugins/{id}/{version}/`. The running code always comes from this managed copy.
+Aurora copies all plugins (both store and dev) into a managed directory inside your [app data folder](../misc/platform-specific.md#appdata) at `plugins/{id}/{version}/`. The running code always comes from this managed copy.
 
 For dev plugins, the original source folder is preserved and used when you click reload.

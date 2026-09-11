@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FilterIcon } from 'lucide-react';
 import { useState } from 'react';
 
-import { Input } from '@nuclearplayer/ui';
+import { Input } from '@aurora/ui';
 
 const meta: Meta<typeof Input> = {
   title: 'Components/Input',

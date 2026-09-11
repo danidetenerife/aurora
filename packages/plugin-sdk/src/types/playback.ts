@@ -1,6 +1,6 @@
-import type { RepeatMode } from '@nuclearplayer/model';
+import type { RepeatMode } from '@aurora/model';
 
-export type { RepeatMode } from '@nuclearplayer/model';
+export type { RepeatMode } from '@aurora/model';
 
 export type PlaybackStatus = 'playing' | 'paused' | 'stopped';
 

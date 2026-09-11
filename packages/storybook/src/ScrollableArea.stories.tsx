@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { ScrollableArea } from '@nuclearplayer/ui';
+import { ScrollableArea } from '@aurora/ui';
 
 const meta: Meta<typeof ScrollableArea> = {
   title: 'Components/ScrollableArea',

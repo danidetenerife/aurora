@@ -1,15 +1,15 @@
 import { produce } from 'immer';
 
-import type { ArtworkSet, QueueItem, Track } from '@nuclearplayer/model';
+import type { ArtworkSet, QueueItem, Track } from '@aurora/model';
 
+import { useFavoritesStore } from '../stores/favoritesStore';
+import { useQueueStore } from '../stores/queueStore';
 import {
   createArtworkSetFromUrl,
   isYouTubeOrGenericArtwork,
   resolveTrackCoverUrl,
 } from './coverArtResolver';
 import { metadataHost } from './metadataHost';
-import { useFavoritesStore } from '../stores/favoritesStore';
-import { useQueueStore } from '../stores/queueStore';
 
 const artworkCache = new Map<string, ArtworkSet>();
 
@@ -37,7 +37,6 @@ export const resolveArtworkForTrack = async (
     return artworkCache.get(cacheKey)!;
   }
 
-  // 1. Try iTunes instant high-res resolver (600x600)
   try {
     const itunesUrl = await resolveTrackCoverUrl(primaryArtist, title);
     if (itunesUrl) {
@@ -45,9 +44,10 @@ export const resolveArtworkForTrack = async (
       artworkCache.set(cacheKey, artworkSet);
       return artworkSet;
     }
-  } catch {}
+  } catch (error) {
+    void error;
+  }
 
-  // 2. Try Spotify / metadataHost search
   try {
     const searchRes = await metadataHost.search({
       query: `${primaryArtist} ${title}`,
@@ -60,7 +60,9 @@ export const resolveArtworkForTrack = async (
       artworkCache.set(cacheKey, match.artwork);
       return match.artwork;
     }
-  } catch {}
+  } catch (error) {
+    void error;
+  }
 
   return null;
 };
@@ -70,7 +72,9 @@ export const enrichTrackArtwork = async (item: QueueItem): Promise<void> => {
   if (artwork) {
     useQueueStore.setState(
       produce((state: { items: QueueItem[] }) => {
-        const target = state.items.find((queueItem) => queueItem.id === item.id);
+        const target = state.items.find(
+          (queueItem) => queueItem.id === item.id,
+        );
         if (target) {
           target.track.artwork = artwork;
         }

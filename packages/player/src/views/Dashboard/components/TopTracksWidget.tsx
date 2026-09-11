@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Loader } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Loader } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../../components/ConnectedTrackTable';
 import { useDashboardTopTracks } from '../hooks/useDashboardData';

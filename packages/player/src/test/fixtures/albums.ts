@@ -1,4 +1,4 @@
-import type { Album, ArtworkSet, TrackRef } from '@nuclearplayer/model';
+import type { Album, ArtworkSet, TrackRef } from '@aurora/model';
 
 type AlbumFixtureOptions = {
   artistName: string;

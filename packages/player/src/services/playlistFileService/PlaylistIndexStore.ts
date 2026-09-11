@@ -1,5 +1,5 @@
-import type { PlaylistIndexEntry } from '@nuclearplayer/model';
-import { playlistIndexSchema } from '@nuclearplayer/model';
+import type { PlaylistIndexEntry } from '@aurora/model';
+import { playlistIndexSchema } from '@aurora/model';
 
 import { createUniversalStore } from '../universalStore';
 import { loadValidated } from '../validatedStore';

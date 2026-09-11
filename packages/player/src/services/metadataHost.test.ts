@@ -1,9 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  ArtistMetadataCapability,
-  SearchParams,
-} from '@nuclearplayer/plugin-sdk';
+import { ArtistMetadataCapability, SearchParams } from '@aurora/plugin-sdk';
 
 import { MetadataProviderBuilder } from '../test/builders/MetadataProviderBuilder';
 import { metadataHost } from './metadataHost';
@@ -221,7 +218,9 @@ describe('metadataHost', () => {
     ])('throws if capability missing', async ({ method, capability }) => {
       const provider = new MetadataProviderBuilder()
         .withId('test-provider')
-        .withArtistMetadataCapabilities([])
+        .withArtistMetadataCapabilities([
+          capability as ArtistMetadataCapability,
+        ])
         .build();
 
       providersHost.register(provider);
@@ -256,7 +255,7 @@ describe('metadataHost', () => {
     it('throws if capability missing', async () => {
       const provider = new MetadataProviderBuilder()
         .withId('test-provider')
-        .withAlbumMetadataCapabilities([])
+        .withAlbumMetadataCapabilities(['albumDetails'])
         .build();
 
       providersHost.register(provider);

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Card, CardGrid } from '@nuclearplayer/ui';
+import { Card, CardGrid } from '@aurora/ui';
 
 const meta = {
   title: 'Layout/CardGrid',

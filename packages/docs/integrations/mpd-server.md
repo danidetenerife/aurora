@@ -1,33 +1,33 @@
 ---
-description: Control Nuclear from any MPD client.
+description: Control Aurora from any MPD client.
 ---
 
 # MPD server
 
-Nuclear includes a built-in [MPD](https://www.musicpd.org/)-compatible server. If you already use tools like `mpc`, `ncmpcpp`, `mpDris2`, or any other MPD client, you can use them with Nuclear and control playback.
+Aurora includes a built-in [MPD](https://www.musicpd.org/)-compatible server. If you already use tools like `mpc`, `ncmpcpp`, `mpDris2`, or any other MPD client, you can use them with Aurora and control playback.
 
-Nuclear supports the subset of the protocol needed for playback control, queue management, and real-time notifications. Library browsing and stored playlists are not yet supported.
+Aurora supports the subset of the protocol needed for playback control, queue management, and real-time notifications. Library browsing and stored playlists are not yet supported.
 
 ## Enable the server
 
-1. Open Nuclear, then go to Settings, then Integrations.
+1. Open Aurora, then go to Settings, then Integrations.
 2. Toggle **Enable MPD Server** on.
 3. The server starts on `127.0.0.1:6600` (localhost only). If port 6600 is taken, it tries 6601, 6602, and so on up to 6609.
 4. The **MPD Server URL** field below the toggle shows the bound address. Click the copy button to grab it.
 
 ## Connect a client
 
-If Nuclear was able to bind to port 6600, which is the default port for this protocol, all tools will see it out of the box. Example with mpc:
+If Aurora was able to bind to port 6600, which is the default port for this protocol, all tools will see it out of the box. Example with mpc:
 
 {% tabs %}
 {% tab title="mpc" %}
-If Nuclear got port 6600, `mpc` connects with no configuration:
+If Aurora got port 6600, `mpc` connects with no configuration:
 
 ```bash
 mpc status
 ```
 
-If Nuclear bound to a different port (check the settings field), set the `MPD_HOST` and `MPD_PORT` environment variables:
+If Aurora bound to a different port (check the settings field), set the `MPD_HOST` and `MPD_PORT` environment variables:
 
 ```bash
 export MPD_HOST=127.0.0.1
@@ -44,11 +44,11 @@ mpd_host = 127.0.0.1
 mpd_port = 6600
 ```
 
-Adjust the port if Nuclear bound to a different one.
+Adjust the port if Aurora bound to a different one.
 {% endtab %}
 
 {% tab title="Other clients" %}
-Use `127.0.0.1` on the port shown in Nuclear's settings. No password is required.
+Use `127.0.0.1` on the port shown in Aurora's settings. No password is required.
 {% endtab %}
 {% endtabs %}
 

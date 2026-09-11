@@ -98,7 +98,7 @@ describe("What's New view", () => {
 
     expect(WhatsNewWrapper.entries).toHaveLength(5);
     expect(WhatsNewWrapper.entry(3).description).toHaveTextContent(
-      'MCP server for controlling Nuclear from AI agents',
+      'MCP server for controlling Aurora from AI agents',
     );
     expect(WhatsNewWrapper.entry(4).description).toHaveTextContent(
       'Updated documentation',

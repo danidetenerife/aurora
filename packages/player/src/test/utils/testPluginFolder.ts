@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { PluginManifest } from '@nuclearplayer/plugin-sdk';
+import { PluginManifest } from '@aurora/plugin-sdk';
 
 import { PluginFsMock } from '../mocks/plugin-fs';
 
@@ -15,7 +15,7 @@ export type PluginFolderOptions = {
   main?: string;
 };
 
-export const AppData = '/home/user/.local/share/com.nuclearplayer';
+export const AppData = '/home/user/.local/share/org.aurora.player';
 
 export const createPluginFolder = (
   basePath: string,
@@ -38,6 +38,10 @@ export const createPluginFolder = (
     description,
     author,
     ...(main ? { main } : {}),
+    aurora: {
+      displayName: displayName ?? name,
+      permissions,
+    },
     nuclear: {
       displayName: displayName ?? name,
       permissions,

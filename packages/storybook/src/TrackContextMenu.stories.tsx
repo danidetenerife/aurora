@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { FC, ReactNode, useState } from 'react';
 
-import { Button, TrackContextMenu } from '@nuclearplayer/ui';
+import { Button, TrackContextMenu } from '@aurora/ui';
 
 const meta: Meta<typeof TrackContextMenu> = {
   title: 'Components/TrackContextMenu',

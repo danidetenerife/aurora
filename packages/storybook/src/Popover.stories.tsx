@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { PencilIcon, Trash2Icon } from 'lucide-react';
 
-import { Button, Popover } from '@nuclearplayer/ui';
+import { Button, Popover } from '@aurora/ui';
 
 const meta: Meta<typeof Popover> = {
   title: 'Components/Popover',

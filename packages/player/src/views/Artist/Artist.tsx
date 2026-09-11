@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
+import { Loader2, Radio } from 'lucide-react';
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
-import { EmptyState, ScrollableArea } from '@nuclearplayer/ui';
-import { Loader2, Radio } from 'lucide-react';
+import type { MetadataProvider } from '@aurora/plugin-sdk';
+import { EmptyState, ScrollableArea } from '@aurora/ui';
 
 import { useProviders } from '../../hooks/useProviders';
 import { providersHost } from '../../services/providersHost';
@@ -14,10 +14,14 @@ import { ARTIST_WIDGETS, groupWidgets } from './artistWidgets';
 type ArtistProps = Record<string, never>;
 
 const normalizeProviderId = (id: string): string => {
-  if (id === 'youtube' || id === 'nuclear-plugin-youtube-music') {
+  if (
+    id === 'youtube' ||
+    id === 'aurora-plugin-youtube-music' ||
+    id === 'nuclear-plugin-youtube-music'
+  ) {
     return 'youtube-music';
   }
-  if (id === 'nuclear-plugin-something') {
+  if (id === 'aurora-plugin-something' || id === 'nuclear-plugin-something') {
     return 'spotify';
   }
   return id;
@@ -78,7 +82,9 @@ export const Artist: FC<ArtistProps> = () => {
 
     // Case 1: Channel ID on a non-YouTube provider -> redirect to youtube-music
     if (isYouTubeChannelId(decodedArtistId) && providerId !== 'youtube-music') {
-      const ytProvider = metadataProviders.find((p) => p.id === 'youtube-music');
+      const ytProvider = metadataProviders.find(
+        (p) => p.id === 'youtube-music',
+      );
       if (ytProvider) {
         void navigate({
           to: `/artist/youtube-music/${encodeURIComponent(decodedArtistId)}`,
@@ -124,15 +130,12 @@ export const Artist: FC<ArtistProps> = () => {
     navigate,
   ]);
 
-  const isWaiting =
-    isStartingUp ||
-    (!provider && metadataProviders.length > 0) ||
-    metadataProviders.length === 0;
+  const isWaiting = !provider && (isStartingUp || metadataProviders.length > 0);
 
   if (isWaiting) {
     return (
       <ScrollableArea className="bg-background flex items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-primary opacity-60" />
+        <Loader2 size={40} className="text-primary animate-spin opacity-60" />
       </ScrollableArea>
     );
   }
@@ -173,7 +176,7 @@ export const Artist: FC<ArtistProps> = () => {
     }
     return (
       <ScrollableArea className="bg-background flex items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-primary opacity-60" />
+        <Loader2 size={40} className="text-primary animate-spin opacity-60" />
       </ScrollableArea>
     );
   }

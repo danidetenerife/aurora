@@ -15,12 +15,12 @@ export const testimonials: Testimonial[] = [
   {
     quote: 'Sounds illegal.',
     author: 'ineedyourdiscipline',
-    url: 'https://old.reddit.com/r/privacy/comments/aggycb/nuclear_a_free_alternative_to_spotify_no_drm_100/ee68tsi/',
+    url: 'https://old.reddit.com/r/privacy/comments/aggycb/aurora_a_free_alternative_to_spotify_no_drm_100/ee68tsi/',
     source: 'redditor',
   },
   {
     quote:
-      "I used nuclear and had a horrible experience with it. It looks bad, you wait for 1 minute to play a 3 minute song, it's slow as fuck. Probably it's because of Electron, but it is used by so many people that I started cringing.",
+      "I used aurora and had a horrible experience with it. It looks bad, you wait for 1 minute to play a 3 minute song, it's slow as fuck. Probably it's because of Electron, but it is used by so many people that I started cringing.",
     author: 'Anonymous /g/ user',
     url: 'https://desuarchive.org/g/thread/80081582/#80096271',
   },
@@ -32,7 +32,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     quote:
-      "I downloaded Nuclear (the AppImage, if that matters) and booted it up. Instant 300MB RAM usage.\n\nI think I'll pass.",
+      "I downloaded Aurora (the AppImage, if that matters) and booted it up. Instant 300MB RAM usage.\n\nI think I'll pass.",
     author: 'throwaway58576',
     source: 'HN user',
     url: 'https://news.ycombinator.com/item?id=45118538',
@@ -61,7 +61,7 @@ export const testimonials: Testimonial[] = [
     quote: 'As a musician, fuck everything about this',
     author: 'Rockytriton',
     source: 'redditor',
-    url: 'https://old.reddit.com/r/linux/comments/ag82rn/nuclear_a_free_alternative_to_spotify_no_drm_100/ee5q1ds/',
+    url: 'https://old.reddit.com/r/linux/comments/ag82rn/aurora_a_free_alternative_to_spotify_no_drm_100/ee5q1ds/',
   },
   {
     quote:

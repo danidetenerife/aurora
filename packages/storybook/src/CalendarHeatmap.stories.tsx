@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-import { CalendarHeatmap, CalendarHeatmapProps } from '@nuclearplayer/ui';
+import { CalendarHeatmap, CalendarHeatmapProps } from '@aurora/ui';
 
 const meta = {
   title: 'Components/HistoryCharts/CalendarHeatmap',

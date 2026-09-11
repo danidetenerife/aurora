@@ -1,9 +1,9 @@
 import { FC, useCallback } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { ArtistRef, pickArtwork } from '@nuclearplayer/model';
-import type { AttributedResult } from '@nuclearplayer/plugin-sdk';
-import type { CardsRowItem } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { ArtistRef, pickArtwork } from '@aurora/model';
+import type { AttributedResult } from '@aurora/plugin-sdk';
+import type { CardsRowItem } from '@aurora/ui';
 
 import { useDashboardTopArtists } from '../hooks/useDashboardData';
 import { useNavigateToEntity } from '../hooks/useNavigateToEntity';

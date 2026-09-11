@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { Package, WifiOff } from 'lucide-react';
 
-import { Button, EmptyState } from '@nuclearplayer/ui';
+import { Button, EmptyState } from '@aurora/ui';
 
 const meta = {
   title: 'Components/EmptyState',

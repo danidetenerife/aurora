@@ -2,32 +2,32 @@
 
 Build plugins for Aurora music player.
 
-Plugins are JavaScript/TypeScript modules that extend Aurora's functionality. Write lifecycle hooks, register providers, distribute it through the [plugin registry](https://github.com/NuclearPlayer/plugin-registry).
+Plugins are JavaScript/TypeScript modules that extend Aurora's functionality. Write lifecycle hooks, register providers, distribute it through the [plugin registry](https://github.com/AuroraPlayer/plugin-registry).
 
 ## Quick Start
 
 ```bash
 mkdir my-plugin && cd my-plugin
 pnpm init -y
-pnpm add @nuclearplayer/plugin-sdk
+pnpm add @aurora/plugin-sdk
 ```
 
 Create `src/index.ts`:
 
 ```ts
-import { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onLoad(api: NuclearPluginAPI) {
+  async onLoad(api: AuroraPluginAPI) {
     console.log('Plugin loaded');
   },
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     console.log('Plugin enabled');
   },
-  async onDisable(api: NuclearPluginAPI) {
+  async onDisable(api: AuroraPluginAPI) {
     console.log('Plugin disabled');
   },
-  async onUnload(api: NuclearPluginAPI) {
+  async onUnload(api: AuroraPluginAPI) {
     console.log('Plugin unloaded');
   },
 };
@@ -46,8 +46,8 @@ You can load both TS and JS files. Nuclear compiles TS using esbuild.
 ### Optional fields
 - `main` - Entry file path (defaults to `index.js` or `dist/index.js`)
 
-### Nuclear-specific config
-Add a `nuclear` object for extra metadata:
+### Aurora-specific config
+Add an `aurora` object for extra metadata:
 
 - `displayName` - Friendly name (defaults to `name`)
 - `category` - Arbitrary grouping (e.g., `source`, `integration`, `lyrics`)
@@ -56,16 +56,14 @@ Add a `nuclear` object for extra metadata:
 
 ```json
 {
-  "name": "@nuclear-plugin/lastfm",
-  "version": "0.1.0",
-  "description": "Scrobble tracks to Last.fm",
-  "author": "Aurora Team",
-  "main": "dist/index.js",
-  "nuclear": {
-    "displayName": "Last.fm Scrobbler",
-    "category": "integration",
-    "icon": { "type": "link", "link": "https://example.com/icon.png" },
-    "permissions": ["scrobble", "network"]
+  "name": "@aurora-plugin/lastfm",
+  "version": "1.0.0",
+  "description": "Last.fm scrobbler",
+  "main": "src/index.ts",
+  "aurora": {
+    "displayName": "Last.fm",
+    "category": "scrobbler",
+    "permissions": ["network", "storage"]
   }
 }
 ```
@@ -122,7 +120,7 @@ The `api` object passed to lifecycle hooks provides access to these domain APIs:
 | `api.Logger` | Structured logging |
 | `api.Ytdlp` | yt-dlp integration |
 
-See the [full documentation](https://docs.nuclearplayer.com) for detailed guides on each API.
+See the [full documentation](https://aurora-player.org) for detailed guides on each API.
 
 ## Permissions
 
@@ -167,15 +165,15 @@ Run `pnpm build` and you'll get `dist/index.js`.
 
 ```ts
 import type {
-  NuclearPlugin,
+  AuroraPlugin,
   PluginManifest,
   PluginIcon,
-  // Model types (re-exported from @nuclearplayer/model)
+  // Model types (re-exported from @aurora/model)
   ArtistCredit,
   Album,
   Track,
   // ... and many more
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 ```
 
 ## License

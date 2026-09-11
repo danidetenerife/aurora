@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import '@nuclearplayer/tailwind-config';
+import '@aurora/tailwind-config';
 
 import { PlayerBarSeekBar } from './PlayerBarSeekBar';
 

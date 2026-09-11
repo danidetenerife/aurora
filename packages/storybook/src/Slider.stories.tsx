@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Slider } from '@nuclearplayer/ui';
+import { Slider } from '@aurora/ui';
 
 const meta: Meta<typeof Slider> = {
   title: 'Components/Slider',

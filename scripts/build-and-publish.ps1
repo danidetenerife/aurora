@@ -67,7 +67,7 @@ if (Test-Path $WebsiteVersionPath) {
 
 # 5. Build frontend
 Write-Host "[1/4] Compilando Frontend..." -ForegroundColor Yellow
-npx pnpm --filter @nuclearplayer/player build:frontend
+npx pnpm --filter @aurora/player build:frontend
 
 # 6. Build Android APK
 Write-Host "[2/4] Compilando Android APK..." -ForegroundColor Yellow
@@ -76,11 +76,23 @@ cmd.exe /c "cd packages\player && npx cap sync android && android\build-apk.bat"
 # 7. Build Tauri Desktop EXE
 Write-Host "[3/4] Compilando instalador Windows..." -ForegroundColor Yellow
 $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
-$SigningKeyPath = Join-Path $env:USERPROFILE ".tauri\nuclear-updater.key"
-$SigningPasswordPath = Join-Path $env:USERPROFILE ".tauri\nuclear-updater.password"
+$SigningKeyPath = Join-Path $env:USERPROFILE ".tauri\aurora-updater.key"
+$SigningPasswordPath = Join-Path $env:USERPROFILE ".tauri\aurora-updater.password"
 
 if (-not (Test-Path -LiteralPath $SigningKeyPath) -or -not (Test-Path -LiteralPath $SigningPasswordPath)) {
-    throw "No se encontró la clave de firma del actualizador en $SigningKeyPath"
+    $LegacyKeyPath = Join-Path $env:USERPROFILE ".tauri\aurora-updater.key"
+    $LegacyPasswordPath = Join-Path $env:USERPROFILE ".tauri\aurora-updater.password"
+    if ((Test-Path -LiteralPath $LegacyKeyPath) -and (Test-Path -LiteralPath $LegacyPasswordPath)) {
+        Copy-Item $LegacyKeyPath $SigningKeyPath -Force
+        Copy-Item $LegacyPasswordPath $SigningPasswordPath -Force
+        $LegacyPubPath = Join-Path $env:USERPROFILE ".tauri\aurora-updater.key.pub"
+        $SigningPubPath = Join-Path $env:USERPROFILE ".tauri\aurora-updater.key.pub"
+        if (Test-Path -LiteralPath $LegacyPubPath) {
+            Copy-Item $LegacyPubPath $SigningPubPath -Force
+        }
+    } else {
+        throw "No se encontró la clave de firma del actualizador en $SigningKeyPath"
+    }
 }
 
 $env:TAURI_SIGNING_PRIVATE_KEY = [System.IO.File]::ReadAllText($SigningKeyPath).Trim()
@@ -95,7 +107,7 @@ Set-Location $Root
 # Copy setup exe to executables
 $GeneratedExe = "$Root\packages\player\src-tauri\target\release\bundle\nsis\Aurora_${NextVer}_x64-setup.exe"
 if (-not (Test-Path $GeneratedExe)) {
-    $GeneratedExe = "$Root\packages\player\src-tauri\target\release\bundle\nsis\Nuclear_${NextVer}_x64-setup.exe"
+    $GeneratedExe = "$Root\packages\player\src-tauri\target\release\bundle\nsis\Aurora_${NextVer}_x64-setup.exe"
 }
 $DestExe = "$Root\ejecutables\Aurora_${NextVer}_x64-setup.exe"
 if (Test-Path $GeneratedExe) {

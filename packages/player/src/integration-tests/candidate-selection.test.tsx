@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react';
 
-import type { QueueItem, StreamCandidate } from '@nuclearplayer/model';
+import type { QueueItem, StreamCandidate } from '@aurora/model';
 
 import { providersHost } from '../services/providersHost';
 import { useQueueStore } from '../stores/queueStore';

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { PlayerBar } from '@nuclearplayer/ui';
+import { PlayerBar } from '@aurora/ui';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 

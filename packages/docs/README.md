@@ -18,7 +18,7 @@ Aurora is a free, open-source music player without ads or tracking. Search for a
 New to Aurora? Start here:
 
 - [Getting started](user-manual/getting-started.md) - install Aurora and play your first song
-- [How Aurora works](core-concepts/how-nuclear-works.md) - understand the plugin model and how playback works
+- [How Aurora works](core-concepts/how-aurora-works.md) - understand the plugin model and how playback works
 - [Plugins and providers](core-concepts/plugins-and-providers.md) - what plugins do and how to manage your sources
 - [Installation](user-manual/installation.md) - platform-specific download and install instructions
 - [Themes](themes/themes.md) - customize Aurora's appearance with built-in, custom, or community themes
@@ -27,19 +27,19 @@ New to Aurora? Start here:
 
 This is a pnpm/turbo monorepo with these major packages:
 
-- @nuclearplayer/player - Main Tauri app (React + Rust)
-- @nuclearplayer/ui - Shared UI components
-- @nuclearplayer/themes - Theming system and utilities
-- @nuclearplayer/plugin-sdk - Plugin framework and helpers
-- @nuclearplayer/model - Shared data model
-- @nuclearplayer/hifi - Advanced HTML5 audio engine
-- @nuclearplayer/i18n - Internationalization
-- @nuclearplayer/storybook - Component demos
-- @nuclearplayer/tailwind-config - Shared Tailwind v4 CSS config
-- @nuclearplayer/eslint-config - Shared linting rules
-- @nuclearplayer/tools - Build and maintenance utilities
-- @nuclearplayer/docs - This documentation
-- @nuclearplayer/website - Project website
+- @aurora/player - Main Tauri app (React + Rust)
+- @aurora/ui - Shared UI components
+- @aurora/themes - Theming system and utilities
+- @aurora/plugin-sdk - Plugin framework and helpers
+- @aurora/model - Shared data model
+- @aurora/hifi - Advanced HTML5 audio engine
+- @aurora/i18n - Internationalization
+- @aurora/storybook - Component demos
+- @aurora/tailwind-config - Shared Tailwind v4 CSS config
+- @aurora/eslint-config - Shared linting rules
+- @aurora/tools - Build and maintenance utilities
+- @aurora/docs - This documentation
+- @aurora/website - Project website
 
 ## For developers
 

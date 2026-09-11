@@ -2,7 +2,7 @@ import * as dialog from '@tauri-apps/plugin-dialog';
 import * as fs from '@tauri-apps/plugin-fs';
 import { type Mock } from 'vitest';
 
-import type { Playlist } from '@nuclearplayer/model';
+import type { Playlist } from '@aurora/model';
 
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { PlaylistBuilder } from '../../test/builders/PlaylistBuilder';

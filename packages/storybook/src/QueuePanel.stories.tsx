@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { QueueItem } from '@nuclearplayer/model';
-import { QueuePanel } from '@nuclearplayer/ui';
+import type { QueueItem } from '@aurora/model';
+import { QueuePanel } from '@aurora/ui';
 
 const meta = {
   title: 'Components/QueuePanel',

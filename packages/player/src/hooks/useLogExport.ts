@@ -6,8 +6,8 @@ import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { LogEntryData } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { LogEntryData } from '@aurora/ui';
 
 import { Logger } from '../services/logger';
 

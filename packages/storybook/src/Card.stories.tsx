@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Card } from '@nuclearplayer/ui';
+import { Card } from '@aurora/ui';
 
 const meta = {
   title: 'Components/Card',

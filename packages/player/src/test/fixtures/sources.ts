@@ -1,8 +1,5 @@
-import type { SearchResults } from '@nuclearplayer/model';
-import type {
-  MetadataProvider,
-  StreamingProvider,
-} from '@nuclearplayer/plugin-sdk';
+import type { SearchResults } from '@aurora/model';
+import type { MetadataProvider, StreamingProvider } from '@aurora/plugin-sdk';
 
 import { MetadataProviderBuilder } from '../builders/MetadataProviderBuilder';
 import { StreamingProviderBuilder } from '../builders/StreamingProviderBuilder';

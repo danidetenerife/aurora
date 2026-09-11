@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import type { SettingDefinition } from '@nuclearplayer/plugin-sdk';
+import type { SettingDefinition } from '@aurora/plugin-sdk';
 
 export const useSettingTranslation = (definition: SettingDefinition) => {
   const { t } = useTranslation('preferences', { useSuspense: false });

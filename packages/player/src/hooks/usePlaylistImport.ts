@@ -3,7 +3,7 @@ import { readTextFile } from '@tauri-apps/plugin-fs';
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import { importPlaylistFromJson } from '../services/playlistImport';
 import { usePlaylistStore } from '../stores/playlistStore';

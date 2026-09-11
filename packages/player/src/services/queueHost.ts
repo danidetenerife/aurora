@@ -1,9 +1,9 @@
-import type { QueueItem, Track } from '@nuclearplayer/model';
+import type { QueueItem, Track } from '@aurora/model';
 import type {
   Queue,
   QueueHost,
   QueueItemStateUpdate,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { useQueueStore } from '../stores/queueStore';
 

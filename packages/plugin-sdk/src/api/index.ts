@@ -29,7 +29,7 @@ import { ShellAPI } from './shell';
 import { StreamingAPI } from './streaming';
 import { YtdlpAPI } from './ytdlp';
 
-export class NuclearAPI {
+export class AuroraAPI {
   readonly Settings: Settings;
   readonly Providers: Providers;
   readonly Queue: QueueAPI;
@@ -87,4 +87,6 @@ export class NuclearAPI {
   }
 }
 
-export class NuclearPluginAPI extends NuclearAPI {}
+export class AuroraPluginAPI extends AuroraAPI {}
+
+export { AuroraAPI as NuclearAPI, AuroraPluginAPI as NuclearPluginAPI };

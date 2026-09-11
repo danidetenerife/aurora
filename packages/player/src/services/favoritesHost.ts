@@ -1,13 +1,5 @@
-import type {
-  AlbumRef,
-  ArtistRef,
-  ProviderRef,
-  Track,
-} from '@nuclearplayer/model';
-import type {
-  FavoritesHost,
-  FavoritesListener,
-} from '@nuclearplayer/plugin-sdk';
+import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
+import type { FavoritesHost, FavoritesListener } from '@aurora/plugin-sdk';
 
 import { useFavoritesStore } from '../stores/favoritesStore';
 
@@ -38,8 +30,7 @@ export const createFavoritesHost = (): FavoritesHost => ({
   isArtistFavorite: async (source: ProviderRef) =>
     useFavoritesStore.getState().isArtistFavorite(source),
 
-  getDeletedKeys: async () =>
-    useFavoritesStore.getState().deletedKeys,
+  getDeletedKeys: async () => useFavoritesStore.getState().deletedKeys,
 
   subscribe: (listener: FavoritesListener) =>
     useFavoritesStore.subscribe((state) =>

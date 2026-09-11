@@ -2,9 +2,9 @@ import { Airplay, Car } from 'lucide-react';
 import { FC } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { RepeatMode } from '@nuclearplayer/plugin-sdk';
-import { Button, PlayerBar, Tooltip } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { RepeatMode } from '@aurora/plugin-sdk';
+import { Button, PlayerBar, Tooltip } from '@aurora/ui';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { useMediaRouter } from '../../hooks/useMediaRouter';

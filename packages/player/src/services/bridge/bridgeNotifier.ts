@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 
-import type { SoundStatus } from '@nuclearplayer/hifi';
-import type { SettingValue } from '@nuclearplayer/plugin-sdk';
+import type { SoundStatus } from '@aurora/hifi';
+import type { SettingValue } from '@aurora/plugin-sdk';
 
 import { useQueueStore } from '../../stores/queueStore';
 import { useSettingsStore } from '../../stores/settingsStore';

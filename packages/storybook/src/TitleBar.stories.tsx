@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { TitleBar } from '@nuclearplayer/ui';
+import { TitleBar } from '@aurora/ui';
 
 const meta = {
   title: 'Components/TitleBar',
@@ -28,11 +28,7 @@ export const AllVariants: Story = {
     <div className="flex flex-col gap-8">
       <div>
         <p className="text-foreground/50 mb-2 text-sm">macOS</p>
-        <TitleBar
-          {...args}
-          title="Aurora Music Player"
-          styleOverride="macos"
-        />
+        <TitleBar {...args} title="Aurora Music Player" styleOverride="macos" />
       </div>
       <div>
         <p className="text-foreground/50 mb-2 text-sm">Windows / Linux</p>

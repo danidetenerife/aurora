@@ -1,5 +1,7 @@
+import { QueryClient } from '@tanstack/react-query';
 import { createMemoryHistory, createRouter } from '@tanstack/react-router';
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import App from '../../App';
 import { routeTree } from '../../routeTree.gen';
@@ -7,16 +9,29 @@ import { useFavoritesStore } from '../../stores/favoritesStore';
 import { createTrack } from '../../test/fixtures/favorites';
 import { resetInMemoryTauriStore } from '../../test/utils/inMemoryTauriStore';
 
+vi.mock('../../services/artworkEnricher', () => ({
+  resolveArtworkForTrack: vi.fn(),
+  enrichTrackArtwork: vi.fn(),
+  enrichTracksInQueue: vi.fn(),
+  enrichFavoriteTracks: vi.fn(),
+}));
+
 const renderAtRoute = async (route: string) => {
   const history = createMemoryHistory({ initialEntries: [route] });
   const router = createRouter({ routeTree, history });
-  const component = render(<App routerProp={router} />);
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const component = render(
+    <App routerProp={router} queryClientProp={queryClient} />,
+  );
   await screen.findByTestId('favorite-tracks-view');
   return component;
 };
 
 describe('FavoriteTracks view', () => {
   beforeEach(() => {
+    cleanup();
     resetInMemoryTauriStore();
     useFavoritesStore.setState({
       tracks: [],
@@ -102,6 +117,11 @@ describe('FavoriteTracks view', () => {
   it('shows duration column when tracks have duration', async () => {
     const trackWithDuration = createTrack('musicbrainz', 'track-1');
     trackWithDuration.durationMs = 180000;
+    trackWithDuration.artwork = {
+      items: [
+        { url: 'https://example.com/artwork.jpg', width: 300, height: 300 },
+      ],
+    };
 
     useFavoritesStore.setState({
       tracks: [
@@ -112,7 +132,8 @@ describe('FavoriteTracks view', () => {
 
     await renderAtRoute('/favorites/tracks');
 
-    expect(screen.getByText('3:00')).toBeInTheDocument();
+    const table = await screen.findByRole('table');
+    expect(table).toHaveTextContent('3:00');
   });
 
   it('hides duration column when no tracks have duration', async () => {

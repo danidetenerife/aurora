@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { ViewShell } from '@aurora/ui';
 
 import changelog from '../../../changelog.json';
 import type { ChangelogEntry } from '../../types/changelog';

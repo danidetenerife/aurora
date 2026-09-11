@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import type { ArtistMetadataCapability } from '@nuclearplayer/plugin-sdk';
+import type { ArtistMetadataCapability } from '@aurora/plugin-sdk';
 
 import { ArtistAlbumsGrid } from './components/ArtistAlbumsGrid';
 import { ArtistBioHeader } from './components/ArtistBioHeader';

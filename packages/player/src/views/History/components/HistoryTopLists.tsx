@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import type { TimeRange } from '../../../services/tauri/bindings';
 import { useTopAlbums } from '../hooks/queries/useTopAlbums';

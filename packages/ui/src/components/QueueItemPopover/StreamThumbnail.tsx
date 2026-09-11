@@ -1,7 +1,7 @@
 import { CassetteTape } from 'lucide-react';
 import { FC } from 'react';
 
-import type { StreamCandidate } from '@nuclearplayer/model';
+import type { StreamCandidate } from '@aurora/model';
 
 import { Badge } from '../Badge';
 

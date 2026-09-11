@@ -1,6 +1,6 @@
-# Building Nuclear for Android (APK)
+# Building Aurora for Android (APK)
 
-This guide covers building the native Nuclear Android APK using Tauri v2 Mobile.
+This guide covers building the native Aurora Android APK using Tauri v2 Mobile.
 
 ## Prerequisites
 
@@ -43,4 +43,4 @@ You can build the APK without installing any mobile build tools locally:
 1. Push your repository to GitHub.
 2. Go to **Actions** > **Build Android APK**.
 3. Click **Run workflow**.
-4. Once completed, download the `nuclear-android-apk` artifact containing the installable `.apk` file.
+4. Once completed, download the `aurora-android-apk` artifact containing the installable `.apk` file.

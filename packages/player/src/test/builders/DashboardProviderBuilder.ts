@@ -1,7 +1,7 @@
 import type {
   DashboardCapability,
   DashboardProvider,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 export class DashboardProviderBuilder {
   private provider: DashboardProvider;

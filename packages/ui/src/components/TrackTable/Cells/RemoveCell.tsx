@@ -1,7 +1,7 @@
 import { CellContext } from '@tanstack/react-table';
 import { Trash2 } from 'lucide-react';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 import { Button } from '../../Button';
 import { useTrackTableContext } from '../TrackTableContext';

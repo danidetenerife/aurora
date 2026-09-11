@@ -3,11 +3,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 const Welcome = () => (
   <div className="max-w-2xl p-8">
     <h1 className="text-foreground mb-6 text-4xl font-bold">
-      Welcome to Nuclear Storybook! 🎵
+      Welcome to Aurora Storybook! 🎵
     </h1>
     <p className="text-foreground-secondary mb-6 text-lg">
-      This is the component development environment for the Nuclear music
-      player. Here you can develop and test UI components in isolation.
+      This is the component development environment for the Aurora music player.
+      Here you can develop and test UI components in isolation.
     </p>
   </div>
 );

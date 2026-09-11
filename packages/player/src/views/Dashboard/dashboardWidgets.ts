@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import type { DashboardCapability } from '@nuclearplayer/plugin-sdk';
+import type { DashboardCapability } from '@aurora/plugin-sdk';
 
 import { EditorialPlaylistsWidget } from './components/EditorialPlaylistsWidget';
 import { NewReleasesWidget } from './components/NewReleasesWidget';

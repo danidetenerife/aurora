@@ -1,7 +1,4 @@
-import type {
-  MetadataProvider,
-  ProvidersHost,
-} from '@nuclearplayer/plugin-sdk';
+import type { MetadataProvider, ProvidersHost } from '@aurora/plugin-sdk';
 
 import { useProvidersStore } from '../stores/providersStore';
 

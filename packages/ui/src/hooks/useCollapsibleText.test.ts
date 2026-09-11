@@ -11,7 +11,7 @@ const multiLineMessage = [
 ].join('\n');
 
 const longSingleLineMessage =
-  'parsed release response RemoteRelease { version: Version { major: 1, minor: 6, patch: 2 }, notes: Some("Nuclear Player release v1.6.2"), pub_date: Some(2026-02-20 1:57:34.261 +00:00:00), data: Static { platforms: {"windows-x86_64": ReleaseManifestPlatform { url: Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("github.com")), port: None, path: "/NuclearPlayer/nuclear-xrd/releases/download/player%401.6.2/nuclear-music-player_1.6.2_x64_en-US.msi" } } }';
+  'parsed release response RemoteRelease { version: Version { major: 1, minor: 6, patch: 2 }, notes: Some("Aurora release v1.6.2"), pub_date: Some(2026-02-20 1:57:34.261 +00:00:00), data: Static { platforms: {"windows-x86_64": ReleaseManifestPlatform { url: Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("github.com")), port: None, path: "/danidetenerife/aurora/releases/download/player%401.6.2/aurora_1.6.2_x64_en-US.msi" } } }';
 
 describe('useCollapsibleText', () => {
   it('short text is not collapsible', () => {

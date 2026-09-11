@@ -1,5 +1,5 @@
 {
-  "name": "@nuclearplayer/i18n",
+  "name": "@aurora/i18n",
   "version": "0.0.10",
   "type": "module",
   "main": "./src/index.ts",
@@ -23,7 +23,7 @@
     "clean": "rm -rf dist build .turbo node_modules/.vite"
   },
   "dependencies": {
-    "@nuclearplayer/eslint-config": "workspace:*",
+    "@aurora/eslint-config": "workspace:*",
     "i18next": "^25.0.0",
     "react-i18next": "^16.0.0"
   },

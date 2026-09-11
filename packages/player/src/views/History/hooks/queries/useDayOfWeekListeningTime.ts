@@ -3,7 +3,7 @@ import groupBy from 'lodash-es/groupBy';
 import meanBy from 'lodash-es/meanBy';
 import { DateTime } from 'luxon';
 
-import type { DayOfWeekValues } from '@nuclearplayer/ui';
+import type { DayOfWeekValues } from '@aurora/ui';
 
 import type { TimeRange } from '../../../../services/tauri/bindings';
 import { commands } from '../../../../services/tauri/bindings';

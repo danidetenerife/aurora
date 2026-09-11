@@ -2,7 +2,7 @@ import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import { render, RenderResult, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { DialogWrapper } from '@nuclearplayer/ui';
+import { DialogWrapper } from '@aurora/ui';
 
 import App from '../../App';
 import { routeTree } from '../../routeTree.gen';

@@ -31,7 +31,7 @@ const { Content } = await render(post);
 
 const postUrl = new URL(Astro.url.pathname, Astro.site).href;
 const blogUrl = new URL('/blog/', Astro.site).href;
-const siteUrl = Astro.site?.toString() ?? 'https://nuclearplayer.com/';
+const siteUrl = Astro.site?.toString() ?? 'https://auroraplayer.com/';
 const coverUrl = cover ? new URL(cover, Astro.site).toString() : undefined;
 
 const blogPostingSchema = {
@@ -57,7 +57,7 @@ const breadcrumbSchema = {
 ---
 
 <BaseLayout
-  title={`${title} - Nuclear`}
+  title={`${title} - Aurora`}
   description={description}
   ogType="article"
   ogImage={cover}

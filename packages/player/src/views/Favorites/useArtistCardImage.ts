@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
+import type { MetadataProvider } from '@aurora/plugin-sdk';
 
 import { providersHost } from '../../services/providersHost';
 import { useProvidersStore } from '../../stores/providersStore';
@@ -25,7 +25,9 @@ export const useArtistCardImage = (
   const cachedUrl = cacheKey ? imageCache.get(cacheKey) : undefined;
 
   const initialUrl = usableLocalUrl ?? cachedUrl;
-  const [resolvedUrl, setResolvedUrl] = useState<string | undefined>(initialUrl);
+  const [resolvedUrl, setResolvedUrl] = useState<string | undefined>(
+    initialUrl,
+  );
 
   useEffect(() => {
     if (usableLocalUrl) {
@@ -54,7 +56,9 @@ export const useArtistCardImage = (
     provider
       .searchArtists({ query: artistName, limit: 1 })
       .then((results) => {
-        if (cancelled) return;
+        if (cancelled) {
+          return;
+        }
         const artwork = results?.[0]?.artwork;
         const imageUrl = artwork?.items?.[0]?.url;
         if (imageUrl) {

@@ -1,10 +1,10 @@
 ---
-description: Structured logging for plugins, routed to Nuclear's log file and developer console.
+description: Structured logging for plugins, routed to Aurora's log file and developer console.
 ---
 
 # Logger
 
-The Logger API gives plugins structured, leveled logging. All log output is routed through Nuclear's logging system, which writes to the app's log file and the developer console.
+The Logger API gives plugins structured, leveled logging. All log output is routed through Aurora's logging system, which writes to the app's log file and the developer console.
 
 These logs can also be viewed in the built-in log viewer (Preferences → Logs).
 
@@ -15,15 +15,15 @@ These logs can also be viewed in the built-in log viewer (Preferences → Logs).
 Access the logger via `api.Logger.*` in any lifecycle hook:
 
 ```typescript
-import type { NuclearPlugin, NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPlugin, AuroraPluginAPI } from '@aurora/plugin-sdk';
 
-const plugin: NuclearPlugin = {
-  onEnable(api: NuclearPluginAPI) {
+const plugin: AuroraPlugin = {
+  onEnable(api: AuroraPluginAPI) {
     api.Logger.info('Plugin enabled');
     api.Logger.debug('Loaded 42 cached entries');
   },
 
-  onDisable(api: NuclearPluginAPI) {
+  onDisable(api: AuroraPluginAPI) {
     api.Logger.info('Plugin disabled');
   },
 };
@@ -64,4 +64,4 @@ api.Logger.log(level: LogLevel, message: string): void
 
 * All methods are synchronous. They accept a string and return nothing.
 * If no logger host is provided (e.g. during testing), every method no-ops.
-* Log output goes to Nuclear's logging system, which writes to the app's log file on disk devtools console, terminal console, and the built-in log viewer (Preferences → Logs).
+* Log output goes to Aurora's logging system, which writes to the app's log file on disk devtools console, terminal console, and the built-in log viewer (Preferences → Logs).

@@ -1,10 +1,10 @@
-:root[data-theme-id='nuclear:lagoon'] {
+:root[data-theme-id='aurora:lagoon'] {
   --background: oklch(0.985 0.018 210);
   --primary: oklch(0.67 0.16 205);
   --foreground-secondary: oklch(0.42 0.1 205);
 }
 
-:root[data-theme-id='nuclear:lagoon'][data-theme='dark'] {
+:root[data-theme-id='aurora:lagoon'][data-theme='dark'] {
   --background: oklch(0.2 0.025 205);
   --background-secondary: oklch(0.25 0.03 205);
   --background-input: oklch(0.13 0.015 205);

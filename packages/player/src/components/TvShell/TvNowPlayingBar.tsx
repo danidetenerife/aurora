@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';

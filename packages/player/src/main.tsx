@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom/client';
 
-import '@nuclearplayer/tailwind-config';
-import '@nuclearplayer/themes';
-import '@nuclearplayer/i18n';
+import '@aurora/tailwind-config';
+import '@aurora/themes';
+import '@aurora/i18n';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

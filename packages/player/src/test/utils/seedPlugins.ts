@@ -1,6 +1,6 @@
 import { upsertRegistryEntry } from '../../services/plugins/pluginRegistry';
 import { usePluginStore } from '../../stores/pluginStore';
-import { NuclearPluginBuilder } from '../builders/NuclearPluginBuilder';
+import { AuroraPluginBuilder } from '../builders/AuroraPluginBuilder';
 import { PluginStateBuilder } from '../builders/PluginStateBuilder';
 
 type SeedParams = {
@@ -16,7 +16,7 @@ type SeedParams = {
 };
 
 const managedPathFor = (id: string, version: string) =>
-  `/home/user/.local/share/com.nuclearplayer/plugins/${id}/${version}`;
+  `/home/user/.local/share/org.aurora.player/plugins/${id}/${version}`;
 
 export const seedPlugin = async ({
   id,
@@ -32,7 +32,7 @@ export const seedPlugin = async ({
         .withVersion(version)
         .withEnabled(enabled)
         .withInstallationMethod(installationMethod)
-        .withInstance(new NuclearPluginBuilder().build())
+        .withInstance(new AuroraPluginBuilder().build())
         .build(),
     },
   }));

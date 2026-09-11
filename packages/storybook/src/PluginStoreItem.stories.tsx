@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { PluginStoreItem } from '@nuclearplayer/ui';
+import { PluginStoreItem } from '@aurora/ui';
 
 const meta = {
   title: 'Components/PluginStoreItem',
@@ -21,7 +21,7 @@ export const Default: Story = {
     name: 'YouTube Music',
     description:
       'Stream music directly from YouTube Music with full search and playlist support.',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     categories: ['Streaming', 'Metadata'],
     version: '1.2.0',
     onInstall: fn(),

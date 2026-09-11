@@ -1,8 +1,9 @@
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { usePlaylistStore } from '../stores/playlistStore';
 import { useSoundStore } from '../stores/soundStore';
+import { resetInMemoryTauriStore } from '../test/utils/inMemoryTauriStore';
 import { eventBus } from './eventBus';
 import { mergeListenRecords } from './listeningProfile.mjs';
 import { PersonalizationEngine } from './personalizationEngine';
@@ -26,6 +27,7 @@ describe('personalization learning across devices', () => {
   let desktop: PersonalizationEngine;
 
   beforeEach(() => {
+    resetInMemoryTauriStore();
     localStorage.clear();
     useSoundStore.setState({
       src: null,

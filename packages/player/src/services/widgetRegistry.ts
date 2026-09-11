@@ -1,7 +1,4 @@
-import type {
-  CustomWidgetComponent,
-  WidgetRegistry,
-} from '@nuclearplayer/plugin-sdk';
+import type { CustomWidgetComponent, WidgetRegistry } from '@aurora/plugin-sdk';
 
 const toKey = (pluginId: string, widgetId: string) =>
   `plugin.${pluginId}.${widgetId}`;

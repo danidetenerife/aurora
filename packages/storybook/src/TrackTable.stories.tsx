@@ -2,12 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
 
-import { Track } from '@nuclearplayer/model';
-import {
-  TrackTable,
-  TrackTableLabels,
-  TrackTableProps,
-} from '@nuclearplayer/ui';
+import { Track } from '@aurora/model';
+import { TrackTable, TrackTableLabels, TrackTableProps } from '@aurora/ui';
 
 const labels: TrackTableLabels = {
   headers: {

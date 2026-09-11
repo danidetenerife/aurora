@@ -1,7 +1,7 @@
 import { useParams, useSearch } from '@tanstack/react-router';
 import { useCallback, useMemo, type FC } from 'react';
 
-import { ScrollableArea } from '@nuclearplayer/ui';
+import { ScrollableArea } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { buildThumbnails } from '../../services/playlistFileService/buildThumbnails';

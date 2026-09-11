@@ -1,4 +1,4 @@
-import type { Stream, StreamCandidate, Track } from '@nuclearplayer/model';
+import type { Stream, StreamCandidate, Track } from '@aurora/model';
 
 import type { ProviderDescriptor } from './providers';
 

@@ -1,9 +1,9 @@
-import { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
-import { apiMeta, ParamMeta } from '@nuclearplayer/plugin-sdk/mcp';
+import { AuroraPluginAPI } from '@aurora/plugin-sdk';
+import { apiMeta, ParamMeta } from '@aurora/plugin-sdk/mcp';
 
 import { createPluginAPI } from '../plugins/createPluginAPI';
 
-const bridgeApi: NuclearPluginAPI = createPluginAPI('bridge', 'Bridge');
+const bridgeApi: AuroraPluginAPI = createPluginAPI('bridge', 'Bridge');
 
 const dispatchPluginApi = async (
   domain: string,
@@ -12,7 +12,7 @@ const dispatchPluginApi = async (
 ): Promise<unknown> => {
   const methodMeta = apiMeta[domain].methods[methodName];
 
-  const domainInstance = bridgeApi[domain as keyof NuclearPluginAPI];
+  const domainInstance = bridgeApi[domain as keyof AuroraPluginAPI];
   const fn = domainInstance[methodName as keyof typeof domainInstance] as (
     ...args: never[]
   ) => Promise<unknown>;

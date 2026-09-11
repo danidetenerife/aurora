@@ -34,8 +34,8 @@ Click a playlist card to open it. The detail view shows the tracklist with the s
 
 Click the import button (next to the + button) to see two options:
 
-- **Import from JSON**: opens a file picker. Nuclear accepts its own JSON export format as well as some legacy formats.
-- **Import from URL**: opens a dialog where you paste a URL. Nuclear checks all installed playlists providers to find one that can handle it. If a match is found, you're taken to a preview page where you can save the playlist locally.
+- **Import from JSON**: opens a file picker. Aurora accepts its own JSON export format as well as some legacy formats.
+- **Import from URL**: opens a dialog where you paste a URL. Aurora checks all installed playlists providers to find one that can handle it. If a match is found, you're taken to a preview page where you can save the playlist locally.
 
 Playlists imported from a URL are **read-only**. You can play their tracks and add them to the queue, but you can't reorder or remove tracks.
 

@@ -1,8 +1,8 @@
 import { Music } from 'lucide-react';
 import { useEffect, useMemo, type FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { EmptyState, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { EmptyState, ViewShell } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { enrichFavoriteTracks } from '../../services/artworkEnricher';

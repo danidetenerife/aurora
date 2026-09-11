@@ -30,17 +30,17 @@ This particular repo is a rewrite project, with the original Aurora codebase in 
 - TanStack Query v5 - chosen solution for HTTP requests.
 
 ### Packages
-- `@nuclearplayer/player` - Main Tauri app (React + Rust).  
-- `@nuclearplayer/plugin-sdk` - Plugin system (TS/React).  
-- `@nuclearplayer/ui` - Shared UI components.  
-- `@nuclearplayer/model` - Data model.
-- `@nuclearplayer/docs` - Gitbook documentation.
-- `@nuclearplayer/tailwind-config` - Shared Tailwind config.  
-- `@nuclearplayer/eslint-config` - Shared linting & formatting rules.  
-- `@nuclearplayer/hifi` - Advanced HTML5 audio component for playback.
-- `@nuclearplayer/themes` - Theming system.
-- `@nuclearplayer/tools` - Build and maintenance utilities.
-- `@nuclearplayer/storybook` - Storybook stories.
+- `@aurora/player` - Main Tauri app (React + Rust).  
+- `@aurora/plugin-sdk` - Plugin system (TS/React).  
+- `@aurora/ui` - Shared UI components.  
+- `@aurora/model` - Data model.
+- `@aurora/docs` - Gitbook documentation.
+- `@aurora/tailwind-config` - Shared Tailwind config.  
+- `@aurora/eslint-config` - Shared linting & formatting rules.  
+- `@aurora/hifi` - Advanced HTML5 audio component for playback.
+- `@aurora/themes` - Theming system.
+- `@aurora/tools` - Build and maintenance utilities.
+- `@aurora/storybook` - Storybook stories.
 
 ### Workflow Commands
 

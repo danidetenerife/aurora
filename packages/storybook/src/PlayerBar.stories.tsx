@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useCallback, useState } from 'react';
 
-import { PlayerBar } from '@nuclearplayer/ui';
+import { PlayerBar } from '@aurora/ui';
 
 const meta = {
   title: 'Layout/PlayerBar',

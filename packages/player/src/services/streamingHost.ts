@@ -1,8 +1,5 @@
-import type { StreamCandidate, Track } from '@nuclearplayer/model';
-import type {
-  StreamingHost,
-  StreamingProvider,
-} from '@nuclearplayer/plugin-sdk';
+import type { StreamCandidate, Track } from '@aurora/model';
+import type { StreamingHost, StreamingProvider } from '@aurora/plugin-sdk';
 
 import { getSetting, useSettingsStore } from '../stores/settingsStore';
 import { errorMessage } from '../utils/errorMessage';
@@ -11,10 +8,7 @@ import { providersHost } from './providersHost';
 
 const getActiveStreamingProvider = (): StreamingProvider | undefined => {
   const activeId = providersHost.getActive('streaming');
-  const provider = providersHost.get<StreamingProvider>(
-    activeId,
-    'streaming',
-  );
+  const provider = providersHost.get<StreamingProvider>(activeId, 'streaming');
   if (provider) {
     return provider;
   }

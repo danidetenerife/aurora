@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Box, Card, CardGrid, Loader, Tabs } from '@nuclearplayer/ui';
+import { Box, Card, CardGrid, Loader, Tabs } from '@aurora/ui';
 
 const meta = {
   title: 'Layout/Tabs',

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { PlayerBar } from '@nuclearplayer/ui';
+import { PlayerBar } from '@aurora/ui';
 
 import { ConnectedControls } from './ConnectedControls';
 import { ConnectedNowPlaying } from './ConnectedNowPlaying';

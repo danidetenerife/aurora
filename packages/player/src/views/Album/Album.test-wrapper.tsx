@@ -128,7 +128,7 @@ export const AlbumWrapper = {
   },
 
   async findQueueItemThumbnail() {
-    const item = await screen.findByTestId('queue-item');
-    return within(item).getByRole('img');
+    const items = await screen.findAllByTestId('queue-item');
+    return within(items[0]).getByRole('img');
   },
 };

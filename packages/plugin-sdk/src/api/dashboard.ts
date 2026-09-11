@@ -1,9 +1,4 @@
-import type {
-  AlbumRef,
-  ArtistRef,
-  PlaylistRef,
-  Track,
-} from '@nuclearplayer/model';
+import type { AlbumRef, ArtistRef, PlaylistRef, Track } from '@aurora/model';
 
 import type { AttributedResult, DashboardHost } from '../types/dashboard';
 

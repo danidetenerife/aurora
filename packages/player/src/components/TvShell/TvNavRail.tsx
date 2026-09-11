@@ -1,7 +1,7 @@
 import { setFocus } from '@noriginmedia/norigin-spatial-navigation';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import { useTvStore } from '../../stores/tvStore';
 import { TvButton } from './TvButton';

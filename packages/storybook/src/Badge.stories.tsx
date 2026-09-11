@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Badge } from '@nuclearplayer/ui';
+import { Badge } from '@aurora/ui';
 
 const meta = {
   title: 'Components/Badge',

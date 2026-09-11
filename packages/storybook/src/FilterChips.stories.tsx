@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { FilterChip, FilterChips } from '@nuclearplayer/ui';
+import { FilterChip, FilterChips } from '@aurora/ui';
 
 const meta = {
   title: 'Components/FilterChips',

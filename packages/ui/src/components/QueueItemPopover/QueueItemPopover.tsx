@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 
-import type { StreamCandidate, Track } from '@nuclearplayer/model';
+import type { StreamCandidate, Track } from '@aurora/model';
 
 import { Popover } from '../Popover';
 import { CandidateList } from './CandidateList';

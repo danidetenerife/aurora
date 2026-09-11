@@ -1,11 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import {
-  HistoryDayGroup,
-  HistoryRow,
-  HistoryRowLabels,
-} from '@nuclearplayer/ui';
+import { HistoryDayGroup, HistoryRow, HistoryRowLabels } from '@aurora/ui';
 
 const meta = {
   title: 'Components/HistoryDayGroup',

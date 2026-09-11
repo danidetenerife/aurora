@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { mockIPC } from '@tauri-apps/api/mocks';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -57,14 +58,23 @@ describe('Plugins view', () => {
 
     // Manifest has been read
     await waitFor(() => {
-      expect(readTextFileMock).nthCalledWith(1, '/path/to/plugin/package.json');
+      expect(readTextFileMock).nthCalledWith(
+        1,
+        path.posix.join('/path/to/plugin', 'package.json'),
+      );
     });
 
     // After copying the plugin to managed folder, its manifest has been read
     await waitFor(() => {
       expect(readTextFileMock).nthCalledWith(
         3,
-        `${AppData}/plugins/nuclear-fake-plugin/0.1.0/package.json`,
+        path.posix.join(
+          AppData,
+          'plugins',
+          'nuclear-fake-plugin',
+          '0.1.0',
+          'package.json',
+        ),
       );
     });
 
@@ -72,7 +82,13 @@ describe('Plugins view', () => {
     await waitFor(() => {
       expect(readTextFileMock).nthCalledWith(
         4,
-        `${AppData}/plugins/nuclear-fake-plugin/0.1.0/index.ts`,
+        path.posix.join(
+          AppData,
+          'plugins',
+          'nuclear-fake-plugin',
+          '0.1.0',
+          'index.ts',
+        ),
       );
     });
 

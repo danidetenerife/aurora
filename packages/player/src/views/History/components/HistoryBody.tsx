@@ -1,8 +1,8 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { HistoryRowLabels } from '@nuclearplayer/ui';
-import { HistoryDayGroup, HistoryRow } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { HistoryRowLabels } from '@aurora/ui';
+import { HistoryDayGroup, HistoryRow } from '@aurora/ui';
 
 import type { HistoryEntry } from '../../../services/tauri/bindings';
 import { formatTimeOfDay } from '../../../utils/time';

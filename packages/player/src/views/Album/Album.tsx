@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
+import { Loader2, Radio } from 'lucide-react';
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import type { MetadataProvider } from '@nuclearplayer/plugin-sdk';
-import { EmptyState, ScrollableArea } from '@nuclearplayer/ui';
-import { Loader2, Radio } from 'lucide-react';
+import type { MetadataProvider } from '@aurora/plugin-sdk';
+import { EmptyState, ScrollableArea } from '@aurora/ui';
 
 import { useProviders } from '../../hooks/useProviders';
 import { providersHost } from '../../services/providersHost';
@@ -89,19 +89,26 @@ export const Album: FC<AlbumProps> = () => {
     navigate,
   ]);
 
-  const isWaitingForProviders = !provider && !redirectFailed && (isStartingUp || redirecting || metadataProviders.length === 0);
+  const isWaitingForProviders =
+    !provider && !redirectFailed && (isStartingUp || redirecting);
 
   if (isWaitingForProviders) {
     return (
-      <ScrollableArea className="bg-background flex items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-primary opacity-60" />
+      <ScrollableArea
+        className="bg-background flex items-center justify-center"
+        data-testid="album-view"
+      >
+        <Loader2 size={40} className="text-primary animate-spin opacity-60" />
       </ScrollableArea>
     );
   }
 
   if (!provider) {
     return (
-      <ScrollableArea className="bg-background flex flex-col items-center justify-center">
+      <ScrollableArea
+        className="bg-background flex flex-col items-center justify-center"
+        data-testid="album-view"
+      >
         <EmptyState
           icon={<Radio size={48} />}
           title="Información no disponible"

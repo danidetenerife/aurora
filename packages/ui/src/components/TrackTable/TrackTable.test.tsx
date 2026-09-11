@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 import { TrackTable, TrackTableLabels } from '.';
 

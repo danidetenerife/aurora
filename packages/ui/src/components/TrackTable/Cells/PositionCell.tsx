@@ -1,6 +1,6 @@
 import { CellContext } from '@tanstack/react-table';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 export const PositionCell = <T extends Track>({
   getValue,

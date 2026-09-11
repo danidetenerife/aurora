@@ -1,4 +1,4 @@
-import type { TopListEntry } from '@nuclearplayer/ui';
+import type { TopListEntry } from '@aurora/ui';
 
 import type {
   TopAlbum,

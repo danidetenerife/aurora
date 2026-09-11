@@ -1,4 +1,4 @@
-import { pickArtwork } from '@nuclearplayer/model';
+import { pickArtwork } from '@aurora/model';
 
 import { useQueueStore } from '../stores/queueStore';
 import { useSoundStore } from '../stores/soundStore';
@@ -64,7 +64,8 @@ export const initMediaSessionService = () => {
 
     const track = currentItem.track;
     const artwork = pickArtwork(track.artwork, 'thumbnail', 512);
-    const artist = track.artists?.map((artistCredit) => artistCredit.name).join(', ') || '';
+    const artist =
+      track.artists?.map((artistCredit) => artistCredit.name).join(', ') || '';
     const albumTitle = track.album?.title || '';
     const artworkUrl = artwork?.url || '';
 
@@ -98,14 +99,15 @@ export const initMediaSessionService = () => {
         album: albumTitle,
         artworkUrl,
         durationMs,
-      }).catch((err) => console.error('[mediaSessionService] updateMetadata FAILED', err));
+      }).catch((err) =>
+        console.error('[mediaSessionService] updateMetadata FAILED', err),
+      );
     }
   });
 
   let lastStatus = '';
   let lastReportedSeek = 0;
   let lastReportedTime = 0;
-
 
   useSoundStore.subscribe((state) => {
     const isPlaying = state.status === 'playing';
@@ -142,7 +144,6 @@ export const initMediaSessionService = () => {
   });
 
   if (isCapacitorEnvironment()) {
-
     NativeMediaSessionPlugin.addListener('mediaAction', (data) => {
       switch (data.action) {
         case 'callstart':

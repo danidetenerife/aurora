@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import type { AlbumRef } from '@nuclearplayer/model';
+import type { AlbumRef } from '@aurora/model';
 
 import { metadataHost } from '../../../services/metadataHost';
 

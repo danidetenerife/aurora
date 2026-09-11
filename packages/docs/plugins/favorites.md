@@ -6,7 +6,7 @@ description: Save and manage user's favorite tracks, albums, and artists.
 
 ## Favorites API for Plugins
 
-The Favorites API lets Nuclear, as well as  plugins, read and modify the user's library of saved tracks, albums, and artists.
+The Favorites API lets Aurora, as well as  plugins, read and modify the user's library of saved tracks, albums, and artists.
 
 {% hint style="info" %}
 Access favorites via `api.Favorites.*` in your plugin's lifecycle hooks. All operations are asynchronous and return Promises.
@@ -18,7 +18,7 @@ Access favorites via `api.Favorites.*` in your plugin's lifecycle hooks. All ope
 
 ### What gets stored
 
-Nuclear stores three types of favorites:
+Aurora stores three types of favorites:
 
 | Type | What's saved  |
 |------|--------------|
@@ -53,10 +53,10 @@ Favorites are saved to disk automatically after every add/remove operation. They
 {% tabs %}
 {% tab title="Reading favorites" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const tracks = await api.Favorites.getTracks();
     const albums = await api.Favorites.getAlbums();
     const artists = await api.Favorites.getArtists();
@@ -74,10 +74,10 @@ export default {
 
 {% tab title="Adding favorites" %}
 ```typescript
-import type { NuclearPluginAPI, Track, AlbumRef, ArtistRef } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI, Track, AlbumRef, ArtistRef } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Add a track (requires full Track object)
     const track: Track = {
       title: 'Paranoid Android',
@@ -106,10 +106,10 @@ export default {
 
 {% tab title="Removing favorites" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Remove by source reference (provider + ID)
     await api.Favorites.removeTrack({ provider: 'musicbrainz', id: 'abc123' });
     await api.Favorites.removeAlbum({ provider: 'musicbrainz', id: 'def456' });
@@ -121,10 +121,10 @@ export default {
 
 {% tab title="Checking favorite status" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const source = { provider: 'musicbrainz', id: 'abc123' };
 
     if (await api.Favorites.isTrackFavorite(source)) {
@@ -141,10 +141,10 @@ export default {
 
 {% tab title="Subscribing to changes" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const unsubscribe = api.Favorites.subscribe((favorites) => {
       api.Logger.info(`Favorites updated: ${favorites.tracks.length} tracks`);
       

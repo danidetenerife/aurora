@@ -1,4 +1,4 @@
-import { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 import { dashboardHost } from '../../services/dashboardHost';
 import { discoveryHost } from '../../services/discoveryHost';
@@ -20,8 +20,8 @@ import { ytdlpHost } from '../../services/ytdlpHost';
 export const createPluginAPI = (
   pluginId: string,
   displayName: string,
-): NuclearPluginAPI => {
-  return new NuclearPluginAPI({
+): AuroraPluginAPI => {
+  return new AuroraPluginAPI({
     settingsHost: createPluginSettingsHost(pluginId, displayName),
     queueHost,
     providersHost,

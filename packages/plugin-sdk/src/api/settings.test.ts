@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { NuclearAPI } from '.';
+import { AuroraAPI } from '.';
 import { InMemorySettingsHost } from '../test/utils/inMemorySettingsHost';
 import type { SettingDefinition } from '../types/settings';
 
 describe('Settings (SDK)', () => {
   it('exposes register/get/set/subscribe methods', async () => {
     const host = new InMemorySettingsHost({ type: 'plugin', pluginId: 'p1' });
-    const api = new NuclearAPI({ settingsHost: host });
+    const api = new AuroraAPI({ settingsHost: host });
 
     const definitions: SettingDefinition[] = [
       {
@@ -43,7 +43,7 @@ describe('Settings (SDK)', () => {
 
   it('getGlobal/setGlobal bypasses namespace scoping', async () => {
     const host = new InMemorySettingsHost({ type: 'plugin', pluginId: 'p1' });
-    const api = new NuclearAPI({ settingsHost: host });
+    const api = new AuroraAPI({ settingsHost: host });
 
     await api.Settings.setGlobal('core.theme.dark', true);
 
@@ -59,7 +59,7 @@ describe('Settings (SDK)', () => {
   });
 
   it('throws clearly when host is missing', async () => {
-    const api = new NuclearAPI();
+    const api = new AuroraAPI();
     expect(() => api.Settings.get('x')).toThrow('Settings host not available');
     expect(() => api.Settings.set('x', 'y')).toThrow(
       'Settings host not available',

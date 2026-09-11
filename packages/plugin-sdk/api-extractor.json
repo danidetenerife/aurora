@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
   "mainEntryPointFilePath": "<projectFolder>/dist/index.d.ts",
-  "bundledPackages": ["@nuclearplayer/model"],
+  "bundledPackages": ["@aurora/model"],
   "compiler": {
     "tsconfigFilePath": "<projectFolder>/tsconfig.json",
     "overrideTsconfig": {
       "compilerOptions": {
         "paths": {
-          "@nuclearplayer/model": ["../model/dist/index.d.ts"]
+          "@aurora/model": ["../model/dist/index.d.ts"]
         }
       }
     }

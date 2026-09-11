@@ -18,13 +18,13 @@ yt-dlp is a system dependency. If it's not installed on the user's machine, this
 
 ## Availability
 
-The yt-dlp host is only configured when Nuclear detects a working yt-dlp binary on the system. The `available` getter tells you whether you can use the API:
+The yt-dlp host is only configured when Aurora detects a working yt-dlp binary on the system. The `available` getter tells you whether you can use the API:
 
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     if (!api.Ytdlp.available) {
       api.Logger.warn('yt-dlp is not installed, skipping YouTube features');
       return;
@@ -44,10 +44,10 @@ If you call `search()` or `getStream()` without a configured host, they throw `E
 {% tabs %}
 {% tab title="Searching" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     if (!api.Ytdlp.available) return;
 
     const results = await api.Ytdlp.search('Radiohead Paranoid Android', 5);
@@ -66,10 +66,10 @@ export default {
 
 {% tab title="Getting streams" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     if (!api.Ytdlp.available) return;
 
     const results = await api.Ytdlp.search('Radiohead Paranoid Android', 1);

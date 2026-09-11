@@ -1,14 +1,14 @@
 ---
-description: Let AI agents control Nuclear via the Model Context Protocol.
+description: Let AI agents control Aurora via the Model Context Protocol.
 ---
 
 # MCP server
 
-Nuclear includes a built-in [MCP](https://modelcontextprotocol.io/) server that lets your AI control the music player, doing pretty much anything that you can!
+Aurora includes a built-in [MCP](https://modelcontextprotocol.io/) server that lets your AI control the music player, doing pretty much anything that you can!
 
 ## Enable the server
 
-1. Open Nuclear → Settings → Integrations.
+1. Open Aurora → Settings → Integrations.
 2. Toggle `Enable MCP Server` on.
 3. The server starts on `http://127.0.0.1:8800/mcp` (localhost only). If port 8800 is taken, it tries 8801, 8802, and so on up to 8809.
 4. The **MCP Server URL** field below the toggle shows the actual URL. Click the copy button to grab it.
@@ -20,7 +20,7 @@ The server URL is `http://127.0.0.1:8800/mcp` using the `Streamable HTTP` transp
 {% tabs %}
 {% tab title="Claude Code" %}
 ```bash
-claude mcp add nuclear --transport http http://127.0.0.1:8800/mcp
+claude mcp add aurora --transport http http://127.0.0.1:8800/mcp
 ```
 {% endtab %}
 
@@ -30,7 +30,7 @@ Add to your `opencode.json`:
 ```json
 {
   "mcp": {
-    "nuclear": {
+    "aurora": {
       "type": "remote",
       "url": "http://127.0.0.1:8800/mcp"
     }
@@ -43,14 +43,14 @@ Add to your `opencode.json`:
 Add to `~/.codex/config.toml`:
 
 ```toml
-[mcp_servers.nuclear]
+[mcp_servers.aurora]
 url = "http://127.0.0.1:8800/mcp"
 ```
 
 Or via the CLI:
 
 ```bash
-codex mcp add nuclear --url http://127.0.0.1:8800/mcp
+codex mcp add aurora --url http://127.0.0.1:8800/mcp
 ```
 {% endtab %}
 
@@ -60,7 +60,7 @@ Add to your MCP config (`claude_desktop_config.json`, `.cursor/mcp.json`, etc.):
 ```json
 {
   "mcpServers": {
-    "nuclear": {
+    "aurora": {
       "url": "http://127.0.0.1:8800/mcp"
     }
   }
@@ -79,7 +79,7 @@ Enter `http://127.0.0.1:8800/mcp` as the URL and select `Streamable HTTP` as the
 
 ## Tools
 
-Nuclear exposes four MCP tools. The server uses a hierarchical discovery pattern: start broad, drill down, then act.
+Aurora exposes four MCP tools. The server uses a hierarchical discovery pattern: start broad, drill down, then act.
 
 ### `list_methods`
 
@@ -109,7 +109,7 @@ Gets the JSON shape of a data type. Use this when `method_details` returns a par
 
 ### `call`
 
-Calls a Nuclear API method.
+Calls a Aurora API method.
 
 | Parameter | Type   | Required | Description                                                                                    |
 | --------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
@@ -130,8 +130,8 @@ Each step returns a small, focused payload to save on tokens.
 
 ## Agent skill
 
-If your AI tool supports skills (like Claude Code), you can install one that teaches the agent how to use Nuclear's MCP tools, including the discovery workflow, common recipes, and the full API reference.
+If your AI tool supports skills (like Claude Code), you can install one that teaches the agent how to use Aurora's MCP tools, including the discovery workflow, common recipes, and the full API reference.
 
-[Download nuclear-mcp.zip](../.gitbook/assets/nuclear-mcp.zip)
+[Download aurora-mcp.zip](../.gitbook/assets/aurora-mcp.zip)
 
 Unzip it into your skills directory (e.g. `~/.claude/skills/`) and the agent will pick it up automatically.

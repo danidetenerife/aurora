@@ -1,9 +1,10 @@
 import type { FC, PropsWithChildren } from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { LoggerProvider, Sound, SoundError } from '@nuclearplayer/hifi';
-import type { TFunction } from '@nuclearplayer/i18n';
-import { useTranslation } from '@nuclearplayer/i18n';
+import { LoggerProvider, Sound, SoundError } from '@aurora/hifi';
+import type { TFunction } from '@aurora/i18n';
+import { useTranslation } from '@aurora/i18n';
+import type { Track } from '@aurora/model';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { eventBus } from '../../services/eventBus';
@@ -21,6 +22,28 @@ const describePlaybackError = (error: Error, t: TFunction): string => {
   return errorMessage(error);
 };
 
+const extractYouTubeId = (track?: Track, srcUrl?: string): string | null => {
+  if (srcUrl) {
+    const match = srcUrl.match(
+      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
+    );
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+  const candidate = track?.streamCandidates?.find(
+    (item) =>
+      !item.failed && item.source?.id && /^[\w-]{11}$/.test(item.source.id),
+  );
+  if (candidate?.source?.id) {
+    return candidate.source.id;
+  }
+  if (track?.source?.id && /^[\w-]{11}$/.test(track.source.id)) {
+    return track.source.id;
+  }
+  return null;
+};
+
 export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('streaming');
   const { src, status, seek } = useSoundStore();
@@ -29,26 +52,19 @@ export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const setShowVideo = useTvStore((state) => state.setShowVideo);
   const currentTrack = useQueueStore((state) => state.getCurrentItem()?.track);
   const mediaSource = useMemo(() => {
-    if (!src || !showVideo || /youtube\.com|youtu\.be/.test(src.url)) {
+    if (src && /youtube\.com|youtu\.be/.test(src.url)) {
       return src;
     }
-    const candidate = currentTrack?.streamCandidates?.find(
-      (item) => !item.failed && item.stream,
-    );
-    const source = candidate?.source ?? currentTrack?.source;
-    if (
-      !source ||
-      !/youtube/i.test(source.provider) ||
-      !/^[\w-]{11}$/.test(source.id)
-    ) {
-      return src;
+    const videoId = extractYouTubeId(currentTrack, src?.url);
+    if (videoId) {
+      return {
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+        protocol: 'https' as const,
+        startPositionSeconds: useSoundStore.getState().seek,
+      };
     }
-    return {
-      url: `https://www.youtube.com/watch?v=${source.id}`,
-      protocol: 'https' as const,
-      startPositionSeconds: useSoundStore.getState().seek,
-    };
-  }, [src, showVideo, currentTrack]);
+    return src;
+  }, [src, currentTrack]);
   const preload: HTMLAudioElement['preload'] = 'auto';
   const crossOrigin = undefined;
   const [volume01] = useCoreSetting<number>('playback.volume');

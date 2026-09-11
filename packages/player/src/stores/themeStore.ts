@@ -4,7 +4,7 @@ import {
   clearAdvancedTheme,
   DEFAULT_THEME_ID,
   setThemeId,
-} from '@nuclearplayer/themes';
+} from '@aurora/themes';
 
 export type BasicTheme = { type: 'basic'; id: string };
 export type ActiveTheme = BasicTheme;

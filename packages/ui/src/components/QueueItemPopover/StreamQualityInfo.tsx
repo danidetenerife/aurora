@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import type { Stream } from '@nuclearplayer/model';
+import type { Stream } from '@aurora/model';
 
 type StreamQualityInfoProps = {
   stream: Stream;

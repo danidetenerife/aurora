@@ -7,7 +7,7 @@ import {
   within,
 } from '@testing-library/react';
 
-import { AudioSource } from '@nuclearplayer/hifi';
+import { AudioSource } from '@aurora/hifi';
 
 import App from '../App';
 import { playbackManager } from '../services/playback';

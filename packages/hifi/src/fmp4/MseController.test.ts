@@ -25,6 +25,7 @@ describe('MseController', () => {
   });
 
   afterEach(() => {
+    delete win.ManagedMediaSource;
     fixture.teardown();
     server.teardown();
   });

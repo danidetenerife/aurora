@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import type { Track } from '@nuclearplayer/model';
+import type { Track } from '@aurora/model';
 
 type TrackHeaderProps = {
   track: Track;

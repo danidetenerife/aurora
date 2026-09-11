@@ -4,11 +4,11 @@ description: Automatic track recommendations
 
 # Music discovery
 
-Discovery recommends tracks based on what you're listening to and adds them to your queue automatically. When you reach the last track in your queue, Nuclear uses discovery providers to add more music.
+Discovery recommends tracks based on what you're listening to and adds them to your queue automatically. When you reach the last track in your queue, Aurora uses discovery providers to add more music.
 
 ## How it works
 
-Discovery watches your queue position. When you're playing the last track, it sends the last 10 tracks in your queue to a discovery provider (added by plugins). The provider returns recommendations, and Nuclear adds them to the end of your queue.
+Discovery watches your queue position. When you're playing the last track, it sends the last 10 tracks in your queue to a discovery provider (added by plugins). The provider returns recommendations, and Aurora adds them to the end of your queue.
 
 ## Requirements
 

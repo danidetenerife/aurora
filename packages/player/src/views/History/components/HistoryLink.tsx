@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { FC, Fragment, useState } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 import { useQueueActions } from '../../../hooks/useQueueActions';
 import { metadataHost } from '../../../services/metadataHost';

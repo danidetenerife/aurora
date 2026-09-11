@@ -1,8 +1,8 @@
 import { produce } from 'immer';
 import { create } from 'zustand';
 
-import type { NuclearPlugin, PluginMetadata } from '@nuclearplayer/plugin-sdk';
-import { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPlugin, PluginMetadata } from '@aurora/plugin-sdk';
+import { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 import { Logger } from '../services/logger';
 import { createPluginAPI } from '../services/plugins/createPluginAPI';
@@ -31,8 +31,8 @@ export type PluginState = {
   warnings: string[];
   installationMethod: PluginInstallationMethod;
   originalPath?: string;
-  instance?: NuclearPlugin;
-  api?: NuclearPluginAPI;
+  instance?: AuroraPlugin;
+  api?: AuroraPluginAPI;
   isLoading?: boolean;
 };
 
@@ -63,7 +63,7 @@ const requireInstance = (id: string) => {
 type LoadedPluginData = {
   metadata: PluginMetadata;
   managedPath: string;
-  instance: NuclearPlugin;
+  instance: AuroraPlugin;
   warnings: string[];
 };
 

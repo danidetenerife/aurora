@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { PlayerBar } from '@nuclearplayer/ui';
+import { PlayerBar } from '@aurora/ui';
 
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';

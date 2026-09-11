@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-import { Button, SettingsPanel, SettingsTab } from '@nuclearplayer/ui';
+import { Button, SettingsPanel, SettingsTab } from '@aurora/ui';
 
 const SAMPLE_TABS: SettingsTab[] = [
   {

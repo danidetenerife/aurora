@@ -1,5 +1,5 @@
 {
-  "name": "@nuclearplayer/eslint-config",
+  "name": "@aurora/eslint-config",
   "version": "0.0.10",
   "description": "Shared ESLint and Prettier configuration for Aurora",
   "type": "module",

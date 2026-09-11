@@ -12,7 +12,10 @@ declare global {
           playerVars?: Record<string, unknown>;
           events?: {
             onReady?: (event: { target: YTPlayerInstance }) => void;
-            onStateChange?: (event: { data: number; target: YTPlayerInstance }) => void;
+            onStateChange?: (event: {
+              data: number;
+              target: YTPlayerInstance;
+            }) => void;
             onError?: (event: { data: number }) => void;
           };
         },
@@ -39,14 +42,34 @@ type YTPlayerInstance = {
   getCurrentTime: () => number;
   getDuration: () => number;
   getPlayerState?: () => number;
+  loadVideoById?: (options: { videoId: string; startSeconds?: number }) => void;
+  cueVideoById?: (options: { videoId: string; startSeconds?: number }) => void;
   destroy: () => void;
 };
 
 const extractYouTubeVideoId = (url: string): string | null => {
   const match = url.match(
-    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
+    /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
   );
   return match ? match[1] : null;
+};
+
+const getPlayerOrigin = (): string | undefined => {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+  const { protocol, hostname, origin } = window.location;
+  if (
+    protocol === 'capacitor:' ||
+    protocol === 'file:' ||
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    !origin ||
+    origin === 'null'
+  ) {
+    return undefined;
+  }
+  return origin;
 };
 
 export const YouTubePlayer: FC<SoundProps> = ({
@@ -60,6 +83,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
   onEnd,
   onCanPlay,
   onError,
+  onSourceInvalid,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<YTPlayerInstance | null>(null);
@@ -68,7 +92,6 @@ export const YouTubePlayer: FC<SoundProps> = ({
   const hasEndedRef = useRef<boolean>(false);
   const videoId = extractYouTubeVideoId(src.url);
 
-  // Mutable refs to prevent stale closure bugs
   const statusRef = useRef(status);
   statusRef.current = status;
 
@@ -81,6 +104,9 @@ export const YouTubePlayer: FC<SoundProps> = ({
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
 
+  const onSourceInvalidRef = useRef(onSourceInvalid);
+  onSourceInvalidRef.current = onSourceInvalid;
+
   const onTimeUpdateRef = useRef(onTimeUpdate);
   onTimeUpdateRef.current = onTimeUpdate;
 
@@ -89,7 +115,11 @@ export const YouTubePlayer: FC<SoundProps> = ({
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
+      if (firstScriptTag?.parentNode) {
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      } else {
+        document.head.appendChild(tag);
+      }
     }
   }, []);
 
@@ -105,7 +135,9 @@ export const YouTubePlayer: FC<SoundProps> = ({
               player.playVideo();
             }
           }
-        } catch {}
+        } catch {
+          void 0;
+        }
       }
     };
 
@@ -128,6 +160,27 @@ export const YouTubePlayer: FC<SoundProps> = ({
     let isMounted = true;
     hasEndedRef.current = false;
 
+    if (
+      playerRef.current &&
+      typeof playerRef.current.loadVideoById === 'function'
+    ) {
+      const startSeconds = seek && seek > 0 ? seek : 0;
+      if (statusRef.current === 'playing') {
+        try {
+          playerRef.current.loadVideoById({ videoId, startSeconds });
+        } catch {
+          void 0;
+        }
+      } else {
+        try {
+          playerRef.current.cueVideoById?.({ videoId, startSeconds });
+        } catch {
+          void 0;
+        }
+      }
+      return;
+    }
+
     const initPlayer = () => {
       if (!window.YT?.Player || !containerRef.current || !isMounted) {
         return;
@@ -137,16 +190,24 @@ export const YouTubePlayer: FC<SoundProps> = ({
         try {
           playerRef.current.destroy();
         } catch {
-          // ignore
+          void 0;
         }
         playerRef.current = null;
       }
 
+      const container = containerRef.current;
+      container.innerHTML = '';
+      const placeholder = document.createElement('div');
+      placeholder.style.width = '100%';
+      placeholder.style.height = '100%';
+      container.appendChild(placeholder);
+
       try {
-        playerRef.current = new window.YT.Player(containerRef.current, {
+        const safeOrigin = getPlayerOrigin();
+        playerRef.current = new window.YT.Player(placeholder, {
           videoId,
           playerVars: {
-            autoplay: 0,
+            autoplay: 1,
             controls: 0,
             disablekb: 1,
             fs: 0,
@@ -155,7 +216,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
             enablejsapi: 1,
             iv_load_policy: 3,
             modestbranding: 1,
-            origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+            ...(safeOrigin ? { origin: safeOrigin } : {}),
           },
           events: {
             onReady: (event) => {
@@ -165,86 +226,111 @@ export const YouTubePlayer: FC<SoundProps> = ({
               if (volume !== undefined) {
                 try {
                   event.target.setVolume(volume);
-                } catch {}
+                } catch {
+                  void 0;
+                }
               }
               if (seek && seek > 0) {
                 try {
                   event.target.seekTo(seek, true);
-                } catch {}
+                } catch {
+                  void 0;
+                }
               }
               onCanPlayRef.current?.();
               if (statusRef.current === 'playing') {
                 try {
                   event.target.playVideo();
-                } catch {}
+                } catch {
+                  void 0;
+                }
               } else {
                 try {
                   event.target.pauseVideo();
-                } catch {}
+                } catch {
+                  void 0;
+                }
               }
             },
             onStateChange: (event) => {
               if (!isMounted) {
                 return;
               }
-              if (event.data === window.YT?.PlayerState.ENDED) {
+              if (event.data === window.YT?.PlayerState.PLAYING) {
+                onCanPlayRef.current?.();
+                if (statusRef.current !== 'playing') {
+                  try {
+                    event.target.pauseVideo();
+                  } catch {
+                    void 0;
+                  }
+                }
+              } else if (event.data === window.YT?.PlayerState.ENDED) {
                 if (!hasEndedRef.current) {
                   hasEndedRef.current = true;
                   onEndRef.current?.();
                 }
               } else if (
-                event.data === window.YT?.PlayerState.PLAYING &&
-                statusRef.current !== 'playing'
-              ) {
-                try {
-                  event.target.pauseVideo();
-                } catch {}
-              } else if (
                 event.data === window.YT?.PlayerState.PAUSED &&
                 statusRef.current === 'playing'
               ) {
-                // Auto resume immediately on background/screen-off unintended pause
                 try {
                   event.target.playVideo();
-                } catch {}
+                } catch {
+                  void 0;
+                }
                 setTimeout(() => {
                   if (isMounted && statusRef.current === 'playing') {
                     try {
                       playerRef.current?.playVideo();
-                    } catch {}
+                    } catch {
+                      void 0;
+                    }
                   }
                 }, 100);
                 setTimeout(() => {
                   if (isMounted && statusRef.current === 'playing') {
                     try {
                       playerRef.current?.playVideo();
-                    } catch {}
+                    } catch {
+                      void 0;
+                    }
                   }
                 }, 300);
                 setTimeout(() => {
                   if (isMounted && statusRef.current === 'playing') {
                     try {
                       playerRef.current?.playVideo();
-                    } catch {}
+                    } catch {
+                      void 0;
+                    }
                   }
                 }, 600);
               }
             },
-            onError: () => {
+            onError: (event: { data: number }) => {
               if (isMounted && !hasEndedRef.current) {
-                onErrorRef.current?.(new Error('YouTube playback failed'));
+                if (event.data === 101 || event.data === 150) {
+                  onSourceInvalidRef.current?.();
+                }
+                onErrorRef.current?.(
+                  new Error(`YouTube playback failed (${event.data})`),
+                );
               }
             },
           },
         });
-      } catch (err) {
+      } catch (error) {
         if (isMounted && !hasEndedRef.current) {
-          onErrorRef.current?.(err instanceof Error ? err : new Error('YouTube init failed'));
+          onErrorRef.current?.(
+            error instanceof Error ? error : new Error('YouTube init failed'),
+          );
         }
       }
     };
 
-    if (window.YT?.Player) {
+    let pollInterval: number | null = null;
+    if (window.YT && typeof window.YT.Player === 'function') {
       initPlayer();
     } else {
       const previousReady = window.onYouTubeIframeAPIReady;
@@ -252,15 +338,38 @@ export const YouTubePlayer: FC<SoundProps> = ({
         previousReady?.();
         initPlayer();
       };
+      let attempts = 0;
+      pollInterval = window.setInterval(() => {
+        attempts += 1;
+        if (window.YT && typeof window.YT.Player === 'function') {
+          if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+          initPlayer();
+        } else if (attempts > 50) {
+          if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+          if (isMounted) {
+            onErrorRef.current?.(new Error('YouTube API load timeout'));
+          }
+        }
+      }, 100);
     }
 
     return () => {
       isMounted = false;
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
       if (playerRef.current) {
         try {
           playerRef.current.destroy();
         } catch {
-          // ignore
+          void 0;
         }
         playerRef.current = null;
       }
@@ -276,15 +385,21 @@ export const YouTubePlayer: FC<SoundProps> = ({
     if (status === 'playing') {
       try {
         player.playVideo();
-      } catch {}
+      } catch {
+        void 0;
+      }
     } else if (status === 'paused') {
       try {
         player.pauseVideo();
-      } catch {}
+      } catch {
+        void 0;
+      }
     } else if (status === 'stopped') {
       try {
         player.stopVideo();
-      } catch {}
+      } catch {
+        void 0;
+      }
     }
   }, [status]);
 
@@ -293,7 +408,9 @@ export const YouTubePlayer: FC<SoundProps> = ({
     if (player && volume !== undefined) {
       try {
         player.setVolume(volume);
-      } catch {}
+      } catch {
+        void 0;
+      }
     }
   }, [volume]);
 
@@ -311,7 +428,9 @@ export const YouTubePlayer: FC<SoundProps> = ({
         player.seekTo(seek, true);
       }
       lastSeekRef.current = seek;
-    } catch {}
+    } catch {
+      void 0;
+    }
   }, [seek]);
 
   useEffect(() => {
@@ -322,7 +441,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
           try {
             if (statusRef.current === 'playing') {
               const state = player.getPlayerState?.();
-              if (state === 2 /* PAUSED */ || state === -1 /* UNSTARTED */ || state === 5 /* CUED */) {
+              if (state === 2 || state === -1 || state === 5) {
                 player.playVideo();
               }
             }
@@ -339,7 +458,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
               onEndRef.current?.();
             }
           } catch {
-            // ignore
+            void 0;
           }
         }
       }, 500);
@@ -378,11 +497,11 @@ export const YouTubePlayer: FC<SoundProps> = ({
         showVideo
           ? {
               position: 'fixed',
-              bottom: '160px',
-              right: '16px',
+              bottom: '140px',
+              right: '24px',
               zIndex: 60,
-              width: 'calc(100vw - 32px)',
-              maxWidth: '420px',
+              width: '560px',
+              maxWidth: 'calc(100vw - 48px)',
               aspectRatio: '16/9',
               borderRadius: '16px',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
@@ -392,14 +511,14 @@ export const YouTubePlayer: FC<SoundProps> = ({
             }
           : {
               position: 'fixed',
-              top: '-9999px',
-              left: '-9999px',
-              width: '320px',
-              height: '180px',
+              bottom: 0,
+              right: 0,
+              width: '200px',
+              height: '200px',
               overflow: 'hidden',
               pointerEvents: 'none',
               opacity: 0.001,
-              zIndex: -999,
+              zIndex: -1,
             }
       }
     >

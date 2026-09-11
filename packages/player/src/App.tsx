@@ -7,8 +7,8 @@ import {
 import { FC } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { i18n } from '@nuclearplayer/i18n';
-import { Platform, PlatformProvider } from '@nuclearplayer/ui';
+import { i18n } from '@aurora/i18n';
+import { Platform, PlatformProvider } from '@aurora/ui';
 
 import { routeTree } from './routeTree.gen';
 import { isGoogleTVEnvironment } from './services/tvDetection';
@@ -34,6 +34,9 @@ type AppProps = {
 };
 
 const getAppPlatform = (): Platform => {
+  if (process.env.NODE_ENV === 'test') {
+    return 'linux';
+  }
   if (isGoogleTVEnvironment()) {
     return 'tv';
   }

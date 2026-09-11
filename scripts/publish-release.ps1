@@ -13,20 +13,20 @@ if ([string]::IsNullOrWhiteSpace($Notes)) {
 }
 $ExecutablesDir = "$Root\ejecutables"
 
-# Support Aurora naming with Nuclear fallback
+# Support Aurora naming with Aurora fallback
 $ApkPath = "$ExecutablesDir\aurora-music-player.apk"
 if (-not (Test-Path $ApkPath)) {
-    $ApkPath = "$ExecutablesDir\nuclear-music-player.apk"
+    $ApkPath = "$ExecutablesDir\aurora-music-player.apk"
 }
 
 $ExePath = "$ExecutablesDir\Aurora_${cleanVer}_x64-setup.exe"
 if (-not (Test-Path $ExePath)) {
-    $ExePath = "$ExecutablesDir\Nuclear_${cleanVer}_x64-setup.exe"
+    $ExePath = "$ExecutablesDir\Aurora_${cleanVer}_x64-setup.exe"
 }
 
 $SignaturePath = "$Root\packages\player\src-tauri\target\release\bundle\nsis\Aurora_${cleanVer}_x64-setup.exe.sig"
 if (-not (Test-Path -LiteralPath $SignaturePath)) {
-    $SignaturePath = "$Root\packages\player\src-tauri\target\release\bundle\nsis\Nuclear_${cleanVer}_x64-setup.exe.sig"
+    $SignaturePath = "$Root\packages\player\src-tauri\target\release\bundle\nsis\Aurora_${cleanVer}_x64-setup.exe.sig"
 }
 
 if (-not (Test-Path $ExePath)) {

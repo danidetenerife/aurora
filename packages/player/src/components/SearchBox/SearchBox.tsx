@@ -2,7 +2,7 @@ import { Search, X } from 'lucide-react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Input } from '@nuclearplayer/ui';
+import { Button, Input } from '@aurora/ui';
 
 import { SearchBoxPopover } from './SearchBoxPopover';
 import { useSearchBox } from './useSearchBox';
@@ -57,7 +57,7 @@ export const SearchBox: FC = () => {
           onBlur={closePopover}
           placeholder={t('placeholder')}
           tone="secondary"
-          className="h-8 pl-9 pr-8"
+          className="h-8 pr-8 pl-9"
         />
         {query.length > 0 && (
           <Button

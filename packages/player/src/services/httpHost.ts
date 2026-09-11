@@ -5,7 +5,7 @@ import type {
   HttpHost,
   HttpRequestInit,
   HttpResponseData,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { Logger } from './logger';
 import { isTauriEnvironment } from './universalStore';
@@ -23,7 +23,9 @@ export const httpHost: HttpHost = {
         if (Capacitor.isNativePlatform()) {
           const rawHeaders: Record<string, string> = {};
           if (init?.headers) {
-            for (const [k, v] of Object.entries(init.headers as Record<string, string>)) {
+            for (const [k, v] of Object.entries(
+              init.headers as Record<string, string>,
+            )) {
               rawHeaders[k] = v;
             }
           }

@@ -6,7 +6,7 @@ import type {
   PlaylistRef,
   SearchResults,
   TrackRef,
-} from '@nuclearplayer/model';
+} from '@aurora/model';
 
 const TEST_PROVIDER_ID = 'test-metadata-provider';
 const TEST_ARTIST_ID = 'test-artist-id';

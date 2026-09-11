@@ -4,8 +4,8 @@ set -euo pipefail
 FLATPAK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${FLATPAK_DIR}/.." && pwd)"
 
-FLATHUB_REPO="flathub/com.nuclearplayer.Nuclear"
-MANIFEST="com.nuclearplayer.Nuclear.yml"
+FLATHUB_REPO="flathub/com.auroraplayer.Aurora"
+MANIFEST="com.auroraplayer.Aurora.yml"
 PNPM_REGISTRY="https://registry.npmjs.org/pnpm/-"
 
 VERSION="$1"

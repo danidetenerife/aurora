@@ -1,11 +1,11 @@
-import { LogEntryData } from '@nuclearplayer/ui';
+import { LogEntryData } from '@aurora/ui';
 
 export const allVariantEntries: LogEntryData[] = [
   {
     id: '1',
     timestamp: new Date(Date.now() - 0),
     level: 'error',
-    target: 'nuclear::plugin::spotify',
+    target: 'aurora::plugin::spotify',
     source: { type: 'plugin', scope: 'spotify' },
     message: 'Authentication failed: Invalid credentials',
   },
@@ -13,7 +13,7 @@ export const allVariantEntries: LogEntryData[] = [
     id: '2',
     timestamp: new Date(Date.now() - 1000),
     level: 'warn',
-    target: 'nuclear::http',
+    target: 'aurora::http',
     source: { type: 'core', scope: 'http' },
     message: 'Rate limited, backing off for 5s',
   },
@@ -21,7 +21,7 @@ export const allVariantEntries: LogEntryData[] = [
     id: '3',
     timestamp: new Date(Date.now() - 2000),
     level: 'info',
-    target: 'nuclear::app',
+    target: 'aurora::app',
     source: { type: 'core', scope: 'app' },
     message: 'Application started',
   },
@@ -29,7 +29,7 @@ export const allVariantEntries: LogEntryData[] = [
     id: '4',
     timestamp: new Date(Date.now() - 3000),
     level: 'debug',
-    target: 'nuclear::plugin::youtube_music',
+    target: 'aurora::plugin::youtube_music',
     source: { type: 'plugin', scope: 'youtube-music' },
     message: 'Searching for: Artist - Track Title',
   },
@@ -37,7 +37,7 @@ export const allVariantEntries: LogEntryData[] = [
     id: '5',
     timestamp: new Date(Date.now() - 4000),
     level: 'trace',
-    target: 'nuclear::playback',
+    target: 'aurora::playback',
     source: { type: 'core', scope: 'playback' },
     message: 'Audio buffer: 45.2s remaining',
   },
@@ -45,7 +45,7 @@ export const allVariantEntries: LogEntryData[] = [
     id: '6',
     timestamp: new Date(Date.now() - 5000),
     level: 'error',
-    target: 'nuclear::plugins',
+    target: 'aurora::plugins',
     source: { type: 'core', scope: 'plugins' },
     message: `Plugin failed to load: youtube-music
 Error: Cannot read property 'search' of undefined
@@ -61,14 +61,14 @@ export const longSingleLineEntry: LogEntryData = {
   target: 'tauri_plugin_updater::updater',
   source: { type: 'core', scope: 'updater' },
   message:
-    'parsed release response RemoteRelease { version: Version { major: 1, minor: 6, patch: 2 }, notes: Some("Nuclear Player release v1.6.2"), pub_date: Some(2026-02-20 1:57:34.261 +00:00:00), data: Static { platforms: {"windows-x86_64": ReleaseManifestPlatform { url: Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("github.com")), port: None, path: "/NuclearPlayer/nuclear-xrd/releases/download/player%401.6.2/nuclear-music-player_1.6.2_x64_en-US.msi", query: None, fragment: None }, signature: "dW50cnVzdGVkIGNvbW1lbnQ6..." }, "darwin-aarch64": ReleaseManifestPlatform { url: Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("github.com")), port: None, path: "/NuclearPlayer/nuclear-xrd/releases/download/player%401.6.2/nuclear-music-player_aarch64.app.tar.gz", query: None, fragment: None }, signature: "dW50cnVzdGVkIGNvbW1lbnQ6..." } } }',
+    'parsed release response RemoteRelease { version: Version { major: 1, minor: 6, patch: 2 }, notes: Some("Aurora release v1.6.2"), pub_date: Some(2026-02-20 1:57:34.261 +00:00:00), data: Static { platforms: {"windows-x86_64": ReleaseManifestPlatform { url: Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("github.com")), port: None, path: "/AuroraPlayer/aurora-xrd/releases/download/player%401.6.2/aurora-music-player_1.6.2_x64_en-US.msi", query: None, fragment: None }, signature: "dW50cnVzdGVkIGNvbW1lbnQ6..." }, "darwin-aarch64": ReleaseManifestPlatform { url: Url { scheme: "https", cannot_be_a_base: false, username: "", password: None, host: Some(Domain("github.com")), port: None, path: "/AuroraPlayer/aurora-xrd/releases/download/player%401.6.2/aurora-music-player_aarch64.app.tar.gz", query: None, fragment: None }, signature: "dW50cnVzdGVkIGNvbW1lbnQ6..." } } }',
 };
 
 export const collapsibleEntry: LogEntryData = {
   id: 'collapsible-1',
   timestamp: new Date(),
   level: 'error',
-  target: 'nuclear::plugin::youtube_music',
+  target: 'aurora::plugin::youtube_music',
   source: { type: 'plugin', scope: 'youtube-music' },
   message: `Unhandled error in plugin lifecycle hook "onTrackChange"
 TypeError: Cannot read properties of undefined (reading 'videoId')
@@ -93,7 +93,7 @@ export const longMessageLogs: LogEntryData[] = [
     id: '1',
     timestamp: new Date(),
     level: 'error',
-    target: 'nuclear::plugins',
+    target: 'aurora::plugins',
     source: { type: 'core', scope: 'plugins' },
     message: `Plugin failed to load: youtube-music
 Error: Cannot read property 'search' of undefined
@@ -118,7 +118,7 @@ Plugin state at time of failure:
     id: '2',
     timestamp: new Date(Date.now() - 1000),
     level: 'debug',
-    target: 'nuclear::http',
+    target: 'aurora::http',
     source: { type: 'core', scope: 'http' },
     message: `HTTP Response (200 OK) from api.deezer.com/search/track?q=radiohead:
 {
@@ -147,7 +147,7 @@ Plugin state at time of failure:
     id: '3',
     timestamp: new Date(Date.now() - 2000),
     level: 'error',
-    target: 'nuclear::plugin::spotify',
+    target: 'aurora::plugin::spotify',
     source: { type: 'plugin', scope: 'spotify' },
     message: `Unhandled rejection in Spotify stream resolver
 Error: ECONNRESET - Connection reset by peer
@@ -166,7 +166,7 @@ Previous attempts failed at: 14:23:01.123, 14:23:03.456`,
     id: '4',
     timestamp: new Date(Date.now() - 3000),
     level: 'warn',
-    target: 'nuclear::streaming',
+    target: 'aurora::streaming',
     source: { type: 'core', scope: 'streaming' },
     message: `Audio buffer underrun detected during playback
 Current buffer: 0.8s (threshold: 2.0s)
@@ -185,7 +185,7 @@ Position: 12:45 / 23:31`,
     id: '5',
     timestamp: new Date(Date.now() - 4000),
     level: 'info',
-    target: 'nuclear::app',
+    target: 'aurora::app',
     source: { type: 'core', scope: 'app' },
     message: `System diagnostics report:
   OS: macOS 15.3.1 (arm64)
@@ -206,7 +206,7 @@ export const clickableChipsLogs: LogEntryData[] = [
     id: '1',
     timestamp: new Date(),
     level: 'error',
-    target: 'nuclear::plugin::spotify',
+    target: 'aurora::plugin::spotify',
     source: { type: 'plugin', scope: 'spotify' },
     message: 'Stream resolution failed: 403 Forbidden',
   },
@@ -214,7 +214,7 @@ export const clickableChipsLogs: LogEntryData[] = [
     id: '2',
     timestamp: new Date(Date.now() - 500),
     level: 'warn',
-    target: 'nuclear::http',
+    target: 'aurora::http',
     source: { type: 'core', scope: 'http' },
     message: 'Request timeout after 30s — retrying with exponential backoff',
   },
@@ -222,7 +222,7 @@ export const clickableChipsLogs: LogEntryData[] = [
     id: '3',
     timestamp: new Date(Date.now() - 1000),
     level: 'info',
-    target: 'nuclear::plugin::youtube_music',
+    target: 'aurora::plugin::youtube_music',
     source: { type: 'plugin', scope: 'youtube-music' },
     message: 'Track resolved: "Radiohead - Paranoid Android" (videoId: abc123)',
   },
@@ -230,7 +230,7 @@ export const clickableChipsLogs: LogEntryData[] = [
     id: '4',
     timestamp: new Date(Date.now() - 1500),
     level: 'debug',
-    target: 'nuclear::playback',
+    target: 'aurora::playback',
     source: { type: 'core', scope: 'playback' },
     message: 'Crossfade started: 3.0s overlap between tracks',
   },
@@ -238,7 +238,7 @@ export const clickableChipsLogs: LogEntryData[] = [
     id: '5',
     timestamp: new Date(Date.now() - 2000),
     level: 'error',
-    target: 'nuclear::plugin::youtube_music',
+    target: 'aurora::plugin::youtube_music',
     source: { type: 'plugin', scope: 'youtube-music' },
     message: 'Age-restricted content blocked: videoId xyz789',
   },
@@ -246,7 +246,7 @@ export const clickableChipsLogs: LogEntryData[] = [
     id: '6',
     timestamp: new Date(Date.now() - 2500),
     level: 'info',
-    target: 'nuclear::app',
+    target: 'aurora::app',
     source: { type: 'core', scope: 'app' },
     message: 'Equalizer preset applied: "Rock"',
   },
@@ -270,13 +270,13 @@ export const generateLogs = (count: number): LogEntryData[] => {
     { scope: 'spotify', type: 'plugin' },
   ];
   const targets = [
-    'nuclear::app',
-    'nuclear::plugins',
-    'nuclear::http',
-    'nuclear::streaming',
-    'nuclear::playback',
-    'nuclear::plugin::youtube_music',
-    'nuclear::plugin::spotify',
+    'aurora::app',
+    'aurora::plugins',
+    'aurora::http',
+    'aurora::streaming',
+    'aurora::playback',
+    'aurora::plugin::youtube_music',
+    'aurora::plugin::spotify',
   ];
   const messages = [
     'Application started',

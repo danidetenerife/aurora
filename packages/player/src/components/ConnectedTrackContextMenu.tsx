@@ -10,9 +10,9 @@ import {
 import { FC, ReactNode } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork, Track } from '@nuclearplayer/model';
-import { Input, TrackContextMenu } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork, Track } from '@aurora/model';
+import { Input, TrackContextMenu } from '@aurora/ui';
 
 import { usePlaylistSubmenu } from '../hooks/usePlaylistSubmenu';
 import { useTrackActions } from '../hooks/useTrackActions';

@@ -1,9 +1,13 @@
 import { normalize } from '@tauri-apps/api/path';
 
+import spotifyPlugin from '../../../../../plugins/aurora-plugin-something/src/index';
+import ytMusicPlugin from '../../../../../plugins/aurora-plugin-youtube-music/src/index';
+import youtubePlugin from '../../../../../plugins/aurora-plugin-youtube/src/index';
 import { usePluginStore } from '../../stores/pluginStore';
 import { useStartupStore } from '../../stores/startupStore';
 import { errorMessage } from '../../utils/errorMessage';
 import { providersHost } from '../providersHost';
+import { isTauriEnvironment } from '../universalStore';
 import { createPluginAPI } from './createPluginAPI';
 import { checkAndUpdatePlugins } from './pluginAutoUpdate';
 import { getPluginsDir } from './pluginDir';
@@ -14,11 +18,6 @@ import {
   setRegistryEntryWarnings,
 } from './pluginRegistry';
 
-import spotifyPlugin from '../../../../../plugins/nuclear-plugin-something/src/index';
-import youtubePlugin from '../../../../../plugins/nuclear-plugin-youtube/src/index';
-import ytMusicPlugin from '../../../../../plugins/nuclear-plugin-youtube-music/src/index';
-import { isTauriEnvironment } from '../universalStore';
-
 const isManagedPath = async (absPath: string): Promise<boolean> => {
   const normalizedPath = await normalize(absPath);
   const normalizedBase = await normalize(await getPluginsDir());
@@ -26,28 +25,34 @@ const isManagedPath = async (absPath: string): Promise<boolean> => {
 };
 
 const loadBundledPlugins = (): void => {
-  const ytMusicId = 'nuclear-plugin-youtube-music';
+  const ytMusicId = 'aurora-plugin-youtube-music';
   const ytMusicApi = createPluginAPI(ytMusicId, 'YouTube Music');
   if (ytMusicPlugin.onEnable) {
     try {
       ytMusicPlugin.onEnable(ytMusicApi);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
-  const spotifyId = 'nuclear-plugin-something';
+  const spotifyId = 'aurora-plugin-something';
   const spotifyApi = createPluginAPI(spotifyId, 'Spotify');
   if (spotifyPlugin.onEnable) {
     try {
       spotifyPlugin.onEnable(spotifyApi);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
-  const youtubeId = 'nuclear-plugin-youtube';
+  const youtubeId = 'aurora-plugin-youtube';
   const youtubeApi = createPluginAPI(youtubeId, 'YouTube');
   if (youtubePlugin.onEnable) {
     try {
       youtubePlugin.onEnable(youtubeApi);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
   usePluginStore.setState((state) => ({
@@ -125,28 +130,30 @@ const loadBundledPlugins = (): void => {
   providersHost.resolveActiveOnBootstrap();
 };
 
-export const hydratePluginsFromRegistry = async (): Promise<void> => {
+export const hydratePluginsFromRegistry = async (options?: {
+  loadBundled?: boolean;
+}): Promise<void> => {
   useStartupStore.getState().startStartup();
   const now = Date.now();
 
-  // Always load bundled plugins first — guarantees Spotify metadata and
-  // YouTube streaming work on both APK and Desktop regardless of the registry.
-  loadBundledPlugins();
+  if (options?.loadBundled ?? true) {
+    loadBundledPlugins();
+  }
 
   if (!isTauriEnvironment()) {
     useStartupStore.getState().finishStartup(Date.now() - now);
     return;
   }
 
-  // In Tauri (Desktop), additionally load any file-system plugins from the
-  // registry on top of the bundled ones. Registry plugins override bundled ones
-  // if they share the same provider ID.
   const entries = (await listRegistryEntries()).sort(
     (a, b) =>
       new Date(a.installedAt).getTime() - new Date(b.installedAt).getTime(),
   );
 
   const BUNDLED_PLUGIN_IDS = new Set([
+    'aurora-plugin-something',
+    'aurora-plugin-youtube-music',
+    'aurora-plugin-youtube',
     'nuclear-plugin-something',
     'nuclear-plugin-youtube-music',
     'nuclear-plugin-youtube',
@@ -205,35 +212,15 @@ export const hydratePluginsFromRegistry = async (): Promise<void> => {
         }
       }
     } catch (error) {
-      usePluginStore.setState((state) => ({
-        plugins: {
-          ...state.plugins,
-          [entry.id]: {
-            metadata: {
-              id: entry.id,
-              name: entry.id,
-              displayName: entry.id,
-              version: entry.version,
-              description: '',
-              categories: [],
-              author: '',
-              entry: '',
-              permissions: [],
-            },
-            path: entry.path,
-            enabled: entry.enabled,
-            warning: true,
-            warnings: [errorMessage(error)],
-            installationMethod: entry.installationMethod,
-            originalPath: entry.originalPath,
-          },
-        },
-      }));
+      await setRegistryEntryWarnings(entry.id, [errorMessage(error)]);
     } finally {
       const elapsed = Date.now() - pluginLoadStartTime;
+      useStartupStore.getState().setPluginDuration(entry.id, elapsed);
       const targetMin = (await getRegistryEntry(entry.id))?.enabled ? 200 : 0;
       if (elapsed < targetMin) {
-        await new Promise((resolve) => setTimeout(resolve, targetMin - elapsed));
+        await new Promise((resolve) =>
+          setTimeout(resolve, targetMin - elapsed),
+        );
       }
     }
   }

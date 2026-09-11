@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { LogViewer } from '@nuclearplayer/ui';
+import { LogViewer } from '@aurora/ui';
 
 import {
   clickableChipsLogs,

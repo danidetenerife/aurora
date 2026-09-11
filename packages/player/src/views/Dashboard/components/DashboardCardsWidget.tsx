@@ -1,13 +1,8 @@
 import isEmpty from 'lodash-es/isEmpty';
 import { useMemo } from 'react';
 
-import type { AttributedResult } from '@nuclearplayer/plugin-sdk';
-import {
-  CardsRow,
-  CardsRowItem,
-  CardsRowLabels,
-  Loader,
-} from '@nuclearplayer/ui';
+import type { AttributedResult } from '@aurora/plugin-sdk';
+import { CardsRow, CardsRowItem, CardsRowLabels, Loader } from '@aurora/ui';
 
 type DashboardCardsWidgetProps<T> = {
   results: AttributedResult<T>[] | undefined;

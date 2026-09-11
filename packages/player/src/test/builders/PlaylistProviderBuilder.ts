@@ -1,5 +1,5 @@
-import type { Playlist } from '@nuclearplayer/model';
-import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
+import type { Playlist } from '@aurora/model';
+import type { PlaylistProvider } from '@aurora/plugin-sdk';
 
 export class PlaylistProviderBuilder {
   private provider: PlaylistProvider;

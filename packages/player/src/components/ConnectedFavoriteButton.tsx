@@ -1,8 +1,8 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { AlbumRef, ArtistRef, ProviderRef } from '@nuclearplayer/model';
-import { FavoriteButton } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { AlbumRef, ArtistRef, ProviderRef } from '@aurora/model';
+import { FavoriteButton } from '@aurora/ui';
 
 import { useFavoritesStore } from '../stores/favoritesStore';
 

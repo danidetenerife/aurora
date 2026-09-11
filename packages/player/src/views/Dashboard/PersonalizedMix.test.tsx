@@ -1,15 +1,17 @@
 import { act } from '@testing-library/react';
 
-import { i18n } from '@nuclearplayer/i18n';
+import { i18n } from '@aurora/i18n';
 
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { useQueueStore } from '../../stores/queueStore';
+import { DashboardWrapper } from './Dashboard.test-wrapper';
 import { PersonalizedMixWrapper } from './PersonalizedMix.test-wrapper';
 
 describe('personalized recommendations', () => {
   beforeEach(async () => {
+    DashboardWrapper.reset();
     await i18n.changeLanguage('es_ES');
     localStorage.clear();
     useFavoritesStore.setState({ tracks: [], artists: [], albums: [] });

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-import { DayOfWeekChart, DayOfWeekChartProps } from '@nuclearplayer/ui';
+import { DayOfWeekChart, DayOfWeekChartProps } from '@aurora/ui';
 
 const meta = {
   title: 'Components/HistoryCharts/DayOfWeekChart',

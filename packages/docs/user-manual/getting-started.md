@@ -1,20 +1,20 @@
 ---
-description: Install Nuclear and play your first song
+description: Install Aurora and play your first song
 ---
 
 # Getting started
 
-Nuclear is a free music player that streams music from the internet. Unlike many music players, Nuclear doesn't come with a built-in music catalog. Instead, plugins provide everything: search results, audio streams, lyrics, recommendations, and more. You pick which plugins to install, and they determine where your music comes from.
+Aurora is a free music player that streams music from the internet. Unlike many music players, Aurora doesn't come with a built-in music catalog. Instead, plugins provide everything: search results, audio streams, lyrics, recommendations, and more. You pick which plugins to install, and they determine where your music comes from.
 
 This guide walks you through going from a fresh install to playing your first song.
 
-## Install Nuclear
+## Install Aurora
 
-Download and install Nuclear for your platform. See [Installation](installation.md) for detailed instructions.
+Download and install Aurora for your platform. See [Installation](installation.md) for detailed instructions.
 
 ## First launch
 
-When you open Nuclear for the first time, you'll see the Dashboard with a welcome message prompting you to install plugins. Nothing works yet because no plugins are installed.
+When you open Aurora for the first time, you'll see the Dashboard with a welcome message prompting you to install plugins. Nothing works yet because no plugins are installed.
 
 The app layout has five main areas:
 
@@ -24,11 +24,11 @@ The app layout has five main areas:
 - **Queue panel** on the right showing upcoming tracks
 - **Player bar** at the bottom with playback controls
 
-<figure><img src="../.gitbook/assets/app-layout-overview.png" alt="The Nuclear app layout, showing the five main areas"><figcaption><p>The Nuclear app layout with the five main areas</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/app-layout-overview.png" alt="The Aurora app layout, showing the five main areas"><figcaption><p>The Aurora app layout with the five main areas</p></figcaption></figure>
 
 ## Install your first plugins
 
-Nuclear needs at least two types of plugins to play music:
+Aurora needs at least two types of plugins to play music:
 
 - A **metadata plugin** to search for artists, albums, and tracks
 - A **streaming plugin** to provide the actual audio
@@ -46,7 +46,7 @@ You can filter by category (Streaming, Metadata, Lyrics, etc.) and search by nam
 
 <figure><img src="../.gitbook/assets/plugin-store.png" alt="The plugin store showing available plugins"><figcaption><p>The plugin store</p></figcaption></figure>
 
-While you're in the store, consider installing a **dashboard plugin** too. Dashboard plugins populate the home screen with top tracks, new releases, and recommendations so you have something to browse when you open Nuclear.
+While you're in the store, consider installing a **dashboard plugin** too. Dashboard plugins populate the home screen with top tracks, new releases, and recommendations so you have something to browse when you open Aurora.
 
 ## Search for music
 

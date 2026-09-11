@@ -8,7 +8,7 @@ describe('PluginStoreItem', () => {
     name: 'YouTube Music',
     description:
       'Stream music directly from YouTube Music with full search and playlist support.',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     categories: ['Streaming', 'Metadata'],
     onInstall: vi.fn(),
   };

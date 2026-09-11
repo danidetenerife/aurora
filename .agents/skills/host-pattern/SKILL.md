@@ -1,6 +1,6 @@
 ---
 name: host-pattern
-description: Use when adding a new domain to Nuclear's plugin system, or implementing a host. Covers the host pattern (how player functionality is exposed to plugins), the host interface and API class structure, how hosts are implemented in the player, error handling conventions, and what files to create and modify. Trigger phrases include "add a domain", "new domain", "host implementation", "host pattern", "createPluginAPI".
+description: Use when adding a new domain to Aurora's plugin system, or implementing a host. Covers the host pattern (how player functionality is exposed to plugins), the host interface and API class structure, how hosts are implemented in the player, error handling conventions, and what files to create and modify. Trigger phrases include "add a domain", "new domain", "host implementation", "host pattern", "createPluginAPI".
 ---
 
 # Host pattern
@@ -21,7 +21,7 @@ Plugins call methods on an API class (e.g. `api.Queue.addToQueue()`), which hold
 |--------|------|------|
 | Create | `src/types/yourDomain.ts` | `YourDomainHost` interface + related types |
 | Create | `src/api/yourDomain.ts` | `YourDomainAPI` class |
-| Modify | `src/api/index.ts` | Add `yourDomainHost` option + `YourDomain` field to `NuclearAPI` |
+| Modify | `src/api/index.ts` | Add `yourDomainHost` option + `YourDomain` field to `AuroraAPI` |
 | Modify | `src/index.ts` | Export types and API class |
 
 ### Player (`packages/player/`)
@@ -29,7 +29,7 @@ Plugins call methods on an API class (e.g. `api.Queue.addToQueue()`), which hold
 | Action | File | What |
 |--------|------|------|
 | Create | `src/services/yourDomainHost.ts` | Host implementation + singleton export |
-| Modify | `src/services/plugins/createPluginAPI.ts` | Pass singleton to `NuclearPluginAPI` |
+| Modify | `src/services/plugins/createPluginAPI.ts` | Pass singleton to `AuroraPluginAPI` |
 | Modify | `src/services/logger.ts` | Add domain to `LOG_SCOPES` (needed for `reportError`) |
 
 If the domain needs shared model types: create `packages/model/src/yourDomain.ts` and re-export from `packages/model/src/index.ts`.
@@ -63,7 +63,7 @@ export class YourDomainAPI {
 
 Reference: `packages/plugin-sdk/src/api/queue.ts`, `packages/plugin-sdk/src/api/dashboard.ts`
 
-## Connecting to NuclearAPI
+## Connecting to AuroraAPI
 
 ```typescript
 // packages/plugin-sdk/src/api/index.ts
@@ -83,7 +83,7 @@ this.YourDomain = new YourDomainAPI(opts?.yourDomainHost);
 ```typescript
 // packages/player/src/services/plugins/createPluginAPI.ts
 import { yourDomainHost } from '../../services/yourDomainHost';
-// Add to NuclearPluginAPI constructor call:
+// Add to AuroraPluginAPI constructor call:
 yourDomainHost,
 ```
 
@@ -93,7 +93,7 @@ Hosts bridge the SDK contract to whatever backs the domain. Most commonly a Zust
 
 ```typescript
 // packages/player/src/services/yourDomainHost.ts
-import type { YourDomainHost } from '@nuclearplayer/plugin-sdk';
+import type { YourDomainHost } from '@aurora/plugin-sdk';
 import { useYourDomainStore } from '../stores/yourDomainStore';
 
 export const createYourDomainHost = (): YourDomainHost => ({

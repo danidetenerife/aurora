@@ -1,4 +1,4 @@
-import type { ArtworkSet } from '@nuclearplayer/model';
+import type { ArtworkSet } from '@aurora/model';
 
 const memoryCache = new Map<string, string>();
 const LOCAL_STORAGE_KEY_PREFIX = 'aurora_cover_';
@@ -12,7 +12,9 @@ const normalizeText = (text: string): string =>
     .trim();
 
 export const isYouTubeOrGenericArtwork = (url?: string): boolean => {
-  if (!url) return true;
+  if (!url) {
+    return true;
+  }
   return (
     url.includes('i.ytimg.com') ||
     url.includes('img.youtube.com') ||
@@ -26,7 +28,9 @@ export const resolveTrackCoverUrl = async (
   artist: string,
   title: string,
 ): Promise<string | null> => {
-  if (!artist || !title) return null;
+  if (!artist || !title) {
+    return null;
+  }
 
   const cacheKey = `${normalizeText(artist)}___${normalizeText(title)}`;
   if (memoryCache.has(cacheKey)) {
@@ -35,12 +39,16 @@ export const resolveTrackCoverUrl = async (
 
   // Check localStorage cache
   try {
-    const cached = localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${cacheKey}`);
+    const cached = localStorage.getItem(
+      `${LOCAL_STORAGE_KEY_PREFIX}${cacheKey}`,
+    );
     if (cached) {
       memoryCache.set(cacheKey, cached);
       return cached;
     }
-  } catch {}
+  } catch {
+    void 0;
+  }
 
   const queries = [
     `${artist} ${title}`,
@@ -52,7 +60,9 @@ export const resolveTrackCoverUrl = async (
       const response = await fetch(
         `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`,
       );
-      if (!response.ok) continue;
+      if (!response.ok) {
+        continue;
+      }
 
       const data = (await response.json()) as {
         results?: Array<{ artworkUrl100?: string }>;
@@ -60,7 +70,6 @@ export const resolveTrackCoverUrl = async (
 
       const rawArtwork = data?.results?.[0]?.artworkUrl100;
       if (rawArtwork) {
-        // Upgrade iTunes thumbnail to high-res 600x600
         const highResUrl = rawArtwork.replace('100x100bb.jpg', '600x600bb.jpg');
         memoryCache.set(cacheKey, highResUrl);
         try {
@@ -68,11 +77,13 @@ export const resolveTrackCoverUrl = async (
             `${LOCAL_STORAGE_KEY_PREFIX}${cacheKey}`,
             highResUrl,
           );
-        } catch {}
+        } catch (error) {
+          void error;
+        }
         return highResUrl;
       }
-    } catch {
-      // Ignore network errors
+    } catch (error) {
+      void error;
     }
   }
 

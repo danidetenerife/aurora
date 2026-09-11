@@ -1,12 +1,19 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Loader, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { DashboardProvider } from '@aurora/plugin-sdk';
+import { Loader, ViewShell } from '@aurora/ui';
 
+import { useProviders } from '../../hooks/useProviders';
 import { useStartupStore } from '../../stores/startupStore';
+import { DashboardEmptyState } from './components/DashboardEmptyState';
 import { PersonalizedMixWidget } from './components/PersonalizedMixWidget';
+import { DASHBOARD_WIDGETS } from './dashboardWidgets';
 
 const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
+  const dashboardProviders = useProviders('dashboard') as DashboardProvider[];
+  const metadataProviders = useProviders('metadata');
+
   if (isStartingUp) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -15,9 +22,24 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
     );
   }
 
+  if (dashboardProviders.length === 0 && metadataProviders.length === 0) {
+    return <DashboardEmptyState />;
+  }
+
+  const activeCapabilities = new Set(
+    dashboardProviders.flatMap((provider) => provider.capabilities ?? []),
+  );
+  const activeWidgets = DASHBOARD_WIDGETS.filter((widget) =>
+    activeCapabilities.has(widget.capability),
+  );
+
   return (
     <div className="flex flex-col gap-6 pb-12">
-      <PersonalizedMixWidget />
+      {metadataProviders.length > 0 && <PersonalizedMixWidget />}
+      {activeWidgets.map((widget) => {
+        const WidgetComponent = widget.component;
+        return <WidgetComponent key={widget.capability} />;
+      })}
     </div>
   );
 };

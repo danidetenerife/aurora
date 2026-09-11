@@ -2,7 +2,7 @@ import { HeaderContext } from '@tanstack/react-table';
 import { SortAsc, SortDesc } from 'lucide-react';
 import { PropsWithChildren, useCallback } from 'react';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 import { cn } from '../../../utils';
 

@@ -154,7 +154,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden sm:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap sm:table-cell"
                 role="columnheader"
               >
                 <span
@@ -174,7 +174,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden md:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap md:table-cell"
                 role="columnheader"
               >
                 <span
@@ -234,21 +234,21 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -312,21 +312,21 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -390,21 +390,21 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -592,7 +592,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden sm:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap sm:table-cell"
                 role="columnheader"
               >
                 <span
@@ -612,7 +612,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden md:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap md:table-cell"
                 role="columnheader"
               >
                 <span
@@ -672,21 +672,21 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -750,21 +750,21 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -828,21 +828,21 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -906,21 +906,21 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 4
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -984,21 +984,21 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 5
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1203,7 +1203,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden sm:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap sm:table-cell"
                 role="columnheader"
               >
                 <span
@@ -1223,7 +1223,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden md:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap md:table-cell"
                 role="columnheader"
               >
                 <span
@@ -1283,21 +1283,21 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1361,21 +1361,21 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1439,21 +1439,21 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1517,21 +1517,21 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 4
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1595,21 +1595,21 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 5
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1800,7 +1800,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </span>
                 </th>
                 <th
-                  class="px-2 text-left cursor-pointer hidden sm:table-cell w-40 whitespace-nowrap"
+                  class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap sm:table-cell"
                   role="columnheader"
                 >
                   <span
@@ -1820,7 +1820,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </span>
                 </th>
                 <th
-                  class="px-2 text-left cursor-pointer hidden md:table-cell w-40 whitespace-nowrap"
+                  class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap md:table-cell"
                   role="columnheader"
                 >
                   <span
@@ -1880,21 +1880,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 1
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -1958,21 +1958,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 2
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2036,21 +2036,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 3
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2114,21 +2114,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 4
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2192,21 +2192,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 5
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2270,21 +2270,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 6
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2348,21 +2348,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 7
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2426,21 +2426,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 8
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2504,21 +2504,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 9
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2582,21 +2582,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 10
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2660,21 +2660,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 11
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2738,21 +2738,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 12
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2816,21 +2816,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 13
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2894,21 +2894,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 14
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2972,21 +2972,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 15
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3050,21 +3050,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 16
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3128,21 +3128,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 17
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3206,21 +3206,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 18
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3284,21 +3284,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 19
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3362,21 +3362,21 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   </div>
                 </td>
                 <td
-                  class="px-2 py-1.5 min-w-0"
+                  class="min-w-0 px-2 py-1.5"
                 >
                   <div
-                    class="flex items-center justify-between gap-2 min-w-0"
+                    class="flex min-w-0 items-center justify-between gap-2"
                   >
                     <button
-                      class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                      class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                       >
                         Track 20
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                        class="text-foreground-secondary line-clamp-1 text-xs break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3628,7 +3628,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden sm:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap sm:table-cell"
                 role="columnheader"
               >
                 <span
@@ -3648,7 +3648,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 </span>
               </th>
               <th
-                class="px-2 text-left cursor-pointer hidden md:table-cell w-40 whitespace-nowrap"
+                class="px-2 text-left cursor-pointer hidden w-40 whitespace-nowrap md:table-cell"
                 role="columnheader"
               >
                 <span
@@ -3708,21 +3708,21 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -3786,21 +3786,21 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>
@@ -3864,21 +3864,21 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 </div>
               </td>
               <td
-                class="px-2 py-1.5 min-w-0"
+                class="min-w-0 px-2 py-1.5"
               >
                 <div
-                  class="flex items-center justify-between gap-2 min-w-0"
+                  class="flex min-w-0 items-center justify-between gap-2"
                 >
                   <button
-                    class="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+                    class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words"
+                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
                     >
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
+                      class="text-foreground-secondary line-clamp-1 text-xs break-words"
                     >
                       Frank Zappa
                     </span>

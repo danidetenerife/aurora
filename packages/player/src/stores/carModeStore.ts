@@ -6,7 +6,8 @@ import {
 } from '../services/nativeMediaSession';
 import { isCapacitorEnvironment } from '../services/universalStore';
 
-const STORAGE_KEY_AUTO_CAR_MODE = 'nuclear_auto_car_mode_enabled';
+const STORAGE_KEY_AUTO_CAR_MODE = 'aurora_auto_car_mode_enabled';
+const LEGACY_STORAGE_KEY_AUTO_CAR_MODE = 'nuclear_auto_car_mode_enabled';
 
 type CarModeState = {
   isCarMode: boolean;
@@ -21,7 +22,9 @@ type CarModeState = {
 
 const getInitialAutoCarMode = (): boolean => {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY_AUTO_CAR_MODE);
+    const saved =
+      localStorage.getItem(STORAGE_KEY_AUTO_CAR_MODE) ??
+      localStorage.getItem(LEGACY_STORAGE_KEY_AUTO_CAR_MODE);
     return saved === null ? true : saved === 'true';
   } catch {
     return true;
@@ -59,10 +62,14 @@ export const useCarModeStore = create<CarModeState>((set) => ({
 let isInitialized = false;
 
 export const initCarModeService = async (): Promise<void> => {
-  if (isInitialized) return;
+  if (isInitialized) {
+    return;
+  }
   isInitialized = true;
 
-  if (!isCapacitorEnvironment()) return;
+  if (!isCapacitorEnvironment()) {
+    return;
+  }
 
   try {
     const initialStatus = await NativeMediaSessionPlugin.isBluetoothConnected();

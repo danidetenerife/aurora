@@ -1,8 +1,8 @@
-import { NuclearPluginAPI } from './index.js';
+import { AuroraPluginAPI } from './index.js';
 
-describe('NuclearPluginAPI', () => {
+describe('AuroraPluginAPI', () => {
   it('should create an instance', () => {
-    const api = new NuclearPluginAPI();
-    expect(api).toBeInstanceOf(NuclearPluginAPI);
+    const api = new AuroraPluginAPI();
+    expect(api).toBeInstanceOf(AuroraPluginAPI);
   });
 });

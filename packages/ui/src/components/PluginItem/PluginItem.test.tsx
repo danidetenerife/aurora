@@ -10,7 +10,7 @@ describe('PluginItem', () => {
       <PluginItem
         className="border-accent-red"
         name="YouTube Music"
-        author="Nuclear Team"
+        author="Aurora Team"
         description="Stream music directly from YouTube Music with full search and playlist support."
         icon={<Music size={24} />}
         onViewDetails={() => {}}
@@ -27,7 +27,7 @@ describe('PluginItem', () => {
     const { asFragment } = render(
       <PluginItem
         name="Disabled Plugin"
-        author="Nuclear Team"
+        author="Aurora Team"
         description="This plugin is currently disabled."
         icon={<Music size={24} />}
         disabled
@@ -41,7 +41,7 @@ describe('PluginItem', () => {
     const { asFragment } = render(
       <PluginItem
         name="Accessory Plugin"
-        author="Nuclear Team"
+        author="Aurora Team"
         description="Has accessory on the right."
         rightAccessory={<span>Accessory</span>}
       />,
@@ -54,7 +54,7 @@ describe('PluginItem', () => {
     const { getByTestId } = render(
       <PluginItem
         name="YouTube Music"
-        author="Nuclear Team"
+        author="Aurora Team"
         description="Stream music from YouTube."
         version="1.2.3"
       />,
@@ -67,7 +67,7 @@ describe('PluginItem', () => {
     const { getByTestId } = render(
       <PluginItem
         name="YouTube Music"
-        author="Nuclear Team"
+        author="Aurora Team"
         description="Stream music from YouTube."
         version="1.2.3"
         updateAvailable
@@ -96,7 +96,7 @@ describe('PluginItem', () => {
     const { getByTestId } = render(
       <PluginItem
         name="YouTube Music"
-        author="Nuclear Team"
+        author="Aurora Team"
         description="Stream music directly from YouTube Music with full search and playlist support."
         {...{ [triggerProp]: handler }}
       />,

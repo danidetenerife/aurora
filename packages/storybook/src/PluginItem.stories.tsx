@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Music, Palette } from 'lucide-react';
 import { fn } from 'storybook/test';
 
-import { PluginItem, Toggle } from '@nuclearplayer/ui';
+import { PluginItem, Toggle } from '@aurora/ui';
 
 const meta = {
   title: 'Components/PluginItem',
@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     name: 'YouTube Music',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description:
       'Stream music directly from YouTube Music with full search and playlist support.',
     version: '1.2.0',
@@ -62,7 +62,7 @@ export const LongDescription: Story = {
 export const Disabled: Story = {
   args: {
     name: 'Disabled Plugin',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description: 'This plugin is currently disabled.',
     icon: <Music size={24} />,
     disabled: true,
@@ -72,7 +72,7 @@ export const Disabled: Story = {
 export const Warning: Story = {
   args: {
     name: 'Warned Plugin',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description: 'This plugin has warnings.',
     icon: <Music size={24} />,
     warning: true,
@@ -83,7 +83,7 @@ export const Warning: Story = {
 export const WithRightAccessory: Story = {
   args: {
     name: 'Toggleable Plugin',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description: 'This plugin shows a right accessory toggle.',
     icon: <Music size={24} />,
     rightAccessory: (
@@ -119,7 +119,7 @@ export const UpdateAvailable: Story = {
 export const WithActions: Story = {
   args: {
     name: 'Dev Plugin',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description:
       'Reload and remove controls are available for development plugins.',
     version: '0.5.0',
@@ -132,7 +132,7 @@ export const WithActions: Story = {
 export const WarningWithRightAccessory: Story = {
   args: {
     name: 'Warned + Toggle',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description: 'Warned plugin with a right accessory toggle.',
     icon: <Music size={24} />,
     warning: true,
@@ -150,7 +150,7 @@ export const WarningWithRightAccessory: Story = {
 export const DisabledWarningWithRightAccessory: Story = {
   args: {
     name: 'Disabled + Warned + Toggle',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description: 'Disabled plugin with warnings and a toggle in the top-right.',
     icon: <Music size={24} />,
     disabled: true,
@@ -169,7 +169,7 @@ export const DisabledWarningWithRightAccessory: Story = {
 export const Loading: Story = {
   args: {
     name: 'Updating Plugin',
-    author: 'Nuclear Team',
+    author: 'Aurora Team',
     description: 'An operation is running in the background.',
     icon: <Music size={24} />,
     isLoading: true,

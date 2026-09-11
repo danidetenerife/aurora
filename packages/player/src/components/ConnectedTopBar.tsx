@@ -1,7 +1,7 @@
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { FC } from 'react';
 
-import { TopBar, TopBarLogo, TopBarNavigation } from '@nuclearplayer/ui';
+import { TopBar, TopBarLogo, TopBarNavigation } from '@aurora/ui';
 
 import { useCanGoForward } from '../hooks/useCanGoForward';
 import { SearchBox } from './SearchBox';

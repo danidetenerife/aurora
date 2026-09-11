@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { ThemeStoreItem } from '@nuclearplayer/ui';
+import { ThemeStoreItem } from '@aurora/ui';
 
 const meta = {
   title: 'Components/ThemeStoreItem',

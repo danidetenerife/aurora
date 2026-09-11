@@ -1,9 +1,9 @@
 import { SaveIcon } from 'lucide-react';
 import type { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { Track } from '@nuclearplayer/model';
-import { Popover } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { Track } from '@aurora/model';
+import { Popover } from '@aurora/ui';
 
 import { PlaylistActions } from '../Playlists/components/PlaylistActions';
 

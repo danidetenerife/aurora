@@ -34,7 +34,7 @@ const ogImageUrl = new URL(
   ogImage ?? '/images/social-banner.png',
   Astro.site,
 );
-const siteUrl = Astro.site?.toString() ?? 'https://nuclearplayer.com/';
+const siteUrl = Astro.site?.toString() ?? 'https://aurora-player.org/';
 const logoUrl = new URL('/images/logo-full-outlined.svg', Astro.site).toString();
 
 const organizationId = `${siteUrl}#organization`;
@@ -47,13 +47,13 @@ const jsonLd = {
     {
       '@type': 'Organization',
       '@id': organizationId,
-      name: 'Nuclear',
+      name: 'Aurora',
       url: siteUrl,
       logo: logoUrl,
       sameAs: [
         'https://github.com/danidetenerife/aurora',
-        'https://fosstodon.org/@nuclearplayer',
-        'https://twitter.com/nuclear_player',
+        'https://fosstodon.org/@auroraplayer',
+        'https://twitter.com/aurora_player',
         'https://discord.gg/JqPjKxE',
       ],
     },
@@ -61,7 +61,7 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': websiteId,
       url: siteUrl,
-      name: 'Nuclear Music Player',
+      name: 'Aurora',
       description,
       publisher: { '@id': organizationId },
       inLanguage: 'en',
@@ -69,7 +69,7 @@ const jsonLd = {
     {
       '@type': 'SoftwareApplication',
       '@id': softwareId,
-      name: 'Nuclear',
+      name: 'Aurora',
       description,
       url: siteUrl,
       applicationCategory: 'MultimediaApplication',
@@ -118,7 +118,7 @@ const jsonLd = {
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="Nuclear Music Player" />
+    <meta property="og:site_name" content="Aurora" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content={ogImageUrl} />
     {

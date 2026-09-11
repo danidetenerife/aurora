@@ -1,9 +1,4 @@
-import type {
-  AlbumRef,
-  ArtistRef,
-  ProviderRef,
-  Track,
-} from '@nuclearplayer/model';
+import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
 
 export type FavoriteEntry<T> = {
   ref: T;

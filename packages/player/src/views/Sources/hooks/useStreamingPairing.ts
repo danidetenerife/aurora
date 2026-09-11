@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 
-import type {
-  MetadataProvider,
-  ProviderDescriptor,
-} from '@nuclearplayer/plugin-sdk';
+import type { MetadataProvider, ProviderDescriptor } from '@aurora/plugin-sdk';
 
 type StreamingPairing = {
   lockedStreamingId: string | undefined;

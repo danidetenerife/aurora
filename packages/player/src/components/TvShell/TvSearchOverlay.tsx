@@ -8,8 +8,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
 
 import { useActiveProvider } from '../../hooks/useActiveProvider';
 import { metadataHost } from '../../services/metadataHost';

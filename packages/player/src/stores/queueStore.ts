@@ -4,13 +4,8 @@ import partition from 'lodash-es/partition';
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 
-import type {
-  Queue,
-  QueueItem,
-  StreamCandidate,
-  Track,
-} from '@nuclearplayer/model';
-import { stripResolutionState } from '@nuclearplayer/model';
+import type { Queue, QueueItem, StreamCandidate, Track } from '@aurora/model';
+import { stripResolutionState } from '@aurora/model';
 
 import { eventBus } from '../services/eventBus';
 import { Logger } from '../services/logger';
@@ -114,9 +109,15 @@ const saveToDisk = async (): Promise<void> => {
   }
 };
 
-const debouncedSaveToDisk = debounce(() => {
-  void saveToDisk();
-}, 2000, { leading: false, trailing: true });
+const SAVE_DEBOUNCE_MS = process.env.NODE_ENV === 'test' ? 0 : 2000;
+
+const debouncedSaveToDisk = debounce(
+  () => {
+    void saveToDisk();
+  },
+  SAVE_DEBOUNCE_MS,
+  { leading: false, trailing: true },
+);
 
 const withPersistence = <T extends unknown[]>(
   fn: (...args: T) => void,
@@ -334,6 +335,7 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     }));
     get().updateItemState(itemId, {
       track: { ...track, streamCandidates: [...retried, ...rest] },
+      status: 'idle',
     });
   },
 

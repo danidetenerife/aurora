@@ -172,7 +172,7 @@ exports[`TitleBar > (Snapshot) renders Mac variant 1`] = `
           />
         </svg>
       </span>
-      Nuclear
+      Aurora
     </span>
   </span>
 </div>
@@ -411,7 +411,7 @@ exports[`TitleBar > (Snapshot) renders Windows variant 1`] = `
           />
         </svg>
       </span>
-      Nuclear
+      Aurora
     </span>
   </span>
 </div>

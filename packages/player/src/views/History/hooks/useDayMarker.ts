@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 
 export const useDayMarker = () => {
   const { t } = useTranslation('history');

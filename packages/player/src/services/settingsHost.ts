@@ -3,7 +3,7 @@ import type {
   SettingsHost,
   SettingSource,
   SettingValue,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { useSettingsStore } from '../stores/settingsStore';
 

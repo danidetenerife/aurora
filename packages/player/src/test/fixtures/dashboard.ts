@@ -1,9 +1,4 @@
-import type {
-  AlbumRef,
-  ArtistRef,
-  PlaylistRef,
-  Track,
-} from '@nuclearplayer/model';
+import type { AlbumRef, ArtistRef, PlaylistRef, Track } from '@aurora/model';
 
 const TEST_PROVIDER_ID = 'test-dashboard-provider';
 

@@ -1,8 +1,8 @@
 import { type FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { PlaylistIndexEntry } from '@nuclearplayer/model';
-import { Card, CardGrid } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { PlaylistIndexEntry } from '@aurora/model';
+import { Card, CardGrid } from '@aurora/ui';
 
 import { PlaylistArtwork } from './PlaylistArtwork';
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Playlist } from '@nuclearplayer/model';
+import type { Playlist } from '@aurora/model';
 
 import { detectPlaylistFormat, importPlaylistFromJson } from './playlistImport';
 

@@ -1,6 +1,6 @@
 import { StoryObj } from '@storybook/react-vite';
 
-import { Loader } from '@nuclearplayer/ui';
+import { Loader } from '@aurora/ui';
 
 const meta = { title: 'Components/Loader', component: Loader };
 

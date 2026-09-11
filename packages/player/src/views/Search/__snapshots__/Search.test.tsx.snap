@@ -815,14 +815,14 @@ exports[`Search view > (Snapshot) renders the search view 1`] = `
       </main>
       <div
         animate="[object Object]"
-        class="bg-background-secondary border-border relative flex-col overflow-hidden border-l-(length:--border-width) hidden md:flex"
+        class="bg-background-secondary border-border relative flex-col overflow-hidden border-l-(length:--border-width) p-2 hidden md:flex"
         transition="[object Object]"
       >
         <span
           class="mb-4 flex flex-row items-center justify-start"
         >
           <button
-            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none size-10 justify-center top-2 px-2 left-1 mx-1 mt-2"
+            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none size-10 justify-center top-2 px-2 left-1"
             data-headlessui-state=""
             data-testid="sidebar-toggle-right"
             type="button"
@@ -852,12 +852,15 @@ exports[`Search view > (Snapshot) renders the search view 1`] = `
               />
             </svg>
           </button>
+          <span
+            class="flex flex-1 items-center justify-end gap-1"
+          />
         </span>
         <div
           class="flex flex-1 flex-col overflow-hidden"
         >
           <div
-            class="flex h-full flex-col items-center justify-center gap-4 p-8 text-center transition-opacity duration-150 opacity-0"
+            class="flex h-full flex-col items-center justify-center gap-4 p-8 text-center transition-opacity duration-150 opacity-100"
             data-testid="queue-empty-state"
           >
             <svg
@@ -901,6 +904,9 @@ exports[`Search view > (Snapshot) renders the search view 1`] = `
             </div>
           </div>
         </div>
+        <div
+          class="absolute top-0 bottom-0 w-1 cursor-col-resize transition-colors left-0"
+        />
       </div>
     </div>
     <div

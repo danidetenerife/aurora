@@ -1,9 +1,9 @@
 import { LucideIcon } from 'lucide-react';
 import { ComponentProps, FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { ProviderKind } from '@nuclearplayer/plugin-sdk';
-import { Badge } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import type { ProviderKind } from '@aurora/plugin-sdk';
+import { Badge } from '@aurora/ui';
 
 import { useProviders } from '../../../hooks/useProviders';
 import { ProviderPill } from './ProviderPill';

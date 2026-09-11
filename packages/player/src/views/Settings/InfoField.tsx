@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { CopyButton } from '@nuclearplayer/ui';
+import { CopyButton } from '@aurora/ui';
 
 type Props = {
   label: string;

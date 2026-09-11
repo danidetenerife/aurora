@@ -1,5 +1,6 @@
 import { providersHost } from '../../services/providersHost';
 import { useFavoritesStore } from '../../stores/favoritesStore';
+import { useLayoutStore } from '../../stores/layoutStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { MetadataProviderBuilder } from '../../test/builders/MetadataProviderBuilder';
 import { resetInMemoryTauriStore } from '../../test/utils/inMemoryTauriStore';
@@ -10,6 +11,11 @@ describe('Album view', () => {
     vi.setSystemTime(new Date('2026-01-30T12:00:00.000Z'));
     providersHost.clear();
     resetInMemoryTauriStore();
+    useLayoutStore.setState({
+      rightSidebar: { isCollapsed: false, width: 320 },
+      leftSidebar: { isCollapsed: false, width: 200 },
+    });
+    useQueueStore.setState({ items: [], currentIndex: 0 });
     useFavoritesStore.setState({
       tracks: [],
       albums: [],

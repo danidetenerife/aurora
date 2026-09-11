@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 
-import { AudioSource } from '@nuclearplayer/hifi';
-import type { StreamCandidate } from '@nuclearplayer/model';
+import { AudioSource } from '@aurora/hifi';
+import type { StreamCandidate } from '@aurora/model';
 
 type ResolvedStream = NonNullable<StreamCandidate['stream']>;
 
@@ -41,7 +41,8 @@ export class AudioSourceFactory {
   private async streamServerPort(): Promise<number | null> {
     if (this.cachedStreamServerPort === null) {
       try {
-        this.cachedStreamServerPort = await invoke<number>('stream_server_port');
+        this.cachedStreamServerPort =
+          await invoke<number>('stream_server_port');
       } catch {
         return null;
       }

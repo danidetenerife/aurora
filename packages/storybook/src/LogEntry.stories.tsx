@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-import { LogEntry } from '@nuclearplayer/ui';
+import { LogEntry } from '@aurora/ui';
 
 import {
   allVariantEntries,

@@ -22,7 +22,7 @@ vi.mock('@tauri-apps/plugin-log', () => ({
 }));
 
 const DOWNLOAD_BASE =
-  '/home/user/.local/share/com.nuclearplayer/plugins/.downloads';
+  '/home/user/.local/share/org.aurora.player/plugins/.downloads';
 
 describe('checkAndUpdatePlugins', () => {
   beforeEach(() => {

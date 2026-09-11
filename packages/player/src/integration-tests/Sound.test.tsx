@@ -1,6 +1,6 @@
 import { act, waitFor } from '@testing-library/react';
 
-import { AudioSource } from '@nuclearplayer/hifi';
+import { AudioSource } from '@aurora/hifi';
 
 import { useSettingsStore } from '../stores/settingsStore';
 import { useSoundStore } from '../stores/soundStore';

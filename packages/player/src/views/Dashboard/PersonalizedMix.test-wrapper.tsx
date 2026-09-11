@@ -2,6 +2,7 @@ import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { providersHost } from '../../services/providersHost';
+import { useStartupStore } from '../../stores/startupStore';
 import { MetadataProviderBuilder } from '../../test/builders/MetadataProviderBuilder';
 import { DashboardWrapper } from './Dashboard.test-wrapper';
 
@@ -9,7 +10,13 @@ const RECOMMENDATION_UPDATE_SETTLE_MS = 1200;
 
 export const PersonalizedMixWrapper = {
   async mount() {
-    DashboardWrapper.reset();
+    providersHost.clear();
+    useStartupStore.setState({
+      isStartingUp: false,
+      startupFinishedAt: undefined,
+      totalStartupTimeMs: undefined,
+      pluginDurations: {},
+    });
     providersHost.register(
       new MetadataProviderBuilder()
         .withSearch(async ({ query }) => ({

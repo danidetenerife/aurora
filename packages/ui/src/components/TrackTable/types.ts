@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 
-import { Track } from '@nuclearplayer/model';
+import { Track } from '@aurora/model';
 
 export type TrackTableLabels = {
   headers: {
@@ -35,7 +35,6 @@ export type TrackTableActions<T extends Track = Track> = {
   onArtistClick?: (artistName: string, track: T) => void;
   onAlbumClick?: (albumTitle: string, track: T) => void;
 };
-
 
 export type ContextMenuWrapperProps<T extends Track = Track> = {
   track: T;

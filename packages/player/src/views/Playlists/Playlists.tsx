@@ -3,8 +3,8 @@ import isEmpty from 'lodash-es/isEmpty';
 import { ListMusic, SearchX } from 'lucide-react';
 import { type FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { EmptyState, ScrollableArea, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { EmptyState, ScrollableArea, ViewShell } from '@aurora/ui';
 
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { CreatePlaylistDialog } from './components/CreatePlaylistDialog';

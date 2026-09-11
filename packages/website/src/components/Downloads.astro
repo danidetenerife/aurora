@@ -11,7 +11,7 @@ const platforms = [
   {
     name: 'macOS',
     icon: 'simple-icons:apple',
-    url: releaseUrl(`Nuclear_${version}_aarch64.dmg`),
+    url: releaseUrl(`Aurora_${version}_aarch64.dmg`),
   },
   {
     name: 'Windows',
@@ -21,7 +21,7 @@ const platforms = [
   {
     name: 'Linux',
     icon: 'simple-icons:linux',
-    url: releaseUrl(`Nuclear_${version}_amd64.AppImage`),
+    url: releaseUrl(`Aurora_${version}_amd64.AppImage`),
   },
 ];
 ---
@@ -72,18 +72,18 @@ const platforms = [
     class="text-foreground/60 mx-auto mt-4 max-w-md text-center text-xs leading-relaxed"
   >
     <p>
-      <strong class="text-foreground/80">macOS users:</strong> macOS may block Nuclear
+      <strong class="text-foreground/80">macOS users:</strong> macOS may block Aurora
       from opening. Try right-clicking the app and selecting Open. If that doesn't
       work, run this in Terminal:
     </p>
     <div class="relative mt-1.5 mb-0.5">
       <code
         class="bg-background-secondary block rounded px-2 py-1 pr-8 text-[11px] break-all"
-        >sudo xattr -r -d com.apple.quarantine /Applications/Nuclear.app</code
+        >sudo xattr -r -d com.apple.quarantine /Applications/Aurora.app</code
       >
       <CopyButton
         client:load
-        text="sudo xattr -r -d com.apple.quarantine /Applications/Nuclear.app"
+        text="sudo xattr -r -d com.apple.quarantine /Applications/Aurora.app"
         className="absolute top-1/2 right-1 -translate-y-1/2"
       />
     </div>

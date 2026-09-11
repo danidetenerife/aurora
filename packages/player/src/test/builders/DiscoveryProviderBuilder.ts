@@ -1,4 +1,4 @@
-import type { DiscoveryProvider } from '@nuclearplayer/plugin-sdk';
+import type { DiscoveryProvider } from '@aurora/plugin-sdk';
 
 export class DiscoveryProviderBuilder {
   private provider: DiscoveryProvider;

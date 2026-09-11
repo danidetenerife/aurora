@@ -2,8 +2,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { EllipsisIcon, Trash2Icon } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Button, Dialog, Input, Popover, QueuePanel } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Button, Dialog, Input, Popover, QueuePanel } from '@aurora/ui';
 
 import { useCurrentQueueItem } from '../hooks/useCurrentQueueItem';
 import { useQueue } from '../hooks/useQueue';

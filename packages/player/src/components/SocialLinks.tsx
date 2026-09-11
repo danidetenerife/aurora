@@ -2,7 +2,7 @@ import { openUrl } from '@tauri-apps/plugin-opener';
 import { FC } from 'react';
 import { SiGithub } from 'react-icons/si';
 
-import { Button, Tooltip } from '@nuclearplayer/ui';
+import { Button, Tooltip } from '@aurora/ui';
 
 const SOCIAL_LINKS = [
   {

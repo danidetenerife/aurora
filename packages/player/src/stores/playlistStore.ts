@@ -6,8 +6,8 @@ import type {
   PlaylistIndexEntry,
   PlaylistItem,
   Track,
-} from '@nuclearplayer/model';
-import { stripResolutionState } from '@nuclearplayer/model';
+} from '@aurora/model';
+import { stripResolutionState } from '@aurora/model';
 
 import { playlistFileService } from '../services/playlistFileService';
 import { useQueueStore } from './queueStore';

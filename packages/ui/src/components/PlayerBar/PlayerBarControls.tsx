@@ -1,5 +1,6 @@
 import {
   BoomBox,
+  MonitorPlay,
   Pause,
   Play,
   Repeat,
@@ -7,11 +8,10 @@ import {
   Shuffle,
   SkipBack,
   SkipForward,
-  MonitorPlay,
 } from 'lucide-react';
 import { FC } from 'react';
 
-import { RepeatMode } from '@nuclearplayer/model';
+import { RepeatMode } from '@aurora/model';
 
 import { Button } from '..';
 import { cn } from '../../utils';
@@ -70,7 +70,9 @@ export const PlayerBarControls: FC<PlayerBarControlsProps> = ({
   showDiscovery,
   className = '',
 }) => (
-  <div className={cn('flex items-center justify-center gap-1 sm:gap-2', className)}>
+  <div
+    className={cn('flex items-center justify-center gap-1 sm:gap-2', className)}
+  >
     <Tooltip
       content={isShuffleActive ? labels?.shuffleOn : labels?.shuffleOff}
       side="top"
@@ -95,7 +97,7 @@ export const PlayerBarControls: FC<PlayerBarControlsProps> = ({
     </Button>
     <Button
       size="icon-sm"
-      className="sm:size-10 shadow-none"
+      className="shadow-none sm:size-10"
       variant="noShadow"
       onClick={onPlayPause}
       data-testid={isPlaying ? 'player-pause-button' : 'player-play-button'}

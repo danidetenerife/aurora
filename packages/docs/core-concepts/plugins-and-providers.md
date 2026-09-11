@@ -4,7 +4,7 @@ description: What plugins are, what types of providers they offer, and how to ma
 
 # Plugins and providers
 
-Plugins are packages that extend Nuclear with new functionality. Each plugin can register one or more **providers**, which are the actual services Nuclear uses to search, stream, recommend, and display music.
+Plugins are packages that extend Aurora with new functionality. Each plugin can register one or more **providers**, which are the actual services Aurora uses to search, stream, recommend, and display music.
 
 ## Provider types
 
@@ -24,7 +24,7 @@ Metadata providers declare their capabilities to show you what's available:
 **Album metadata capabilities**:
 - `albumDetails` (tracklist, release date, artwork)
 
-If a provider doesn't declare a capability, Nuclear won't show the corresponding section in the UI. For example, an artist page won't display a biography section if the active metadata provider doesn't support `artistBio`.
+If a provider doesn't declare a capability, Aurora won't show the corresponding section in the UI. For example, an artist page won't display a biography section if the active metadata provider doesn't support `artistBio`.
 
 ### Streaming
 
@@ -36,7 +36,7 @@ Dashboard providers populate the home screen with content like top tracks, new r
 
 ### Discovery
 
-Discovery providers generate recommendations based on your recent listening. When discovery mode is enabled and you reach the end of your queue, Nuclear asks the active discovery provider for more tracks and appends them automatically. See [Music discovery](../misc/discovery.md) for details.
+Discovery providers generate recommendations based on your recent listening. When discovery mode is enabled and you reach the end of your queue, Aurora asks the active discovery provider for more tracks and appends them automatically. See [Music discovery](../misc/discovery.md) for details.
 
 ### Playlists
 

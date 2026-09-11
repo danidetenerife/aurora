@@ -27,7 +27,7 @@ Plugins subscribe to named events using `api.Events.on(eventName, listener)`. Ea
 |-------|---------|------------|
 | `trackStarted` | `Track` | A track begins playing. Fired again when repeat-one restarts the same track. |
 | `trackFinished` | `Track` | A track finishes playing naturally (audio reaches the end). Not fired on skip or stop. |
-| `streamSourceInvalid` | `Track` | The current track's audio source failed to load. Nuclear responds by re-resolving the stream. |
+| `streamSourceInvalid` | `Track` | The current track's audio source failed to load. Aurora responds by re-resolving the stream. |
 | `playbackPaused` | `{ positionMs: number }` | Playback was paused. |
 | `playbackResumed` | `{ positionMs: number }` | Playback started playing again. |
 | `playbackSeeked` | `{ fromMs: number; toMs: number }` | The playback position was changed by clicking the seekbar. `fromMs` is the position before the seek. |
@@ -45,10 +45,10 @@ Plugins subscribe to named events using `api.Events.on(eventName, listener)`. Ea
 Subscribing to events:
 
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  onEnable(api: NuclearPluginAPI) {
+  onEnable(api: AuroraPluginAPI) {
     const unsubscribe = api.Events.on('trackFinished', async (track) => {
       api.Logger.info(`Finished: ${track.title}`);
     });
@@ -78,7 +78,7 @@ api.Events.on<E extends keyof PluginEventMap>(
 
 ```typescript
 type PluginEventMap = {
-  trackStarted: Track;   // from @nuclearplayer/model
+  trackStarted: Track;   // from @aurora/model
   trackFinished: Track;
   streamSourceInvalid: Track;
   playbackPaused: { positionMs: number };

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import { pickArtwork } from '@nuclearplayer/model';
-import { Loader } from '@nuclearplayer/ui';
+import { pickArtwork } from '@aurora/model';
+import { Loader } from '@aurora/ui';
 
 import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { useArtistBio } from '../hooks/useArtistBio';
@@ -68,7 +68,7 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
             alt={`${artist.name} avatar`}
           />
         )}
-        <h1 className="font-heading min-w-0 pr-10 text-3xl font-extrabold leading-tight tracking-tight">
+        <h1 className="font-heading min-w-0 pr-10 text-3xl leading-tight font-extrabold tracking-tight">
           {artist.name}
         </h1>
       </div>

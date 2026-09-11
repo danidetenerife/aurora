@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback } from 'react';
 
-import type { AttributedResult } from '@nuclearplayer/plugin-sdk';
+import type { AttributedResult } from '@aurora/plugin-sdk';
 
 type EntityType = 'artist' | 'album';
 

@@ -1,7 +1,7 @@
 import { AlertCircle, Package } from 'lucide-react';
 import { FC, useMemo, useState } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 import {
   Button,
   CenteredLoader,
@@ -10,7 +10,7 @@ import {
   Input,
   PluginStoreItem,
   ScrollableArea,
-} from '@nuclearplayer/ui';
+} from '@aurora/ui';
 
 import { MarketplacePlugin } from '../../apis/pluginMarketplaceApi';
 import { useInstallPlugin } from '../../hooks/useInstallPlugin';

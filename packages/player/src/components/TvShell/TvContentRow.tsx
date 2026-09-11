@@ -4,7 +4,7 @@ import {
 } from '@noriginmedia/norigin-spatial-navigation';
 import { FC, ReactNode } from 'react';
 
-import { cn } from '@nuclearplayer/ui';
+import { cn } from '@aurora/ui';
 
 type TvContentRowProps = {
   title: string;

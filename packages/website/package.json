@@ -1,5 +1,5 @@
 {
-  "name": "@nuclearplayer/website",
+  "name": "@aurora/website",
   "version": "2.10.1",
   "description": "Aurora website",
   "type": "module",
@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "@nuclearplayer/eslint-config": "workspace:*",
-    "@nuclearplayer/tailwind-config": "workspace:*",
+    "@aurora/eslint-config": "workspace:*",
+    "@aurora/tailwind-config": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.11",
     "@types/react": "^18.3.23",

@@ -3,14 +3,14 @@ import { readTextFile } from '@tauri-apps/plugin-fs';
 import React from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 
-import { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import { AuroraPluginAPI } from '@aurora/plugin-sdk';
 import type {
+  AuroraPlugin,
   LoadedPlugin,
-  NuclearPlugin,
   PluginManifest,
   PluginMetadata,
-} from '@nuclearplayer/plugin-sdk';
-import * as nuclearUI from '@nuclearplayer/ui';
+} from '@aurora/plugin-sdk';
+import * as auroraUI from '@aurora/ui';
 
 import { errorMessage } from '../../utils/errorMessage';
 import { Logger } from '../logger';
@@ -52,17 +52,18 @@ export class PluginLoader {
   }
 
   private buildMetadata(manifest: PluginManifest): PluginMetadata {
+    const auroraMeta = manifest.aurora || manifest.nuclear;
     return {
       id: manifest.name,
       name: manifest.name,
-      displayName: manifest.nuclear?.displayName || manifest.name,
+      displayName: auroraMeta?.displayName || manifest.name,
       version: manifest.version,
       description: manifest.description,
       author: manifest.author,
-      category: manifest.nuclear?.category,
-      categories: manifest.nuclear?.categories ?? [],
-      icon: manifest.nuclear?.icon,
-      permissions: manifest.nuclear?.permissions || [],
+      category: auroraMeta?.category,
+      categories: auroraMeta?.categories ?? [],
+      icon: auroraMeta?.icon,
+      permissions: auroraMeta?.permissions || [],
     };
   }
 
@@ -113,13 +114,18 @@ export class PluginLoader {
     return this.pluginCode;
   }
 
-  private evaluatePlugin(code: string): NuclearPlugin {
+  private evaluatePlugin(code: string): AuroraPlugin {
     Logger.plugins.debug('Evaluating plugin code');
     const exports = {} as Record<string, unknown>;
     const module = { exports } as { exports: unknown };
     const ALLOWED_MODULES: Record<string, unknown> = {
-      '@nuclearplayer/plugin-sdk': { NuclearPluginAPI },
-      '@nuclearplayer/ui': nuclearUI,
+      '@aurora/plugin-sdk': { AuroraPluginAPI },
+      '@aurora/ui': auroraUI,
+      '@nuclearplayer/plugin-sdk': {
+        NuclearPluginAPI: AuroraPluginAPI,
+        AuroraPluginAPI,
+      },
+      '@nuclearplayer/ui': auroraUI,
       react: React,
       'react/jsx-runtime': jsxRuntime,
     };
@@ -149,7 +155,7 @@ export class PluginLoader {
       throw new Error('Plugin must export a default object.');
     }
     Logger.plugins.debug('Plugin code evaluated successfully');
-    return plugin as NuclearPlugin;
+    return plugin as AuroraPlugin;
   }
 
   async loadMetadata(): Promise<PluginMetadata> {
@@ -157,7 +163,7 @@ export class PluginLoader {
     return this.buildMetadata(manifest);
   }
 
-  async load(api?: NuclearPluginAPI): Promise<LoadedPlugin> {
+  async load(api?: AuroraPluginAPI): Promise<LoadedPlugin> {
     Logger.plugins.debug(`Loading plugin from ${this.path}`);
     const manifest = this.manifest ?? (await this.readManifest());
     const metadata = this.buildMetadata(manifest);

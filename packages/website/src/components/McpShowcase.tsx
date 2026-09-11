@@ -13,15 +13,14 @@ const tabs: Tab[] = [
   {
     id: 'claude-code',
     label: 'Claude Code',
-    content:
-      'claude mcp add nuclear --transport http http://127.0.0.1:8800/mcp',
+    content: 'claude mcp add aurora --transport http http://127.0.0.1:8800/mcp',
   },
   {
     id: 'opencode',
     label: 'OpenCode',
     content: `{
   "mcp": {
-    "nuclear": {
+    "aurora": {
       "type": "remote",
       "url": "http://127.0.0.1:8800/mcp"
     }
@@ -31,14 +30,14 @@ const tabs: Tab[] = [
   {
     id: 'codex',
     label: 'Codex CLI',
-    content: 'codex mcp add nuclear --url http://127.0.0.1:8800/mcp',
+    content: 'codex mcp add aurora --url http://127.0.0.1:8800/mcp',
   },
   {
     id: 'claude-desktop',
     label: 'Claude Desktop / Cursor',
     content: `{
   "mcpServers": {
-    "nuclear": {
+    "aurora": {
       "url": "http://127.0.0.1:8800/mcp"
     }
   }
@@ -59,7 +58,7 @@ export const McpShowcase: FC = () => {
         MCP
       </h2>
       <p className="text-foreground max-w-prose text-center text-base leading-relaxed">
-        Nuclear has a built-in{' '}
+        Aurora has a built-in{' '}
         <strong className="font-bold">Model Context Protocol</strong> server.
         Connect your AI agent and let it control playback, search for music,
         manage queues and playlists.

@@ -1,4 +1,4 @@
-import type { StreamCandidate, Track } from '@nuclearplayer/model';
+import type { StreamCandidate, Track } from '@aurora/model';
 
 import { isStreamExpired, streamingHost } from '../streamingHost';
 

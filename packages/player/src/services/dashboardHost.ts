@@ -4,7 +4,7 @@ import {
   type DashboardCapability,
   type DashboardHost,
   type DashboardProvider,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { reportError } from '../utils/logging';
 import { providersHost } from './providersHost';

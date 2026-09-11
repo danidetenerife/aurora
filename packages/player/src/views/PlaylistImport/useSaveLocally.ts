@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useCallback } from 'react';
 
-import type { Playlist } from '@nuclearplayer/model';
+import type { Playlist } from '@aurora/model';
 
 import { usePlaylistStore } from '../../stores/playlistStore';
 

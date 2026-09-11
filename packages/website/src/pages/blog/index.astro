@@ -9,9 +9,9 @@ import { getPublishedPosts, toSummary } from '../../lib/blog/queries';
 
 const posts = (await getPublishedPosts()).map(toSummary);
 
-const title = 'Blog - Nuclear';
+const title = 'Blog - Aurora';
 const description =
-  'Read about interesting tech stories from the development of Nuclear. Our promise to you: everything on the blog is written manually, without the help of AI!';
+  'Read about interesting tech stories from the development of Aurora. Our promise to you: everything on the blog is written manually, without the help of AI!';
 ---
 
 <BaseLayout title={title} description={description}>

@@ -19,7 +19,7 @@ export * from './LogEntry';
 export * from './LogViewer';
 export * from './Loader';
 export * from './Mosaic';
-export * from './NuclearJam';
+export * from './AuroraJam';
 export * from './Pagination';
 export * from './PlayerBar';
 export * from './PlayerShell';

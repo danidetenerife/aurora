@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { CardsRow } from '@nuclearplayer/ui';
+import { CardsRow } from '@aurora/ui';
 
 const meta = {
   title: 'Components/CardsRow',

@@ -1,4 +1,9 @@
-export { NuclearPluginAPI, NuclearAPI } from './api';
+export {
+  AuroraPluginAPI,
+  AuroraAPI,
+  NuclearPluginAPI,
+  NuclearAPI,
+} from './api';
 export { DashboardAPI } from './api/dashboard';
 export { DiscoveryAPI } from './api/discovery';
 export { EventsAPI } from './api/events';
@@ -43,4 +48,4 @@ export type {
   ProviderDescriptor,
 } from './types/providers';
 export { useSetting } from './react/useSetting';
-export * from '@nuclearplayer/model';
+export * from '@aurora/model';

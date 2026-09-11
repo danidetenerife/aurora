@@ -10,8 +10,8 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import type { PlaylistProvider } from '@nuclearplayer/plugin-sdk';
+import { useTranslation } from '@aurora/i18n';
+import type { PlaylistProvider } from '@aurora/plugin-sdk';
 
 import { providersHost } from '../../services/providersHost';
 import { usePlaylistStore } from '../../stores/playlistStore';

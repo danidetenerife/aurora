@@ -1,4 +1,4 @@
-import { i18n } from '@nuclearplayer/i18n';
+import { i18n } from '@aurora/i18n';
 
 import { defaultQueryClient } from '../App';
 import { useFavoritesStore } from '../stores/favoritesStore';

@@ -5,10 +5,11 @@ import type {
   YtdlpPlaylistInfo,
   YtdlpSearchResult,
   YtdlpStreamInfo,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 import { httpHost } from './httpHost';
 import { selectHlsAudio } from './selectHlsAudio';
+import { isGoogleTVEnvironment } from './tvDetection';
 import { isCapacitorEnvironment, isTauriEnvironment } from './universalStore';
 import { YtStreamExtractor } from './ytStreamExtractor';
 
@@ -18,27 +19,30 @@ let cachedVisitorData = DEFAULT_VISITOR_ID;
 
 async function getVisitorData(): Promise<string> {
   try {
-    const res = await httpHost.fetch('https://www.youtube.com/youtubei/v1/visitor_id', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-        'X-YouTube-Client-Name': '1',
-        'X-YouTube-Client-Version': '2.20240901.01.00',
-        Origin: 'https://www.youtube.com',
-      },
-      body: JSON.stringify({
-        context: {
-          client: {
-            clientName: 'WEB',
-            clientVersion: '2.20240901.01.00',
-            hl: 'en',
-            gl: 'US',
-          },
+    const res = await httpHost.fetch(
+      'https://www.youtube.com/youtubei/v1/visitor_id',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          'X-YouTube-Client-Name': '1',
+          'X-YouTube-Client-Version': '2.20240901.01.00',
+          Origin: 'https://www.youtube.com',
         },
-      }),
-    });
+        body: JSON.stringify({
+          context: {
+            client: {
+              clientName: 'WEB',
+              clientVersion: '2.20240901.01.00',
+              hl: 'en',
+              gl: 'US',
+            },
+          },
+        }),
+      },
+    );
 
     if (res.status === 200 && res.body) {
       const data = JSON.parse(res.body);
@@ -54,7 +58,9 @@ async function getVisitorData(): Promise<string> {
   return cachedVisitorData;
 }
 
-async function extractAudioStreamDirect(videoId: string): Promise<YtdlpStreamInfo | null> {
+async function extractAudioStreamDirect(
+  videoId: string,
+): Promise<YtdlpStreamInfo | null> {
   const visitorData = cachedVisitorData || DEFAULT_VISITOR_ID;
   void getVisitorData();
 
@@ -92,18 +98,23 @@ async function extractAudioStreamDirect(videoId: string): Promise<YtdlpStreamInf
   };
 
   try {
-    const res = await httpHost.fetch('https://www.youtube.com/youtubei/v1/player?prettyPrint=false', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const res = await httpHost.fetch(
+      'https://www.youtube.com/youtubei/v1/player?prettyPrint=false',
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      },
+    );
 
     if (res.status < 200 || res.status >= 300 || !res.body) {
       return null;
     }
 
     const data = JSON.parse(res.body);
-    if (data.videoDetails?.isLive || data.videoDetails?.isLiveContent) return null;
+    if (data.videoDetails?.isLive || data.videoDetails?.isLiveContent) {
+      return null;
+    }
     const hlsManifestUrl = data.streamingData?.hlsManifestUrl;
     let audioUrl = hlsManifestUrl;
 
@@ -113,7 +124,8 @@ async function extractAudioStreamDirect(videoId: string): Promise<YtdlpStreamInf
           headers: { 'User-Agent': 'Mozilla/5.0' },
         });
         if (m3u8Res.status === 200 && m3u8Res.body) {
-          audioUrl = selectHlsAudio(m3u8Res.body, hlsManifestUrl) ?? hlsManifestUrl;
+          audioUrl =
+            selectHlsAudio(m3u8Res.body, hlsManifestUrl) ?? hlsManifestUrl;
         }
       } catch {
         // use hlsManifestUrl
@@ -164,10 +176,24 @@ export const ytdlpHost: YtdlpHost = {
 
     let videoId = url;
     const match = url.match(
-      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
+      /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
     );
     if (match && match[1]) {
       videoId = match[1];
+    }
+
+    if (isGoogleTVEnvironment()) {
+      return {
+        stream_url: `https://www.youtube.com/watch?v=${videoId}`,
+        duration: null,
+        title: null,
+        container: null,
+        codec: null,
+        album: null,
+        artists: [],
+        album_artists: [],
+        upload_date: null,
+      };
     }
 
     const directInfo = await extractAudioStreamDirect(videoId);
@@ -177,7 +203,9 @@ export const ytdlpHost: YtdlpHost = {
 
     if (isCapacitorEnvironment()) {
       try {
-        const { streamUrl } = await YtStreamExtractor.extractAudioUrl({ videoId });
+        const { streamUrl } = await YtStreamExtractor.extractAudioUrl({
+          videoId,
+        });
         if (streamUrl) {
           return {
             stream_url: streamUrl,
@@ -193,13 +221,20 @@ export const ytdlpHost: YtdlpHost = {
         }
       } catch (error) {
         console.warn('[ytdlpHost] WebView extraction fallback failed:', error);
-        throw new Error(
-          `No se pudo resolver un stream de audio reproducible para ${videoId}`,
-        );
       }
     }
 
-    throw new Error(`No se pudo resolver un stream de audio reproducible para ${videoId}`);
+    return {
+      stream_url: `https://www.youtube.com/watch?v=${videoId}`,
+      duration: null,
+      title: null,
+      container: null,
+      codec: null,
+      album: null,
+      artists: [],
+      album_artists: [],
+      upload_date: null,
+    };
   },
 
   getPlaylist: async (url: string): Promise<YtdlpPlaylistInfo> => {

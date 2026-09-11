@@ -1,6 +1,6 @@
 # Logging
 
-Nuclear uses [Tauri's log plugin](https://v2.tauri.app/plugin/logging/) for unified Rust + TypeScript logging. All logs go to stdout, log files on disk, and the in-app log viewer (via webview forwarding).
+Aurora uses [Tauri's log plugin](https://v2.tauri.app/plugin/logging/) for unified Rust + TypeScript logging. All logs go to stdout, log files on disk, and the in-app log viewer (via webview forwarding).
 
 Each platform has its own [log directory](https://v2.tauri.app/reference/javascript/api/namespacepath/#applogdir).
 
@@ -63,12 +63,12 @@ reportError('plugins', {
 Plugins use `api.Logger` (provided by the plugin SDK). All methods are synchronous and fire-and-forget.
 
 ```typescript
-const plugin: NuclearPlugin = {
-  onLoad(api: NuclearPluginAPI) {
+const plugin: AuroraPlugin = {
+  onLoad(api: AuroraPluginAPI) {
     api.Logger.info('Plugin loaded');
     api.Logger.debug('Initializing providers...');
   },
-  onEnable(api: NuclearPluginAPI) {
+  onEnable(api: AuroraPluginAPI) {
     api.Logger.info('Plugin enabled');
   },
 };
@@ -103,13 +103,13 @@ Rust HTTP logging already includes:
 
 ## Log File Locations
 
-The bundle identifier is `com.nuclearplayer`.
+The bundle identifier is `com.auroraplayer`.
 
 | Platform | Location |
 |----------|----------|
-| macOS | `~/Library/Logs/com.nuclearplayer/` |
-| Linux | `~/.local/share/com.nuclearplayer/logs/` |
-| Windows | `%APPDATA%\com.nuclearplayer\logs\` |
+| macOS | `~/Library/Logs/com.auroraplayer/` |
+| Linux | `~/.local/share/com.auroraplayer/logs/` |
+| Windows | `%APPDATA%\com.auroraplayer\logs\` |
 
 Log files:
 
@@ -121,4 +121,4 @@ Users can access log files via the "Open Log Folder" button in the Logs view, or
 
 ## In-App Log Viewer
 
-Nuclear has a built-in log viewer accessible from the sidebar.
+Aurora has a built-in log viewer accessible from the sidebar.

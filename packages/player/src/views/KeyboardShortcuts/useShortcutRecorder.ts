@@ -2,8 +2,8 @@ import { useCallback, useEffect } from 'react';
 import { useRecordHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Platform, usePlatform } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Platform, usePlatform } from '@aurora/ui';
 
 import { COMMANDS } from '../../shortcuts/commands';
 import { useShortcutsStore } from '../../stores/shortcutsStore';

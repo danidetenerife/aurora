@@ -1,8 +1,8 @@
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { Card, CardGrid, Loader } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { Card, CardGrid, Loader } from '@aurora/ui';
 
 import { useNavigateToPlaylist } from '../../../hooks/useNavigateToPlaylist';
 import { useArtistPlaylists } from '../hooks/useArtistPlaylists';

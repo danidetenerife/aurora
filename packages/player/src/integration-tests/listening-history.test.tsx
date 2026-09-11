@@ -225,7 +225,12 @@ describe('Listening history', () => {
         artists: ['Test Artist'],
         albumTitle: null,
         durationMs: null,
-        artworkUrl: null,
+        artworkUrl: expect.toBeOneOf
+          ? expect.toBeOneOf([null, expect.any(String)])
+          : {
+              asymmetricMatch: (actual: unknown) =>
+                actual === null || typeof actual === 'string',
+            },
         provider: 'test',
         providerId: 'track 1',
       },

@@ -13,10 +13,10 @@
         "TAURI_SIGNING_PRIVATE_KEY_PASSWORD"
       ]
     },
-    "@nuclearplayer/eslint-config#build": {
+    "@aurora/eslint-config#build": {
       "outputs": []
     },
-    "@nuclearplayer/tailwind-config#build": {
+    "@aurora/tailwind-config#build": {
       "outputs": []
     },
     "build:frontend": {
@@ -31,9 +31,9 @@
       "cache": false,
       "persistent": true
     },
-    "@nuclearplayer/player#dev": {
+    "@aurora/player#dev": {
       "dependsOn": [
-        "@nuclearplayer/player#build:frontend"
+        "@aurora/player#build:frontend"
       ],
       "cache": false,
       "persistent": true
@@ -61,11 +61,11 @@
         "^build"
       ]
     },
-    "@nuclearplayer/storybook#dev": {
+    "@aurora/storybook#dev": {
       "cache": false,
       "persistent": true
     },
-    "@nuclearplayer/storybook#build": {
+    "@aurora/storybook#build": {
       "dependsOn": [
         "^build"
       ],
@@ -73,11 +73,11 @@
         "storybook-static/**"
       ]
     },
-    "@nuclearplayer/website#build": {
-      "dependsOn": ["@nuclearplayer/tailwind-config#build"],
+    "@aurora/website#build": {
+      "dependsOn": ["@aurora/tailwind-config#build"],
       "outputs": ["dist/**"]
     },
-    "@nuclearplayer/website#dev": {
+    "@aurora/website#dev": {
       "cache": false,
       "persistent": true
     }

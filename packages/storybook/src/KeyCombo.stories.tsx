@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-import { KeyCombo } from '@nuclearplayer/ui';
+import { KeyCombo } from '@aurora/ui';
 
 const meta = {
   title: 'Components/KeyCombo',

@@ -1,4 +1,4 @@
-import type { ArtworkSet, Track } from '@nuclearplayer/model';
+import type { ArtworkSet, Track } from '@aurora/model';
 
 import type { HistoryEntry } from '../../../services/tauri/bindings';
 

@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { Tabs, ViewShell } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { Tabs, ViewShell } from '@aurora/ui';
 
 import { HistoryList } from './components/HistoryList';
 import { HistoryStats } from './components/HistoryStats';

@@ -1,4 +1,4 @@
-import type { QueueItem, Track } from '@nuclearplayer/model';
+import type { QueueItem, Track } from '@aurora/model';
 
 export const createTrack = (title: string): Track => ({
   title,

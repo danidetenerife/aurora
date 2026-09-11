@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 
-import {
-  type SettingDefinition,
-  type SettingsHost,
-} from '@nuclearplayer/plugin-sdk';
+import { type SettingDefinition, type SettingsHost } from '@aurora/plugin-sdk';
 
 import {
   coreSettingsHost,

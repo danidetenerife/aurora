@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { Queue } from '@nuclearplayer/model';
+import type { Queue } from '@aurora/model';
 
 import { useQueueStore } from '../stores/queueStore';
 

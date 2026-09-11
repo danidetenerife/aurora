@@ -18,7 +18,7 @@ Access playlists via `api.Playlists.*` in your plugin's lifecycle hooks. All ope
 
 ### Index vs. full playlist
 
-Nuclear keeps a lightweight **index** of all playlists and loads the full playlist data on demand. This matters for two reasons:
+Aurora keeps a lightweight **index** of all playlists and loads the full playlist data on demand. This matters for two reasons:
 
 1. `getIndex()` returns `PlaylistIndexEntry[]`, which contains names, timestamps, artwork, and aggregate stats (item count, total duration), but not the actual track list.
 2. `getPlaylist(id)` returns the full `Playlist` with its `items` array.
@@ -51,10 +51,10 @@ Each playlist is stored as a separate JSON file on disk. All mutations through t
 {% tabs %}
 {% tab title="Reading playlists" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // List all playlists (lightweight, no track data)
     const index = await api.Playlists.getIndex();
     for (const entry of index) {
@@ -75,10 +75,10 @@ export default {
 
 {% tab title="Creating and modifying" %}
 ```typescript
-import type { NuclearPluginAPI, Track } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI, Track } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     // Create a new playlist
     const playlistId = await api.Playlists.createPlaylist('Late Night Jazz');
 
@@ -106,10 +106,10 @@ export default {
 
 {% tab title="Importing" %}
 ```typescript
-import type { NuclearPluginAPI, Playlist } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI, Playlist } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const externalPlaylist: Playlist = {
       id: 'ignored-original-id',
       name: 'Imported Playlist',
@@ -137,10 +137,10 @@ export default {
 
 {% tab title="Subscribing to changes" %}
 ```typescript
-import type { NuclearPluginAPI } from '@nuclearplayer/plugin-sdk';
+import type { AuroraPluginAPI } from '@aurora/plugin-sdk';
 
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const unsubscribe = api.Playlists.subscribe((index) => {
       api.Logger.info(`Playlists changed: ${index.length} playlists`);
     });
@@ -159,7 +159,7 @@ export default {
 
 ## Playlist providers
 
-Plugins can register a `PlaylistProvider` that handles URL-based playlist imports. When a user pastes a URL into Nuclear's import dialog, the player asks each registered playlist provider whether it can handle that URL. The first provider that matches gets called to fetch the playlist.
+Plugins can register a `PlaylistProvider` that handles URL-based playlist imports. When a user pastes a URL into Aurora's import dialog, the player asks each registered playlist provider whether it can handle that URL. The first provider that matches gets called to fetch the playlist.
 
 ### Implementing a provider
 
@@ -172,11 +172,11 @@ Register it with `api.Providers.register()` like any other provider, with `kind:
 
 ```typescript
 import type {
-  NuclearPlugin,
-  NuclearPluginAPI,
+  AuroraPlugin,
+  AuroraPluginAPI,
   PlaylistProvider,
   Playlist,
-} from '@nuclearplayer/plugin-sdk';
+} from '@aurora/plugin-sdk';
 
 const provider: PlaylistProvider = {
   id: 'acme-playlists',
@@ -210,11 +210,11 @@ const provider: PlaylistProvider = {
   },
 };
 
-const plugin: NuclearPlugin = {
-  onEnable(api: NuclearPluginAPI) {
+const plugin: AuroraPlugin = {
+  onEnable(api: AuroraPluginAPI) {
     api.Providers.register(provider);
   },
-  onDisable(api: NuclearPluginAPI) {
+  onDisable(api: AuroraPluginAPI) {
     api.Providers.unregister('acme-playlists');
   },
 };
@@ -223,7 +223,7 @@ export default plugin;
 ```
 
 {% hint style="warning" %}
-Always unregister your provider in `onDisable`. If you don't, Nuclear will keep calling it after the plugin is disabled.
+Always unregister your provider in `onDisable`. If you don't, Aurora will keep calling it after the plugin is disabled.
 {% endhint %}
 
 ---

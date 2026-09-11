@@ -3,8 +3,8 @@ import { writeTextFile } from '@tauri-apps/plugin-fs';
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { PLAYLIST_EXPORT_VERSION } from '@nuclearplayer/model';
+import { useTranslation } from '@aurora/i18n';
+import { PLAYLIST_EXPORT_VERSION } from '@aurora/model';
 
 import { usePlaylistStore } from '../stores/playlistStore';
 import { reportError } from '../utils/logging';

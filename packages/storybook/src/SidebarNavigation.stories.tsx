@@ -15,7 +15,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-import { SidebarNavigation, SidebarNavigationItem } from '@nuclearplayer/ui';
+import { SidebarNavigation, SidebarNavigationItem } from '@aurora/ui';
 
 const meta = {
   title: 'Navigation/SidebarNavigation',

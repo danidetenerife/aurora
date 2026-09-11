@@ -1,7 +1,7 @@
 import { DateTime, Info, Interval } from 'luxon';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 import {
   Box,
   CalendarHeatmap,
@@ -9,7 +9,7 @@ import {
   ListeningClock,
   ScrollableArea,
   Select,
-} from '@nuclearplayer/ui';
+} from '@aurora/ui';
 
 import { useCoreSetting } from '../../../hooks/useCoreSetting';
 import { useDailyListeningTime } from '../hooks/queries/useDailyListeningTime';

@@ -1,15 +1,15 @@
 import { omit } from 'lodash-es';
 
-import type { QueueItem, StreamCandidate } from '@nuclearplayer/model';
-import { stripResolutionState } from '@nuclearplayer/model';
+import type { QueueItem, StreamCandidate } from '@aurora/model';
+import { stripResolutionState } from '@aurora/model';
 
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
+import { enrichTrackArtwork } from '../artworkEnricher';
 import { playbackManager } from '../playback';
 import { hasActiveStreamingProvider, streamingHost } from '../streamingHost';
 import { AudioSourceFactory } from './audioSource';
 import { candidatesForTrack } from './candidateSource';
-import { enrichTrackArtwork } from '../artworkEnricher';
 
 export type ResolveOptions = {
   autoPlay: boolean;

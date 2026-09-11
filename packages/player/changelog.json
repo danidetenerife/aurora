@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-11T18:00",
+    "description": "Resolve and enable reliable audio and video playback on Google TV and Android TV with seamless track switching and background playback.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Google TV", "color": "green" }, { "label": "Playback", "color": "blue" }]
+  },
+  {
     "date": "2026-09-11T16:55",
     "description": "Restore artist name display directly under song titles in track tables across all screen sizes and devices.",
     "type": "fix",
@@ -85,7 +92,7 @@
   },
   {
     "date": "2026-09-03T22:00",
-    "description": "Complete rebranding from Nuclear to Aurora. Fixed desktop audio playback by prioritizing yt-dlp on Tauri. Added audio focus handling to pause music during phone calls. Filtered YouTube Music search to exclude live streams and long videos. Removed TV/Google TV support. Updated all Android app icons to Aurora design.",
+    "description": "Complete rebranding to Aurora. Fixed desktop audio playback by prioritizing yt-dlp on Tauri. Added audio focus handling to pause music during phone calls. Filtered YouTube Music search to exclude live streams and long videos. Removed TV/Google TV support. Updated all Android app icons to Aurora design.",
     "type": "feature",
     "contributors": [
       "danidetenerife"
@@ -399,7 +406,7 @@
   },
   {
     "date": "2026-09-02T19:43",
-    "description": "Streamlined player by removing unused integrations (Nuclear Jam, MCP server, MPD server, Discord RPC) and appearance customizations (custom title bar and frameless window options) for peak performance and lighter footprint.",
+    "description": "Streamlined player by removing unused integrations (Aurora Jam, MCP server, MPD server, Discord RPC) and appearance customizations (custom title bar and frameless window options) for peak performance and lighter footprint.",
     "type": "improvement",
     "contributors": [
       "danidetenerife"
@@ -601,7 +608,7 @@
   },
   {
     "date": "2026-08-10T00:00",
-    "description": "Nuclear starts maximized by default",
+    "description": "Aurora starts maximized by default",
     "type": "improvement",
     "contributors": [
       "nukeop"
@@ -615,7 +622,7 @@
   },
   {
     "date": "2026-08-08T00:00",
-    "description": "Nuclear Jam remote control now supports searching for music, adding tracks to the queue, and removing tracks from the queue.",
+    "description": "Aurora Jam remote control now supports searching for music, adding tracks to the queue, and removing tracks from the queue.",
     "type": "feature",
     "contributors": [
       "nukeop"
@@ -713,7 +720,7 @@
   },
   {
     "date": "2026-07-16T00:00",
-    "description": "Listening history: Nuclear now keeps a history of the tracks you play. Can be disabled in the preferences.",
+    "description": "Listening history: Aurora now keeps a history of the tracks you play. Can be disabled in the preferences.",
     "type": "feature",
     "contributors": [
       "nukeop"
@@ -937,7 +944,7 @@
   },
   {
     "date": "2026-05-27T00:00",
-    "description": "Nuclear Jam lets you control playback from any device on your local network. Enable it in Settings -> Integrations, then scan the QR code with your phone.",
+    "description": "Aurora Jam lets you control playback from any device on your local network. Enable it in Settings -> Integrations, then scan the QR code with your phone.",
     "type": "feature",
     "contributors": [
       "nukeop"
@@ -979,7 +986,7 @@
   },
   {
     "date": "2026-05-11T00:00",
-    "description": "MPD server lets you control Nuclear from MPD clients like mpc and ncmpcpp",
+    "description": "MPD server lets you control Aurora from MPD clients like mpc and ncmpcpp",
     "type": "feature",
     "contributors": [
       "nukeop"
@@ -1179,7 +1186,7 @@
   },
   {
     "date": "2026-03-21T00:00",
-    "description": "Nuclear is now built from source for Flatpak, with new app icons",
+    "description": "Aurora is now built from source for Flatpak, with new app icons",
     "type": "improvement",
     "contributors": [
       "nukeop"
@@ -1249,7 +1256,7 @@
   },
   {
     "date": "2026-03-16T00:00",
-    "description": "Queue items are now correctly restored when restarting Nuclear.",
+    "description": "Queue items are now correctly restored when restarting Aurora.",
     "type": "fix",
     "contributors": [
       "nukeop"
@@ -1461,7 +1468,7 @@
   },
   {
     "date": "2026-03-04T00:00",
-    "description": "Plugins can use Nuclear UI components (Button, Toggle, etc.)",
+    "description": "Plugins can use Aurora UI components (Button, Toggle, etc.)",
     "type": "feature",
     "contributors": [
       "nukeop"
@@ -1525,7 +1532,7 @@
   },
   {
     "date": "2026-03-01T00:00",
-    "description": "Support importing legacy format playlists (from old Nuclear)",
+    "description": "Support importing legacy format playlists (from legacy format)",
     "type": "feature",
     "contributors": [
       "nukeop"
@@ -1539,7 +1546,7 @@
   },
   {
     "date": "2026-02-28T00:00",
-    "description": "Migrated repository to nukeop/nuclear",
+    "description": "Migrated repository to danidetenerife/aurora",
     "type": "chore",
     "contributors": [
       "nukeop"
@@ -1587,7 +1594,7 @@
   },
   {
     "date": "2026-02-20T00:00",
-    "description": "MCP server for controlling Nuclear from AI agents and other tools",
+    "description": "MCP server for controlling Aurora from AI agents and other tools",
     "type": "feature",
     "contributors": [
       "nukeop"

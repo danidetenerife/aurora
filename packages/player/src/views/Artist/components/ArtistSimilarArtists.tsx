@@ -2,9 +2,9 @@ import { Link } from '@tanstack/react-router';
 import isEmpty from 'lodash-es/isEmpty';
 import { FC } from 'react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
-import { pickArtwork } from '@nuclearplayer/model';
-import { Loader } from '@nuclearplayer/ui';
+import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
+import { Loader } from '@aurora/ui';
 
 import { useArtistRelatedArtists } from '../hooks/useArtistRelatedArtists';
 

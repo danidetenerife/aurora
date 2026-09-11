@@ -6,7 +6,7 @@ description: Recommend tracks based on the user's listening context
 
 ## Discovery providers
 
-Discovery providers recommend tracks based on what the user is listening to. When the user reaches the last track in their queue, Nuclear asks the active discovery provider for recommendations and appends them automatically.
+Discovery providers recommend tracks based on what the user is listening to. When the user reaches the last track in their queue, Aurora asks the active discovery provider for recommendations and appends them automatically.
 
 The provider receives the last 10 tracks from the queue as context and returns new tracks to add to the queue.
 
@@ -21,7 +21,7 @@ Plugins can either add a new discovery provider, or request recommendations from
 You register discovery providers with `api.Providers.register()` just like any other provider. It needs an `id`, `kind: 'discovery'`, a `name`, and a `getRecommendations` method:
 
 ```typescript
-import type { DiscoveryProvider, NuclearPlugin, NuclearPluginAPI, Track } from '@nuclearplayer/plugin-sdk';
+import type { DiscoveryProvider, AuroraPlugin, AuroraPluginAPI, Track } from '@aurora/plugin-sdk';
 
 const provider: DiscoveryProvider = {
   id: 'acme-discovery',
@@ -47,11 +47,11 @@ const provider: DiscoveryProvider = {
   },
 };
 
-const plugin: NuclearPlugin = {
-  onEnable(api: NuclearPluginAPI) {
+const plugin: AuroraPlugin = {
+  onEnable(api: AuroraPluginAPI) {
     api.Providers.register(provider);
   },
-  onDisable(api: NuclearPluginAPI) {
+  onDisable(api: AuroraPluginAPI) {
     api.Providers.unregister('acme-discovery');
   },
 };
@@ -60,7 +60,7 @@ export default plugin;
 ```
 
 {% hint style="warning" %}
-Always unregister your provider in `onDisable`. If you don't, it stays registered and Nuclear will keep calling it after the plugin is disabled.
+Always unregister your provider in `onDisable`. If you don't, it stays registered and Aurora will keep calling it after the plugin is disabled.
 {% endhint %}
 
 ---
@@ -71,7 +71,7 @@ Always unregister your provider in `onDisable`. If you don't, it stays registere
 getRecommendations(context: Track[], options: DiscoveryOptions): Promise<Track[]>
 ```
 
-Nuclear calls this when the user is about to run out of tracks. The two arguments:
+Aurora calls this when the user is about to run out of tracks. The two arguments:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -138,7 +138,7 @@ Plugins can request recommendations from the active discovery provider via `api.
 
 ```typescript
 export default {
-  async onEnable(api: NuclearPluginAPI) {
+  async onEnable(api: AuroraPluginAPI) {
     const queue = await api.Queue.getQueue();
     const lastTen = queue.items.slice(-10).map((item) => item.track);
 
@@ -164,7 +164,7 @@ api.Discovery.getRecommendations(
 ): Promise<Track[]>
 ```
 
-The optional `providerId` targets a specific discovery provider. If omitted, Nuclear uses whichever provider is active.
+The optional `providerId` targets a specific discovery provider. If omitted, Aurora uses whichever provider is active.
 
 ---
 

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import { Box, TopList } from '@nuclearplayer/ui';
-import type { TopListEntry } from '@nuclearplayer/ui';
+import { Box, TopList } from '@aurora/ui';
+import type { TopListEntry } from '@aurora/ui';
 
 import { formatListeningDuration } from '../utils/format';
 

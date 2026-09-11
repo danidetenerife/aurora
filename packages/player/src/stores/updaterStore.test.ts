@@ -169,13 +169,13 @@ describe('useUpdaterStore', () => {
 
       const mockRelease = {
         tag_name: 'v1.48.0',
-        name: 'Nuclear v1.48.0',
+        name: 'Aurora v1.48.0',
         body: 'Bug fixes and performance improvements',
         assets: [
           {
-            name: 'nuclear-music-player.apk',
+            name: 'aurora.apk',
             browser_download_url:
-              'https://github.com/danidetenerife/aurora/releases/download/v1.48.0/nuclear-music-player.apk',
+              'https://github.com/danidetenerife/aurora/releases/download/v1.48.0/aurora.apk',
             size: 13000000,
           },
         ],
@@ -191,7 +191,7 @@ describe('useUpdaterStore', () => {
       const state = useUpdaterStore.getState();
       expect(state.isUpdateAvailable).toBe(true);
       expect(state.androidApkUrl).toBe(
-        'https://github.com/danidetenerife/aurora/releases/download/v1.48.0/nuclear-music-player.apk',
+        'https://github.com/danidetenerife/aurora/releases/download/v1.48.0/aurora.apk',
       );
       expect(state.newVersion).toBe('v1.48.0');
     });

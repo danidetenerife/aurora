@@ -10,14 +10,14 @@ import {
   UserIcon,
 } from 'lucide-react';
 
-import { useTranslation } from '@nuclearplayer/i18n';
+import { useTranslation } from '@aurora/i18n';
 import {
   PlayerShell,
   PlayerWorkspace,
   SidebarNavigation,
   SidebarNavigationItem,
   Toaster,
-} from '@nuclearplayer/ui';
+} from '@aurora/ui';
 
 import { CarModeOverlay } from '../components/CarMode/CarModeOverlay';
 import { ConnectedMobileNav } from '../components/ConnectedMobileNav';

@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => {
       build: {
         lib: {
           entry: 'src/index.ts',
-          name: 'NuclearHifi',
+          name: 'AuroraHifi',
           formats: ['es'],
           fileName: 'index',
         },

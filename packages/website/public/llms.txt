@@ -1,10 +1,10 @@
-# Nuclear
+# Aurora
 
-> Nuclear is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening. Cross-platform (Windows, macOS, Linux), privacy-respecting, and AGPL licensed.
+> Aurora is a free, open-source music player without ads or tracking. Search for any song or artist, build playlists, and start listening. Cross-platform (Windows, macOS, Linux), privacy-respecting, and AGPL licensed.
 
 ## Links
 
-- [Home](https://nuclearplayer.com): Website
+- [Home](https://aurora-player.org): Website
 - [GitHub Repository](https://github.com/danidetenerife/aurora): Source code
 - [Discord](https://discord.gg/JqPjKxE): Community chat
-- [Documentation](https://docs.nuclearplayer.com): Docs
+- [Documentation](https://docs.aurora-player.org): Docs

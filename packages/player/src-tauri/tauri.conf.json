@@ -3,12 +3,12 @@
     "productName":  "Aurora",
     "mainBinaryName":  "aurora-music-player",
     "version":  "1.48.8",
-    "identifier":  "com.nuclearplayer",
+    "identifier":  "com.auroraplayer",
     "build":  {
                   "frontendDist":  "../dist",
                   "devUrl":  "http://localhost:5173",
                   "beforeDevCommand":  "vite",
-                  "beforeBuildCommand":  "cd ../.. \u0026\u0026 pnpm --filter @nuclearplayer/player build:frontend"
+                  "beforeBuildCommand":  "cd ../.. \u0026\u0026 pnpm --filter @aurora/player build:frontend"
               },
     "app":  {
                 "windows":  [
