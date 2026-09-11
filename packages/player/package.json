@@ -1,12 +1,12 @@
 {
     "name":  "@aurora/player",
-    "version":  "1.48.8",
+    "version":  "1.48.9",
     "private":  true,
     "type":  "module",
     "scripts":  {
                     "dev":  "tauri dev",
-                    "build":  "tsc && vite build && tauri build",
-                    "build:frontend":  "tsc && vite build",
+                    "build":  "tsc \u0026\u0026 vite build \u0026\u0026 tauri build",
+                    "build:frontend":  "tsc \u0026\u0026 vite build",
                     "tauri":  "tauri",
                     "preview":  "vite preview",
                     "lint":  "eslint .",
