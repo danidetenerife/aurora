@@ -16,8 +16,9 @@ export const useSearchBox = () => {
   const closePopover = () => setIsPopoverOpen(false);
 
   const goToSearch = (searchQuery: string) => {
-    navigate({ to: '/search', search: { q: searchQuery } });
+    closePopover();
     inputRef.current?.blur();
+    void navigate({ to: '/search', search: { q: searchQuery } });
   };
 
   const popover = useSearchPopover({
@@ -72,6 +73,7 @@ export const useSearchBox = () => {
     openPopover,
     closePopover,
     handleKeyDown,
+    submit,
     clear,
     popover,
   };

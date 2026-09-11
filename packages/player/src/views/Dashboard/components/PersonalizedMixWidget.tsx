@@ -298,7 +298,7 @@ export const PersonalizedMixWidget: FC = () => {
       ) : (
         <ConnectedTrackTable
           tracks={visibleTracks ?? []}
-          features={{ filterable: true, playAll: true, addAllToQueue: true }}
+          features={{ filterable: false, playAll: true, addAllToQueue: true }}
           display={{ displayDuration: false }}
         />
       )}

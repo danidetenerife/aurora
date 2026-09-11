@@ -15,6 +15,7 @@ const inputVariants = cva(
     variants: {
       variant: {
         text: '',
+        search: '',
         number: '',
         password: '',
         borderless:
@@ -48,7 +49,7 @@ const inputVariants = cva(
   },
 );
 
-type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'size'> &
+type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'size'> &
   VariantProps<typeof inputVariants> & {
     label?: string;
     description?: string;
@@ -67,6 +68,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     size,
     className,
     endAddon,
+    type,
     ...rest
   },
   ref,
@@ -85,10 +87,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     .join(' ');
 
   const state = error ? 'error' : 'normal';
-  const inputType: 'text' | 'number' | 'password' = (variant ?? 'text') as
-    | 'text'
-    | 'number'
-    | 'password';
+  const inputType =
+    type ??
+    ((variant ?? 'text') as 'text' | 'number' | 'password' | 'search');
 
   return (
     <div className="flex w-full flex-col gap-2">
