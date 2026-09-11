@@ -248,7 +248,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -326,7 +326,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -404,7 +404,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -686,7 +686,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -764,7 +764,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -842,7 +842,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -920,7 +920,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                       Track 4
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -998,7 +998,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                       Track 5
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1297,7 +1297,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1375,7 +1375,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1453,7 +1453,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1531,7 +1531,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                       Track 4
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1609,7 +1609,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                       Track 5
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -1894,7 +1894,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 1
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -1972,7 +1972,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 2
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2050,7 +2050,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 3
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2128,7 +2128,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 4
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2206,7 +2206,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 5
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2284,7 +2284,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 6
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2362,7 +2362,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 7
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2440,7 +2440,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 8
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2518,7 +2518,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 9
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2596,7 +2596,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 10
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2674,7 +2674,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 11
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2752,7 +2752,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 12
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2830,7 +2830,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 13
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2908,7 +2908,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 14
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -2986,7 +2986,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 15
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3064,7 +3064,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 16
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3142,7 +3142,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 17
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3220,7 +3220,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 18
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3298,7 +3298,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 19
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3376,7 +3376,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                         Track 20
                       </span>
                       <span
-                        class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                        class="text-xs text-foreground-secondary line-clamp-1 break-words"
                       >
                         Frank Zappa
                       </span>
@@ -3722,7 +3722,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                       Track 1
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -3800,7 +3800,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                       Track 2
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>
@@ -3878,7 +3878,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                       Track 3
                     </span>
                     <span
-                      class="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words"
+                      class="text-xs text-foreground-secondary line-clamp-1 break-words"
                     >
                       Frank Zappa
                     </span>

@@ -72,27 +72,34 @@ export const TitleCell = <T extends Track>({
   const hasContextMenu = Boolean(ContextMenuWrapper);
   const hasActions = hasAddToQueue || hasContextMenu;
   const artistName =
-    track.artists?.map((a) => a.name).join(', ') || 'Unknown Artist';
+    track.artists && track.artists.length > 0
+      ? track.artists
+          .map((artist) => artist.name)
+          .filter(Boolean)
+          .join(', ')
+      : (track as unknown as { artist?: string }).artist || '';
 
   return (
-    <td className="px-2 py-1.5 min-w-0">
-      <div className="flex items-center justify-between gap-2 min-w-0">
+    <td className="min-w-0 px-2 py-1.5">
+      <div className="flex min-w-0 items-center justify-between gap-2">
         <button
-          className="min-w-0 flex-1 cursor-pointer text-left hover:underline flex flex-col justify-center overflow-hidden"
+          className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
           onClick={(e) => {
             e.stopPropagation();
             actions.onPlayNow?.(track);
           }}
         >
-          <span className="font-semibold text-sm leading-snug text-foreground line-clamp-2 break-words">
+          <span className="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words">
             {getValue()}
           </span>
-          <span className="text-xs text-foreground-secondary sm:hidden line-clamp-1 break-words">
-            {artistName}
-          </span>
+          {artistName ? (
+            <span className="text-foreground-secondary line-clamp-1 text-xs break-words">
+              {artistName}
+            </span>
+          ) : null}
         </button>
         {showControls && hasActions && (
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex shrink-0 items-center gap-1">
             {hasAddToQueue && (
               <AddToQueueButton
                 label={labels.addToQueue}

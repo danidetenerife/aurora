@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-11T16:55",
+    "description": "Restore artist name display directly under song titles in track tables across all screen sizes and devices.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Interface", "color": "green" }]
+  },
+  {
     "date": "2026-09-11T16:45",
     "description": "Add dislike button to now playing bar and track context menu actions to blacklist songs and artists, instantly skipping tracks, applying score penalties, and excluding them from recommendations across synced devices.",
     "type": "feat",
