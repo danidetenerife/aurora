@@ -198,10 +198,12 @@ export const ConnectedPlayerBarWrapper = {
     },
     discoveryButton: {
       get element() {
-        return screen.getByTestId('player-discovery-button');
+        return screen.queryByTestId('player-discovery-button');
       },
       async click() {
-        await user.click(this.element);
+        if (this.element) {
+          await user.click(this.element);
+        }
       },
     },
   },

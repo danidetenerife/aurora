@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-09-11T16:20",
+    "description": "Make music discovery and queue autoplay completely automatic and seamless in the background; remove the misleading and redundant discovery button from the player controls bar.",
+    "type": "feat",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Playback", "color": "green" }]
+  },
+  {
+    "date": "2026-09-11T16:00",
+    "description": "Add user-owned cloud synchronization via WebDAV (Nextcloud, ownCloud, NAS) and private GitHub Gists, manual library backup export/import, and instant pairing via QR code configuration between desktop and mobile devices.",
+    "type": "feat",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Sync", "color": "green" }]
+  },
+  {
     "date": "2026-09-11T12:30",
     "description": "Use direct audio output, respect playback interruptions, block playback during phone calls, restore selection of resolved queue tracks and simplify car controls. Keep video controls exclusive to Google TV, avoid competing TV update downloads, and wait for desktop installation before offering a restart.",
     "type": "fix",

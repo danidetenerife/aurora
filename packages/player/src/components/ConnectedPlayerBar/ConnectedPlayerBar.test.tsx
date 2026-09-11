@@ -163,19 +163,11 @@ describe('ConnectedControls', () => {
     );
   });
 
-  it('clicking discovery toggles the discovery setting', async () => {
+  it('does not display a discovery button because discovery is automatic', async () => {
     providersHost.register(new DiscoveryProviderBuilder().build());
     await Wrapper.mount();
 
-    await Wrapper.controls.discoveryButton.click();
-    expect(useSettingsStore.getState().values['core.playback.discovery']).toBe(
-      true,
-    );
-
-    await Wrapper.controls.discoveryButton.click();
-    expect(useSettingsStore.getState().values['core.playback.discovery']).toBe(
-      false,
-    );
+    expect(Wrapper.controls.discoveryButton.element).toBeNull();
   });
 });
 

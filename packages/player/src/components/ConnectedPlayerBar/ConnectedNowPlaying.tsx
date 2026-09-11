@@ -6,7 +6,6 @@ import { pickArtwork } from '@nuclearplayer/model';
 import { FavoriteButton, PlayerBar } from '@nuclearplayer/ui';
 
 import { useFavoritesStore } from '../../stores/favoritesStore';
-import { useProvidersStore } from '../../stores/providersStore';
 import { useQueueStore } from '../../stores/queueStore';
 
 export const ConnectedNowPlaying: FC = () => {
@@ -42,11 +41,21 @@ export const ConnectedNowPlaying: FC = () => {
       onArtistClick={
         artist
           ? () => {
-              const activeMetadata =
-                useProvidersStore.getState().getActive('metadata') ?? 'spotify';
-              void navigate({
-                to: `/artist/${activeMetadata}/${encodeURIComponent(artist)}`,
-              });
+              const artistSource = track?.artists[0]?.source;
+              if (artistSource?.provider && artistSource?.id) {
+                void navigate({
+                  to: '/artist/$providerId/$artistId',
+                  params: {
+                    providerId: artistSource.provider,
+                    artistId: artistSource.id,
+                  },
+                });
+              } else {
+                void navigate({
+                  to: '/search',
+                  search: { q: artist },
+                });
+              }
             }
           : undefined
       }

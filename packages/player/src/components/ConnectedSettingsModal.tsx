@@ -1,8 +1,4 @@
-import {
-  BlocksIcon,
-  LaptopIcon,
-  Settings2Icon,
-} from 'lucide-react';
+import { BlocksIcon, LaptopIcon, Settings2Icon } from 'lucide-react';
 import { FC } from 'react';
 
 import { useTranslation } from '@nuclearplayer/i18n';
@@ -28,7 +24,7 @@ const SETTINGS_TABS = [
   {
     id: 'sync' as SettingsTab,
     icon: <LaptopIcon />,
-    label: 'Vincular con PC',
+    label: 'Sincronización',
     content: () => <SyncSettingsView />,
   },
   {
@@ -45,7 +41,8 @@ export const ConnectedSettingsModal: FC = () => {
 
   const tabs = SETTINGS_TABS.map((tab) => ({
     ...tab,
-    label: tab.id === 'sync' ? 'Vincular con PC' : t(`${tab.id}.title`, tab.label),
+    label:
+      tab.id === 'sync' ? 'Sincronización' : t(`${tab.id}.title`, tab.label),
   }));
 
   return (

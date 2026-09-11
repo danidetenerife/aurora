@@ -8,7 +8,6 @@ import { Button, PlayerBar, Tooltip } from '@nuclearplayer/ui';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { useMediaRouter } from '../../hooks/useMediaRouter';
-import { useProviders } from '../../hooks/useProviders';
 import { playbackManager } from '../../services/playback';
 import { useCarModeStore } from '../../stores/carModeStore';
 import { useQueueStore } from '../../stores/queueStore';
@@ -20,9 +19,6 @@ export const ConnectedControls: FC = () => {
     useCoreSetting<boolean>('playback.shuffle');
   const [repeatMode, setRepeatMode] =
     useCoreSetting<RepeatMode>('playback.repeat');
-  const [discoveryEnabled, setDiscoveryEnabled] =
-    useCoreSetting<boolean>('playback.discovery');
-  const hasDiscoveryProviders = useProviders('discovery').length > 0;
   const { castState, openCastPicker } = useMediaRouter();
 
   const { goToNext, goToPrevious } = useQueueStore(
@@ -35,10 +31,6 @@ export const ConnectedControls: FC = () => {
 
   const handleToggleShuffle = () => {
     setShuffleEnabled(!shuffleEnabled);
-  };
-
-  const handleToggleDiscovery = () => {
-    setDiscoveryEnabled(!discoveryEnabled);
   };
 
   const handleToggleRepeat = () => {
@@ -60,19 +52,13 @@ export const ConnectedControls: FC = () => {
         onPrevious={goToPrevious}
         onShuffleToggle={handleToggleShuffle}
         onRepeatToggle={handleToggleRepeat}
-        isDiscoveryActive={hasDiscoveryProviders && Boolean(discoveryEnabled)}
-        onDiscoveryToggle={
-          hasDiscoveryProviders ? handleToggleDiscovery : undefined
-        }
-        showDiscovery={hasDiscoveryProviders}
+        showDiscovery={false}
         labels={{
           shuffleOn: t('shuffleOn'),
           shuffleOff: t('shuffleOff'),
           repeatOff: t('repeatOff'),
           repeatAll: t('repeatAll'),
           repeatOne: t('repeatOne'),
-          discoveryOn: t('discoveryOn'),
-          discoveryOff: t('discoveryOff'),
         }}
       />
       <Tooltip

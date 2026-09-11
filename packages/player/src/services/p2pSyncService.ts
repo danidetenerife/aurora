@@ -12,17 +12,28 @@ import {
   type UserListenRecord,
 } from './personalizationEngine';
 import { playlistFileService } from './playlistFileService';
+import { GistAdapter } from './sync/gistAdapter';
+import type {
+  FavEntry,
+  GistConfig,
+  SyncAdapter,
+  SyncConfig,
+  SyncPayload,
+  SyncPlaylistItem,
+  SyncProviderType,
+  SyncResult,
+  WebDavConfig,
+} from './sync/types';
+import { WebDavAdapter } from './sync/webDavAdapter';
 import { createUniversalStore, isTauriEnvironment } from './universalStore';
 
 const SYNC_STORE_FILE = 'p2p_sync.json';
 const syncStore = createUniversalStore(SYNC_STORE_FILE);
 
-type FavEntry = { ref: Record<string, unknown>; addedAtIso: string };
-
 function entrySourceKey(entry: FavEntry): string {
-  const src = entry.ref?.source as Record<string, string> | undefined;
-  if (src?.provider && src?.id) {
-    return `${src.provider}::${src.id}`;
+  const source = entry.ref?.source as Record<string, string> | undefined;
+  if (source?.provider && source?.id) {
+    return `${source.provider}::${source.id}`;
   }
   return (
     (entry.ref?.title as string) ??
@@ -41,12 +52,12 @@ function isEntryDeleted(
   entry: FavEntry,
   deletedKeys: Record<string, number>,
 ): boolean {
-  const srcKey = entrySourceKey(entry);
+  const sourceKey = entrySourceKey(entry);
   const nameKey = entryNameKey(entry);
   const addedTime = new Date(entry.addedAtIso).getTime();
 
-  const srcDeletedTime = deletedKeys[srcKey];
-  if (srcDeletedTime && srcDeletedTime >= addedTime) {
+  const sourceDeletedTime = deletedKeys[sourceKey];
+  if (sourceDeletedTime && sourceDeletedTime >= addedTime) {
     return true;
   }
   const nameDeletedTime = nameKey ? deletedKeys[nameKey] : undefined;
@@ -56,11 +67,6 @@ function isEntryDeleted(
   return false;
 }
 
-/**
- * Merges two favourite entry lists keeping all unique non-deleted items.
- * When both sides have the same item, keeps the one with the more
- * recent addedAtIso so the last action wins.
- */
 function mergeFavEntries(
   local: FavEntry[],
   remote: FavEntry[],
@@ -107,18 +113,18 @@ async function safeFetchJson<T>(
     const timeout =
       typeof optionsOrTimeout === 'number' ? optionsOrTimeout : timeoutMs;
 
-    const res = await fetch(url, {
+    const response = await fetch(url, {
       ...options,
       signal: AbortSignal.timeout(timeout),
     });
-    if (!res.ok) {
+    if (!response.ok) {
       return null;
     }
-    const contentType = res.headers.get('content-type') || '';
+    const contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('application/json')) {
       return null;
     }
-    return (await res.json()) as T;
+    return (await response.json()) as T;
   } catch {
     return null;
   }
@@ -149,36 +155,42 @@ export class P2PSyncService {
         this.scheduleProfilePush();
       }
     });
+
     useFavoritesStore.subscribe(() => {
       if (this.isApplyingRemote) {
         return;
       }
-      this.schedulePushToPc();
+      this.schedulePushToActiveProvider();
     });
 
     useSettingsStore.subscribe(() => {
       if (this.isApplyingRemote) {
         return;
       }
-      this.schedulePushToPc();
+      this.schedulePushToActiveProvider();
     });
 
     usePlaylistStore.subscribe(() => {
       if (this.isApplyingRemote) {
         return;
       }
-      this.schedulePushToPc();
+      this.schedulePushToActiveProvider();
     });
   }
 
-  private schedulePushToPc(): void {
+  private schedulePushToActiveProvider(): void {
     if (this.pushDebounceTimer) {
       clearTimeout(this.pushDebounceTimer);
     }
     this.pushDebounceTimer = window.setTimeout(
       async () => {
         if (await this.isAutoSyncEnabled()) {
-          void this.pushLocalChangesToPc();
+          const provider = await this.getSyncProvider();
+          if (provider === 'lan') {
+            void this.pushLocalChangesToPc();
+          } else if (provider !== 'none') {
+            void this.syncNow();
+          }
         }
       },
       Math.max(
@@ -196,116 +208,71 @@ export class P2PSyncService {
     this.profilePushTimer = window.setTimeout(async () => {
       this.profilePushTimer = null;
       if (await this.isAutoSyncEnabled()) {
-        await this.pushListeningProfile();
+        const provider = await this.getSyncProvider();
+        if (provider === 'lan') {
+          await this.pushListeningProfile();
+        } else if (provider !== 'none') {
+          await this.syncNow();
+        }
       }
     }, P2PSyncService.PUSH_DEBOUNCE_MS);
   }
 
-  async pushListeningProfile(serverUrl?: string): Promise<boolean> {
-    if (this.isPushingProfile) {
-      this.scheduleProfilePush();
-      return false;
+  async getSyncProvider(): Promise<SyncProviderType> {
+    const saved = await syncStore.get<SyncProviderType>('sync_provider');
+    if (saved) {
+      return saved;
     }
-    this.isPushingProfile = true;
-    try {
-      const workingUrl = serverUrl ?? (await this.getWorkingServerUrl());
-      if (!workingUrl) {
-        return false;
-      }
-      const listens = await personalizationEngine.getListenRecords();
-      const blacklist = await personalizationEngine.getBlacklist();
-      const response = await safeFetchJson<{ success: boolean }>(
-        `${workingUrl}/api/sync/push`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_profile: listens, blacklist }),
-        },
-        6000,
-      );
-      return response?.success === true;
-    } finally {
-      this.isPushingProfile = false;
+    const webdavUrl = await syncStore.get<string>('webdav_url');
+    if (webdavUrl) {
+      return 'webdav';
     }
+    const gistToken = await syncStore.get<string>('gist_token');
+    if (gistToken) {
+      return 'gist';
+    }
+    return 'lan';
   }
 
-  async pushLocalChangesToPc(): Promise<boolean> {
-    const serverUrl = await this.getWorkingServerUrl();
-    if (!serverUrl) {
-      return false;
+  async setSyncProvider(provider: SyncProviderType): Promise<void> {
+    await syncStore.set('sync_provider', provider);
+    await syncStore.save();
+  }
+
+  async getWebDavConfig(): Promise<WebDavConfig> {
+    const url = (await syncStore.get<string>('webdav_url')) ?? '';
+    const username = (await syncStore.get<string>('webdav_username')) ?? '';
+    const password = (await syncStore.get<string>('webdav_password')) ?? '';
+    const remotePath =
+      (await syncStore.get<string>('webdav_remote_path')) ?? 'aurora_sync.json';
+    return { url, username, password, remotePath };
+  }
+
+  async setWebDavConfig(config: WebDavConfig): Promise<void> {
+    await syncStore.set('webdav_url', config.url.trim());
+    await syncStore.set('webdav_username', config.username.trim());
+    await syncStore.set('webdav_password', config.password);
+    await syncStore.set(
+      'webdav_remote_path',
+      config.remotePath?.trim() || 'aurora_sync.json',
+    );
+    await syncStore.set('sync_provider', 'webdav');
+    await syncStore.save();
+  }
+
+  async getGistConfig(): Promise<GistConfig> {
+    const token = (await syncStore.get<string>('gist_token')) ?? '';
+    const gistId = (await syncStore.get<string>('gist_id')) ?? '';
+    return { token, gistId };
+  }
+
+  async setGistConfig(config: GistConfig): Promise<void> {
+    await syncStore.set('gist_token', config.token.trim());
+    if (config.gistId) {
+      await syncStore.set('gist_id', config.gistId.trim());
     }
-
-    try {
-      const favStoreState = useFavoritesStore.getState();
-      const settingsStoreState = useSettingsStore.getState();
-      const playlistStoreState = usePlaylistStore.getState();
-
-      const allPlaylists = [];
-      for (const entry of playlistStoreState.index) {
-        const playlist = await usePlaylistStore
-          .getState()
-          .loadPlaylist(entry.id);
-        if (playlist) {
-          allPlaylists.push(playlist);
-        }
-      }
-
-      const userProfileListens = await personalizationEngine.getListenRecords();
-      const blacklist = await personalizationEngine.getBlacklist();
-
-      const payload = {
-        favorites: {
-          tracks: favStoreState.tracks,
-          artists: favStoreState.artists,
-          albums: favStoreState.albums,
-          deletedKeys: favStoreState.deletedKeys,
-        },
-        settings: settingsStoreState.values,
-        playlists: allPlaylists,
-        user_profile: userProfileListens,
-        blacklist,
-        activeProviders: useProvidersStore.getState().active,
-      };
-
-      const res = await fetch(`${serverUrl}/api/sync/push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(6000),
-      });
-
-      if (res.ok) {
-        try {
-          const responseBody = (await res.json()) as {
-            deletedKeys?: Record<string, number>;
-          };
-          if (
-            responseBody?.deletedKeys &&
-            typeof responseBody.deletedKeys === 'object'
-          ) {
-            const localDeletedKeys = useFavoritesStore.getState().deletedKeys;
-            const merged: Record<string, number> = { ...localDeletedKeys };
-            for (const [key, timestamp] of Object.entries(
-              responseBody.deletedKeys,
-            )) {
-              if (!merged[key] || (merged[key] ?? 0) < (timestamp as number)) {
-                merged[key] = timestamp as number;
-              }
-            }
-            useFavoritesStore.setState({ deletedKeys: merged });
-            const favDiskStore = createUniversalStore('favorites.json');
-            await favDiskStore.set('favorites.deletedKeys', merged);
-            await favDiskStore.save();
-          }
-        } catch {
-          // Response body is optional
-        }
-        return true;
-      }
-      return false;
-    } catch {
-      return false;
-    }
+    await syncStore.set('sync_provider', 'gist');
+    await syncStore.save();
   }
 
   async getSyncServerUrl(): Promise<string> {
@@ -322,6 +289,7 @@ export class P2PSyncService {
       cleanUrl = `http://${cleanUrl}`;
     }
     await syncStore.set('server_url', cleanUrl);
+    await syncStore.set('sync_provider', 'lan');
     await syncStore.save();
   }
 
@@ -394,17 +362,17 @@ export class P2PSyncService {
     for (const subnet of commonSubnets) {
       const batchPromises: Promise<string | null>[] = [];
 
-      for (let i = 1; i <= 40; i++) {
-        const candidate = `http://${subnet}${i}:4122`;
-        const p = safeFetchJson<{ status: string }>(
+      for (let index = 1; index <= 40; index++) {
+        const candidate = `http://${subnet}${index}:4122`;
+        const promise = safeFetchJson<{ status: string }>(
           `${candidate}/api/health`,
           300,
-        ).then((res) => (res?.status === 'ok' ? candidate : null));
-        batchPromises.push(p);
+        ).then((result) => (result?.status === 'ok' ? candidate : null));
+        batchPromises.push(promise);
       }
 
       const results = await Promise.all(batchPromises);
-      const found = results.find((r) => r !== null);
+      const found = results.find((result) => result !== null);
       if (found) {
         await this.setSyncServerUrl(found);
         return found;
@@ -414,17 +382,356 @@ export class P2PSyncService {
     return null;
   }
 
-  async syncNow(): Promise<{
-    success: boolean;
-    error?: string;
-    syncedCounts?: { tracks: number; artists: number; settings: number };
+  async getActiveAdapter(): Promise<SyncAdapter | null> {
+    const provider = await this.getSyncProvider();
+    if (provider === 'webdav') {
+      const config = await this.getWebDavConfig();
+      if (!config.url) {
+        return null;
+      }
+      return new WebDavAdapter(config);
+    }
+    if (provider === 'gist') {
+      const config = await this.getGistConfig();
+      if (!config.token) {
+        return null;
+      }
+      return new GistAdapter(config, async (newGistId) => {
+        await syncStore.set('gist_id', newGistId);
+        await syncStore.save();
+      });
+    }
+    return null;
+  }
+
+  async testActiveConnection(): Promise<{ success: boolean; error?: string }> {
+    const provider = await this.getSyncProvider();
+    if (provider === 'lan') {
+      const workingUrl = await this.getWorkingServerUrl();
+      if (workingUrl) {
+        return { success: true };
+      }
+      return {
+        success: false,
+        error: `No se puede conectar al servidor LAN en ${await this.getSyncServerUrl()}`,
+      };
+    }
+    const adapter = await this.getActiveAdapter();
+    if (!adapter) {
+      return {
+        success: false,
+        error: 'No se ha configurado ningún proveedor de sincronización',
+      };
+    }
+    return adapter.testConnection();
+  }
+
+  async gatherLocalPayload(): Promise<SyncPayload> {
+    const favStoreState = useFavoritesStore.getState();
+    const settingsStoreState = useSettingsStore.getState();
+    const playlistStoreState = usePlaylistStore.getState();
+
+    const allPlaylists: SyncPlaylistItem[] = [];
+    for (const entry of playlistStoreState.index) {
+      const playlist = await playlistStoreState.loadPlaylist(entry.id);
+      if (playlist) {
+        allPlaylists.push(playlist);
+      }
+    }
+
+    const userProfileListens = await personalizationEngine.getListenRecords();
+    const blacklist = await personalizationEngine.getBlacklist();
+
+    return {
+      version: 1,
+      timestamp: Date.now(),
+      favorites: {
+        tracks: favStoreState.tracks as unknown as FavEntry[],
+        artists: favStoreState.artists as unknown as FavEntry[],
+        albums: favStoreState.albums as unknown as FavEntry[],
+        deletedKeys: favStoreState.deletedKeys,
+      },
+      settings: settingsStoreState.values,
+      playlists: allPlaylists,
+      user_profile: userProfileListens,
+      blacklist,
+      activeProviders: useProvidersStore.getState().active,
+    };
+  }
+
+  async applyRemotePayload(remotePayload: SyncPayload): Promise<{
+    needsPushBack: boolean;
+    counts: {
+      tracks: number;
+      artists: number;
+      playlists: number;
+      settings: number;
+    };
   }> {
+    let syncedTracks = 0;
+    let syncedArtists = 0;
+    let syncedSettings = 0;
+    let syncedPlaylists = 0;
+    let needsPushBack = false;
+
+    if (remotePayload.user_profile) {
+      await personalizationEngine.mergeRemoteListens(
+        remotePayload.user_profile,
+      );
+    }
+
+    if (remotePayload.blacklist) {
+      await personalizationEngine.mergeRemoteBlacklist(
+        remotePayload.blacklist.tracks ?? [],
+        remotePayload.blacklist.artists ?? [],
+      );
+    }
+
+    const mergedProfile = await personalizationEngine.getListenRecords();
+    const remoteProfile = mergeListenRecords(
+      remotePayload.user_profile || [],
+      [],
+    );
+    const localBlacklist = await personalizationEngine.getBlacklist();
+    const remoteTracks = remotePayload.blacklist?.tracks ?? [];
+    const remoteArtists = (remotePayload.blacklist?.artists ?? []).map(
+      (artist) => artist.trim().toLowerCase(),
+    );
+
+    const blacklistHadLocalExtras =
+      localBlacklist.tracks.some((track) => !remoteTracks.includes(track)) ||
+      localBlacklist.artists.some((artist) => !remoteArtists.includes(artist));
+
+    if (
+      JSON.stringify(mergedProfile) !== JSON.stringify(remoteProfile) ||
+      blacklistHadLocalExtras
+    ) {
+      needsPushBack = true;
+    }
+
+    const toEntry = (item: {
+      ref?: Record<string, unknown>;
+      addedAtIso?: string;
+    }): FavEntry => ({
+      addedAtIso: item.addedAtIso ?? new Date().toISOString(),
+      ref: (item.ref ?? item) as Record<string, unknown>,
+    });
+
+    if (remotePayload.favorites) {
+      this.isApplyingRemote = true;
+
+      const rawArtists = remotePayload.favorites.artists ?? [];
+      const rawTracks = remotePayload.favorites.tracks ?? [];
+      const rawAlbums = remotePayload.favorites.albums ?? [];
+      const localState = useFavoritesStore.getState();
+
+      const remoteDeletedKeys = remotePayload.favorites.deletedKeys ?? {};
+      const mergedDeletedKeys: Record<string, number> = {
+        ...localState.deletedKeys,
+      };
+      for (const [key, timestamp] of Object.entries(remoteDeletedKeys)) {
+        if (
+          !mergedDeletedKeys[key] ||
+          (mergedDeletedKeys[key] ?? 0) < timestamp
+        ) {
+          mergedDeletedKeys[key] = timestamp;
+        }
+      }
+
+      const { merged: mergedArtists, hadLocalExtras: artistExtras } =
+        mergeFavEntries(
+          (localState.artists as unknown as FavEntry[]) ?? [],
+          rawArtists.map(toEntry),
+          mergedDeletedKeys,
+        );
+      const { merged: mergedTracks, hadLocalExtras: trackExtras } =
+        mergeFavEntries(
+          (localState.tracks as unknown as FavEntry[]) ?? [],
+          rawTracks.map(toEntry),
+          mergedDeletedKeys,
+        );
+      const { merged: mergedAlbums, hadLocalExtras: albumExtras } =
+        mergeFavEntries(
+          (localState.albums as unknown as FavEntry[]) ?? [],
+          rawAlbums.map(toEntry),
+          mergedDeletedKeys,
+        );
+
+      if (artistExtras || trackExtras || albumExtras) {
+        needsPushBack = true;
+      }
+
+      useFavoritesStore.setState({
+        artists: mergedArtists as never,
+        tracks: mergedTracks as never,
+        albums: mergedAlbums as never,
+        deletedKeys: mergedDeletedKeys,
+      });
+
+      syncedArtists = mergedArtists.length;
+      syncedTracks = mergedTracks.length;
+
+      const favDiskStore = createUniversalStore('favorites.json');
+      await favDiskStore.set('favorites.tracks', mergedTracks);
+      await favDiskStore.set('favorites.albums', mergedAlbums);
+      await favDiskStore.set('favorites.artists', mergedArtists);
+      await favDiskStore.set('favorites.deletedKeys', mergedDeletedKeys);
+      await favDiskStore.save();
+
+      this.isApplyingRemote = false;
+    }
+
+    if (
+      Array.isArray(remotePayload.playlists) &&
+      remotePayload.playlists.length > 0
+    ) {
+      const playlistStore = usePlaylistStore.getState();
+      for (const rawPlaylist of remotePayload.playlists) {
+        const playlist =
+          (rawPlaylist as { playlist?: SyncPlaylistItem }).playlist ||
+          rawPlaylist;
+        if (playlist && (playlist.name || playlist.id)) {
+          const playlistId = playlist.id || `synced-${playlist.name}`;
+          const playlistObj = {
+            id: playlistId,
+            name: playlist.name || 'Playlist',
+            description: playlist.description || '',
+            createdAtIso: playlist.createdAtIso || new Date().toISOString(),
+            lastModifiedIso:
+              playlist.lastModifiedIso || new Date().toISOString(),
+            isReadOnly: false,
+            items: playlist.items || [],
+            artwork: playlist.artwork,
+          };
+          await playlistFileService.savePlaylist(playlistObj as never);
+          syncedPlaylists++;
+        }
+      }
+      await playlistStore.loadIndex();
+    }
+
+    if (remotePayload.settings) {
+      const settings = remotePayload.settings;
+      const currentValues = { ...useSettingsStore.getState().values };
+      const settingsDiskStore = createUniversalStore('settings.json');
+
+      const isThemeKey = (key: string) =>
+        key.includes('theme') || key === 'dark' || key === 'themeId';
+
+      for (const [key, value] of Object.entries(settings)) {
+        if (isThemeKey(key)) {
+          continue;
+        }
+        const rawKey = key.replace(/^core\./, '');
+        const fullKey = `core.${rawKey}`;
+
+        currentValues[key] = value as never;
+        currentValues[rawKey] = value as never;
+        currentValues[fullKey] = value as never;
+
+        await settingsDiskStore.set(key, value);
+        await settingsDiskStore.set(rawKey, value);
+        await settingsDiskStore.set(fullKey, value);
+        syncedSettings++;
+      }
+
+      useSettingsStore.setState({ values: currentValues });
+      await settingsDiskStore.save();
+
+      const language = (settings['core.general.language'] ||
+        settings['general.language'] ||
+        settings.language) as string | undefined;
+      if (language) {
+        void changeLanguage(language);
+      }
+    }
+
+    if (
+      remotePayload.activeProviders &&
+      typeof remotePayload.activeProviders === 'object'
+    ) {
+      const providersDiskStore = createUniversalStore('active-providers.json');
+      const existing =
+        (await providersDiskStore.get<Record<string, string>>('active')) ?? {};
+      const merged = {
+        ...existing,
+        ...remotePayload.activeProviders,
+      };
+      await providersDiskStore.set('active', merged);
+      await providersDiskStore.save();
+      await useProvidersStore.getState().loadFromDisk();
+    }
+
+    return {
+      needsPushBack,
+      counts: {
+        tracks: syncedTracks,
+        artists: syncedArtists,
+        playlists: syncedPlaylists,
+        settings: syncedSettings,
+      },
+    };
+  }
+
+  async syncNow(): Promise<SyncResult> {
     if (this.isSyncing) {
       return { success: false, error: 'Sincronización ya en curso' };
     }
     this.isSyncing = true;
 
     try {
+      const provider = await this.getSyncProvider();
+
+      if (provider === 'webdav' || provider === 'gist') {
+        const adapter = await this.getActiveAdapter();
+        if (!adapter) {
+          this.isSyncing = false;
+          return {
+            success: false,
+            error: 'Configuración de sincronización incompleta',
+          };
+        }
+
+        let remotePayload: SyncPayload | null = null;
+        try {
+          remotePayload = await adapter.fetchRemote();
+        } catch (error) {
+          this.isSyncing = false;
+          return {
+            success: false,
+            error: `Error al conectar con el almacenamiento de sincronización: ${error instanceof Error ? error.message : String(error)}`,
+          };
+        }
+
+        let applyResult = {
+          needsPushBack: true,
+          counts: { tracks: 0, artists: 0, playlists: 0, settings: 0 },
+        };
+
+        if (remotePayload) {
+          applyResult = await this.applyRemotePayload(remotePayload);
+        }
+
+        if (!remotePayload || applyResult.needsPushBack) {
+          const fullLocal = await this.gatherLocalPayload();
+          await adapter.pushRemote(fullLocal);
+        }
+
+        await syncStore.set('last_sync_time', Date.now());
+        await syncStore.save();
+        this.lastSyncFinishedAt = Date.now();
+
+        void defaultQueryClient.invalidateQueries({ queryKey: ['history'] });
+        void defaultQueryClient.invalidateQueries({ queryKey: ['favorites'] });
+        void defaultQueryClient.invalidateQueries({ queryKey: ['playlists'] });
+
+        return {
+          success: true,
+          syncedCounts: applyResult.counts,
+        };
+      }
+
+      // LAN Sync Provider
       const workingUrl = await this.getWorkingServerUrl();
       if (!workingUrl) {
         this.isSyncing = false;
@@ -434,16 +741,6 @@ export class P2PSyncService {
           error: `No se puede conectar con el PC en ${savedUrl}. Comprueba que el PC está encendido y en el mismo Wi-Fi.`,
         };
       }
-
-      let syncedTracks = 0;
-      let syncedArtists = 0;
-      let syncedSettings = 0;
-
-      const hostMatch = workingUrl.match(/^https?:\/\/([^:/]+)/);
-      const host = hostMatch ? hostMatch[1] : '192.168.0.12';
-
-      const settingsStore = useSettingsStore.getState();
-      const playlistStore = usePlaylistStore.getState();
 
       const syncData = await safeFetchJson<{
         favorites?: {
@@ -474,6 +771,7 @@ export class P2PSyncService {
       }>(`${workingUrl}/api/sync`, undefined, 3500);
 
       if (!syncData) {
+        this.isSyncing = false;
         return {
           success: false,
           error: i18n.t('common:sync.profileDownloadFailed'),
@@ -495,12 +793,14 @@ export class P2PSyncService {
 
       const localBlacklist = await personalizationEngine.getBlacklist();
       const remoteTracks = syncData.blacklist?.tracks ?? [];
-      const remoteArtists = (syncData.blacklist?.artists ?? []).map((a) =>
-        a.trim().toLowerCase(),
+      const remoteArtists = (syncData.blacklist?.artists ?? []).map((artist) =>
+        artist.trim().toLowerCase(),
       );
       const blacklistHadLocalExtras =
-        localBlacklist.tracks.some((t) => !remoteTracks.includes(t)) ||
-        localBlacklist.artists.some((a) => !remoteArtists.includes(a));
+        localBlacklist.tracks.some((track) => !remoteTracks.includes(track)) ||
+        localBlacklist.artists.some(
+          (artist) => !remoteArtists.includes(artist),
+        );
 
       if (
         JSON.stringify(mergedProfile) !== JSON.stringify(remoteProfile) ||
@@ -508,12 +808,17 @@ export class P2PSyncService {
       ) {
         const pushed = await this.pushListeningProfile(workingUrl);
         if (!pushed) {
+          this.isSyncing = false;
           return {
             success: false,
             error: i18n.t('common:sync.profileUploadFailed'),
           };
         }
       }
+
+      let syncedTracks = 0;
+      let syncedArtists = 0;
+      let syncedSettings = 0;
 
       const librarySnapshot = JSON.stringify({
         favorites: syncData.favorites,
@@ -522,6 +827,7 @@ export class P2PSyncService {
         plugins: syncData.plugins,
         activeProviders: syncData.activeProviders,
       });
+
       if (syncData.favorites && librarySnapshot !== this.lastAppliedLibrary) {
         this.isApplyingRemote = true;
 
@@ -540,9 +846,7 @@ export class P2PSyncService {
         const localState = useFavoritesStore.getState();
         let needsPushBack = false;
 
-        // Merge PC's deletedKeys with local tombstones — bidirectional
         const remoteDeletedKeys = syncData.favorites.deletedKeys ?? {};
-
         const mergedDeletedKeys: Record<string, number> = {
           ...localState.deletedKeys,
         };
@@ -555,7 +859,6 @@ export class P2PSyncService {
           }
         }
 
-        // Bidirectional merge: union of local + remote, respecting deletion tombstones
         const { merged: mergedArtists, hadLocalExtras: artistExtras } =
           mergeFavEntries(
             (localState.artists as unknown as FavEntry[]) ?? [],
@@ -587,7 +890,6 @@ export class P2PSyncService {
         syncedArtists = mergedArtists.length;
         syncedTracks = mergedTracks.length;
 
-        // Persist merged favorites to disk
         const favDiskStore = createUniversalStore('favorites.json');
         await favDiskStore.set('favorites.tracks', mergedTracks);
         await favDiskStore.set('favorites.albums', mergedAlbums);
@@ -595,95 +897,74 @@ export class P2PSyncService {
         await favDiskStore.set('favorites.deletedKeys', mergedDeletedKeys);
         await favDiskStore.save();
 
-        // If local had items the PC didn't know about, push back so the PC stays in sync
         if (needsPushBack) {
           this.isApplyingRemote = false;
           void this.pushLocalChangesToPc();
           this.isApplyingRemote = true;
         }
 
-        // Playlists
         if (
           Array.isArray(syncData.playlists) &&
           syncData.playlists.length > 0
         ) {
-          for (const rawPl of syncData.playlists) {
-            const pl =
-              (
-                rawPl as {
-                  playlist?: {
-                    id?: string;
-                    name?: string;
-                    items?: unknown[];
-                    artwork?: unknown;
-                    description?: string;
-                  };
-                }
-              ).playlist ||
-              (rawPl as {
-                id?: string;
-                name?: string;
-                items?: unknown[];
-                artwork?: unknown;
-                description?: string;
-              });
-            if (pl && (pl.name || pl.id)) {
-              const playlistId = pl.id || `synced-${pl.name}`;
+          for (const rawPlaylist of syncData.playlists) {
+            const playlist =
+              (rawPlaylist as { playlist?: SyncPlaylistItem }).playlist ||
+              (rawPlaylist as SyncPlaylistItem);
+            if (playlist && (playlist.name || playlist.id)) {
+              const playlistId = playlist.id || `synced-${playlist.name}`;
               const playlistObj = {
                 id: playlistId,
-                name: pl.name || 'Playlist',
-                description: pl.description || '',
+                name: playlist.name || 'Playlist',
+                description: playlist.description || '',
                 createdAtIso: new Date().toISOString(),
                 lastModifiedIso: new Date().toISOString(),
                 isReadOnly: false,
-                items: pl.items || [],
-                artwork: pl.artwork,
+                items: playlist.items || [],
+                artwork: playlist.artwork,
               };
 
               await playlistFileService.savePlaylist(playlistObj as never);
             }
           }
-          await playlistStore.loadIndex();
+          await usePlaylistStore.getState().loadIndex();
         }
 
-        // Settings — skip theme settings (device-local preference)
         if (syncData.settings) {
-          const s = syncData.settings;
+          const settings = syncData.settings;
           const currentValues = { ...useSettingsStore.getState().values };
           const settingsDiskStore = createUniversalStore('settings.json');
 
           const isThemeKey = (key: string) =>
             key.includes('theme') || key === 'dark' || key === 'themeId';
 
-          for (const [key, val] of Object.entries(s)) {
+          for (const [key, value] of Object.entries(settings)) {
             if (isThemeKey(key)) {
               continue;
             }
             const rawKey = key.replace(/^core\./, '');
             const fullKey = `core.${rawKey}`;
 
-            currentValues[key] = val as never;
-            currentValues[rawKey] = val as never;
-            currentValues[fullKey] = val as never;
+            currentValues[key] = value as never;
+            currentValues[rawKey] = value as never;
+            currentValues[fullKey] = value as never;
 
-            await settingsDiskStore.set(key, val);
-            await settingsDiskStore.set(rawKey, val);
-            await settingsDiskStore.set(fullKey, val);
+            await settingsDiskStore.set(key, value);
+            await settingsDiskStore.set(rawKey, value);
+            await settingsDiskStore.set(fullKey, value);
           }
 
           useSettingsStore.setState({ values: currentValues });
           await settingsDiskStore.save();
 
-          const lang = (s['core.general.language'] ||
-            s['general.language'] ||
-            s.language) as string | undefined;
-          if (lang) {
-            void changeLanguage(lang);
+          const language = (settings['core.general.language'] ||
+            settings['general.language'] ||
+            settings.language) as string | undefined;
+          if (language) {
+            void changeLanguage(language);
           }
         }
 
-        // Active providers — sync from PC so Android knows which metadata
-        // provider to use (e.g. Spotify) for artist page redirects.
         if (
           syncData.activeProviders &&
           typeof syncData.activeProviders === 'object'
@@ -703,11 +984,10 @@ export class P2PSyncService {
           await useProvidersStore.getState().loadFromDisk();
         }
 
-        // Plugins & Providers
         if (syncData.plugins) {
           const pluginsDiskStore = createUniversalStore('plugins.json');
-          for (const [k, v] of Object.entries(syncData.plugins)) {
-            await pluginsDiskStore.set(k, v);
+          for (const [key, value] of Object.entries(syncData.plugins)) {
+            await pluginsDiskStore.set(key, value);
           }
           await pluginsDiskStore.save();
         }
@@ -716,17 +996,17 @@ export class P2PSyncService {
         this.lastAppliedLibrary = librarySnapshot;
       }
 
-      // 2. Also query /api/settings on port 4120 if available
+      const hostMatch = workingUrl.match(/^https?:\/\/([^:/]+)/);
+      const host = hostMatch ? hostMatch[1] : '192.168.0.12';
       const pcSettings = await safeFetchJson<{
         shuffle?: boolean;
         repeat?: string;
         discovery?: boolean;
         language?: string;
-        dark?: boolean;
-        themeId?: string;
       }>(`http://${host}:4120/api/settings`, 2000);
 
       if (pcSettings) {
+        const settingsStore = useSettingsStore.getState();
         if (pcSettings.shuffle !== undefined) {
           settingsStore.setValue('playback.shuffle', pcSettings.shuffle);
         }
@@ -740,7 +1020,6 @@ export class P2PSyncService {
           settingsStore.setValue('general.language', pcSettings.language);
           void changeLanguage(pcSettings.language);
         }
-        // Theme is intentionally not synced — each device keeps its own theme
         syncedSettings++;
       }
 
@@ -753,7 +1032,6 @@ export class P2PSyncService {
       void defaultQueryClient.invalidateQueries({ queryKey: ['favorites'] });
       void defaultQueryClient.invalidateQueries({ queryKey: ['playlists'] });
 
-      // Start real-time SSE listener if not running
       this.ensureRealtimeSseConnection(workingUrl);
 
       return {
@@ -761,17 +1039,169 @@ export class P2PSyncService {
         syncedCounts: {
           tracks: syncedTracks,
           artists: syncedArtists,
+          playlists: 0,
           settings: syncedSettings,
         },
       };
-    } catch (err) {
-      this.isSyncing = false;
-      this.isApplyingRemote = false;
-      this.lastSyncFinishedAt = Date.now();
-      return { success: false, error: String(err) };
+    } catch (error) {
+      return { success: false, error: String(error) };
     } finally {
       this.isSyncing = false;
       this.isApplyingRemote = false;
+    }
+  }
+
+  async exportLibraryBackup(): Promise<string> {
+    const payload = await this.gatherLocalPayload();
+    return JSON.stringify(payload, null, 2);
+  }
+
+  async importLibraryBackup(jsonContent: string): Promise<SyncResult> {
+    try {
+      const parsed = JSON.parse(jsonContent) as SyncPayload;
+      if (!parsed || typeof parsed !== 'object') {
+        return {
+          success: false,
+          error: 'Formato de archivo de respaldo no válido',
+        };
+      }
+      const result = await this.applyRemotePayload(parsed);
+      void defaultQueryClient.invalidateQueries({ queryKey: ['history'] });
+      void defaultQueryClient.invalidateQueries({ queryKey: ['favorites'] });
+      void defaultQueryClient.invalidateQueries({ queryKey: ['playlists'] });
+      return { success: true, syncedCounts: result.counts };
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Error al procesar el archivo',
+      };
+    }
+  }
+
+  async generateQrConfigString(): Promise<string> {
+    const provider = await this.getSyncProvider();
+    const config: Record<string, unknown> = { provider };
+    if (provider === 'webdav') {
+      config.webdav = await this.getWebDavConfig();
+    } else if (provider === 'gist') {
+      config.gist = await this.getGistConfig();
+    } else if (provider === 'lan') {
+      config.lan = { serverUrl: await this.getSyncServerUrl() };
+    }
+    const jsonString = JSON.stringify(config);
+    return `aurora-sync://${btoa(jsonString)}`;
+  }
+
+  async applyQrConfigString(scanned: string): Promise<boolean> {
+    const trimmed = scanned.trim();
+    if (trimmed.startsWith('aurora-sync://')) {
+      try {
+        const base64Data = trimmed.replace('aurora-sync://', '');
+        const decodedJson = atob(base64Data);
+        const config = JSON.parse(decodedJson) as SyncConfig;
+
+        if (config.provider === 'webdav' && config.webdav) {
+          await this.setWebDavConfig(config.webdav);
+          return true;
+        }
+        if (config.provider === 'gist' && config.gist) {
+          await this.setGistConfig(config.gist);
+          return true;
+        }
+        if (config.provider === 'lan' && config.lan) {
+          await this.setSyncServerUrl(config.lan.serverUrl);
+          return true;
+        }
+      } catch {
+        return false;
+      }
+    }
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      await this.setSyncServerUrl(trimmed);
+      return true;
+    }
+
+    return false;
+  }
+
+  async pushListeningProfile(serverUrl?: string): Promise<boolean> {
+    if (this.isPushingProfile) {
+      this.scheduleProfilePush();
+      return false;
+    }
+    this.isPushingProfile = true;
+    try {
+      const workingUrl = serverUrl ?? (await this.getWorkingServerUrl());
+      if (!workingUrl) {
+        return false;
+      }
+      const listens = await personalizationEngine.getListenRecords();
+      const blacklist = await personalizationEngine.getBlacklist();
+      const response = await safeFetchJson<{ success: boolean }>(
+        `${workingUrl}/api/sync/push`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_profile: listens, blacklist }),
+        },
+        6000,
+      );
+      return response?.success === true;
+    } finally {
+      this.isPushingProfile = false;
+    }
+  }
+
+  async pushLocalChangesToPc(): Promise<boolean> {
+    const serverUrl = await this.getWorkingServerUrl();
+    if (!serverUrl) {
+      return false;
+    }
+
+    try {
+      const favStoreState = useFavoritesStore.getState();
+      const settingsStoreState = useSettingsStore.getState();
+      const playlistStoreState = usePlaylistStore.getState();
+
+      const allPlaylists = [];
+      for (const entry of playlistStoreState.index) {
+        const playlist = await playlistStoreState.loadPlaylist(entry.id);
+        if (playlist) {
+          allPlaylists.push(playlist);
+        }
+      }
+
+      const userProfileListens = await personalizationEngine.getListenRecords();
+      const blacklist = await personalizationEngine.getBlacklist();
+
+      const payload = {
+        favorites: {
+          tracks: favStoreState.tracks,
+          artists: favStoreState.artists,
+          albums: favStoreState.albums,
+          deletedKeys: favStoreState.deletedKeys,
+        },
+        settings: settingsStoreState.values,
+        playlists: allPlaylists,
+        user_profile: userProfileListens,
+        blacklist,
+        activeProviders: useProvidersStore.getState().active,
+      };
+
+      const response = await fetch(`${serverUrl}/api/sync/push`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(6000),
+      });
+
+      return response.ok;
+    } catch {
+      return false;
     }
   }
 
