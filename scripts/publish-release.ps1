@@ -9,7 +9,7 @@ Set-Location $Root
 $Tag = if ($Version.StartsWith("v")) { $Version } else { "v$Version" }
 $cleanVer = $Version.Replace("v", "")
 if ([string]::IsNullOrWhiteSpace($Notes)) {
-    $Notes = "Aurora Music Player $Tag: Actualización del reproductor Aurora, soporte y navegación Google TV, sincronización bidireccional y enlaces oficiales de descarga."
+    $Notes = "Aurora Music Player ${Tag}: Actualización del reproductor Aurora, soporte y navegación Google TV, sincronización bidireccional y enlaces oficiales de descarga."
 }
 $ExecutablesDir = "$Root\ejecutables"
 
