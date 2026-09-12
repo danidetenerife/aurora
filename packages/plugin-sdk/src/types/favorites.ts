@@ -1,4 +1,10 @@
-import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
+import type {
+  AlbumRef,
+  ArtistRef,
+  PlaylistRef,
+  ProviderRef,
+  Track,
+} from '@aurora/model';
 
 export type FavoriteEntry<T> = {
   ref: T;
@@ -9,6 +15,7 @@ export type FavoritesData = {
   tracks: FavoriteEntry<Track>[];
   albums: FavoriteEntry<AlbumRef>[];
   artists: FavoriteEntry<ArtistRef>[];
+  playlists: FavoriteEntry<PlaylistRef>[];
 };
 
 export type FavoritesListener = (favorites: FavoritesData) => void;
@@ -30,6 +37,11 @@ export type FavoritesHost = {
   removeArtist: (source: ProviderRef) => Promise<void>;
   removeArtistByName: (name: string) => Promise<void>;
   isArtistFavorite: (source: ProviderRef) => Promise<boolean>;
+
+  getPlaylists: () => Promise<FavoriteEntry<PlaylistRef>[]>;
+  addPlaylist: (ref: PlaylistRef) => Promise<void>;
+  removePlaylist: (source: ProviderRef) => Promise<void>;
+  isPlaylistFavorite: (source: ProviderRef) => Promise<boolean>;
 
   getDeletedKeys: () => Promise<Record<string, number>>;
 

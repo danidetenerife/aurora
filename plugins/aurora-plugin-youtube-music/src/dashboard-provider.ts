@@ -15,6 +15,36 @@ import {
 
 export const DASHBOARD_PROVIDER_ID = 'youtube-music-dashboard';
 
+export const PUBLIC_PLAYLISTS: PlaylistRef[] = [
+  {
+    id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
+    name: 'Top canciones',
+    source: {
+      provider: 'youtube-music',
+      id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
+      url: 'https://music.youtube.com/playlist?list=PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
+    },
+  },
+  {
+    id: 'PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI',
+    name: 'Éxitos globales',
+    source: {
+      provider: 'youtube-music',
+      id: 'PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI',
+      url: 'https://music.youtube.com/playlist?list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI',
+    },
+  },
+  {
+    id: 'PLQog_FHUHAFUj9M1fK9M4w5yX7L7Y7Y7Y',
+    name: 'Novedades musicales',
+    source: {
+      provider: 'youtube-music',
+      id: 'PLQog_FHUHAFUj9M1fK9M4w5yX7L7Y7Y7Y',
+      url: 'https://music.youtube.com/playlist?list=PLQog_FHUHAFUj9M1fK9M4w5yX7L7Y7Y7Y',
+    },
+  },
+];
+
 export const createDashboardProvider = (
   api: AuroraPluginAPI,
   client: YtMusicClient,
@@ -117,16 +147,6 @@ export const createDashboardProvider = (
       // Use the public catalogue below when Explore is unavailable.
     }
 
-    return [
-      {
-        id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
-        name: 'Top canciones',
-        source: {
-          provider: 'youtube-music',
-          id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
-          url: 'https://music.youtube.com/playlist?list=PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
-        },
-      },
-    ];
+    return PUBLIC_PLAYLISTS;
   },
 });

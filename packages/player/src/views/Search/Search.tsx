@@ -106,6 +106,32 @@ const SearchContent: FC<{
         </div>
       ),
     },
+    results?.playlists && {
+      id: 'playlists',
+      label: t('search:results.playlists'),
+      content: (
+        <CardGrid>
+          {results.playlists.map((item) => (
+            <Card
+              key={item.source.id}
+              title={item.name}
+              src={pickArtwork(item.artwork, 'cover', 300)?.url}
+              onClick={() => {
+                if (item.source.url) {
+                  navigate({
+                    to: '/playlists/import/$providerId',
+                    params: {
+                      providerId: `${item.source.provider}-playlists`,
+                    },
+                    search: { url: encodeURIComponent(item.source.url) },
+                  });
+                }
+              }}
+            />
+          ))}
+        </CardGrid>
+      ),
+    },
   ].filter(Boolean);
 
   return <Tabs items={tabsItems as TabsItem[]} className="flex-1" />;

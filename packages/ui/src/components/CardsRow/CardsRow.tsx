@@ -1,6 +1,6 @@
 import isEmpty from 'lodash-es/isEmpty';
 import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 import { cn } from '../../utils';
 import { Badge } from '../Badge';
@@ -15,6 +15,7 @@ export type CardsRowItem = {
   subtitle?: string;
   imageUrl?: string;
   onClick?: () => void;
+  action?: ReactNode;
 };
 
 export type CardsRowLabels = {
@@ -120,6 +121,7 @@ export const CardsRow: FC<CardsRowProps> = ({
               src={item.imageUrl}
               title={item.title}
               subtitle={item.subtitle}
+              action={item.action}
               onClick={item.onClick}
             />
           ))

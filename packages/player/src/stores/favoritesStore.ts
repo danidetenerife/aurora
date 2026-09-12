@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 
-import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
+import type {
+  AlbumRef,
+  ArtistRef,
+  PlaylistRef,
+  ProviderRef,
+  Track,
+} from '@aurora/model';
 import type { FavoriteEntry, FavoritesData } from '@aurora/plugin-sdk';
 
 import { createUniversalStore } from '../services/universalStore';
@@ -31,6 +37,9 @@ type FavoritesState = FavoritesData & {
   removeArtistByName: (name: string) => Promise<void>;
   clearArtists: () => Promise<void>;
   isArtistFavorite: (source: ProviderRef, name?: string) => boolean;
+  addPlaylist: (ref: PlaylistRef) => Promise<void>;
+  removePlaylist: (source: ProviderRef) => Promise<void>;
+  isPlaylistFavorite: (source: ProviderRef) => boolean;
 };
 
 const matchesSource = (a?: ProviderRef, b?: ProviderRef): boolean =>
@@ -71,11 +80,12 @@ const saveToDisk = async (): Promise<void> => {
   await store.set('favorites.tracks', state.tracks);
   await store.set('favorites.albums', state.albums);
   await store.set('favorites.artists', state.artists);
+  await store.set('favorites.playlists', state.playlists);
   await store.set('favorites.deletedKeys', state.deletedKeys);
   await store.save();
 };
 
-type FavoritesKey = 'tracks' | 'albums' | 'artists';
+type FavoritesKey = 'tracks' | 'albums' | 'artists' | 'playlists';
 
 const getList = <T extends RefWithSource>(key: FavoritesKey) =>
   useFavoritesStore.getState()[key] as unknown as FavoriteEntry<T>[];
@@ -120,6 +130,7 @@ export const useFavoritesStore = create<FavoritesState>(() => ({
   tracks: [],
   albums: [],
   artists: [],
+  playlists: [],
   deletedKeys: {},
   loaded: false,
 
@@ -130,6 +141,9 @@ export const useFavoritesStore = create<FavoritesState>(() => ({
       (await store.get<FavoriteEntry<AlbumRef>[]>('favorites.albums')) ?? [];
     const artists =
       (await store.get<FavoriteEntry<ArtistRef>[]>('favorites.artists')) ?? [];
+    const playlists =
+      (await store.get<FavoriteEntry<PlaylistRef>[]>('favorites.playlists')) ??
+      [];
     const deletedKeys =
       (await store.get<Record<string, number>>('favorites.deletedKeys')) ?? {};
 
@@ -137,6 +151,7 @@ export const useFavoritesStore = create<FavoritesState>(() => ({
       tracks,
       albums,
       artists,
+      playlists,
       deletedKeys,
       loaded: true,
     });
@@ -217,6 +232,9 @@ export const useFavoritesStore = create<FavoritesState>(() => ({
     const list = useFavoritesStore.getState().artists;
     return list.some((entry) => matchesArtist(entry, source, name));
   },
+  addPlaylist: createAddFavorite<PlaylistRef>('playlists'),
+  removePlaylist: createRemoveFavorite<PlaylistRef>('playlists'),
+  isPlaylistFavorite: createIsFavorite<PlaylistRef>('playlists'),
 }));
 
 export const initializeFavoritesStore = async (): Promise<void> => {

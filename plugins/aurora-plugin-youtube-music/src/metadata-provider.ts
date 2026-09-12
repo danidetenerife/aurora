@@ -11,6 +11,7 @@ import type {
 } from '@aurora/plugin-sdk';
 
 import { YtMusicClient } from './client';
+import { PUBLIC_PLAYLISTS } from './dashboard-provider';
 import {
   mapAlbumDetailsToAlbum,
   mapAlbumToAlbumRef,
@@ -59,7 +60,7 @@ export const createMetadataProvider = (
   kind: 'metadata',
   name: 'YouTube Music',
   streamingProviderId: STREAMING_PROVIDER_ID,
-  searchCapabilities: ['artists', 'albums', 'tracks', 'unified'],
+  searchCapabilities: ['artists', 'albums', 'tracks', 'playlists', 'unified'],
   artistMetadataCapabilities: [
     'artistBio',
     'artistTopTracks',
@@ -70,13 +71,19 @@ export const createMetadataProvider = (
 
   search: async (params: SearchParams): Promise<SearchResults> => {
     const limit = params.limit ?? DEFAULT_SEARCH_LIMIT;
-    const requestedTypes = params.types ?? ['tracks', 'albums', 'artists'];
+    const requestedTypes = params.types ?? [
+      'tracks',
+      'albums',
+      'artists',
+      'playlists',
+    ];
 
     const results: SearchResults = {};
 
     const shouldSearchTracks = requestedTypes.includes('tracks');
     const shouldSearchAlbums = requestedTypes.includes('albums');
     const shouldSearchArtists = requestedTypes.includes('artists');
+    const shouldSearchPlaylists = requestedTypes.includes('playlists');
 
     const tasks: Array<Promise<void>> = [];
 
@@ -108,6 +115,12 @@ export const createMetadataProvider = (
           );
         }),
       );
+    }
+
+    if (shouldSearchPlaylists) {
+      results.playlists = PUBLIC_PLAYLISTS.filter((playlist) =>
+        playlist.name.toLowerCase().includes(params.query.toLowerCase()),
+      ).slice(0, limit);
     }
 
     await Promise.all(tasks);

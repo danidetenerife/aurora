@@ -14,6 +14,7 @@ type CardProps = {
   className?: string;
   onClick?: () => void;
   imageReveal?: boolean;
+  action?: ReactNode;
 };
 
 export const Card: FC<CardProps> = ({
@@ -24,6 +25,7 @@ export const Card: FC<CardProps> = ({
   className,
   onClick,
   imageReveal = true,
+  action,
 }) => (
   <Button
     data-testid="card"
@@ -39,6 +41,7 @@ export const Card: FC<CardProps> = ({
       shadow="none"
       className="relative aspect-square w-full items-center justify-center overflow-hidden p-0"
     >
+      {action && <div className="absolute top-2 right-2 z-10">{action}</div>}
       {image ?? (
         <ImageReveal
           enabled={imageReveal}

@@ -16,6 +16,7 @@ import { isPlaylistUrl, MetadataClient } from './client';
 import {
   createDashboardProvider,
   DASHBOARD_PROVIDER_ID,
+  PUBLIC_PLAYLISTS,
 } from './dashboard-provider';
 import {
   mapAlbumResponseToRef,
@@ -41,7 +42,7 @@ const createProvider = (): MetadataProvider =>
     id: PROVIDER_ID,
     kind: 'metadata',
     name: decode('U3BvdGlmeQ=='),
-    searchCapabilities: ['artists', 'albums', 'tracks'],
+    searchCapabilities: ['artists', 'albums', 'tracks', 'playlists'],
     artistMetadataCapabilities: [
       'artistBio',
       'artistTopTracks',
@@ -70,6 +71,10 @@ const createProvider = (): MetadataProvider =>
       const data = await client!.searchTracks(params.query, params.limit ?? 15);
       return data.map(mapTrackToAuroraTrack);
     },
+    searchPlaylists: async ({ query, limit = 15 }) =>
+      PUBLIC_PLAYLISTS.filter((playlist) =>
+        playlist.name.toLowerCase().includes(query.toLowerCase()),
+      ).slice(0, limit),
     fetchArtistBio: async (artistUri: string): Promise<ArtistBio> => {
       const artist = await client!.getArtistOverview(artistUri);
       return mapArtistToArtistBio(artist);
