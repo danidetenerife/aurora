@@ -5,6 +5,7 @@ type TvSection =
   | 'search'
   | 'favorites'
   | 'playlists'
+  | 'podcasts'
   | 'queue'
   | 'settings';
 
