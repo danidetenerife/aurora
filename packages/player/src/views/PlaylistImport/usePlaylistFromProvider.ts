@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
-import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
 import type { Playlist, PlaylistItem } from '@aurora/model';
@@ -40,12 +39,6 @@ export const usePlaylistFromProvider = (
     enabled: Boolean(provider),
     retry: false,
   });
-
-  useEffect(() => {
-    if (query.isSuccess) {
-      toast.success(t('importSuccess'));
-    }
-  }, [query.isSuccess, t]);
 
   useEffect(() => {
     if (query.error) {

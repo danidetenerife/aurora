@@ -1,10 +1,12 @@
 import * as dialog from '@tauri-apps/plugin-dialog';
 import * as fs from '@tauri-apps/plugin-fs';
+import { screen } from '@testing-library/react';
 import { type Mock } from 'vitest';
 
 import type { Playlist } from '@aurora/model';
 
 import { usePlaylistStore } from '../../stores/playlistStore';
+import { DashboardProviderBuilder } from '../../test/builders/DashboardProviderBuilder';
 import { PlaylistBuilder } from '../../test/builders/PlaylistBuilder';
 import { resetInMemoryTauriStore } from '../../test/utils/inMemoryTauriStore';
 import { PlaylistsWrapper } from './Playlists.test-wrapper';
@@ -39,6 +41,7 @@ describe('Playlists view', () => {
       playlists: new Map(),
       loaded: true,
     });
+    PlaylistsWrapper.clearProviders();
   });
 
   it('shows empty state when no playlists', async () => {
@@ -405,6 +408,69 @@ describe('Playlists view', () => {
       });
       expect(PlaylistsWrapper.cards).toHaveLength(0);
       expect(PlaylistsWrapper.emptyState).toBeInTheDocument();
+    });
+  });
+
+  it('populates view with popular playlists when user has no personal playlists', async () => {
+    PlaylistsWrapper.registerDashboardProvider(
+      new DashboardProviderBuilder()
+        .withId('spotify-dashboard')
+        .withName('Spotify')
+        .withCapabilities('editorialPlaylists')
+        .withFetchEditorialPlaylists(async () => [
+          {
+            id: 'top-hits',
+            name: 'Today’s Top Hits',
+            source: {
+              provider: 'spotify',
+              id: 'top-hits',
+              url: 'https://open.spotify.com/playlist/top-hits',
+            },
+          },
+        ])
+        .build(),
+    );
+
+    await PlaylistsWrapper.mount();
+
+    await vi.waitFor(() => {
+      expect(PlaylistsWrapper.popularPlaylistsWidget).toBeInTheDocument();
+    });
+    expect(PlaylistsWrapper.emptyState).not.toBeInTheDocument();
+    expect(screen.getByText('Today’s Top Hits')).toBeInTheDocument();
+  });
+
+  it('displays user playlists first and popular playlists below when playlists exist', async () => {
+    PlaylistsWrapper.createPlaylists(
+      new PlaylistBuilder().withName('My Private Mix').withTrackCount(5),
+    );
+
+    PlaylistsWrapper.registerDashboardProvider(
+      new DashboardProviderBuilder()
+        .withId('youtube-dashboard')
+        .withName('YouTube Music')
+        .withCapabilities('editorialPlaylists')
+        .withFetchEditorialPlaylists(async () => [
+          {
+            id: 'yt-hits',
+            name: 'Top canciones',
+            source: {
+              provider: 'youtube-music',
+              id: 'yt-hits',
+              url: 'https://music.youtube.com/playlist?list=yt-hits',
+            },
+          },
+        ])
+        .build(),
+    );
+
+    await PlaylistsWrapper.mount();
+
+    expect(screen.getByText('My Playlists')).toBeInTheDocument();
+    expect(screen.getByText('My Private Mix')).toBeInTheDocument();
+    await vi.waitFor(() => {
+      expect(PlaylistsWrapper.popularPlaylistsWidget).toBeInTheDocument();
+      expect(screen.getByText('Top canciones')).toBeInTheDocument();
     });
   });
 });

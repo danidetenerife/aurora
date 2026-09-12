@@ -31,8 +31,8 @@ const comparePlaylists = (
 };
 
 export const usePlaylistSort = (playlists: PlaylistIndexEntry[]) => {
-  const [sortBy, setSortBy] = useState<PlaylistSortBy>('dateModified');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [sortBy, setSortBy] = useState<PlaylistSortBy>('dateAdded');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   const toggleSortDirection = () => {
     setSortDirection((current) => {

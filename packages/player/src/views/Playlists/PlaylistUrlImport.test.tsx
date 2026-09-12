@@ -104,10 +104,6 @@ describe('import from URL', () => {
     );
     expect(screen.getByText('Midnight Drive')).toBeInTheDocument();
     expect(screen.getByText('Coastal Breeze')).toBeInTheDocument();
-
-    await vi.waitFor(() => {
-      expect(toastSuccess).toHaveBeenCalledWith('Playlist imported');
-    });
   });
 
   it('plays all tracks when clicking the play button', async () => {
@@ -153,6 +149,10 @@ describe('import from URL', () => {
     expect(screen.queryByTestId('read-only-badge')).not.toBeInTheDocument();
     expect(screen.getByText('Midnight Drive')).toBeInTheDocument();
     expect(screen.getByText('Coastal Breeze')).toBeInTheDocument();
+
+    await vi.waitFor(() => {
+      expect(toastSuccess).toHaveBeenCalledWith('Playlist imported');
+    });
   });
 
   it('shows an error when no providers are registered', async () => {

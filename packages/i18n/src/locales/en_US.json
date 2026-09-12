@@ -118,6 +118,8 @@
   },
   "playlists": {
     "title": "Playlists",
+    "myPlaylists": "My Playlists",
+    "popularPlaylists": "Popular Playlists",
     "empty": "No playlists yet",
     "emptyDescription": "Create a playlist or import one to get started",
     "emptyTracks": "No tracks in this playlist",

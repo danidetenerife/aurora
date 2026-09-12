@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-09-12T15:35",
+    "description": "Renovación gráfica integral de Android Auto: interfaz visual con ContentStyle en cuadrícula, carátulas en alta resolución en todas las canciones, listas y podcasts, tarjetas visuales de búsqueda para conducción y reproducción inmediata de playlists y búsquedas.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android Auto", "color": "green" }, { "label": "Búsqueda", "color": "blue" }, { "label": "Interfaz", "color": "purple" }]
+  },
+  {
+    "date": "2026-09-12T15:20",
+    "description": "Corrige el aviso repetitivo de lista importada al navegar o consultar listas remotas, y llena la vista con listas populares de Spotify y YouTube Music cuando no hay listas personales creadas.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Playlists", "color": "purple" }, { "label": "Android", "color": "green" }]
+  },
+  {
     "date": "2026-09-12T15:10",
     "description": "Añade podcasts al buscador, elimina el encabezado grande de búsqueda, prioriza las listas propias y muestra listas públicas populares de YouTube Music sin barras de desplazamiento visibles.",
     "type": "improvement",

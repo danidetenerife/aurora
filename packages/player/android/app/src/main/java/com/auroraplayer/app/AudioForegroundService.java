@@ -217,6 +217,25 @@ public class AudioForegroundService extends Service {
                     pluginInstance.notifyMediaAction("seekto", pos);
                 }
             }
+
+            @Override
+            public void onPlayFromMediaId(String mediaId, Bundle extras) {
+                NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
+                if (pluginInstance != null && mediaId != null) {
+                    String action = mediaId.startsWith("playid:") || mediaId.startsWith("podcast:") || mediaId.startsWith("playlist:") || mediaId.startsWith("search_play:") ? mediaId : "playid:" + mediaId;
+                    pluginInstance.notifyMediaAction(action, -1);
+                }
+                resumeStream();
+                setOptimisticPlaybackState(true);
+            }
+
+            @Override
+            public void onPlayFromSearch(String query, Bundle extras) {
+                NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
+                if (pluginInstance != null) {
+                    pluginInstance.notifyMediaAction("search:" + (query == null ? "" : query), -1);
+                }
+            }
         });
 
         mediaSession.setActive(true);
@@ -338,6 +357,11 @@ public class AudioForegroundService extends Service {
             metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentDurationMs);
         }
 
+        if (artworkUrl != null && !artworkUrl.isEmpty()) {
+            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artworkUrl);
+            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artworkUrl);
+        }
+
         if (currentArtworkBitmap != null) {
             metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, currentArtworkBitmap);
             metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, currentArtworkBitmap);
@@ -366,6 +390,8 @@ public class AudioForegroundService extends Service {
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, finalArtist)
                         .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, finalAlbum)
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, finalAlbum)
+                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artworkUrl)
+                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artworkUrl)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);

@@ -1,8 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import { render, RenderResult, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import type { PlaylistProvider } from '@aurora/plugin-sdk';
+import type { DashboardProvider, PlaylistProvider } from '@aurora/plugin-sdk';
 import { createSelectWrapper, DialogWrapper } from '@aurora/ui';
 
 import App from '../../App';
@@ -26,7 +27,12 @@ export const PlaylistsWrapper = {
   async mount(): Promise<RenderResult> {
     const history = createMemoryHistory({ initialEntries: ['/playlists'] });
     const router = createRouter({ routeTree, history });
-    const component = render(<App routerProp={router} />);
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const component = render(
+      <App routerProp={router} queryClientProp={queryClient} />,
+    );
     await screen.findByTestId('playlists-view');
     return component;
   },
@@ -88,6 +94,9 @@ export const PlaylistsWrapper = {
   },
   get importView() {
     return screen.queryByTestId('playlist-import-view');
+  },
+  get popularPlaylistsWidget() {
+    return screen.queryByTestId('dashboard-editorial-playlists');
   },
 
   createButton: {
@@ -156,6 +165,10 @@ export const PlaylistsWrapper = {
   },
 
   registerPlaylistProvider(provider: PlaylistProvider) {
+    providersHost.register(provider);
+  },
+
+  registerDashboardProvider(provider: DashboardProvider) {
     providersHost.register(provider);
   },
 

@@ -12,7 +12,13 @@ import { useFavoritesStore } from '../../../stores/favoritesStore';
 import { useDashboardEditorialPlaylists } from '../hooks/useDashboardData';
 import { DashboardCardsWidget } from './DashboardCardsWidget';
 
-export const EditorialPlaylistsWidget: FC = () => {
+type EditorialPlaylistsWidgetProps = {
+  title?: string;
+};
+
+export const EditorialPlaylistsWidget: FC<EditorialPlaylistsWidgetProps> = ({
+  title,
+}) => {
   const { t } = useTranslation('dashboard');
   const { data: results, isLoading } = useDashboardEditorialPlaylists();
   const navigateToPlaylist = useNavigateToPlaylist();
@@ -66,7 +72,13 @@ export const EditorialPlaylistsWidget: FC = () => {
         data-testid="dashboard-editorial-playlists"
         results={results}
         isLoading={isLoading}
-        title={t('editorial-playlists', 'Últimas y populares de YouTube Music')}
+        title={
+          title ??
+          t(
+            'editorial-playlists',
+            'Listas populares de Spotify y YouTube Music',
+          )
+        }
         labels={{
           filterPlaceholder: t('filter-playlists'),
           nothingFound: t('nothing-found'),
