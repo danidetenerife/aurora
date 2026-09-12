@@ -25,19 +25,25 @@ import {
 import { SearchEmptyState } from './SearchEmptyState';
 
 const SearchContent: FC<{
+  query: string;
   provider: MetadataProvider | undefined;
   isLoading: boolean;
   isError: boolean;
   results: SearchResults | undefined;
   refetch: () => void;
   podcasts: PodcastSearchResult[];
-}> = ({ provider, isLoading, isError, results, refetch, podcasts }) => {
+}> = ({ query, provider, isLoading, isError, results, refetch, podcasts }) => {
   const { t } = useTranslation(['search', 'common']);
   const navigate = useNavigate();
   const providerId = provider?.id ?? '';
 
   if (!provider && podcasts.length === 0) {
-    return <SearchEmptyState />;
+    return (
+      <>
+        <span className="sr-only">Query: &quot;{query}&quot;</span>
+        <SearchEmptyState />
+      </>
+    );
   }
 
   if (isLoading) {
@@ -176,7 +182,12 @@ const SearchContent: FC<{
     },
   ].filter(Boolean);
 
-  return <Tabs items={tabsItems as TabsItem[]} className="flex-1" />;
+  return (
+    <>
+      <span className="sr-only">Query: &quot;{query}&quot;</span>
+      <Tabs items={tabsItems as TabsItem[]} className="flex-1" />
+    </>
+  );
 };
 
 export const Search: FC = () => {
@@ -212,6 +223,7 @@ export const Search: FC = () => {
       classes={{ root: 'aurora-compact-view-shell' }}
     >
       <SearchContent
+        query={q}
         provider={provider}
         isLoading={isLoading}
         isError={isError}

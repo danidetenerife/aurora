@@ -89,6 +89,8 @@ export function TrackTable<T extends Track = Track>({
       ContextMenuWrapper: meta?.ContextMenuWrapper,
       onArtistClick: actions?.onArtistClick,
       onAlbumClick: actions?.onAlbumClick,
+      noTruncate: meta?.noTruncate,
+      hideSubtitleArtist: meta?.hideSubtitleArtist,
     },
   });
 

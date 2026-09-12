@@ -52,14 +52,15 @@ export function useColumns<T extends Track = Track>(
             enableSorting: false,
           },
         ),
-      columnHelper.accessor((track) => track.artists?.[0]?.name ?? '', {
-        id: 'artist',
-        enableSorting: true,
-        header: (context) => (
-          <TextHeader context={context}>{labels.headers.artist}</TextHeader>
-        ),
-        cell: TextCell,
-      }),
+      (display?.displayArtist ?? true) &&
+        columnHelper.accessor((track) => track.artists?.[0]?.name ?? '', {
+          id: 'artist',
+          enableSorting: true,
+          header: (context) => (
+            <TextHeader context={context}>{labels.headers.artist}</TextHeader>
+          ),
+          cell: TextCell,
+        }),
       columnHelper.accessor((track) => track.title, {
         id: 'title',
         enableSorting: true,

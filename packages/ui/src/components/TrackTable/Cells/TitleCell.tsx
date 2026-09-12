@@ -12,6 +12,8 @@ type TitleCellMeta = {
   displayQueueControls?: boolean;
   onAddToQueue?: (track: Track) => void;
   ContextMenuWrapper?: FC<ContextMenuWrapperProps>;
+  noTruncate?: boolean;
+  hideSubtitleArtist?: boolean;
 };
 
 type AddToQueueButtonProps = {
@@ -67,6 +69,8 @@ export const TitleCell = <T extends Track>({
   const { actions, labels } = useTrackTableContext<T>();
   const showControls = meta?.displayQueueControls;
   const ContextMenuWrapper = meta?.ContextMenuWrapper;
+  const noTruncate = Boolean(meta?.noTruncate);
+  const hideSubtitleArtist = Boolean(meta?.hideSubtitleArtist);
   const track = row.original;
   const hasAddToQueue = Boolean(meta?.onAddToQueue);
   const hasContextMenu = Boolean(ContextMenuWrapper);
@@ -83,17 +87,33 @@ export const TitleCell = <T extends Track>({
     <td className="min-w-0 px-2 py-1.5">
       <div className="flex min-w-0 items-center justify-between gap-2">
         <button
-          className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
+          className={
+            noTruncate
+              ? 'flex min-w-0 flex-1 cursor-pointer flex-col justify-center text-left hover:underline'
+              : 'flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline'
+          }
           onClick={(e) => {
             e.stopPropagation();
             actions.onPlayNow?.(track);
           }}
         >
-          <span className="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words">
+          <span
+            className={
+              noTruncate
+                ? 'text-foreground text-sm leading-snug font-semibold break-words whitespace-normal'
+                : 'text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words'
+            }
+          >
             {getValue()}
           </span>
-          {artistName ? (
-            <span className="text-foreground-secondary line-clamp-1 text-xs break-words">
+          {artistName && !hideSubtitleArtist ? (
+            <span
+              className={
+                noTruncate
+                  ? 'text-foreground-secondary text-xs break-words whitespace-normal'
+                  : 'text-foreground-secondary line-clamp-1 text-xs break-words'
+              }
+            >
               {artistName}
             </span>
           ) : null}

@@ -263,7 +263,9 @@ export const Podcasts: FC = () => {
                 className="border-border flex min-w-0 items-center gap-3 border-b py-3 text-left"
               >
                 <Play size={20} className="text-primary shrink-0" />
-                <span className="min-w-0 text-sm">{episode.title}</span>
+                <span className="min-w-0 flex-1 text-sm break-words whitespace-normal">
+                  {episode.title}
+                </span>
               </button>
             ))}
           </>

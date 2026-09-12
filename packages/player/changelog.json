@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T18:30",
+    "description": "Eliminación total del truncamiento de texto en la tabla de episodios y vistas de podcasts: los títulos completos se muestran en múltiples líneas sin puntos suspensivos ni recortes, se oculta la columna redundante de artista dando el ancho completo al título, y se asegura la reproducción del audio exacto del episodio.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Interfaz", "color": "purple" }, { "label": "Accesibilidad", "color": "green" }]
+  },
+  {
     "date": "2026-09-12T18:10",
     "description": "Corrige la reproducción de episodios de podcasts para que reproduzcan el audio exacto del episodio en lugar de buscar canciones aleatorias, elimina todo truncamiento de textos y descripciones en la sección de podcasts, y optimiza el diseño en dispositivos móviles para mostrar los episodios inmediatamente.",
     "type": "fix",

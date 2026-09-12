@@ -16,6 +16,7 @@ type ConnectedTrackTableProps = Omit<
 > & {
   actions?: Pick<TrackTableActions<Track>, 'onRemove' | 'onReorder'>;
   playbackTracks?: Track[];
+  meta?: TrackTableProps<Track>['meta'];
 };
 
 export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
@@ -82,6 +83,7 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
       meta={{
         isTrackFavorite: trackActions.isFavorite,
         ContextMenuWrapper: ConnectedTrackContextMenu,
+        ...restProps.meta,
       }}
     />
   );

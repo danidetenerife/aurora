@@ -70,6 +70,8 @@ export type TrackTableProps<T extends Track = Track> = {
   meta?: {
     isTrackFavorite?: (track: T) => boolean;
     ContextMenuWrapper?: FC<ContextMenuWrapperProps<T>>;
+    noTruncate?: boolean;
+    hideSubtitleArtist?: boolean;
   };
   rowHeight?: number;
   overscan?: number;

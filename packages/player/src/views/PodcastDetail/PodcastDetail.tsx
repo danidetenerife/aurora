@@ -74,13 +74,17 @@ export const PodcastDetail: FC = () => {
         ) : (
           <ConnectedTrackTable
             tracks={podcast.episodes}
-            rowHeight={64}
+            rowHeight={84}
             features={{ playAll: true, addAllToQueue: true }}
             display={{
               displayThumbnail: true,
               displayDuration: true,
               displayArtist: false,
               displayQueueControls: true,
+            }}
+            meta={{
+              noTruncate: true,
+              hideSubtitleArtist: true,
             }}
           />
         )}
