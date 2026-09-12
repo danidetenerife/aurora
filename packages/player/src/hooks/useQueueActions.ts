@@ -8,6 +8,7 @@ import { useQueueStore } from '../stores/queueStore';
 export const useQueueActions = () => {
   const {
     addToQueue,
+    playTracks,
     addNext,
     addAt,
     removeByIds,
@@ -24,14 +25,14 @@ export const useQueueActions = () => {
 
   const playNow = useCallback(
     (track: Track) => {
-      clearQueue();
-      addToQueue([track]);
+      playTracks([track], 0);
     },
-    [clearQueue, addToQueue],
+    [playTracks],
   );
 
   return {
     addToQueue,
+    playTracks,
     addNext,
     addAt,
     removeByIds,

@@ -96,6 +96,7 @@ describe('Active provider selection', () => {
     await SourcesWrapper.section('streaming').providerSelect.select('Stream B');
 
     await SearchWrapper.search('Giant Steps');
+    await SearchWrapper.selectTab(/albums/i);
     const albumCard = await screen.findByText('Giant Steps');
     await albumCard.click();
     await screen.findByTestId('album-view');

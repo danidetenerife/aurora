@@ -48,6 +48,6 @@ export const PopoverItem: FC<PopoverItemProps> = ({
     {...props}
   >
     <span className="w-4 shrink-0">{icon}</span>
-    <span>{children}</span>
+    <span className="min-w-0 flex-1 truncate">{children}</span>
   </button>
 );

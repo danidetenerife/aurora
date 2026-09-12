@@ -36,7 +36,7 @@ export const TextCell = <T extends Track>(
       className={cn(
         isNoTruncate ? 'px-2' : 'truncate px-2',
         isArtist && 'hidden sm:table-cell',
-        isNoTruncate && isDuration && 'whitespace-nowrap text-right',
+        isDuration && 'w-20 text-right whitespace-nowrap',
         clickHandler ? 'cursor-pointer' : 'cursor-default',
       )}
     >

@@ -10,7 +10,13 @@
   width: 100%;
   min-width: 0;
 }
-.mobile-player-panel [data-testid='now-playing-title'],
+.mobile-player-panel [data-testid='now-playing-title'] {
+  overflow: visible !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  word-break: break-word !important;
+  line-height: 1.25 !important;
+}
 .mobile-player-panel [data-testid='player-now-playing-artist'] {
   overflow: hidden !important;
   white-space: nowrap !important;

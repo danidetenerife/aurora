@@ -77,6 +77,7 @@ export type Track = {
   source: ProviderRef;
   localFile?: LocalFileInfo;
   streamCandidates?: StreamCandidate[];
+  isPodcast?: boolean;
 };
 
 export type Album = {

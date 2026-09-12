@@ -40,18 +40,17 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
         onPlayNow: (track) => {
           if (queueTracks.length > 0) {
             const trackIndex = queueTracks.findIndex(
-              (t) =>
-                (t.source?.id && t.source?.id === track.source?.id) ||
-                (t.title === track.title &&
-                  t.artists?.[0]?.name === track.artists?.[0]?.name),
+              (item) =>
+                (item.source?.id && item.source?.id === track.source?.id) ||
+                (item.title === track.title &&
+                  item.artists?.[0]?.name === track.artists?.[0]?.name),
             );
-            queueActions.clearQueue();
-            queueActions.addToQueue(queueTracks);
-            if (trackIndex > 0) {
-              queueActions.goToIndex(trackIndex);
-            }
+            queueActions.playTracks(
+              queueTracks,
+              trackIndex >= 0 ? trackIndex : 0,
+            );
           } else {
-            trackActions.playNow(track);
+            queueActions.playTracks([track], 0);
           }
         },
         onPlayNext: trackActions.addNext,
@@ -59,8 +58,7 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
         onRemove: externalActions?.onRemove,
         onReorder: externalActions?.onReorder,
         onPlayAll: () => {
-          queueActions.clearQueue();
-          queueActions.addToQueue(queueTracks);
+          queueActions.playTracks(queueTracks, 0);
         },
         onAddAllToQueue: () => {
           queueActions.addToQueue(queueTracks);

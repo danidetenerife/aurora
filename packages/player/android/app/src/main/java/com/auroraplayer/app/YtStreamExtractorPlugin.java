@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -69,6 +70,9 @@ public class YtStreamExtractorPlugin extends Plugin {
 
         Runnable cleanupRunnable = () -> cleanup(hidden);
 
+        java.util.Map<String, String> headers = new java.util.HashMap<>();
+        headers.put("Accept-Language", "es-ES,es;q=0.9");
+
         Runnable stage2TimeoutRunnable = () -> {
             if (settled.compareAndSet(false, true)) {
                 cleanupRunnable.run();
@@ -82,8 +86,8 @@ public class YtStreamExtractorPlugin extends Plugin {
                 Log.i(TAG, "Stage 1 (embed) timed out for " + videoId + ", trying Stage 2 (m.youtube.com)");
                 try {
                     hidden.stopLoading();
-                    String watchUrl = "https://m.youtube.com/watch?v=" + videoId;
-                    hidden.loadUrl(watchUrl);
+                    String watchUrl = "https://m.youtube.com/watch?v=" + videoId + "&hl=es&gl=ES";
+                    hidden.loadUrl(watchUrl, headers);
                     mainHandler.postDelayed(stage2TimeoutRunnable, STAGE2_TIMEOUT_MS);
                 } catch (Throwable t) {
                     if (settled.compareAndSet(false, true)) {
@@ -104,23 +108,56 @@ public class YtStreamExtractorPlugin extends Plugin {
         settings.setUserAgentString(MOBILE_UA);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
+        hidden.setWebChromeClient(new WebChromeClient());
+
         hidden.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                try {
+                    view.evaluateJavascript(
+                        "(function() {" +
+                        "  var v = document.querySelector('video');" +
+                        "  if (v) { v.muted = true; v.play().catch(function(){}); }" +
+                        "  var b = document.querySelector('.ytp-large-play-button') || document.querySelector('button[aria-label=\"Play\"]');" +
+                        "  if (b) { b.click(); }" +
+                        "})();",
+                        null
+                    );
+                } catch (Throwable ignored) {}
+            }
+
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 try {
                     String url = request.getUrl().toString();
                     String lowerUrl = url.toLowerCase();
 
-                    boolean isGoogleVideo = lowerUrl.contains("googlevideo.com") && lowerUrl.contains("videoplayback");
-                    boolean isAudio = lowerUrl.contains("mime=audio") ||
-                                      lowerUrl.contains("mime%3daudio") ||
-                                      lowerUrl.contains("audio%2f") ||
-                                      lowerUrl.contains("audio/");
-                    boolean isVideoOnly = lowerUrl.contains("mime=video") || lowerUrl.contains("mime%3dvideo");
+                    boolean isGoogleVideo = lowerUrl.contains("googlevideo.com");
+                    boolean isHls = isGoogleVideo && (lowerUrl.contains("hls_playlist") || lowerUrl.contains("/playlist/index.m3u8"));
+                    boolean isVideoItag = lowerUrl.contains("itag/133") || lowerUrl.contains("itag/134") ||
+                                          lowerUrl.contains("itag/135") || lowerUrl.contains("itag/136") ||
+                                          lowerUrl.contains("itag/137") || lowerUrl.contains("itag/242") ||
+                                          lowerUrl.contains("itag/243") || lowerUrl.contains("itag/244") ||
+                                          lowerUrl.contains("itag/247") || lowerUrl.contains("itag/248") ||
+                                          lowerUrl.contains("itag/278") || lowerUrl.contains("itag/18") ||
+                                          lowerUrl.contains("itag/22");
+                    boolean isHlsAudio = isHls && !isVideoItag && !lowerUrl.contains("file/seg.ts");
 
-                    if (!settled.get() && isGoogleVideo && isAudio && !isVideoOnly) {
+                    boolean isDashAudio = isGoogleVideo && lowerUrl.contains("videoplayback") &&
+                                          (lowerUrl.contains("mime=audio") || lowerUrl.contains("mime%3daudio") ||
+                                           lowerUrl.contains("audio%2f") || lowerUrl.contains("audio/")) &&
+                                          !lowerUrl.contains("mime=video") && !lowerUrl.contains("mime%3dvideo");
+
+                    boolean isDubbed = (lowerUrl.contains("dubbed-auto") || lowerUrl.contains("dubbed")) &&
+                                       !lowerUrl.contains("lang=es") &&
+                                       !lowerUrl.contains("acont=original");
+
+                    boolean isValidAudio = (isHlsAudio || isDashAudio) && !isDubbed;
+
+                    if (!settled.get() && isValidAudio) {
                         if (settled.compareAndSet(false, true)) {
-                            Log.i(TAG, "Successfully intercepted audio stream URL for " + videoId);
+                            Log.i(TAG, "Successfully intercepted audio stream URL for " + videoId + ": " + url);
                             mainHandler.removeCallbacks(stage1TimeoutRunnable);
                             mainHandler.removeCallbacks(stage2TimeoutRunnable);
 
@@ -140,16 +177,16 @@ public class YtStreamExtractorPlugin extends Plugin {
             }
         });
 
-        // Attach off-screen (1x1) so the media pipeline actually runs
         ViewGroup root = getActivity().findViewById(android.R.id.content);
         if (root != null) {
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(1, 1);
+            hidden.setAlpha(0.01f);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(300, 200);
             root.addView(hidden, params);
         }
 
         String embedUrl = "https://www.youtube.com/embed/" + videoId
-            + "?autoplay=1&mute=0&controls=0&playsinline=1";
-        hidden.loadUrl(embedUrl);
+            + "?autoplay=1&mute=1&controls=0&playsinline=1&hl=es&gl=ES&enablejsapi=1";
+        hidden.loadUrl(embedUrl, headers);
     }
 
     private void cleanup(WebView webView) {

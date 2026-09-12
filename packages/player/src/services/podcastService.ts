@@ -136,6 +136,13 @@ type YtmBrowseResponse = {
                       };
                     };
                   };
+                  playbackProgress?: {
+                    musicPlaybackProgressRenderer?: {
+                      durationText?: {
+                        runs?: Array<{ text?: string }>;
+                      };
+                    };
+                  };
                 };
               }>;
             };
@@ -154,6 +161,102 @@ const DEFAULT_LOCALE = 'es';
 const DEFAULT_COUNTRY = 'ES';
 const SEARCH_RESULT_LIMIT = 25;
 const EPISODE_LIMIT = 200;
+
+const CURATED_YTM_PODCASTS: PodcastSearchResult[] = [
+  {
+    id: 'MPSPPLzuFY9Ixj9Z4G5-eRHblrmwMOY7tLUCHi',
+    name: 'The Wild Project',
+    publisher: 'Jordi Wild',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPLlDZ74Qz5KgziPV5gTjd5QDsey1znyS_d',
+    name: 'Terrores Criminales',
+    publisher: 'Terrores Nocturnos Podcast',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPLVYKDE9WjKYQ',
+    name: 'Nadie Sabe Nada',
+    publisher: 'SER Podcast',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPL01FNQnUl7YKuI7iD1lwxKz8Ho3J8L8Of',
+    name: 'ROCA PROJECT',
+    publisher: 'Carlos Roca',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPLIijRqUddPmhs7b8p_0VxYA3Dvh4629EJ',
+    name: 'Extra Anormal Podcast',
+    publisher: 'Podcast Extra Anormal',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPL0rT9kkqIgDewaqNB7hwUJ1_TxGr4jiCt',
+    name: 'Gusgri Podcast',
+    publisher: 'Doble G',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPLHlflR-J9dJdapDdWtWq0u--YEUc5PYki',
+    name: 'Tom Segura En Español Podcast',
+    publisher: 'Tom Segura',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPLP7xxvt-QP_wmLIqw00IIROfaMIzSBNlk',
+    name: 'Conversaciones en español',
+    publisher: 'Joel Zárate',
+    source: 'youtube-music',
+  },
+  {
+    id: 'MPSPPLhLv3Z_8fvFh5lPIb-Xo-gTYjKQm0GDuv',
+    name: 'Salida de Emergencia',
+    publisher: 'Salida de Emergencia',
+    source: 'youtube-music',
+  },
+];
+
+const parseDurationToMillis = (text?: string): number | undefined => {
+  if (!text) {
+    return undefined;
+  }
+  const clean = text.replace(/^[•\s]+/, '').trim();
+
+  if (/^\d+:\d+(:\d+)?$/.test(clean)) {
+    const parts = clean.split(':').map(Number);
+    if (parts.length === 3) {
+      return (parts[0] * 3600 + parts[1] * 60 + parts[2]) * 1000;
+    }
+    if (parts.length === 2) {
+      return (parts[0] * 60 + parts[1]) * 1000;
+    }
+  }
+
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+
+  const hMatch = clean.match(/(\d+)\s*(?:h|hr|hrs|horas?)/i);
+  if (hMatch) {
+    hours = parseInt(hMatch[1], 10);
+  }
+
+  const mMatch = clean.match(/(\d+)\s*(?:min|mins|minutos?|m\b)/i);
+  if (mMatch) {
+    minutes = parseInt(mMatch[1], 10);
+  }
+
+  const sMatch = clean.match(/(\d+)\s*(?:s|seg|secs?|segundos?)/i);
+  if (sMatch) {
+    seconds = parseInt(sMatch[1], 10);
+  }
+
+  const totalSecs = hours * 3600 + minutes * 60 + seconds;
+  return totalSecs > 0 ? totalSecs * 1000 : undefined;
+};
 
 class PodcastService {
   private async searchYtmPodcasts(
@@ -267,30 +370,44 @@ class PodcastService {
     }
   }
 
+  async getFeaturedPodcasts(): Promise<PodcastSearchResult[]> {
+    try {
+      const [popularYtm, spanishYtm] = await Promise.all([
+        this.searchYtmPodcasts('podcasts populares'),
+        this.searchYtmPodcasts('podcasts en español'),
+      ]);
+
+      const seenIds = new Set<string>();
+      const combined: PodcastSearchResult[] = [];
+
+      for (const item of [...popularYtm, ...spanishYtm, ...CURATED_YTM_PODCASTS]) {
+        if (!seenIds.has(item.id)) {
+          seenIds.add(item.id);
+          combined.push(item);
+        }
+      }
+
+      if (combined.length > 0) {
+        return combined;
+      }
+    } catch {
+      // fallback
+    }
+
+    return CURATED_YTM_PODCASTS;
+  }
+
   async searchPodcasts(query: string): Promise<PodcastSearchResult[]> {
     if (!query.trim()) {
       return [];
     }
 
-    const [ytmResults, itunesResults] = await Promise.all([
-      this.searchYtmPodcasts(query),
-      this.searchItunesPodcasts(query),
-    ]);
-
-    const combined = [...ytmResults];
-    const seenNames = new Set(
-      ytmResults.map((item) => item.name.toLowerCase().trim()),
-    );
-
-    for (const itunesItem of itunesResults) {
-      const normalizedName = itunesItem.name.toLowerCase().trim();
-      if (!seenNames.has(normalizedName)) {
-        combined.push(itunesItem);
-        seenNames.add(normalizedName);
-      }
+    const ytmResults = await this.searchYtmPodcasts(query);
+    if (ytmResults.length > 0) {
+      return ytmResults;
     }
 
-    return combined;
+    return this.searchItunesPodcasts(query);
   }
 
   private async getItunesPodcastDetails(
@@ -352,6 +469,7 @@ class PodcastService {
             url: entry.episodeUrl!,
           },
           durationMs: entry.trackTimeMillis,
+          isPodcast: true,
           artwork: {
             items:
               entry.artworkUrl600 || showArtwork
@@ -426,7 +544,7 @@ class PodcastService {
           .join('');
       const headerThumbnails =
         headerSection?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
-      const showArtwork = headerThumbnails?.[headerThumbnails.length - 1]?.url;
+      const initialArtwork = headerThumbnails?.[headerThumbnails.length - 1]?.url;
 
       const secondarySection =
         data.contents?.twoColumnBrowseResultsRenderer?.secondaryContents;
@@ -434,6 +552,9 @@ class PodcastService {
         secondarySection?.sectionListRenderer?.contents?.[0]
           ?.musicShelfRenderer;
       const rawEpisodeList = episodeShelf?.contents ?? [];
+      const firstEpThumb =
+        rawEpisodeList[0]?.musicMultiRowListItemRenderer?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.slice(-1)[0]?.url;
+      const showArtwork = initialArtwork || firstEpThumb;
 
       const episodes: Track[] = [];
 
@@ -445,6 +566,23 @@ class PodcastService {
           row?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
         const episodeThumb =
           thumbnails?.[thumbnails.length - 1]?.url ?? showArtwork;
+
+
+        const durText =
+          row?.playbackProgress?.musicPlaybackProgressRenderer?.durationText
+            ?.runs
+            ?.map((run) => run.text)
+            .filter(Boolean)
+            .join('') ||
+          row?.subtitle?.runs
+            ?.map((run) => run.text)
+            .filter((text): text is string => Boolean(text))
+            .find((text) =>
+              /\b(?:\d+\s*(?:h|hr|hrs|horas?|min|mins|minutos?|seg|s)\b|\d+:\d+)/i.test(
+                text,
+              ),
+            );
+        const durationMs = parseDurationToMillis(durText);
 
         if (videoId && episodeTitle) {
           episodes.push({
@@ -465,6 +603,8 @@ class PodcastService {
               id: videoId,
               url: `https://www.youtube.com/watch?v=${videoId}`,
             },
+            durationMs,
+            isPodcast: true,
             artwork: {
               items: episodeThumb
                 ? [{ url: episodeThumb, purpose: 'thumbnail' }]

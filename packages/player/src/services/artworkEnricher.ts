@@ -16,6 +16,19 @@ const artworkCache = new Map<string, ArtworkSet>();
 export const resolveArtworkForTrack = async (
   track: Track,
 ): Promise<ArtworkSet | null> => {
+  const isPodcast =
+    track.source.provider === 'podcast-audio' ||
+    track.source.provider === 'youtube-music' ||
+    track.album?.source.provider === 'youtube-music' ||
+    track.album?.source.provider === 'itunes-podcast';
+
+  if (isPodcast) {
+    if (track.artwork && track.artwork.items?.length > 0) {
+      return track.artwork;
+    }
+    return null;
+  }
+
   const currentFirstUrl = track.artwork?.items?.[0]?.url;
   const hasValidArtwork =
     track.artwork &&

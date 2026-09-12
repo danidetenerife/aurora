@@ -1,287 +1,190 @@
-import { ArrowLeft, Heart, Mic2, Play } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
+import { Heart, Mic2 } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
-import { z } from 'zod';
 
-import { i18n, useTranslation } from '@aurora/i18n';
-import type { PodcastRef, Track } from '@aurora/model';
+import { useTranslation } from '@aurora/i18n';
+import type { PodcastRef } from '@aurora/model';
 import { ViewShell } from '@aurora/ui';
 
-import { httpHost } from '../../services/httpHost';
-import { playbackManager } from '../../services/playback';
+import { podcastService } from '../../services/podcastService';
 import { usePodcastStore } from '../../stores/podcastStore';
-import { useQueueStore } from '../../stores/queueStore';
 
 export const PODCASTS: PodcastRef[] = [
+  {
+    id: 'MPSPPLzuFY9Ixj9Z4G5-eRHblrmwMOY7tLUCHi',
+    name: 'The Wild Project',
+    publisher: 'Jordi Wild',
+    sourceUrl:
+      'https://music.youtube.com/browse/MPSPPLzuFY9Ixj9Z4G5-eRHblrmwMOY7tLUCHi',
+  },
+  {
+    id: 'MPSPPLlDZ74Qz5KgziPV5gTjd5QDsey1znyS_d',
+    name: 'Terrores Criminales',
+    publisher: 'Terrores Nocturnos Podcast',
+    sourceUrl:
+      'https://music.youtube.com/browse/MPSPPLlDZ74Qz5KgziPV5gTjd5QDsey1znyS_d',
+  },
+  {
+    id: 'MPSPPLVYKDE9WjKYQ',
+    name: 'Nadie Sabe Nada',
+    publisher: 'SER Podcast',
+    sourceUrl: 'https://music.youtube.com/browse/MPSPPLVYKDE9WjKYQ',
+  },
+  {
+    id: 'MPSPPL01FNQnUl7YKuI7iD1lwxKz8Ho3J8L8Of',
+    name: 'ROCA PROJECT',
+    publisher: 'Carlos Roca',
+    sourceUrl:
+      'https://music.youtube.com/browse/MPSPPL01FNQnUl7YKuI7iD1lwxKz8Ho3J8L8Of',
+  },
+  {
+    id: 'MPSPPLIijRqUddPmhs7b8p_0VxYA3Dvh4629EJ',
+    name: 'Extra Anormal Podcast',
+    publisher: 'Podcast Extra Anormal',
+    sourceUrl:
+      'https://music.youtube.com/browse/MPSPPLIijRqUddPmhs7b8p_0VxYA3Dvh4629EJ',
+  },
+  {
+    id: 'MPSPPL0rT9kkqIgDewaqNB7hwUJ1_TxGr4jiCt',
+    name: 'Gusgri Podcast',
+    publisher: 'Doble G',
+    sourceUrl:
+      'https://music.youtube.com/browse/MPSPPL0rT9kkqIgDewaqNB7hwUJ1_TxGr4jiCt',
+  },
   {
     id: 'todopoderosos',
     name: 'Todopoderosos',
     publisher: 'Espacio Fundación Telefónica',
-    sourceUrl: 'https://www.ivoox.com/podcast-todopoderosos_sq_f11325_1.html',
-  },
-  {
-    id: 'nude-project',
-    name: 'The Nude Project',
-    publisher: 'Nude Project',
-    sourceUrl: 'https://open.spotify.com/show/3k3d3j3j3j3j3j3j3j3j3j',
-  },
-  {
-    id: 'historia-national',
-    name: 'Historia National Geographic',
-    publisher: 'National Geographic',
-    sourceUrl:
-      'https://www.ivoox.com/podcast-historia-national-geographic_sq_f11231_1.html',
-  },
-  {
-    id: 'daily',
-    name: 'The Daily',
-    publisher: 'The New York Times',
-    sourceUrl: 'https://podcasts.apple.com/us/podcast/the-daily/id1200361736',
-  },
-  {
-    id: 'serial',
-    name: 'Serial',
-    publisher: 'Serial Productions',
-    sourceUrl: 'https://serialpodcast.org/',
+    sourceUrl: 'https://music.youtube.com/search?q=todopoderosos',
   },
 ];
 
-const directorySchema = z.object({
-  results: z.array(
-    z.object({
-      collectionId: z.number().optional(),
-      collectionName: z.string().optional(),
-      artworkUrl600: z.string().optional(),
-      kind: z.string().optional(),
-      trackId: z.number().optional(),
-      trackName: z.string().optional(),
-      episodeUrl: z.string().url().optional(),
-      trackTimeMillis: z.number().optional(),
-    }),
-  ),
-});
-const requestDirectory = async (path: string) => {
-  const response = await httpHost.fetch(`https://itunes.apple.com/${path}`);
-  if (response.status !== 200) {
-    throw new Error(i18n.t('podcastBrowser:loadError'));
+const PodcastCardCover: FC<{ src?: string }> = ({ src }) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (src && !hasError) {
+    return (
+      <img
+        src={src}
+        alt=""
+        referrerPolicy="no-referrer"
+        onError={() => setHasError(true)}
+        className="size-16 shrink-0 rounded-lg object-cover"
+      />
+    );
   }
-  return directorySchema.parse(JSON.parse(response.body)).results;
+
+  return (
+    <div className="bg-background border-border flex size-16 shrink-0 items-center justify-center rounded-lg border">
+      <Mic2 className="size-8 opacity-50" />
+    </div>
+  );
 };
-const chartSchema = z.object({
-  feed: z.object({
-    results: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        artistName: z.string().optional(),
-        artworkUrl100: z.string().optional(),
-        url: z.string().optional(),
-      }),
-    ),
-  }),
-});
+
 export const Podcasts: FC = () => {
   const { t } = useTranslation('podcastBrowser');
-  const [selected, setSelected] = useState<PodcastRef | null>(null);
-  const [episodes, setEpisodes] = useState<Track[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [artwork, setArtwork] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
   const [catalog, setCatalog] = useState<PodcastRef[]>(PODCASTS);
+  const [artwork, setArtwork] = useState<Record<string, string>>({});
   const { favorites, load, toggleFavorite } = usePodcastStore();
+
   useEffect(() => {
     void load();
   }, [load]);
+
   useEffect(() => {
     let active = true;
-    void httpHost
-      .fetch(
-        'https://rss.applemarketingtools.com/api/v2/es/podcasts/top/50/podcasts.json',
-      )
-      .then((response) => {
-        if (response.status !== 200) {
+    void podcastService
+      .getFeaturedPodcasts()
+      .then((results) => {
+        if (!active || results.length === 0) {
           return;
         }
-        const results = chartSchema.parse(JSON.parse(response.body)).feed
-          .results;
-        const podcasts = results.map((item) => ({
-          id: `itunes-${item.id}`,
+        const mapped: PodcastRef[] = results.map((item) => ({
+          id: item.id,
           name: item.name,
-          publisher: item.artistName ?? 'Podcast',
-          sourceUrl:
-            item.url ?? `https://podcasts.apple.com/podcast/id${item.id}`,
+          publisher: item.publisher,
+          artworkUrl: item.artwork,
+          sourceUrl: `https://music.youtube.com/browse/${item.id}`,
         }));
-        if (active && podcasts.length > 0) {
-          setCatalog(podcasts);
+        setCatalog(mapped);
+        const artMap: Record<string, string> = {};
+        for (const item of results) {
+          if (item.artwork) {
+            artMap[item.id] = item.artwork;
+          }
         }
+        setArtwork((previous) => ({ ...previous, ...artMap }));
       })
       .catch(() => {});
+
     return () => {
       active = false;
     };
   }, []);
-  useEffect(() => {
-    let active = true;
-    for (const podcast of catalog) {
-      void requestDirectory(
-        `search?term=${encodeURIComponent(podcast.name)}&entity=podcast&limit=1`,
-      )
-        .then((results) => {
-          const image = results[0]?.artworkUrl600;
-          if (active && image) {
-            setArtwork((previous) => ({ ...previous, [podcast.id]: image }));
-          }
-        })
-        .catch(() => {});
-    }
-    return () => {
-      active = false;
-    };
-  }, [catalog]);
-  useEffect(() => {
-    if (!selected) {
-      return;
-    }
-    let active = true;
-    setLoading(true);
-    setError('');
-    setEpisodes([]);
-    const fetchEpisodes = async () => {
-      const matches = await requestDirectory(
-        `search?term=${encodeURIComponent(selected.name)}&entity=podcast&limit=1`,
-      );
-      const show = matches[0];
-      if (!show?.collectionId) {
-        throw new Error(i18n.t('podcastBrowser:empty'));
-      }
-      const entries = await requestDirectory(
-        `lookup?id=${show.collectionId}&entity=podcastEpisode&limit=200`,
-      );
-      const tracks: Track[] = entries
-        .filter((entry) => entry.kind === 'podcast-episode' && entry.episodeUrl)
-        .map((entry) => ({
-          title: entry.trackName ?? selected.name,
-          artists: [{ name: selected.name, roles: ['host'] }],
-          source: {
-            provider: 'podcast-audio',
-            id: String(entry.trackId),
-            url: entry.episodeUrl,
-          },
-          durationMs: entry.trackTimeMillis,
-          artwork: {
-            items: show.artworkUrl600
-              ? [{ url: show.artworkUrl600, purpose: 'thumbnail' }]
-              : [],
-          },
-        }));
-      if (active) {
-        setEpisodes(tracks);
-      }
-    };
-    void fetchEpisodes()
-      .catch((reason: Error) => {
-        if (active) {
-          setError(reason.message);
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
-      });
-    return () => {
-      active = false;
-    };
-  }, [selected]);
-  const playEpisode = (track: Track) => {
-    const queue = useQueueStore.getState();
-    const nextIndex = queue.items.length;
-    queue.addToQueue([track]);
-    queue.goToIndex(nextIndex);
-    playbackManager.play();
+
+  const handleOpenPodcast = (podcast: PodcastRef) => {
+    void navigate({
+      to: '/podcast/$podcastId',
+      params: { podcastId: podcast.id },
+    });
   };
+
   const renderShow = (podcast: PodcastRef) => {
     const favorite = favorites.some((item) => item.id === podcast.id);
+    const coverArt = podcast.artworkUrl || artwork[podcast.id];
+
     return (
       <div
         key={podcast.id}
-        className="border-border bg-background-secondary flex min-w-0 items-center gap-2 rounded-xl border p-2"
+        data-testid="podcast-card"
+        className="border-border bg-background-secondary flex min-w-0 items-center gap-3 rounded-xl border p-3"
       >
         <button
           aria-label={t('open', { name: podcast.name })}
-          onClick={() => setSelected(podcast)}
-          className="flex min-w-0 flex-1 items-center gap-3 text-left"
+          onClick={() => handleOpenPodcast(podcast)}
+          className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left"
         >
-          {artwork[podcast.id] ? (
-            <img
-              src={artwork[podcast.id]}
-              alt=""
-              className="size-12 shrink-0 rounded-lg object-cover"
-            />
-          ) : (
-            <Mic2 className="size-12 shrink-0" />
-          )}
-          <span className="min-w-0">
-            <strong className="block text-sm break-words">
+          <PodcastCardCover src={coverArt} />
+          <span className="min-w-0 flex-1">
+
+            <strong className="text-foreground block text-sm font-bold break-words whitespace-normal">
               {podcast.name}
             </strong>
-            <span className="block text-xs break-words opacity-60">
+            <span className="text-foreground-secondary block text-xs opacity-75 break-words whitespace-normal">
               {podcast.publisher}
             </span>
           </span>
         </button>
         <button
-          className="flex size-11 shrink-0 items-center justify-center"
+          className="hover:text-accent-red flex size-11 shrink-0 cursor-pointer items-center justify-center"
           aria-label={t(favorite ? 'removeFavorite' : 'addFavorite')}
           onClick={() => void toggleFavorite(podcast)}
         >
-          <Heart size={20} fill={favorite ? 'currentColor' : 'none'} />
+          <Heart
+            size={20}
+            className={favorite ? 'text-accent-red fill-accent-red' : ''}
+          />
         </button>
       </div>
     );
   };
+
   return (
-    <ViewShell>
-      <section className="flex w-full min-w-0 flex-col gap-3">
-        {selected ? (
+    <ViewShell data-testid="podcasts-view">
+      <section className="flex w-full min-w-0 flex-col gap-4">
+        {favorites.length > 0 && (
           <>
-            <button
-              onClick={() => setSelected(null)}
-              className="flex items-center gap-2 text-sm"
-            >
-              <ArrowLeft size={18} />
-              {t('back')}
-            </button>
-            <h2 className="text-lg font-bold">{selected.name}</h2>
-            {loading && <p role="status">{t('loading')}</p>}
-            {error && <p role="alert">{error}</p>}
-            {!loading && !error && episodes.length === 0 && <p>{t('empty')}</p>}
-            {episodes.map((episode) => (
-              <button
-                key={episode.source.id}
-                aria-label={t('play', { name: episode.title })}
-                onClick={() => playEpisode(episode)}
-                className="border-border flex min-w-0 items-center gap-3 border-b py-3 text-left"
-              >
-                <Play size={20} className="text-primary shrink-0" />
-                <span className="min-w-0 flex-1 text-sm break-words whitespace-normal">
-                  {episode.title}
-                </span>
-              </button>
-            ))}
-          </>
-        ) : (
-          <>
-            {favorites.length > 0 && (
-              <>
-                <h2 className="text-sm font-semibold">{t('favorites')}</h2>
-                {favorites.map(renderShow)}
-              </>
-            )}
-            <h2 className="text-sm font-semibold">{t('available')}</h2>
-            {catalog.map(renderShow)}
+            <h2 className="text-sm font-semibold">{t('favorites')}</h2>
+            <div className="flex flex-col gap-2">
+              {favorites.map(renderShow)}
+            </div>
           </>
         )}
+        <h2 className="text-sm font-semibold">{t('available')}</h2>
+        <div className="flex flex-col gap-2">{catalog.map(renderShow)}</div>
       </section>
     </ViewShell>
   );
 };
+

@@ -12,9 +12,15 @@
   font-size: 14px;
 }
 
-.aurora-workspace[data-native-mobile] .aurora-apk-topbar button {
+.aurora-workspace[data-native-mobile] .aurora-apk-topbar > div:first-child button {
   height: 32px;
   width: 32px;
+}
+
+.aurora-workspace[data-native-mobile] [data-testid='search-box-popover'] button {
+  height: auto !important;
+  min-height: 40px !important;
+  width: 100% !important;
 }
 
 .aurora-workspace[data-native-mobile] .aurora-library,
@@ -415,7 +421,15 @@
   overflow-wrap: anywhere;
 }
 
-.aurora-workspace[data-native-mobile] [data-testid='now-playing-title'],
+.aurora-workspace[data-native-mobile] [data-testid='now-playing-title'] {
+  min-width: 0;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.25 !important;
+}
+
 .aurora-workspace[data-native-mobile] [data-testid='player-now-playing-artist'] {
   min-width: 0;
   overflow: hidden !important;

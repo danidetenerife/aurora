@@ -36,8 +36,8 @@ async function getVisitorData(): Promise<string> {
             client: {
               clientName: 'WEB',
               clientVersion: '2.20240901.01.00',
-              hl: 'en',
-              gl: 'US',
+              hl: 'es',
+              gl: 'ES',
             },
           },
         }),
@@ -75,7 +75,8 @@ async function extractAudioStreamDirect(
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15',
         osName: 'visionOS',
         osVersion: '26.5.23O471',
-        hl: 'en',
+        hl: 'es',
+        gl: 'ES',
       },
     },
     videoId,
@@ -207,12 +208,29 @@ export const ytdlpHost: YtdlpHost = {
           videoId,
         });
         if (streamUrl) {
+          let resolvedUrl = streamUrl;
+          if (
+            streamUrl.includes('manifest.googlevideo.com') ||
+            streamUrl.includes('.m3u8')
+          ) {
+            try {
+              const m3u8Res = await httpHost.fetch(streamUrl, {
+                headers: { 'User-Agent': 'Mozilla/5.0' },
+              });
+              if (m3u8Res.status === 200 && m3u8Res.body) {
+                resolvedUrl =
+                  selectHlsAudio(m3u8Res.body, streamUrl) ?? streamUrl;
+              }
+            } catch {
+              // ignore
+            }
+          }
           return {
-            stream_url: streamUrl,
+            stream_url: resolvedUrl,
             duration: null,
             title: null,
-            container: streamUrl.includes('webm') ? 'webm' : 'm4a',
-            codec: streamUrl.includes('webm') ? 'opus' : 'aac',
+            container: resolvedUrl.includes('webm') ? 'webm' : 'm4a',
+            codec: resolvedUrl.includes('webm') ? 'opus' : 'aac',
             album: null,
             artists: [],
             album_artists: [],

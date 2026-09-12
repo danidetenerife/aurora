@@ -40,13 +40,13 @@ export const ConnectedMobileNav: FC = () => {
     {
       to: '/playlists',
       icon: <ListMusicIcon className="size-6" />,
-      label: 'Playlists',
+      label: 'Listas',
       isActive: currentPath.startsWith('/playlists'),
     },
     {
       to: '/podcasts',
       icon: <Mic2Icon className="size-6" />,
-      label: 'Podcasts',
+      label: 'Podcast',
       isActive: currentPath.startsWith('/podcasts'),
     },
   ];

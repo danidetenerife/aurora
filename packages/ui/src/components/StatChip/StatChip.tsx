@@ -17,13 +17,13 @@ export const StatChip: FC<StatChipProps> = ({
 }) => (
   <div
     className={cn(
-      'border-border bg-background shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1',
+      'border-border bg-background text-foreground shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1',
       className,
     )}
     {...props}
   >
     {icon && <span className="shrink-0">{icon}</span>}
-    <span className="font-heading text-lg font-extrabold">{value}</span>
+    <span className="font-heading text-foreground text-lg font-extrabold">{value}</span>
     <span className="text-foreground-secondary text-xs font-bold tracking-wide uppercase">
       {label}
     </span>

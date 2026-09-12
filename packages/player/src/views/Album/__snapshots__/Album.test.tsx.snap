@@ -700,10 +700,10 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                   class="flex flex-wrap gap-3"
                 >
                   <div
-                    class="border-border bg-background shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1"
+                    class="border-border bg-background text-foreground shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1"
                   >
                     <span
-                      class="font-heading text-lg font-extrabold"
+                      class="font-heading text-foreground text-lg font-extrabold"
                     >
                       Folk, World, Country
                     </span>
@@ -714,10 +714,10 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                     </span>
                   </div>
                   <div
-                    class="border-border bg-background shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1"
+                    class="border-border bg-background text-foreground shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1"
                   >
                     <span
-                      class="font-heading text-lg font-extrabold"
+                      class="font-heading text-foreground text-lg font-extrabold"
                     >
                       2025
                     </span>
@@ -728,10 +728,10 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                     </span>
                   </div>
                   <div
-                    class="border-border bg-background shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1"
+                    class="border-border bg-background text-foreground shadow-shadow flex items-center gap-2 rounded-md border-(length:--border-width) px-2 py-1"
                   >
                     <span
-                      class="font-heading text-lg font-extrabold"
+                      class="font-heading text-foreground text-lg font-extrabold"
                     >
                       2
                     </span>
@@ -818,7 +818,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                     style="scrollbar-width: none;"
                   >
                     <table
-                      class="border-border relative w-full border-(length:--border-width)"
+                      class="border-border relative w-full table-fixed border-(length:--border-width)"
                       role="table"
                     >
                       <thead>
@@ -1350,7 +1350,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                 class="min-w-0 flex-1"
               >
                 <div
-                  class="text-foreground truncate text-xs sm:text-sm font-bold"
+                  class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight"
                   data-testid="now-playing-title"
                 >
                   Sin reproducir
@@ -1812,7 +1812,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
           <span
             class="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs"
           >
-            Playlists
+            Listas
           </span>
         </a>
         <a
@@ -1847,7 +1847,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
           <span
             class="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs"
           >
-            Podcasts
+            Podcast
           </span>
         </a>
         <button

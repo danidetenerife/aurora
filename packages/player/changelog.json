@@ -1,5 +1,54 @@
 [
   {
+    "date": "2026-09-12T21:30",
+    "description": "Resolución nativa y precisa de podcasts en español: extractor WebView con compatibilidad para pistas de audio HLS nativas y DASH, descarte estricto de doblajes en idiomas foráneos, y carga robusta de carátulas sin referer evitando iconos de imagen rota.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Streaming", "color": "green" }, { "label": "Audio", "color": "purple" }]
+  },
+  {
+    "date": "2026-09-12T21:00",
+    "description": "Aclarado y máximo contraste para los controles de cabecera de podcasts: el botón de retroceso, el botón de favoritos y la cifra de episodios en StatChip ahora utilizan tipografía e iconos en color claro de primer plano sobre fondo oscuro, garantizando una visibilidad y legibilidad perfectas.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Diseño", "color": "purple" }, { "label": "Accesibilidad", "color": "green" }]
+  },
+  {
+    "date": "2026-09-12T20:55",
+    "description": "Reorganización de pastillas y pestañas en el buscador y navegación: orden configurado exactamente como Canciones, Artistas, Álbumes, Listas y Podcast, renombrando 'Listas de reproducción' a 'Listas' y 'Podcasts' a 'Podcast'.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Búsqueda", "color": "blue" }, { "label": "Interfaz", "color": "purple" }, { "label": "Navegación", "color": "green" }]
+  },
+  {
+    "date": "2026-09-12T20:45",
+    "description": "Filtro estricto de pistas de audio en streams de YouTube y podcasts: exclusión absoluta de pistas con doblaje automático en otros idiomas (inglés, árabe, etc.), selección prioritaria de la pista de audio original en español y configuración de localización regional es-ES para garantizar la reproducción en su idioma nativo.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Streaming", "color": "green" }, { "label": "Audio", "color": "purple" }]
+  },
+  {
+    "date": "2026-09-12T20:20",
+    "description": "Corrección integral de las 6 incidencias reportadas: solución al solapamiento del historial de búsquedas en móvil desvinculando la restricción de 32px; oscurecimiento de tipografía en la cabecera del podcast para máximo contraste; reubicación de la pastilla de Podcasts inmediatamente después de Canciones en búsqueda y barra móvil; eliminación de truncamiento en la barra de reproducción inferior; estirado horizontal del texto de episodios; y selección de la pista de audio original/por defecto en streams HLS para evitar doblajes en otros idiomas.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Diseño", "color": "purple" }, { "label": "Streaming", "color": "green" }]
+  },
+  {
+    "date": "2026-09-12T19:48",
+    "description": "Optimización integral de la tabla de episodios de podcasts: cálculo y visualización de la duración real de episodios de YouTube Music, ampliación a ancho completo del título eliminando botones invisibles y columnas innecesarias para evitar saltos de línea excesivos, protección absoluta de miniaturas originales de episodios evitando sustituciones por canciones de iTunes, y ajuste perfecto de la columna Duración.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Interfaz", "color": "purple" }, { "label": "YouTube Music", "color": "red" }]
+  },
+  {
+    "date": "2026-09-12T19:23",
+    "description": "Integración completa de podcasts de YouTube Music en la sección de Podcasts y navegación directa a la ficha: al pulsar en cualquier podcast se abre su ficha detallada completa sin truncamiento de títulos ni autores; contraste máximo con texto negro en la cabecera verde; corrección de ancho en columna Duración; protección de carátulas reales de episodios; y reproducción atómica inmediata del audio exacto.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "YouTube Music", "color": "red" }, { "label": "Diseño", "color": "purple" }, { "label": "Streaming", "color": "green" }]
+  },
+  {
     "date": "2026-09-12T18:30",
     "description": "Eliminación total del truncamiento de texto en la tabla de episodios y vistas de podcasts: los títulos completos se muestran en múltiples líneas sin puntos suspensivos ni recortes, se oculta la columna redundante de artista dando el ancho completo al título, y se asegura la reproducción del audio exacto del episodio.",
     "type": "improvement",

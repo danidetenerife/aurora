@@ -63,9 +63,14 @@ export const candidatesForTrack = async (
     return cached;
   }
 
+  if (track.isPodcast) {
+    return undefined;
+  }
+
   const result = await streamingHost.resolveCandidatesForTrack(track);
   if (result.success) {
     return result.candidates;
   }
   return undefined;
 };
+

@@ -64,7 +64,7 @@ export const PodcastDetail: FC = () => {
     <ScrollableArea className="bg-background" data-testid="podcast-detail-view">
       <PodcastDetailHeader podcast={podcast} />
 
-      <div className="p-4 sm:p-6">
+      <div className="px-1 py-3 sm:px-6 sm:py-6">
         {podcast.episodes.length === 0 ? (
           <EmptyState
             title={t('podcastBrowser:empty')}
@@ -74,13 +74,14 @@ export const PodcastDetail: FC = () => {
         ) : (
           <ConnectedTrackTable
             tracks={podcast.episodes}
-            rowHeight={84}
+            rowHeight={96}
             features={{ playAll: true, addAllToQueue: true }}
             display={{
               displayThumbnail: true,
+              displayFavorite: false,
               displayDuration: true,
               displayArtist: false,
-              displayQueueControls: true,
+              displayQueueControls: false,
             }}
             meta={{
               noTruncate: true,

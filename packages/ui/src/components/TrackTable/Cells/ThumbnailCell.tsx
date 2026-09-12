@@ -25,12 +25,20 @@ export const ThumbnailCell = <T extends Track>({
 }: CellContext<T, Artwork>) => {
   const initialUrl = getValue()?.url;
   const track = row.original;
+  const isPodcast = Boolean(
+    track.isPodcast ||
+      track.album?.source?.provider?.includes('podcast') ||
+      track.source?.provider === 'podcast-audio',
+  );
   const primaryArtist = track.artists?.[0]?.name;
   const title = track.title;
   const cacheKey = `${primaryArtist?.toLowerCase().trim()}___${title?.toLowerCase().trim()}`;
 
   const [hasError, setHasError] = useState(false);
   const [resolvedUrl, setResolvedUrl] = useState<string | undefined>(() => {
+    if (isPodcast) {
+      return initialUrl;
+    }
     if (initialUrl && !isYouTubeOrGeneric(initialUrl)) {
       return initialUrl;
     }
@@ -41,7 +49,7 @@ export const ThumbnailCell = <T extends Track>({
   });
 
   useEffect(() => {
-    if (initialUrl && !isYouTubeOrGeneric(initialUrl)) {
+    if (isPodcast || (initialUrl && !isYouTubeOrGeneric(initialUrl))) {
       setResolvedUrl(initialUrl);
       return;
     }

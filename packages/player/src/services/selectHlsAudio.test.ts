@@ -50,6 +50,29 @@ video.m3u8`;
     expect(selectHlsAudio(manifest, MANIFEST_URL)).toBeUndefined();
   });
 
+  it('prefers DEFAULT=YES track over a preceding non-default language track', () => {
+    const multiLangManifest = `#EXTM3U
+#EXT-X-MEDIA:URI="japanese.m3u8",TYPE=AUDIO,GROUP-ID="audio",NAME="Japanese",LANGUAGE="ja",DEFAULT=NO,CHANNELS="2"
+#EXT-X-MEDIA:URI="spanish_default.m3u8",TYPE=AUDIO,GROUP-ID="audio",NAME="Spanish",LANGUAGE="es",DEFAULT=YES,CHANNELS="2"
+#EXT-X-STREAM-INF:BANDWIDTH=385245,CODECS="avc1.4D4015,mp4a.40.2",AUDIO="audio"
+video.m3u8`;
+    expect(selectHlsAudio(multiLangManifest, MANIFEST_URL)).toBe(
+      'https://example.com/music/spanish_default.m3u8',
+    );
+  });
+
+  it('filters out auto-dubbed renditions and selects the original Spanish track', () => {
+    const multiLangManifest = `#EXTM3U
+#EXT-X-MEDIA:URI="arabic_dubbed.m3u8?acont=dubbed-auto:lang=ar",TYPE=AUDIO,GROUP-ID="234",NAME="Arabic (auto-dubbed)",AUTOSELECT=YES,DEFAULT=NO,CHANNELS="2"
+#EXT-X-MEDIA:URI="english_dubbed.m3u8?acont=dubbed-auto:lang=en",TYPE=AUDIO,GROUP-ID="234",NAME="English (auto-dubbed)",AUTOSELECT=YES,DEFAULT=NO,CHANNELS="2"
+#EXT-X-MEDIA:URI="spanish_orig.m3u8?acont=original",TYPE=AUDIO,GROUP-ID="234",NAME="Original (español)",LANGUAGE="es",AUTOSELECT=YES,DEFAULT=YES,CHANNELS="2"
+#EXT-X-STREAM-INF:BANDWIDTH=385245,CODECS="avc1.4D4015,mp4a.40.2",AUDIO="234"
+video.m3u8`;
+    expect(selectHlsAudio(multiLangManifest, MANIFEST_URL)).toBe(
+      'https://example.com/music/spanish_orig.m3u8?acont=original',
+    );
+  });
+
   it('leaves media playlists without alternate audio unchanged', () => {
     expect(
       selectHlsAudio('#EXTM3U\n#EXTINF:6,\nsegment.ts', MANIFEST_URL),

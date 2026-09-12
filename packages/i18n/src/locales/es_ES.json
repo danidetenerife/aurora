@@ -37,7 +37,7 @@
     "favoriteAlbums": "Álbumes favoritos",
     "favoriteTracks": "Canciones favoritas",
     "favoriteArtists": "Artistas favoritos",
-    "playlists": "Listas de reproducción",
+    "playlists": "Listas",
     "history": "Historial",
     "sources": "Fuentes"
   },
@@ -174,17 +174,18 @@
     "recentSearches": "Búsquedas recientes",
     "results": {
       "tracks": "Canciones",
-      "albums": "Álbumes",
       "artists": "Artistas",
-      "playlists": "Listas de reproducción"
-      ,"podcasts": "Podcasts"
+      "albums": "Álbumes",
+      "playlists": "Listas",
+      "podcasts": "Podcast"
     },
     "filters": {
       "all": "Todo",
       "tracks": "Canciones",
-      "albums": "Álbumes",
       "artists": "Artistas",
-      "playlists": "Listas de reproducción"
+      "albums": "Álbumes",
+      "playlists": "Listas",
+      "podcasts": "Podcast"
     },
     "empty-state": "No hay ningún plugin de metadatos instalado",
     "empty-state-description": "Instala un plugin de metadatos para buscar música.",

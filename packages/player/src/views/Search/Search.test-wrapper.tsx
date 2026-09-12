@@ -50,6 +50,11 @@ export const SearchWrapper = {
     await screen.findByTestId('search-view');
   },
 
+  async selectTab(name: string | RegExp) {
+    const tab = await screen.findByRole('tab', { name });
+    await user.click(tab);
+  },
+
   searchBox: {
     get input(): HTMLInputElement {
       return screen.getByTestId('search-box') as HTMLInputElement;

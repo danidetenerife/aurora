@@ -1244,7 +1244,7 @@ exports[`Sources view > (Snapshot) renders the view 1`] = `
                 class="min-w-0 flex-1"
               >
                 <div
-                  class="text-foreground truncate text-xs sm:text-sm font-bold"
+                  class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight"
                   data-testid="now-playing-title"
                 >
                   Sin reproducir
@@ -1706,7 +1706,7 @@ exports[`Sources view > (Snapshot) renders the view 1`] = `
           <span
             class="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs"
           >
-            Playlists
+            Listas
           </span>
         </a>
         <a
@@ -1741,7 +1741,7 @@ exports[`Sources view > (Snapshot) renders the view 1`] = `
           <span
             class="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs"
           >
-            Podcasts
+            Podcast
           </span>
         </a>
         <button

@@ -23,6 +23,7 @@ type QueueStore = Queue & {
   isReady: boolean;
   loadFromDisk: () => Promise<void>;
   addToQueue: (tracks: Track[]) => void;
+  playTracks: (tracks: Track[], startIndex?: number) => void;
   addNext: (tracks: Track[]) => void;
   addAt: (tracks: Track[], index: number) => void;
   removeByIds: (ids: string[]) => void;
@@ -166,6 +167,20 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
       }),
     );
     Logger.queue.debug(`Added ${tracks.length} tracks to queue`);
+  }),
+
+  playTracks: withPersistence((tracks: Track[], startIndex = 0) => {
+    const sanitizedIndex =
+      startIndex >= 0 && startIndex < tracks.length ? startIndex : 0;
+    const newItems = tracks.map(createQueueItem);
+    useSoundStore.getState().stop();
+    set({
+      items: newItems,
+      currentIndex: sanitizedIndex,
+    });
+    Logger.queue.debug(
+      `Playing ${tracks.length} tracks starting at index ${sanitizedIndex}`,
+    );
   }),
 
   addNext: (tracks: Track[]) => {

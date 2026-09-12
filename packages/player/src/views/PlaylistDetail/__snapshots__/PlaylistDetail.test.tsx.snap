@@ -240,7 +240,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
               style="scrollbar-width: none;"
             >
               <table
-                class="border-border relative w-full border-(length:--border-width)"
+                class="border-border relative w-full table-fixed border-(length:--border-width)"
                 role="table"
               >
                 <thead>
@@ -334,7 +334,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       </span>
                     </th>
                     <th
-                      class="px-2 cursor-pointer w-16 min-w-16 text-right whitespace-nowrap"
+                      class="px-2 cursor-pointer w-20 text-right whitespace-nowrap"
                       role="columnheader"
                     >
                       <span
@@ -567,7 +567,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       </div>
                     </td>
                     <td
-                      class="truncate px-2 cursor-default"
+                      class="truncate px-2 w-20 text-right whitespace-nowrap cursor-default"
                     >
                       <div
                         class="truncate"
@@ -799,7 +799,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       </div>
                     </td>
                     <td
-                      class="truncate px-2 cursor-default"
+                      class="truncate px-2 w-20 text-right whitespace-nowrap cursor-default"
                     >
                       <div
                         class="truncate"

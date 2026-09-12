@@ -32,7 +32,7 @@ export function TextHeader<T extends Track>({
         id === 'title' && 'w-full',
         id === 'artist' && 'hidden w-40 whitespace-nowrap sm:table-cell',
         id === 'album' && 'hidden w-40 whitespace-nowrap md:table-cell',
-        id === 'duration' && 'w-16 min-w-16 text-right whitespace-nowrap',
+        id === 'duration' && 'w-20 text-right whitespace-nowrap',
       )}
       onClick={onClick}
     >

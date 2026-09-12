@@ -24,6 +24,14 @@ export const hasActiveStreamingProvider = (): boolean =>
   Boolean(getActiveStreamingProvider());
 
 export const isStreamExpired = (candidate: StreamCandidate): boolean => {
+  if (
+    candidate.stream?.url &&
+    (candidate.stream.url.includes('dubbed-auto') ||
+      candidate.stream.url.includes('dubbed'))
+  ) {
+    return true;
+  }
+
   if (!candidate.lastResolvedAtIso) {
     return false;
   }
@@ -33,6 +41,7 @@ export const isStreamExpired = (candidate: StreamCandidate): boolean => {
 
   return Date.now() - resolvedAt > expiryMs;
 };
+
 
 export const hasFreshStream = (candidate: StreamCandidate): boolean =>
   Boolean(candidate.stream) &&

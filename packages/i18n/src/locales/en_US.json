@@ -176,17 +176,18 @@
     "recentSearches": "Recent searches",
     "results": {
       "tracks": "Tracks",
-      "albums": "Albums",
       "artists": "Artists",
-      "playlists": "Playlists"
-      ,"podcasts": "Podcasts"
+      "albums": "Albums",
+      "playlists": "Playlists",
+      "podcasts": "Podcasts"
     },
     "filters": {
       "all": "All",
       "tracks": "Tracks",
-      "albums": "Albums",
       "artists": "Artists",
-      "playlists": "Playlists"
+      "albums": "Albums",
+      "playlists": "Playlists",
+      "podcasts": "Podcasts"
     },
     "empty-state": "No metadata plugin installed",
     "empty-state-description": "Install a metadata plugin to search for music.",

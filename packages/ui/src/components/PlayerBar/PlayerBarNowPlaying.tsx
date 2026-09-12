@@ -42,7 +42,7 @@ export const PlayerBarNowPlaying: FC<PlayerBarNowPlayingProps> = ({
     </div>
     <div className="min-w-0 flex-1">
       <div
-        className={cn('text-foreground truncate text-xs sm:text-sm font-bold', {
+        className={cn('text-foreground break-words text-xs sm:text-sm font-bold leading-tight', {
           'cursor-pointer hover:underline': onTitleClick,
         })}
         data-testid="now-playing-title"
