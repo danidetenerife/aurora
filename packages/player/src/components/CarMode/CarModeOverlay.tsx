@@ -186,10 +186,10 @@ export const CarModeOverlay: FC = () => {
 
         {/* Track Title & Artist */}
         <div className="w-full max-w-lg space-y-1.5 px-4 text-center">
-          <h1 className="truncate text-2xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-4xl">
+          <h1 className="text-2xl font-extrabold tracking-tight break-words whitespace-normal text-white drop-shadow-md sm:text-4xl">
             {currentTrack?.title ?? 'Sin reproducción'}
           </h1>
-          <p className="truncate text-lg font-semibold text-zinc-300 sm:text-2xl">
+          <p className="text-lg font-semibold break-words whitespace-normal text-zinc-300 sm:text-2xl">
             {currentTrack?.artists?.[0]?.name ?? 'Aurora'}
           </p>
         </div>

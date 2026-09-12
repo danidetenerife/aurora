@@ -49,12 +49,24 @@ export const useArtistCardImage = (
 
     let cancelled = false;
     metadataHost
-      .search({ query: artistName, types: ['artists'], limit: 5 }, activeProviderId)
+      .search(
+        { query: artistName, types: ['artists'], limit: 5 },
+        activeProviderId,
+      )
       .then((results) => {
         if (cancelled) {
           return;
         }
-        const match = results.artists?.find((artist) => artist.name.toLocaleLowerCase() === artistName.toLocaleLowerCase());
+        const normalizedName = artistName.trim().toLocaleLowerCase();
+        const match =
+          results.artists?.find(
+            (artist) =>
+              artist.name.trim().toLocaleLowerCase() === normalizedName,
+          ) ??
+          results.artists?.find((artist) =>
+            artist.name.trim().toLocaleLowerCase().includes(normalizedName),
+          ) ??
+          results.artists?.[0];
         const artwork = match?.artwork;
         const imageUrl = pickArtwork(artwork, 'avatar', 300)?.url;
         if (imageUrl) {

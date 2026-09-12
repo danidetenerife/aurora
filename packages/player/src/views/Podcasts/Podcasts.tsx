@@ -65,6 +65,19 @@ const requestDirectory = async (path: string) => {
     throw new Error(i18n.t('podcastBrowser:loadError'));
   return directorySchema.parse(JSON.parse(response.body)).results;
 };
+const chartSchema = z.object({
+  feed: z.object({
+    results: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        artistName: z.string().optional(),
+        artworkUrl100: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    ),
+  }),
+});
 export const Podcasts: FC = () => {
   const { t } = useTranslation('podcastBrowser');
   const [selected, setSelected] = useState<PodcastRef | null>(null);
@@ -72,13 +85,38 @@ export const Podcasts: FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [artwork, setArtwork] = useState<Record<string, string>>({});
+  const [catalog, setCatalog] = useState<PodcastRef[]>(PODCASTS);
   const { favorites, load, toggleFavorite } = usePodcastStore();
   useEffect(() => {
     void load();
   }, [load]);
   useEffect(() => {
     let active = true;
-    for (const podcast of PODCASTS) {
+    void httpHost
+      .fetch(
+        'https://rss.applemarketingtools.com/api/v2/es/podcasts/top/50/podcasts.json',
+      )
+      .then((response) => {
+        if (response.status !== 200) return;
+        const results = chartSchema.parse(JSON.parse(response.body)).feed
+          .results;
+        const podcasts = results.map((item) => ({
+          id: `itunes-${item.id}`,
+          name: item.name,
+          publisher: item.artistName ?? 'Podcast',
+          sourceUrl:
+            item.url ?? `https://podcasts.apple.com/podcast/id${item.id}`,
+        }));
+        if (active && podcasts.length > 0) setCatalog(podcasts);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+  useEffect(() => {
+    let active = true;
+    for (const podcast of catalog) {
       void requestDirectory(
         `search?term=${encodeURIComponent(podcast.name)}&entity=podcast&limit=1`,
       )
@@ -92,7 +130,7 @@ export const Podcasts: FC = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [catalog]);
   useEffect(() => {
     if (!selected) return;
     let active = true;
@@ -220,7 +258,7 @@ export const Podcasts: FC = () => {
               </>
             )}
             <h2 className="text-sm font-semibold">{t('available')}</h2>
-            {PODCASTS.map(renderShow)}
+            {catalog.map(renderShow)}
           </>
         )}
       </section>

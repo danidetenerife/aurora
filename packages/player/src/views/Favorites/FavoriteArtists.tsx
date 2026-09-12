@@ -121,11 +121,9 @@ export const FavoriteArtists: FC = () => {
           </div>
           <ArtistCollection
             items={sortedArtists.map((entry) => {
-              const localArtworkUrl = pickArtwork(
-                entry.ref?.artwork,
-                'cover',
-                300,
-              )?.url;
+              const localArtworkUrl =
+                pickArtwork(entry.ref?.artwork, 'avatar', 300)?.url ??
+                pickArtwork(entry.ref?.artwork, 'cover', 300)?.url;
               const artistName = entry.ref?.name ?? 'Unknown Artist';
               const sourceId = entry.ref?.source?.id ?? artistName;
               const sourceProvider = entry.ref?.source?.provider ?? 'spotify';
