@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T12:05",
+    "description": "Añade la búsqueda de listas, listas favoritas con corazón y una sección de Podcasts con favoritos en las interfaces compatibles.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Playlists", "color": "purple" }, { "label": "Podcasts", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T11:35",
     "description": "Muestra playlists públicas de YouTube Music y Spotify en la sección Listas, con acceso directo a su importación.",
     "type": "feature",
