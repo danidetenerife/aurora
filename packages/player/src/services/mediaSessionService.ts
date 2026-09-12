@@ -344,7 +344,7 @@ export const initMediaSessionService = (): void => {
 
       if (data.action.startsWith('podcast:')) {
         const podcastId = data.action.slice('podcast:'.length);
-        const podcastNames: Record<string, string> = {
+        const knownPodcasts: Record<string, string> = {
           todopoderosos: 'Todopoderosos',
           'the-wild-project': 'The Wild Project',
           'nude-project': 'The Nude Project',
@@ -354,7 +354,8 @@ export const initMediaSessionService = (): void => {
           daily: 'The Daily',
           serial: 'Serial',
         };
-        const searchTerm = podcastNames[podcastId] || podcastId;
+        const searchTerm =
+          knownPodcasts[podcastId] || podcastId.replace(/-/g, ' ');
         void fetch(
           `https://itunes.apple.com/search?term=${encodeURIComponent(
             searchTerm,

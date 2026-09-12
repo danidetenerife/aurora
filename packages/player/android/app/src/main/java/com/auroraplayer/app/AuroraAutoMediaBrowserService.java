@@ -341,6 +341,12 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             return;
         }
 
+        if (parentMediaId != null && parentMediaId.startsWith("podcast_genre:")) {
+            result.detach();
+            loadPodcastGenreAsync(parentMediaId.substring("podcast_genre:".length()), result);
+            return;
+        }
+
         List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
 
         if (ROOT_ID.equals(parentMediaId)) {
@@ -368,7 +374,7 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             items.add(createMediaItem(CATEGORY_EXPLORE, "Explorar & Búsqueda", "Música para conducir y géneros", getDrawableUri(R.drawable.ic_auto_search), true, true));
             items.add(createMediaItem(CATEGORY_FAVORITES, "Favoritos", "Tus canciones y álbumes guardados", getDrawableUri(R.drawable.ic_auto_favorites), true, true));
             items.add(createMediaItem(CATEGORY_PLAYLISTS, "Listas de reproducción", "Tus playlists y éxitos populares", getDrawableUri(R.drawable.ic_auto_playlists), true, true));
-            items.add(createMediaItem(CATEGORY_PODCASTS, "Podcasts", "Programas populares en español e inglés", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem(CATEGORY_PODCASTS, "Podcasts", "Busca y escucha cualquier podcast", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
             items.add(createMediaItem(CATEGORY_DISCOVER, "Top Éxitos", "Tendencias mundiales y novedades", getDrawableUri(R.drawable.ic_auto_discover), true, true));
             items.add(createMediaItem(CATEGORY_QUEUE, "Cola actual", "Pistas en la lista de reproducción", getDrawableUri(R.drawable.ic_auto_queue), true, false));
         } else if (CATEGORY_EXPLORE.equals(parentMediaId)) {
@@ -399,6 +405,15 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         bitmapExecutor.execute(() -> {
             List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
 
+            items.add(createMediaItem("podcast_genre:comedia española podcast", "🎭 Comedia", "Humor y entretenimiento", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:true crime español", "🔍 True Crime", "Crímenes y misterios", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:tecnología podcast español", "💻 Tecnología", "Gadgets, apps e innovación", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:historia podcast español", "📜 Historia", "Relatos del pasado", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:noticias actualidad podcast español", "📰 Noticias", "Actualidad y análisis", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:deportes fútbol podcast", "⚽ Deportes", "Fútbol, NBA y más", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:ciencia divulgación podcast", "🔬 Ciencia", "Divulgación científica", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            items.add(createMediaItem("podcast_genre:entrevistas famosos podcast", "🎙️ Entrevistas", "Conversaciones con invitados", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+
             addPodcastWithBitmap(items, "todopoderosos", "Todopoderosos", "Arturo González-Campos, Rodrigo Cortés, Javier Cansado, Juan Gómez-Jurado", "https://static-ivoox.epimg.net/canales/3/2/5/1/11325_big.jpg");
             addPodcastWithBitmap(items, "the-wild-project", "The Wild Project", "Jordi Wild", "https://i.scdn.co/image/ab6765630000ba8a798f480fe98dfce4b1bc41fc");
             addPodcastWithBitmap(items, "nude-project", "The Nude Project", "Nude Project Podcast", "https://i.scdn.co/image/ab6765630000ba8a912bbbbce394c8e7e1efca24");
@@ -407,6 +422,79 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             addPodcastWithBitmap(items, "nadie-sabe-nada", "Nadie Sabe Nada", "Andreu Buenafuente y Berto Romero", "https://i.scdn.co/image/ab6765630000ba8a83fa716757545ee2b1fa8519");
             addPodcastWithBitmap(items, "daily", "The Daily", "The New York Times", "https://i.scdn.co/image/ab6765630000ba8a6b47c050fb36cc7cbe41bb59");
             addPodcastWithBitmap(items, "serial", "Serial", "Serial Productions & The New York Times", "https://i.scdn.co/image/ab6765630000ba8a72ce10339d67d7168df65448");
+
+            result.sendResult(items);
+        });
+    }
+
+    private void loadPodcastGenreAsync(final String genreQuery, final Result<List<MediaBrowserCompat.MediaItem>> result) {
+        bitmapExecutor.execute(() -> {
+            List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
+            try {
+                String encodedQuery = java.net.URLEncoder.encode(genreQuery, "UTF-8");
+                URL apiUrl = new URL("https://itunes.apple.com/search?term=" + encodedQuery + "&entity=podcast&limit=15&country=ES");
+                HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
+                conn.setConnectTimeout(HTTP_CONNECT_TIMEOUT_MS);
+                conn.setReadTimeout(HTTP_READ_TIMEOUT_MS);
+                conn.setRequestProperty("User-Agent", "AuroraPlayer/1.0");
+                conn.connect();
+
+                if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    InputStream inputStream = conn.getInputStream();
+                    java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                    inputStream.close();
+                    conn.disconnect();
+
+                    JSONObject responseJson = new JSONObject(outputStream.toString("UTF-8"));
+                    JSONArray results = responseJson.optJSONArray("results");
+                    if (results != null) {
+                        for (int index = 0; index < results.length(); index++) {
+                            JSONObject podcast = results.optJSONObject(index);
+                            if (podcast == null) continue;
+                            String podcastName = podcast.optString("collectionName", "");
+                            String artistName = podcast.optString("artistName", "");
+                            String artworkUrl = podcast.optString("artworkUrl600", podcast.optString("artworkUrl100", ""));
+
+                            if (podcastName.isEmpty()) continue;
+
+                            String podcastSlug = podcastName.toLowerCase().replaceAll("[^a-z0-9]+", "-");
+                            Bitmap artwork = null;
+                            if (!artworkUrl.isEmpty()) {
+                                artwork = bitmapCache.get(artworkUrl);
+                                if (artwork == null) {
+                                    artwork = downloadBitmap(artworkUrl);
+                                    if (artwork != null) {
+                                        if (bitmapCache.size() >= MAX_BITMAP_CACHE_SIZE) {
+                                            String firstKey = bitmapCache.keySet().iterator().next();
+                                            bitmapCache.remove(firstKey);
+                                        }
+                                        bitmapCache.put(artworkUrl, artwork);
+                                    }
+                                }
+                            }
+
+                            if (artwork != null) {
+                                items.add(createMediaItemWithBitmap("podcast:" + podcastSlug, podcastName, artistName, artwork, false, true));
+                            } else {
+                                items.add(createMediaItem("podcast:" + podcastSlug, podcastName, artistName, getDrawableUri(R.drawable.ic_auto_podcasts), false, true));
+                            }
+                        }
+                    }
+                } else {
+                    conn.disconnect();
+                }
+            } catch (Throwable error) {
+                Log.w(TAG, "Podcast genre search failed: " + genreQuery, error);
+            }
+
+            if (items.isEmpty()) {
+                items.add(createMediaItem("podcast:" + genreQuery, "Buscar: " + genreQuery, "Reproducir último episodio", getDrawableUri(R.drawable.ic_auto_podcasts), false, true));
+            }
 
             result.sendResult(items);
         });
@@ -635,6 +723,15 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 "Reproducir \"" + query + "\"",
                 "Buscar mejores resultados en YouTube Music",
                 getDrawableUri(R.drawable.ic_auto_search),
+                false,
+                true
+            ));
+
+            matches.add(createMediaItem(
+                "podcast:" + query.toLowerCase().replaceAll("[^a-z0-9áéíóúñ ]+", "").trim(),
+                "Podcast: \"" + query + "\"",
+                "Buscar podcast y reproducir último episodio",
+                getDrawableUri(R.drawable.ic_auto_podcasts),
                 false,
                 true
             ));
