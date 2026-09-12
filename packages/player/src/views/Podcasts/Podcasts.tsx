@@ -6,7 +6,7 @@ import { Button, Card, CardGrid, ViewShell } from '@aurora/ui';
 
 import { usePodcastStore } from '../../stores/podcastStore';
 
-const PODCASTS: PodcastRef[] = [
+export const PODCASTS: PodcastRef[] = [
   {
     id: 'todopoderosos',
     name: 'Todopoderosos',

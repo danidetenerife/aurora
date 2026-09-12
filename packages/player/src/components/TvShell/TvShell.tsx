@@ -16,10 +16,12 @@ import { initSpatialNavigation } from '../../services/spatialNavigation';
 import { streamResolution } from '../../services/streamResolution';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
+import { usePodcastStore } from '../../stores/podcastStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { useStartupStore } from '../../stores/startupStore';
 import { useTvStore } from '../../stores/tvStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
+import { PODCASTS } from '../../views/Podcasts/Podcasts';
 import { StreamResolver } from '../StreamResolver';
 import { TvAutoUpdater } from './TvAutoUpdater';
 import { TvButton } from './TvButton';
@@ -39,6 +41,12 @@ const TvMainContent: FC = () => {
   const favorites = useFavoritesStore((state) => state.tracks);
   const queue = useQueueStore((state) => state.items);
   const playlists = usePlaylistStore((state) => state.index);
+  const podcastFavorites = usePodcastStore((state) => state.favorites);
+  const togglePodcastFavorite = usePodcastStore(
+    (state) => state.toggleFavorite,
+  );
+  const podcastsLoaded = usePodcastStore((state) => state.loaded);
+  const loadPodcasts = usePodcastStore((state) => state.load);
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [error, setError] = useState(false);
   const sortedFavorites = useMemo(
@@ -54,6 +62,11 @@ const TvMainContent: FC = () => {
     setLimit(PAGE_SIZE);
     setError(false);
   }, [section]);
+  useEffect(() => {
+    if (!podcastsLoaded) {
+      void loadPodcasts();
+    }
+  }, [loadPodcasts, podcastsLoaded]);
   const tracks =
     section === 'favorites'
       ? sortedFavorites.map((entry) => entry.ref)
@@ -73,82 +86,91 @@ const TvMainContent: FC = () => {
         {starting && <p role="status">{t('loading')}</p>}
         {error && <p role="alert">{t('playbackError')}</p>}
         <div className="tv-grid">
-          {section === 'podcasts' ? (
-            <TvFocusableCard
-              title="Abrir Podcasts"
-              focusKey="tv-content-podcasts"
-              onClick={() => window.open('/podcasts', '_self')}
-            >
-              <Music />
-            </TvFocusableCard>
-          ) : section === 'playlists' ? (
-            playlists.slice(0, limit).map((playlist) => (
-              <TvFocusableCard
-                key={playlist.id}
-                title={playlist.name}
-                focusKey={`tv-playlist-${playlist.id}`}
-                onClick={() => {
-                  void usePlaylistStore
-                    .getState()
-                    .loadPlaylist(playlist.id)
-                    .then((result) => {
-                      if (result?.items.length) {
-                        playTvTracks(result.items.map((item) => item.track));
-                        setError(false);
+          {section === 'podcasts'
+            ? PODCASTS.map((podcast) => (
+                <TvFocusableCard
+                  key={podcast.id}
+                  title={`${podcast.name}${podcastFavorites.some((item) => item.id === podcast.id) ? ' ♥' : ''}`}
+                  subtitle={podcast.publisher}
+                  focusKey={`tv-podcast-${podcast.id}`}
+                  onClick={() => void togglePodcastFavorite(podcast)}
+                >
+                  <Music />
+                </TvFocusableCard>
+              ))
+            : section === 'playlists'
+              ? playlists.slice(0, limit).map((playlist) => (
+                  <TvFocusableCard
+                    key={playlist.id}
+                    title={playlist.name}
+                    focusKey={`tv-playlist-${playlist.id}`}
+                    onClick={() => {
+                      void usePlaylistStore
+                        .getState()
+                        .loadPlaylist(playlist.id)
+                        .then((result) => {
+                          if (result?.items.length) {
+                            playTvTracks(
+                              result.items.map((item) => item.track),
+                            );
+                            setError(false);
+                          } else {
+                            setError(true);
+                          }
+                        })
+                        .catch(() => setError(true));
+                    }}
+                  >
+                    <Music />
+                  </TvFocusableCard>
+                ))
+              : tracks.slice(0, limit).map((track, index) => (
+                  <TvFocusableCard
+                    key={`${track.source?.provider}-${track.source?.id}-${index}`}
+                    title={track.title ?? ''}
+                    subtitle={track.artists
+                      ?.map((artist) => artist.name)
+                      .join(', ')}
+                    src={pickArtwork(track.artwork, 'thumbnail', 200)?.url}
+                    focusKey={`tv-content-track-${index}`}
+                    onClick={() => {
+                      if (section === 'favorites') {
+                        playTvTracks(tracks, index);
                       } else {
-                        setError(true);
+                        const queue = useQueueStore.getState();
+                        if (queue.currentIndex === index) {
+                          const current = queue.getCurrentItem();
+                          if (current && current.status !== 'success') {
+                            void streamResolution.resolve(current, {
+                              autoPlay: true,
+                            });
+                          } else {
+                            playbackManager.toggle();
+                          }
+                        } else {
+                          queue.goToIndex(index);
+                          const item = queue.items[index];
+                          if (item) {
+                            void streamResolution.resolve(item, {
+                              autoPlay: true,
+                            });
+                          } else {
+                            playbackManager.play();
+                          }
+                        }
                       }
-                    })
-                    .catch(() => setError(true));
-                }}
-              >
-                <Music />
-              </TvFocusableCard>
-            ))
-          ) : (
-            tracks.slice(0, limit).map((track, index) => (
-              <TvFocusableCard
-                key={`${track.source?.provider}-${track.source?.id}-${index}`}
-                title={track.title ?? ''}
-                subtitle={track.artists
-                  ?.map((artist) => artist.name)
-                  .join(', ')}
-                src={pickArtwork(track.artwork, 'thumbnail', 200)?.url}
-                focusKey={`tv-content-track-${index}`}
-                onClick={() => {
-                  if (section === 'favorites') {
-                    playTvTracks(tracks, index);
-                  } else {
-                    const queue = useQueueStore.getState();
-                    if (queue.currentIndex === index) {
-                      const current = queue.getCurrentItem();
-                      if (current && current.status !== 'success') {
-                        void streamResolution.resolve(current, {
-                          autoPlay: true,
-                        });
-                      } else {
-                        playbackManager.toggle();
-                      }
-                    } else {
-                      queue.goToIndex(index);
-                      const item = queue.items[index];
-                      if (item) {
-                        void streamResolution.resolve(item, {
-                          autoPlay: true,
-                        });
-                      } else {
-                        playbackManager.play();
-                      }
-                    }
-                  }
-                }}
-              >
-                <Music />
-              </TvFocusableCard>
-            ))
+                    }}
+                  >
+                    <Music />
+                  </TvFocusableCard>
+                ))}
+          {(section === 'playlists'
+            ? playlists.length
+            : section === 'podcasts'
+              ? PODCASTS.length
+              : tracks.length) === 0 && (
+            <p className="tv-empty">{t('empty')}</p>
           )}
-          {(section === 'playlists' ? playlists.length : tracks.length) ===
-            0 && <p className="tv-empty">{t('empty')}</p>}
           <TvFocusableCard
             title={t('search')}
             focusKey="tv-content-search"
@@ -157,8 +179,11 @@ const TvMainContent: FC = () => {
             <Search />
           </TvFocusableCard>
         </div>
-        {(section === 'playlists' ? playlists.length : tracks.length) >
-          limit && (
+        {(section === 'playlists'
+          ? playlists.length
+          : section === 'podcasts'
+            ? PODCASTS.length
+            : tracks.length) > limit && (
           <TvButton
             focusKey="tv-more"
             onClick={() => setLimit(limit + PAGE_SIZE)}
