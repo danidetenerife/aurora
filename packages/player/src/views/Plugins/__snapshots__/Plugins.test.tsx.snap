@@ -33,7 +33,7 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
       transition="[object Object]"
     >
       <div
-        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl flex-col sm:flex-row p-0 overflow-hidden"
+        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) aurora-settings-panel flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl min-w-0 flex-col sm:flex-row p-0 overflow-hidden"
         data-headlessui-state="open"
         data-open=""
         id="headlessui-dialog-panel-:r9:"
@@ -343,7 +343,7 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
           </div>
         </nav>
         <div
-          class="flex min-h-0 flex-1 flex-col overflow-hidden"
+          class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
         >
           <div
             class="bg-background relative flex h-full min-h-0 w-full flex-1 flex-col items-start justify-start px-6 pt-6"

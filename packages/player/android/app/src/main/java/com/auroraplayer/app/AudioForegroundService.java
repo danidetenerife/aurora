@@ -220,17 +220,19 @@ public class AudioForegroundService extends Service {
 
             @Override
             public void onPlayFromMediaId(String mediaId, Bundle extras) {
+                setBufferingStateWithMetadata(mediaId);
+
                 NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
                 if (pluginInstance != null && mediaId != null) {
-                    String action = mediaId.startsWith("playid:") || mediaId.startsWith("podcast:") || mediaId.startsWith("playlist:") || mediaId.startsWith("search_play:") ? mediaId : "playid:" + mediaId;
+                    String action = mediaId.startsWith("playid:") || mediaId.startsWith("podcast:") || mediaId.startsWith("playlist:") || mediaId.startsWith("playlist_play:") || mediaId.startsWith("search_play:") ? mediaId : "playid:" + mediaId;
                     pluginInstance.notifyMediaAction(action, -1);
                 }
-                resumeStream();
-                setOptimisticPlaybackState(true);
             }
 
             @Override
             public void onPlayFromSearch(String query, Bundle extras) {
+                setBufferingStateWithMetadata("search:" + (query == null ? "" : query));
+
                 NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
                 if (pluginInstance != null) {
                     pluginInstance.notifyMediaAction("search:" + (query == null ? "" : query), -1);
@@ -254,6 +256,8 @@ public class AudioForegroundService extends Service {
                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
                 PlaybackStateCompat.ACTION_SEEK_TO |
                 PlaybackStateCompat.ACTION_PLAY_PAUSE |
+                PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
+                PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
                 PlaybackStateCompat.ACTION_STOP
             )
             .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
@@ -408,6 +412,25 @@ public class AudioForegroundService extends Service {
         }
     }
 
+    private static final long SUPPORTED_ACTIONS =
+        PlaybackStateCompat.ACTION_PLAY |
+        PlaybackStateCompat.ACTION_PAUSE |
+        PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+        PlaybackStateCompat.ACTION_SEEK_TO |
+        PlaybackStateCompat.ACTION_PLAY_PAUSE |
+        PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
+        PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
+        PlaybackStateCompat.ACTION_STOP;
+
+    private PlaybackStateCompat.Builder newPlaybackStateBuilder() {
+        return new PlaybackStateCompat.Builder()
+            .setActions(SUPPORTED_ACTIONS)
+            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
+            ).build());
+    }
+
     private void handlePlaybackStateUpdate(Intent intent) {
         boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
         long positionMs = intent.getLongExtra("positionMs", 0);
@@ -419,20 +442,8 @@ public class AudioForegroundService extends Service {
 
         int state = isPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
 
-        PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                PlaybackStateCompat.ACTION_SEEK_TO |
-                PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                PlaybackStateCompat.ACTION_STOP
-            )
+        PlaybackStateCompat playbackState = newPlaybackStateBuilder()
             .setState(state, positionMs, isPlaying ? 1.0f : 0f)
-            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
-            ).build())
             .build();
 
         mediaSession.setPlaybackState(playbackState);
@@ -442,10 +453,10 @@ public class AudioForegroundService extends Service {
             String title = "";
             String artist = "";
             if (metadata != null) {
-                CharSequence t = metadata.getText(MediaMetadataCompat.METADATA_KEY_TITLE);
-                CharSequence a = metadata.getText(MediaMetadataCompat.METADATA_KEY_ARTIST);
-                if (t != null) title = t.toString();
-                if (a != null) artist = a.toString();
+                CharSequence titleCs = metadata.getText(MediaMetadataCompat.METADATA_KEY_TITLE);
+                CharSequence artistCs = metadata.getText(MediaMetadataCompat.METADATA_KEY_ARTIST);
+                if (titleCs != null) title = titleCs.toString();
+                if (artistCs != null) artist = artistCs.toString();
             }
             updateNotification(title, artist);
         }
@@ -456,20 +467,8 @@ public class AudioForegroundService extends Service {
 
         int state = currentlyPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
 
-        PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                PlaybackStateCompat.ACTION_SEEK_TO |
-                PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                PlaybackStateCompat.ACTION_STOP
-            )
+        PlaybackStateCompat playbackState = newPlaybackStateBuilder()
             .setState(state, positionMs, currentlyPlaying ? 1.0f : 0f)
-            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
-            ).build())
             .build();
 
         mediaSession.setPlaybackState(playbackState);
@@ -481,25 +480,45 @@ public class AudioForegroundService extends Service {
             : null;
         long pos = state != null ? state.getPosition() : 0;
 
-        PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                PlaybackStateCompat.ACTION_SEEK_TO |
-                PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                PlaybackStateCompat.ACTION_STOP
-            )
+        PlaybackStateCompat playbackState = newPlaybackStateBuilder()
             .setState(isPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED,
                       pos,
                       isPlaying ? 1.0f : 0f)
-            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
-            ).build())
             .build();
         mediaSession.setPlaybackState(playbackState);
         updateNotification(null, null);
+    }
+
+    private void setBufferingStateWithMetadata(String mediaId) {
+        if (mediaSession == null) return;
+
+        String loadingTitle = "Cargando...";
+        String loadingSubtitle = "Aurora Player";
+
+        if (mediaId != null) {
+            if (mediaId.startsWith("search_play:") || mediaId.startsWith("search:")) {
+                loadingTitle = "Buscando...";
+                String query = mediaId.contains(":") ? mediaId.substring(mediaId.indexOf(':') + 1) : mediaId;
+                if (!query.isEmpty()) loadingSubtitle = query;
+            } else if (mediaId.startsWith("podcast:")) {
+                loadingTitle = "Cargando podcast...";
+            } else if (mediaId.startsWith("playlist_play:") || mediaId.startsWith("playlist:")) {
+                loadingTitle = "Cargando playlist...";
+            }
+        }
+
+        MediaMetadataCompat bufferingMeta = new MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, loadingTitle)
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, loadingTitle)
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, loadingSubtitle)
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, loadingSubtitle)
+            .build();
+        mediaSession.setMetadata(bufferingMeta);
+
+        PlaybackStateCompat bufferingState = newPlaybackStateBuilder()
+            .setState(PlaybackStateCompat.STATE_BUFFERING, 0, 1.0f)
+            .build();
+        mediaSession.setPlaybackState(bufferingState);
     }
 
     private Notification buildNotification(String title, String artist, boolean isPlaying) {

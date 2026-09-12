@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T17:15",
+    "description": "Corrige el error 'No se ha podido cargar tu selección' en Android Auto mostrando un estado de buffering inmediato, añade portadas reales a los podcasts descargando imágenes en segundo plano, y arregla las playlists populares para que se reproduzcan directamente sin mostrar una lista vacía.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android Auto", "color": "green" }, { "label": "Corrección crítica", "color": "red" }, { "label": "Podcasts", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T15:35",
     "description": "Renovación gráfica integral de Android Auto: interfaz visual con ContentStyle en cuadrícula, carátulas en alta resolución en todas las canciones, listas y podcasts, tarjetas visuales de búsqueda para conducción y reproducción inmediata de playlists y búsquedas.",
     "type": "improvement",

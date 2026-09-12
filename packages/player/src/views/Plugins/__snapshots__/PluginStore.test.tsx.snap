@@ -33,7 +33,7 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
       transition="[object Object]"
     >
       <div
-        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl flex-col sm:flex-row p-0 overflow-hidden"
+        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) aurora-settings-panel flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl min-w-0 flex-col sm:flex-row p-0 overflow-hidden"
         data-headlessui-state="open"
         data-open=""
         id="headlessui-dialog-panel-:r9:"
@@ -341,13 +341,13 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
               <span
                 class="cursor-text text-xs select-all"
               >
-                v1.47.1 (7dab15f)
+                v1.47.1 (6bd5b66)
               </span>
             </div>
           </div>
         </nav>
         <div
-          class="flex min-h-0 flex-1 flex-col overflow-hidden"
+          class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
         >
           <div
             class="bg-background relative flex h-full min-h-0 w-full flex-1 flex-col items-start justify-start px-6 pt-6"
@@ -542,46 +542,50 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
                                     data-testid="plugin-store-item"
                                   >
                                     <div
-                                      class="flex min-w-0 flex-1 flex-col gap-1.5"
+                                      class="flex min-w-0 flex-1 items-start gap-3"
                                     >
                                       <div
-                                        class="flex flex-wrap items-center gap-2"
+                                        class="flex min-w-0 flex-1 flex-col gap-1.5"
                                       >
-                                        <h3
-                                          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+                                        <div
+                                          class="flex flex-wrap items-center gap-2"
                                         >
-                                          <span
-                                            data-testid="plugin-store-item-name"
-                                          >
-                                            YouTube Music
-                                          </span>
-                                          <span
-                                            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+                                          <h3
+                                            class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
                                           >
                                             <span
-                                              class="mr-1 opacity-60"
+                                              data-testid="plugin-store-item-name"
                                             >
-                                              by
+                                              YouTube Music
                                             </span>
                                             <span
-                                              data-testid="plugin-store-item-author"
+                                              class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
                                             >
-                                              nukeop
+                                              <span
+                                                class="mr-1 opacity-60"
+                                              >
+                                                by
+                                              </span>
+                                              <span
+                                                data-testid="plugin-store-item-author"
+                                              >
+                                                nukeop
+                                              </span>
                                             </span>
+                                          </h3>
+                                          <span
+                                            class="border-border inline-flex items-center justify-center border-(length:--border-width) whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold bg-accent-cyan text-foreground"
+                                          >
+                                            streaming
                                           </span>
-                                        </h3>
-                                        <span
-                                          class="border-border inline-flex items-center justify-center border-(length:--border-width) whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold bg-accent-cyan text-foreground"
+                                        </div>
+                                        <p
+                                          class="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
+                                          data-testid="plugin-store-item-description"
                                         >
-                                          streaming
-                                        </span>
+                                          Stream music from YouTube
+                                        </p>
                                       </div>
-                                      <p
-                                        class="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
-                                        data-testid="plugin-store-item-description"
-                                      >
-                                        Stream music from YouTube
-                                      </p>
                                     </div>
                                     <div
                                       class="shrink-0 flex items-center justify-end sm:justify-start"
@@ -627,46 +631,50 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
                                     data-testid="plugin-store-item"
                                   >
                                     <div
-                                      class="flex min-w-0 flex-1 flex-col gap-1.5"
+                                      class="flex min-w-0 flex-1 items-start gap-3"
                                     >
                                       <div
-                                        class="flex flex-wrap items-center gap-2"
+                                        class="flex min-w-0 flex-1 flex-col gap-1.5"
                                       >
-                                        <h3
-                                          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+                                        <div
+                                          class="flex flex-wrap items-center gap-2"
                                         >
-                                          <span
-                                            data-testid="plugin-store-item-name"
-                                          >
-                                            Last.fm Scrobbler
-                                          </span>
-                                          <span
-                                            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+                                          <h3
+                                            class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
                                           >
                                             <span
-                                              class="mr-1 opacity-60"
+                                              data-testid="plugin-store-item-name"
                                             >
-                                              by
+                                              Last.fm Scrobbler
                                             </span>
                                             <span
-                                              data-testid="plugin-store-item-author"
+                                              class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
                                             >
-                                              nukeop
+                                              <span
+                                                class="mr-1 opacity-60"
+                                              >
+                                                by
+                                              </span>
+                                              <span
+                                                data-testid="plugin-store-item-author"
+                                              >
+                                                nukeop
+                                              </span>
                                             </span>
+                                          </h3>
+                                          <span
+                                            class="border-border inline-flex items-center justify-center border-(length:--border-width) whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold bg-accent-cyan text-foreground"
+                                          >
+                                            scrobbling
                                           </span>
-                                        </h3>
-                                        <span
-                                          class="border-border inline-flex items-center justify-center border-(length:--border-width) whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold bg-accent-cyan text-foreground"
+                                        </div>
+                                        <p
+                                          class="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
+                                          data-testid="plugin-store-item-description"
                                         >
-                                          scrobbling
-                                        </span>
+                                          Scrobble your listening history to Last.fm
+                                        </p>
                                       </div>
-                                      <p
-                                        class="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
-                                        data-testid="plugin-store-item-description"
-                                      >
-                                        Scrobble your listening history to Last.fm
-                                      </p>
                                     </div>
                                     <div
                                       class="shrink-0 flex items-center justify-end sm:justify-start"
@@ -712,46 +720,50 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
                                     data-testid="plugin-store-item"
                                   >
                                     <div
-                                      class="flex min-w-0 flex-1 flex-col gap-1.5"
+                                      class="flex min-w-0 flex-1 items-start gap-3"
                                     >
                                       <div
-                                        class="flex flex-wrap items-center gap-2"
+                                        class="flex min-w-0 flex-1 flex-col gap-1.5"
                                       >
-                                        <h3
-                                          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+                                        <div
+                                          class="flex flex-wrap items-center gap-2"
                                         >
-                                          <span
-                                            data-testid="plugin-store-item-name"
-                                          >
-                                            MusicBrainz Metadata
-                                          </span>
-                                          <span
-                                            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+                                          <h3
+                                            class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
                                           >
                                             <span
-                                              class="mr-1 opacity-60"
+                                              data-testid="plugin-store-item-name"
                                             >
-                                              by
+                                              MusicBrainz Metadata
                                             </span>
                                             <span
-                                              data-testid="plugin-store-item-author"
+                                              class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
                                             >
-                                              nukeop
+                                              <span
+                                                class="mr-1 opacity-60"
+                                              >
+                                                by
+                                              </span>
+                                              <span
+                                                data-testid="plugin-store-item-author"
+                                              >
+                                                nukeop
+                                              </span>
                                             </span>
+                                          </h3>
+                                          <span
+                                            class="border-border inline-flex items-center justify-center border-(length:--border-width) whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold bg-accent-cyan text-foreground"
+                                          >
+                                            metadata
                                           </span>
-                                        </h3>
-                                        <span
-                                          class="border-border inline-flex items-center justify-center border-(length:--border-width) whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold bg-accent-cyan text-foreground"
+                                        </div>
+                                        <p
+                                          class="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
+                                          data-testid="plugin-store-item-description"
                                         >
-                                          metadata
-                                        </span>
+                                          Fetch metadata from MusicBrainz database
+                                        </p>
                                       </div>
-                                      <p
-                                        class="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
-                                        data-testid="plugin-store-item-description"
-                                      >
-                                        Fetch metadata from MusicBrainz database
-                                      </p>
                                     </div>
                                     <div
                                       class="shrink-0 flex items-center justify-end sm:justify-start"
