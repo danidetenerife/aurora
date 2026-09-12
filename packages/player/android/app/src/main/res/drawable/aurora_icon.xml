@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/aurora_icon_bitmap"
-    android:gravity="fill" />
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path android:fillColor="#0F172A" android:pathData="M30,4 L70,4 Q96,4 96,30 L96,70 Q96,96 70,96 L30,96 Q4,96 4,70 L4,30 Q4,4 30,4 Z" />
+    <path android:strokeColor="#2DD4BF" android:strokeWidth="2.5" android:fillColor="@android:color/transparent" android:pathData="M30,4 L70,4 Q96,4 96,30 L96,70 Q96,96 70,96 L30,96 Q4,96 4,70 L4,30 Q4,4 30,4 Z" />
+    <path android:fillColor="#34D399" android:pathData="M50,18 C52,18 53.5,19.5 54.5,22 L78,74 C79,76.5 77.5,79 75,79 C73,79 71.5,77.5 70.5,75.5 L61,54 C60,52 58,50.5 55,50.5 L45,50.5 C42,50.5 40,52 39,54 L29.5,75.5 C28.5,77.5 27,79 25,79 C22.5,79 21,76.5 22,74 L45.5,22 C46.5,19.5 48,18 50,18 Z" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="3.5" android:strokeLineCap="round" android:fillColor="@android:color/transparent" android:pathData="M33,60 Q42,52 50,60 Q58,68 67,60" />
+    <path android:fillColor="#FFFFFF" android:pathData="M46.5,34 A3.5,3.5 0,1 0,53.5 34 A3.5,3.5 0,1 0,46.5 34" />
+</vector>

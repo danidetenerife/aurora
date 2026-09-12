@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T10:30",
+    "description": "Usa el logotipo de Aurora en el icono de Android, Android Auto y Google TV.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }, { "label": "Android Auto", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T10:25",
     "description": "Añade el control No me gusta al modo coche y a Android Auto; la canción se marca para excluirla y avanza la reproducción.",
     "type": "feature",
