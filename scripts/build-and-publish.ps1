@@ -112,7 +112,6 @@ if (-not (Test-Path $GeneratedExe)) {
 $DestExe = "$Root\ejecutables\Aurora_${NextVer}_x64-setup.exe"
 if (Test-Path $GeneratedExe) {
     Copy-Item $GeneratedExe $DestExe -Force
-    Copy-Item $GeneratedExe "C:\Users\Danid\Desktop\Aurora_${NextVer}_x64-setup.exe" -Force -ErrorAction SilentlyContinue
 }
 
 $GeneratedSignature = "$GeneratedExe.sig"
