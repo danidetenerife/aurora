@@ -16,6 +16,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlaylistsIndexRouteImport } from './routes/playlists/index'
+import { Route as PodcastPodcastIdRouteImport } from './routes/podcast/$podcastId'
 import { Route as PlaylistsPlaylistIdRouteImport } from './routes/playlists/$playlistId'
 import { Route as FavoritesTracksRouteImport } from './routes/favorites/tracks'
 import { Route as FavoritesArtistsRouteImport } from './routes/favorites/artists'
@@ -57,6 +58,11 @@ const IndexRoute = IndexRouteImport.update({
 const PlaylistsIndexRoute = PlaylistsIndexRouteImport.update({
   id: '/playlists/',
   path: '/playlists/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastPodcastIdRoute = PodcastPodcastIdRouteImport.update({
+  id: '/podcast/$podcastId',
+  path: '/podcast/$podcastId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlaylistsPlaylistIdRoute = PlaylistsPlaylistIdRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/favorites/artists': typeof FavoritesArtistsRoute
   '/favorites/tracks': typeof FavoritesTracksRoute
   '/playlists/$playlistId': typeof PlaylistsPlaylistIdRoute
+  '/podcast/$podcastId': typeof PodcastPodcastIdRoute
   '/playlists/': typeof PlaylistsIndexRoute
   '/album/$providerId/$albumId': typeof AlbumProviderIdAlbumIdRoute
   '/artist/$providerId/$artistId': typeof ArtistProviderIdArtistIdRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/favorites/artists': typeof FavoritesArtistsRoute
   '/favorites/tracks': typeof FavoritesTracksRoute
   '/playlists/$playlistId': typeof PlaylistsPlaylistIdRoute
+  '/podcast/$podcastId': typeof PodcastPodcastIdRoute
   '/playlists': typeof PlaylistsIndexRoute
   '/album/$providerId/$albumId': typeof AlbumProviderIdAlbumIdRoute
   '/artist/$providerId/$artistId': typeof ArtistProviderIdArtistIdRoute
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/favorites/artists': typeof FavoritesArtistsRoute
   '/favorites/tracks': typeof FavoritesTracksRoute
   '/playlists/$playlistId': typeof PlaylistsPlaylistIdRoute
+  '/podcast/$podcastId': typeof PodcastPodcastIdRoute
   '/playlists/': typeof PlaylistsIndexRoute
   '/album/$providerId/$albumId': typeof AlbumProviderIdAlbumIdRoute
   '/artist/$providerId/$artistId': typeof ArtistProviderIdArtistIdRoute
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/favorites/artists'
     | '/favorites/tracks'
     | '/playlists/$playlistId'
+    | '/podcast/$podcastId'
     | '/playlists/'
     | '/album/$providerId/$albumId'
     | '/artist/$providerId/$artistId'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/favorites/artists'
     | '/favorites/tracks'
     | '/playlists/$playlistId'
+    | '/podcast/$podcastId'
     | '/playlists'
     | '/album/$providerId/$albumId'
     | '/artist/$providerId/$artistId'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/favorites/artists'
     | '/favorites/tracks'
     | '/playlists/$playlistId'
+    | '/podcast/$podcastId'
     | '/playlists/'
     | '/album/$providerId/$albumId'
     | '/artist/$providerId/$artistId'
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   FavoritesArtistsRoute: typeof FavoritesArtistsRoute
   FavoritesTracksRoute: typeof FavoritesTracksRoute
   PlaylistsPlaylistIdRoute: typeof PlaylistsPlaylistIdRoute
+  PodcastPodcastIdRoute: typeof PodcastPodcastIdRoute
   PlaylistsIndexRoute: typeof PlaylistsIndexRoute
   AlbumProviderIdAlbumIdRoute: typeof AlbumProviderIdAlbumIdRoute
   ArtistProviderIdArtistIdRoute: typeof ArtistProviderIdArtistIdRoute
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/playlists'
       fullPath: '/playlists/'
       preLoaderRoute: typeof PlaylistsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/podcast/$podcastId': {
+      id: '/podcast/$podcastId'
+      path: '/podcast/$podcastId'
+      fullPath: '/podcast/$podcastId'
+      preLoaderRoute: typeof PodcastPodcastIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/playlists/$playlistId': {
@@ -328,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritesArtistsRoute: FavoritesArtistsRoute,
   FavoritesTracksRoute: FavoritesTracksRoute,
   PlaylistsPlaylistIdRoute: PlaylistsPlaylistIdRoute,
+  PodcastPodcastIdRoute: PodcastPodcastIdRoute,
   PlaylistsIndexRoute: PlaylistsIndexRoute,
   AlbumProviderIdAlbumIdRoute: AlbumProviderIdAlbumIdRoute,
   ArtistProviderIdArtistIdRoute: ArtistProviderIdArtistIdRoute,

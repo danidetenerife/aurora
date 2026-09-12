@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T17:40",
+    "description": "Ficha completa de podcast integrada con YouTube Music: al hacer click en cualquier podcast desde el buscador o la sección de podcasts se abre la ficha con carátula, autor, descripción y el listado de episodios reproducibles directamente mediante el motor de streaming de YouTube.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "YouTube Music", "color": "red" }, { "label": "Interfaz", "color": "purple" }]
+  },
+  {
     "date": "2026-09-12T17:15",
     "description": "Corrige el error 'No se ha podido cargar tu selección' en Android Auto mostrando un estado de buffering inmediato, añade portadas reales a los podcasts descargando imágenes en segundo plano, y arregla las playlists populares para que se reproduzcan directamente sin mostrar una lista vacía.",
     "type": "fix",

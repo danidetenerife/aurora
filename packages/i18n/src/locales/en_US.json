@@ -648,6 +648,9 @@
     "open": "Open {{name}}",
     "play": "Play {{name}}",
     "addFavorite": "Add to favorites",
-    "removeFavorite": "Remove from favorites"
+    "removeFavorite": "Remove from favorites",
+    "playEpisode": "Play episode",
+    "episodesCount": "{{count}} episodes",
+    "details": "Podcast Details"
   }
 }

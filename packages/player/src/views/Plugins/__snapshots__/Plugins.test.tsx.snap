@@ -366,14 +366,14 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                 >
                   <div
                     aria-orientation="horizontal"
-                    class="flex w-full items-center gap-2"
+                    class="scrollbar-hide flex w-full items-center gap-2 overflow-x-auto"
                     id="tabs-:ra:-list"
                     role="tablist"
                   >
                     <button
                       aria-controls="headlessui-tabs-panel-:rf:"
                       aria-selected="true"
-                      class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2"
+                      class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2 shrink-0 whitespace-nowrap"
                       data-headlessui-state=""
                       data-selected=""
                       id="headlessui-tabs-tab-:rb:"
@@ -386,7 +386,7 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                     <button
                       aria-controls="headlessui-tabs-panel-:rh:"
                       aria-selected="false"
-                      class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2"
+                      class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 shrink-0 whitespace-nowrap"
                       data-headlessui-state=""
                       id="headlessui-tabs-tab-:rd:"
                       role="tab"

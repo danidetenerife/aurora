@@ -1,4 +1,3 @@
-import type { Track } from '@aurora/model';
 import { pickArtwork } from '@aurora/model';
 
 import { useFavoritesStore } from '../stores/favoritesStore';
@@ -9,6 +8,7 @@ import { metadataHost } from './metadataHost';
 import { NativeMediaSessionPlugin } from './nativeMediaSession';
 import { personalizationEngine } from './personalizationEngine';
 import { playbackManager } from './playback';
+import { podcastService } from './podcastService';
 import { isCapacitorEnvironment } from './universalStore';
 
 const secondsToMs = (seconds: number): number => Math.round(seconds * 1000);
@@ -356,44 +356,13 @@ export const initMediaSessionService = (): void => {
         };
         const searchTerm =
           knownPodcasts[podcastId] || podcastId.replace(/-/g, ' ');
-        void fetch(
-          `https://itunes.apple.com/search?term=${encodeURIComponent(
-            searchTerm,
-          )}&entity=podcast&limit=1`,
-        )
-          .then((response) => response.json())
-          .then(async (resultData) => {
-            const collectionId = resultData.results?.[0]?.collectionId;
-            if (!collectionId) {
-              return;
-            }
-            const epResponse = await fetch(
-              `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode&limit=20`,
-            );
-            const epData = await epResponse.json();
-            const firstEp = epData.results?.find(
-              (entry: { kind?: string; episodeUrl?: string }) =>
-                entry.kind === 'podcast-episode' && entry.episodeUrl,
-            );
-            if (firstEp) {
-              const episodeTrack: Track = {
-                title: firstEp.trackName ?? searchTerm,
-                artists: [{ name: searchTerm, roles: ['host'] }],
-                source: {
-                  provider: 'podcast-audio',
-                  id: String(firstEp.trackId),
-                  url: firstEp.episodeUrl,
-                },
-                durationMs: firstEp.trackTimeMillis,
-                artwork: {
-                  items: firstEp.artworkUrl600
-                    ? [{ url: firstEp.artworkUrl600, purpose: 'thumbnail' }]
-                    : [],
-                },
-              };
+        void podcastService
+          .getPodcastDetails(searchTerm)
+          .then((detail) => {
+            if (detail && detail.episodes.length > 0) {
               const queue = useQueueStore.getState();
-              queue.addToQueue([episodeTrack]);
-              queue.goToIndex(queue.items.length - 1);
+              queue.addToQueue(detail.episodes);
+              queue.goToIndex(0);
               playbackManager.play();
             }
           })
