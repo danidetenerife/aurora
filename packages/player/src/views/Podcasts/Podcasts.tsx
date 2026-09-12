@@ -61,8 +61,9 @@ const directorySchema = z.object({
 });
 const requestDirectory = async (path: string) => {
   const response = await httpHost.fetch(`https://itunes.apple.com/${path}`);
-  if (response.status !== 200)
+  if (response.status !== 200) {
     throw new Error(i18n.t('podcastBrowser:loadError'));
+  }
   return directorySchema.parse(JSON.parse(response.body)).results;
 };
 const chartSchema = z.object({
@@ -97,7 +98,9 @@ export const Podcasts: FC = () => {
         'https://rss.applemarketingtools.com/api/v2/es/podcasts/top/50/podcasts.json',
       )
       .then((response) => {
-        if (response.status !== 200) return;
+        if (response.status !== 200) {
+          return;
+        }
         const results = chartSchema.parse(JSON.parse(response.body)).feed
           .results;
         const podcasts = results.map((item) => ({
@@ -107,7 +110,9 @@ export const Podcasts: FC = () => {
           sourceUrl:
             item.url ?? `https://podcasts.apple.com/podcast/id${item.id}`,
         }));
-        if (active && podcasts.length > 0) setCatalog(podcasts);
+        if (active && podcasts.length > 0) {
+          setCatalog(podcasts);
+        }
       })
       .catch(() => {});
     return () => {
@@ -122,8 +127,9 @@ export const Podcasts: FC = () => {
       )
         .then((results) => {
           const image = results[0]?.artworkUrl600;
-          if (active && image)
+          if (active && image) {
             setArtwork((previous) => ({ ...previous, [podcast.id]: image }));
+          }
         })
         .catch(() => {});
     }
@@ -132,7 +138,9 @@ export const Podcasts: FC = () => {
     };
   }, [catalog]);
   useEffect(() => {
-    if (!selected) return;
+    if (!selected) {
+      return;
+    }
     let active = true;
     setLoading(true);
     setError('');
@@ -142,7 +150,9 @@ export const Podcasts: FC = () => {
         `search?term=${encodeURIComponent(selected.name)}&entity=podcast&limit=1`,
       );
       const show = matches[0];
-      if (!show?.collectionId) throw new Error(i18n.t('podcastBrowser:empty'));
+      if (!show?.collectionId) {
+        throw new Error(i18n.t('podcastBrowser:empty'));
+      }
       const entries = await requestDirectory(
         `lookup?id=${show.collectionId}&entity=podcastEpisode&limit=200`,
       );
@@ -163,14 +173,20 @@ export const Podcasts: FC = () => {
               : [],
           },
         }));
-      if (active) setEpisodes(tracks);
+      if (active) {
+        setEpisodes(tracks);
+      }
     };
     void fetchEpisodes()
       .catch((reason: Error) => {
-        if (active) setError(reason.message);
+        if (active) {
+          setError(reason.message);
+        }
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       });
     return () => {
       active = false;
@@ -205,8 +221,10 @@ export const Podcasts: FC = () => {
             <Mic2 className="size-12 shrink-0" />
           )}
           <span className="min-w-0">
-            <strong className="block truncate text-sm">{podcast.name}</strong>
-            <span className="block truncate text-xs opacity-60">
+            <strong className="block text-sm break-words">
+              {podcast.name}
+            </strong>
+            <span className="block text-xs break-words opacity-60">
               {podcast.publisher}
             </span>
           </span>

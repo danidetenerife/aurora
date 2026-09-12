@@ -633,6 +633,8 @@
     "open": "Abrir {{name}}",
     "play": "Reproducir {{name}}",
     "addFavorite": "Guardar favorito",
-    "removeFavorite": "Quitar de favoritos"
+    "removeFavorite": "Quitar de favoritos",
+    "playEpisode": "Reproducir episodio",
+    "playLatest": "Reproducir último episodio"
   }
 }

@@ -41,7 +41,8 @@ export const createStreamingProvider = (
 
     if (
       (track.source?.provider === STREAMING_PROVIDER_ID ||
-        track.source?.provider === 'youtube-music') &&
+        track.source?.provider === 'youtube-music' ||
+        track.source?.provider === 'youtube') &&
       track.source?.id &&
       !track.source.id.startsWith('http') &&
       track.source.id.length > 5

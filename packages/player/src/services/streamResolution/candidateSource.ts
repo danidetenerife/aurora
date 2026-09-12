@@ -27,6 +27,37 @@ export const candidatesForTrack = async (
       },
     ];
   }
+
+  const isDirectYoutube =
+    (track.source.provider === 'youtube' ||
+      track.source.provider === 'youtube-music' ||
+      track.source.provider === 'aurora-plugin-youtube' ||
+      track.source.provider === 'aurora-plugin-youtube-music') &&
+    track.source.id &&
+    /^[a-zA-Z0-9_-]{11}$/.test(track.source.id);
+
+  if (isDirectYoutube) {
+    const cached = track.streamCandidates;
+    if (
+      cached?.length &&
+      !cached.some(isStreamExpired) &&
+      cached.some((candidate) => candidate.id === track.source.id)
+    ) {
+      return cached;
+    }
+
+    return [
+      {
+        id: track.source.id,
+        title: track.title,
+        source: track.source,
+        failed: false,
+        lastResolvedAtIso: new Date().toISOString(),
+        durationMs: track.durationMs,
+      },
+    ];
+  }
+
   const cached = track.streamCandidates;
   if (cached?.length && !cached.some(isStreamExpired)) {
     return cached;

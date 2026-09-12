@@ -650,6 +650,7 @@
     "addFavorite": "Add to favorites",
     "removeFavorite": "Remove from favorites",
     "playEpisode": "Play episode",
+    "playLatest": "Play latest episode",
     "episodesCount": "{{count}} episodes",
     "details": "Podcast Details"
   }

@@ -14,7 +14,9 @@ type PodcastDetailHeaderProps = {
   podcast: PodcastDetail;
 };
 
-export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) => {
+export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
+  podcast,
+}) => {
   const { t } = useTranslation(['podcastBrowser', 'common']);
   const navigate = useNavigate();
   const { favorites, toggleFavorite } = usePodcastStore();
@@ -33,7 +35,9 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) =
 
   const handlePlayLatest = () => {
     const firstEpisode = podcast.episodes[0];
-    if (!firstEpisode) return;
+    if (!firstEpisode) {
+      return;
+    }
 
     const queue = useQueueStore.getState();
     queue.clearQueue();
@@ -43,7 +47,7 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) =
   };
 
   return (
-    <div className="border-border bg-primary shadow-shadow relative mx-4 mt-4 flex flex-col gap-6 rounded-xl border-(length:--border-width) p-6 sm:mx-6 sm:mt-6 md:flex-row">
+    <div className="border-border bg-primary shadow-shadow relative mx-3 mt-3 flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4 sm:mx-6 sm:mt-6 sm:gap-6 sm:p-6 md:flex-row">
       <button
         type="button"
         data-testid="podcast-back-button"
@@ -65,7 +69,11 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) =
         data-testid="podcast-favorite-button"
         onClick={handleToggleFavorite}
         className="bg-background border-border hover:bg-background/80 absolute top-4 right-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg border-(length:--border-width) transition-colors"
-        aria-label={t(isFavorite ? 'podcastBrowser:removeFavorite' : 'podcastBrowser:addFavorite')}
+        aria-label={t(
+          isFavorite
+            ? 'podcastBrowser:removeFavorite'
+            : 'podcastBrowser:addFavorite',
+        )}
       >
         <Heart
           size={18}
@@ -73,16 +81,16 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) =
         />
       </button>
 
-      <div className="flex shrink-0 justify-center pt-8 md:pt-0">
+      <div className="flex shrink-0 justify-center pt-8 sm:pt-0">
         {podcast.artwork ? (
           <img
             src={podcast.artwork}
             alt={podcast.title}
-            className="border-border shadow-shadow size-48 rounded-xl border-(length:--border-width) object-cover sm:size-56"
+            className="border-border shadow-shadow size-28 rounded-xl border-(length:--border-width) object-cover sm:size-48 md:size-56"
           />
         ) : (
-          <div className="border-border bg-background shadow-shadow flex size-48 items-center justify-center rounded-xl border-(length:--border-width) sm:size-56">
-            <Mic2 size={64} className="opacity-40" />
+          <div className="border-border bg-background shadow-shadow flex size-28 items-center justify-center rounded-xl border-(length:--border-width) sm:size-48 md:size-56">
+            <Mic2 size={40} className="opacity-40" />
           </div>
         )}
       </div>
@@ -90,16 +98,18 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) =
       <div className="flex flex-1 flex-col justify-between gap-4">
         <div className="flex flex-col gap-2">
           <span className="text-xs font-bold tracking-wider uppercase opacity-70">
-            {podcast.source === 'youtube-music' ? 'YouTube Music Podcast' : 'Podcast'}
+            {podcast.source === 'youtube-music'
+              ? 'YouTube Music Podcast'
+              : 'Podcast'}
           </span>
-          <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+          <h1 className="font-heading text-xl font-extrabold tracking-tight break-words sm:text-4xl md:text-5xl">
             {podcast.title}
           </h1>
-          <p className="text-base font-medium opacity-80 sm:text-lg">
+          <p className="text-sm font-medium break-words opacity-80 sm:text-base">
             {podcast.publisher}
           </p>
           {podcast.description && (
-            <p className="line-clamp-3 text-xs opacity-75 sm:text-sm">
+            <p className="text-xs leading-relaxed break-words whitespace-pre-line opacity-80 sm:text-sm">
               {podcast.description}
             </p>
           )}
@@ -115,7 +125,7 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({ podcast }) =
               onClick={handlePlayLatest}
             >
               <Play size={18} fill="currentColor" />
-              <span>{t('podcastBrowser:play', { name: podcast.episodes[0]?.title ?? '' })}</span>
+              <span>{t('podcastBrowser:playLatest')}</span>
             </Button>
           )}
 

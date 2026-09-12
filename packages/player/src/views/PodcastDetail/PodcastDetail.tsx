@@ -13,7 +13,12 @@ export const PodcastDetail: FC = () => {
   const { podcastId } = useParams({ from: '/podcast/$podcastId' });
   const { t } = useTranslation(['podcastBrowser', 'common']);
   const navigate = useNavigate();
-  const { data: podcast, isLoading, isError, refetch } = usePodcastDetail(podcastId);
+  const {
+    data: podcast,
+    isLoading,
+    isError,
+    refetch,
+  } = usePodcastDetail(podcastId);
 
   if (isLoading) {
     return (
@@ -56,10 +61,7 @@ export const PodcastDetail: FC = () => {
   }
 
   return (
-    <ScrollableArea
-      className="bg-background"
-      data-testid="podcast-detail-view"
-    >
+    <ScrollableArea className="bg-background" data-testid="podcast-detail-view">
       <PodcastDetailHeader podcast={podcast} />
 
       <div className="p-4 sm:p-6">
@@ -72,6 +74,7 @@ export const PodcastDetail: FC = () => {
         ) : (
           <ConnectedTrackTable
             tracks={podcast.episodes}
+            rowHeight={64}
             features={{ playAll: true, addAllToQueue: true }}
             display={{
               displayThumbnail: true,

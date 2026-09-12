@@ -18,7 +18,10 @@ import {
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { useActiveProvider } from '../../hooks/useActiveProvider';
 import { metadataHost } from '../../services/metadataHost';
-import { type PodcastSearchResult, podcastService } from '../../services/podcastService';
+import {
+  podcastService,
+  type PodcastSearchResult,
+} from '../../services/podcastService';
 import { SearchEmptyState } from './SearchEmptyState';
 
 const SearchContent: FC<{
@@ -85,10 +88,11 @@ const SearchContent: FC<{
                   className="size-12 shrink-0 rounded-lg object-cover"
                 />
               ) : null}
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold">
+              <span className="min-w-0 flex-1 text-sm font-semibold break-words">
                 {podcast.name}
-                <small className="block truncate text-xs font-normal opacity-60">
-                  {podcast.publisher} {podcast.source === 'youtube-music' ? '• YouTube Music' : ''}
+                <small className="block text-xs font-normal break-words opacity-60">
+                  {podcast.publisher}{' '}
+                  {podcast.source === 'youtube-music' ? '• YouTube Music' : ''}
                 </small>
               </span>
             </button>

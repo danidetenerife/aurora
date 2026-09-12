@@ -65,6 +65,59 @@ const createProvider = (api: AuroraPluginAPI): StreamingProvider => ({
     }));
   },
 
+  searchForTrackV2: async (track) => {
+    if (
+      (track.source?.provider === PROVIDER_ID ||
+        track.source?.provider === 'youtube' ||
+        track.source?.provider === 'youtube-music') &&
+      track.source?.id &&
+      !track.source.id.startsWith('http') &&
+      track.source.id.length > 5
+    ) {
+      return [
+        {
+          id: track.source.id,
+          title: track.title,
+          durationMs: track.durationMs,
+          failed: false,
+          source: { provider: PROVIDER_ID, id: track.source.id },
+        },
+      ];
+    }
+    const [quotedOutcome, plainOutcome] = await Promise.allSettled([
+      api.Ytdlp.search(
+        buildQuotedQuery(
+          track.artists[0]?.name ?? 'Unknown Artist',
+          track.title,
+        ),
+      ),
+      api.Ytdlp.search(
+        `${track.artists[0]?.name ?? 'Unknown Artist'} ${track.title}`,
+      ),
+    ]);
+
+    if (
+      quotedOutcome.status === 'rejected' &&
+      plainOutcome.status === 'rejected'
+    ) {
+      throw quotedOutcome.reason;
+    }
+
+    const results = dedupeById([
+      ...valueOrEmpty(quotedOutcome),
+      ...valueOrEmpty(plainOutcome),
+    ]);
+
+    return results.map((result) => ({
+      id: result.id,
+      title: result.title,
+      durationMs: result.duration ? result.duration * 1000 : undefined,
+      thumbnail: result.thumbnail ?? undefined,
+      failed: false,
+      source: { provider: PROVIDER_ID, id: result.id },
+    }));
+  },
+
   getStreamUrl: async (candidateId) => {
     const info = await api.Ytdlp.getStream(candidateId);
 

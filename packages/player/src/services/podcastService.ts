@@ -156,7 +156,9 @@ const SEARCH_RESULT_LIMIT = 25;
 const EPISODE_LIMIT = 200;
 
 class PodcastService {
-  private async searchYtmPodcasts(query: string): Promise<PodcastSearchResult[]> {
+  private async searchYtmPodcasts(
+    query: string,
+  ): Promise<PodcastSearchResult[]> {
     try {
       const response = await httpHost.fetch(`${YTM_BASE_URL}/search`, {
         method: 'POST',
@@ -182,23 +184,34 @@ class PodcastService {
       }
 
       const data = JSON.parse(response.body) as YtmInnerTubeSearchResponse;
-      const tab = data.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer;
+      const tab =
+        data.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer;
       const contents = tab?.content?.sectionListRenderer?.contents ?? [];
-      const shelf = contents.find((section) => section.musicShelfRenderer)?.musicShelfRenderer;
+      const shelf = contents.find(
+        (section) => section.musicShelfRenderer,
+      )?.musicShelfRenderer;
       const rawItems = shelf?.contents ?? [];
 
       const results: PodcastSearchResult[] = [];
 
       for (const item of rawItems) {
         const renderer = item.musicResponsiveListItemRenderer;
-        if (!renderer) continue;
+        if (!renderer) {
+          continue;
+        }
 
-        const title = renderer.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.[0]?.text;
-        const author = renderer.flexColumns?.[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.[0]?.text ?? 'YouTube Music';
+        const title =
+          renderer.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer
+            ?.text?.runs?.[0]?.text;
+        const author =
+          renderer.flexColumns?.[1]?.musicResponsiveListItemFlexColumnRenderer
+            ?.text?.runs?.[0]?.text ?? 'YouTube Music';
         const browseId =
           renderer.navigationEndpoint?.browseEndpoint?.browseId ||
-          renderer.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.[0]?.navigationEndpoint?.browseEndpoint?.browseId;
-        const thumbnails = renderer.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
+          renderer.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer
+            ?.text?.runs?.[0]?.navigationEndpoint?.browseEndpoint?.browseId;
+        const thumbnails =
+          renderer.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
         const artwork = thumbnails?.[thumbnails.length - 1]?.url;
 
         if (title && browseId) {
@@ -218,7 +231,9 @@ class PodcastService {
     }
   }
 
-  private async searchItunesPodcasts(query: string): Promise<PodcastSearchResult[]> {
+  private async searchItunesPodcasts(
+    query: string,
+  ): Promise<PodcastSearchResult[]> {
     try {
       const response = await httpHost.fetch(
         `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=podcast&limit=${SEARCH_RESULT_LIMIT}`,
@@ -263,7 +278,9 @@ class PodcastService {
     ]);
 
     const combined = [...ytmResults];
-    const seenNames = new Set(ytmResults.map((item) => item.name.toLowerCase().trim()));
+    const seenNames = new Set(
+      ytmResults.map((item) => item.name.toLowerCase().trim()),
+    );
 
     for (const itunesItem of itunesResults) {
       const normalizedName = itunesItem.name.toLowerCase().trim();
@@ -276,7 +293,9 @@ class PodcastService {
     return combined;
   }
 
-  private async getItunesPodcastDetails(collectionId: string): Promise<PodcastDetail | null> {
+  private async getItunesPodcastDetails(
+    collectionId: string,
+  ): Promise<PodcastDetail | null> {
     try {
       const lookupResponse = await httpHost.fetch(
         `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode&limit=${EPISODE_LIMIT}`,
@@ -319,7 +338,9 @@ class PodcastService {
           artists: [{ name: showAuthor, roles: ['host'] }],
           album: {
             title: showTitle,
-            artwork: showArtwork ? { items: [{ url: showArtwork, purpose: 'cover' }] } : undefined,
+            artwork: showArtwork
+              ? { items: [{ url: showArtwork, purpose: 'cover' }] }
+              : undefined,
             source: {
               provider: 'itunes-podcast',
               id: collectionId,
@@ -332,9 +353,15 @@ class PodcastService {
           },
           durationMs: entry.trackTimeMillis,
           artwork: {
-            items: entry.artworkUrl600 || showArtwork
-              ? [{ url: (entry.artworkUrl600 || showArtwork)!, purpose: 'thumbnail' }]
-              : [],
+            items:
+              entry.artworkUrl600 || showArtwork
+                ? [
+                    {
+                      url: (entry.artworkUrl600 || showArtwork)!,
+                      purpose: 'thumbnail',
+                    },
+                  ]
+                : [],
           },
         }));
 
@@ -352,7 +379,9 @@ class PodcastService {
     }
   }
 
-  private async getYtmPodcastDetails(browseId: string): Promise<PodcastDetail | null> {
+  private async getYtmPodcastDetails(
+    browseId: string,
+  ): Promise<PodcastDetail | null> {
     try {
       const response = await httpHost.fetch(`${YTM_BASE_URL}/browse`, {
         method: 'POST',
@@ -377,19 +406,33 @@ class PodcastService {
       }
 
       const data = JSON.parse(response.body) as YtmBrowseResponse;
-      const headerSection = data.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer?.content?.sectionListRenderer?.contents?.[0]?.musicResponsiveHeaderRenderer;
+      const headerSection =
+        data.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer
+          ?.content?.sectionListRenderer?.contents?.[0]
+          ?.musicResponsiveHeaderRenderer;
 
-      const showTitle = headerSection?.title?.runs?.map((run) => run.text).join('') || 'Podcast';
+      const showTitle =
+        headerSection?.title?.runs?.map((run) => run.text).join('') ||
+        'Podcast';
       const showAuthor =
-        headerSection?.straplineTextOne?.runs?.map((run) => run.text).join('') ||
+        headerSection?.straplineTextOne?.runs
+          ?.map((run) => run.text)
+          .join('') ||
         headerSection?.subtitle?.runs?.map((run) => run.text).join('') ||
         'YouTube Music';
-      const showDescription = headerSection?.description?.musicDescriptionShelfRenderer?.description?.runs?.map((run) => run.text).join('');
-      const headerThumbnails = headerSection?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
+      const showDescription =
+        headerSection?.description?.musicDescriptionShelfRenderer?.description?.runs
+          ?.map((run) => run.text)
+          .join('');
+      const headerThumbnails =
+        headerSection?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
       const showArtwork = headerThumbnails?.[headerThumbnails.length - 1]?.url;
 
-      const secondarySection = data.contents?.twoColumnBrowseResultsRenderer?.secondaryContents;
-      const episodeShelf = secondarySection?.sectionListRenderer?.contents?.[0]?.musicShelfRenderer;
+      const secondarySection =
+        data.contents?.twoColumnBrowseResultsRenderer?.secondaryContents;
+      const episodeShelf =
+        secondarySection?.sectionListRenderer?.contents?.[0]
+          ?.musicShelfRenderer;
       const rawEpisodeList = episodeShelf?.contents ?? [];
 
       const episodes: Track[] = [];
@@ -398,8 +441,10 @@ class PodcastService {
         const row = item.musicMultiRowListItemRenderer;
         const videoId = row?.onTap?.watchEndpoint?.videoId;
         const episodeTitle = row?.title?.runs?.map((run) => run.text).join('');
-        const thumbnails = row?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
-        const episodeThumb = thumbnails?.[thumbnails.length - 1]?.url ?? showArtwork;
+        const thumbnails =
+          row?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
+        const episodeThumb =
+          thumbnails?.[thumbnails.length - 1]?.url ?? showArtwork;
 
         if (videoId && episodeTitle) {
           episodes.push({
@@ -407,19 +452,23 @@ class PodcastService {
             artists: [{ name: showAuthor, roles: ['host'] }],
             album: {
               title: showTitle,
-              artwork: showArtwork ? { items: [{ url: showArtwork, purpose: 'cover' }] } : undefined,
+              artwork: showArtwork
+                ? { items: [{ url: showArtwork, purpose: 'cover' }] }
+                : undefined,
               source: {
                 provider: 'youtube-music',
                 id: browseId,
               },
             },
             source: {
-              provider: 'youtube',
+              provider: 'youtube-music',
               id: videoId,
               url: `https://www.youtube.com/watch?v=${videoId}`,
             },
             artwork: {
-              items: episodeThumb ? [{ url: episodeThumb, purpose: 'thumbnail' }] : [],
+              items: episodeThumb
+                ? [{ url: episodeThumb, purpose: 'thumbnail' }]
+                : [],
             },
           });
         }
@@ -449,20 +498,26 @@ class PodcastService {
     if (isYtmId) {
       const cleanBrowseId = podcastId.replace(/^yt-/, '');
       const ytmDetail = await this.getYtmPodcastDetails(cleanBrowseId);
-      if (ytmDetail) return ytmDetail;
+      if (ytmDetail) {
+        return ytmDetail;
+      }
     }
 
     const cleanNumericId = podcastId.replace(/^itunes-/, '');
     if (/^\d+$/.test(cleanNumericId)) {
       const itunesDetail = await this.getItunesPodcastDetails(cleanNumericId);
-      if (itunesDetail) return itunesDetail;
+      if (itunesDetail) {
+        return itunesDetail;
+      }
     }
 
     const slugQuery = podcastId.replace(/[-_]/g, ' ');
     const ytmMatches = await this.searchYtmPodcasts(slugQuery);
     if (ytmMatches.length > 0 && ytmMatches[0]?.id) {
       const ytmDetail = await this.getYtmPodcastDetails(ytmMatches[0].id);
-      if (ytmDetail) return ytmDetail;
+      if (ytmDetail) {
+        return ytmDetail;
+      }
     }
 
     const itunesMatches = await this.searchItunesPodcasts(slugQuery);
