@@ -15,6 +15,7 @@ import { PlaylistsToolbar } from './components/PlaylistsToolbar';
 import { usePlaylistFilter } from './hooks/usePlaylistFilter';
 import { usePlaylistSort } from './hooks/usePlaylistSort';
 import { PlaylistsProvider } from './PlaylistsContext';
+import { EditorialPlaylistsWidget } from '../Dashboard/components/EditorialPlaylistsWidget';
 
 const PlaylistsContent: FC = () => {
   const { t } = useTranslation('playlists');
@@ -85,6 +86,8 @@ const PlaylistsContent: FC = () => {
           />
         </ScrollableArea>
       )}
+
+      <EditorialPlaylistsWidget />
 
       <CreatePlaylistDialog />
     </ViewShell>

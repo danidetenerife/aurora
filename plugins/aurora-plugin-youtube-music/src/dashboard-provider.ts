@@ -7,7 +7,11 @@ import type {
 } from '@aurora/plugin-sdk';
 
 import { YtMusicClient } from './client';
-import { mapAlbumToAlbumRef, mapSongToTrack } from './mappers';
+import {
+  mapAlbumToAlbumRef,
+  mapPlaylistDetailsToPlaylistRef,
+  mapSongToTrack,
+} from './mappers';
 
 export const DASHBOARD_PROVIDER_ID = 'youtube-music-dashboard';
 
@@ -19,7 +23,7 @@ export const createDashboardProvider = (
   kind: 'dashboard',
   name: 'Música Personalizada',
   metadataProviderId: 'youtube-music',
-  capabilities: ['topTracks', 'newReleases'],
+  capabilities: ['topTracks', 'newReleases', 'editorialPlaylists'],
 
   fetchTopTracks: async (): Promise<Track[]> => {
     try {
@@ -101,6 +105,13 @@ export const createDashboardProvider = (
   },
 
   fetchEditorialPlaylists: async (): Promise<PlaylistRef[]> => {
-    return [];
+    try {
+      const explore = await client.getExplore();
+      return explore.editorialPlaylists.map((playlist) =>
+        mapPlaylistDetailsToPlaylistRef(playlist, 'youtube-music'),
+      );
+    } catch {
+      return [];
+    }
   },
 });

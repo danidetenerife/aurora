@@ -248,7 +248,10 @@ export const mapPlaylistDetailsToPlaylistRef = (
   details: YtMusicPlaylistDetails,
   providerId: string,
 ): PlaylistRef => {
-  const source = createProviderRef(providerId, details.id);
+  const source = {
+    ...createProviderRef(providerId, details.id),
+    url: `https://music.youtube.com/playlist?list=${details.id}`,
+  };
   const artwork = createArtworkSet(details.thumbnail, source);
 
   return {
