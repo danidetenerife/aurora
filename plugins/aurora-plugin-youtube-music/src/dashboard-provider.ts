@@ -107,11 +107,26 @@ export const createDashboardProvider = (
   fetchEditorialPlaylists: async (): Promise<PlaylistRef[]> => {
     try {
       const explore = await client.getExplore();
-      return explore.editorialPlaylists.map((playlist) =>
+      const playlists = explore.editorialPlaylists.map((playlist) =>
         mapPlaylistDetailsToPlaylistRef(playlist, 'youtube-music'),
       );
+      if (playlists.length > 0) {
+        return playlists;
+      }
     } catch {
-      return [];
+      // Use the public catalogue below when Explore is unavailable.
     }
+
+    return [
+      {
+        id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
+        name: 'Top canciones',
+        source: {
+          provider: 'youtube-music',
+          id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
+          url: 'https://music.youtube.com/playlist?list=PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
+        },
+      },
+    ];
   },
 });

@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T11:35",
+    "description": "Muestra playlists públicas de YouTube Music y Spotify en la sección Listas, con acceso directo a su importación.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Playlists", "color": "purple" }]
+  },
+  {
     "date": "2026-09-12T10:30",
     "description": "Usa el logotipo de Aurora en el icono de Android, Android Auto y Google TV.",
     "type": "fix",

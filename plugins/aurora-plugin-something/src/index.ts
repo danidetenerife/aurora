@@ -14,6 +14,10 @@ import type {
 
 import { isPlaylistUrl, MetadataClient } from './client';
 import {
+  createDashboardProvider,
+  DASHBOARD_PROVIDER_ID,
+} from './dashboard-provider';
+import {
   mapAlbumResponseToRef,
   mapAlbumUnionToAlbum,
   mapArtistResponseToRef,
@@ -107,11 +111,13 @@ const plugin: AuroraPlugin = {
     client = new MetadataClient(api.Http.fetch);
     api.Providers.register(createProvider());
     api.Providers.register(createPlaylistProvider());
+    api.Providers.register(createDashboardProvider());
   },
 
   onDisable(api: AuroraPluginAPI) {
     api.Providers.unregister(PROVIDER_ID);
     api.Providers.unregister(PLAYLIST_PROVIDER_ID);
+    api.Providers.unregister(DASHBOARD_PROVIDER_ID);
     client = null;
   },
 };
