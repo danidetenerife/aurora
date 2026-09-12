@@ -147,10 +147,7 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
           error: null,
         });
 
-        const autoInstall = getSetting('core.updates.autoInstall');
-        if (autoInstall === true) {
-          await get().downloadUpdate();
-        }
+        await get().downloadUpdate();
       } else {
         set({
           isUpdateAvailable: false,
