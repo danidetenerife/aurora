@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T22:00",
+    "description": "Corrige la WebView invisible del extractor de audio en Android para que no intercepte pulsaciones ni capture el foco. Libera las extracciones y sus temporizadores al cerrar la actividad y evita retener llamadas completadas.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }, { "label": "Accesibilidad", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T21:30",
     "description": "Resolución nativa y precisa de podcasts en español: extractor WebView con compatibilidad para pistas de audio HLS nativas y DASH, descarte estricto de doblajes en idiomas foráneos, y carga robusta de carátulas sin referer evitando iconos de imagen rota.",
     "type": "fix",

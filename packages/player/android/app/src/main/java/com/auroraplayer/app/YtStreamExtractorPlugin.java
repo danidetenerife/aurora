@@ -38,6 +38,7 @@ public class YtStreamExtractorPlugin extends Plugin {
     private static final String TAG = "YtStreamExtractor";
     private static final long STAGE1_TIMEOUT_MS = 8000;
     private static final long STAGE2_TIMEOUT_MS = 7000;
+    private final java.util.Map<WebView, Runnable> activeExtractions = new java.util.HashMap<>();
 
     public static final String MOBILE_UA =
         "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) " +
@@ -51,7 +52,6 @@ public class YtStreamExtractorPlugin extends Plugin {
             return;
         }
 
-        call.setKeepAlive(true);
         getActivity().runOnUiThread(() -> startExtraction(call, videoId.trim()));
     }
 
@@ -59,7 +59,7 @@ public class YtStreamExtractorPlugin extends Plugin {
     private void startExtraction(PluginCall call, String videoId) {
         WebView hidden;
         try {
-            hidden = new WebView(getContext());
+            hidden = new ExtractionWebView(getContext());
         } catch (Throwable t) {
             call.reject("Could not create extraction WebView: " + t.getMessage());
             return;
@@ -68,7 +68,17 @@ public class YtStreamExtractorPlugin extends Plugin {
         AtomicBoolean settled = new AtomicBoolean(false);
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
-        Runnable cleanupRunnable = () -> cleanup(hidden);
+        Runnable cleanupRunnable = () -> {
+            mainHandler.removeCallbacksAndMessages(null);
+            activeExtractions.remove(hidden);
+            cleanup(hidden);
+        };
+        activeExtractions.put(hidden, () -> {
+            if (settled.compareAndSet(false, true)) {
+                cleanupRunnable.run();
+                call.reject("Audio extraction cancelled because the activity was destroyed");
+            }
+        });
 
         java.util.Map<String, String> headers = new java.util.HashMap<>();
         headers.put("Accept-Language", "es-ES,es;q=0.9");
@@ -114,6 +124,7 @@ public class YtStreamExtractorPlugin extends Plugin {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                if (settled.get()) return;
                 try {
                     view.evaluateJavascript(
                         "(function() {" +
@@ -165,7 +176,7 @@ public class YtStreamExtractorPlugin extends Plugin {
                             result.put("streamUrl", url);
 
                             mainHandler.post(() -> {
-                                cleanup(hidden);
+                                cleanupRunnable.run();
                                 call.resolve(result);
                             });
                         }
@@ -177,16 +188,31 @@ public class YtStreamExtractorPlugin extends Plugin {
             }
         });
 
-        ViewGroup root = getActivity().findViewById(android.R.id.content);
-        if (root != null) {
-            hidden.setAlpha(0.01f);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(300, 200);
-            root.addView(hidden, params);
-        }
+        try {
+            ViewGroup root = getActivity().findViewById(android.R.id.content);
+            if (root != null) {
+                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                    ExtractionWebView.VIEW_WIDTH, ExtractionWebView.VIEW_HEIGHT);
+                root.addView(hidden, 0, params);
+            }
 
-        String embedUrl = "https://www.youtube.com/embed/" + videoId
-            + "?autoplay=1&mute=1&controls=0&playsinline=1&hl=es&gl=ES&enablejsapi=1";
-        hidden.loadUrl(embedUrl, headers);
+            String embedUrl = "https://www.youtube.com/embed/" + videoId
+                + "?autoplay=1&mute=1&controls=0&playsinline=1&hl=es&gl=ES&enablejsapi=1";
+            hidden.loadUrl(embedUrl, headers);
+        } catch (RuntimeException error) {
+            if (settled.compareAndSet(false, true)) {
+                cleanupRunnable.run();
+                call.reject("Could not start audio extraction: " + error.getMessage());
+            }
+        }
+    }
+
+    @Override
+    protected void handleOnDestroy() {
+        for (Runnable cancel : new java.util.ArrayList<>(activeExtractions.values())) {
+            cancel.run();
+        }
+        super.handleOnDestroy();
     }
 
     private void cleanup(WebView webView) {

@@ -60,7 +60,23 @@ writeFileSync(
   ),
 );
 
-git('add', ...versionFiles, metainfoFile);
+const [major, minor, patch] = version.split('.').map(Number);
+const versionCode = major * 10000 + minor * 100 + patch;
+const additionalVersionFiles = [
+  ['packages/player/android/app/build.gradle', (content) =>
+    content.replace(/versionName ".*?"/, `versionName "${version}"`)
+      .replace(/versionCode \d+/, `versionCode ${versionCode}`)],
+  ['packages/player/src/stores/updaterStore.ts', (content) =>
+    content.replace(/const CURRENT_VERSION = '.*?';/, `const CURRENT_VERSION = '${version}';`)],
+  ['packages/website/src/data/version.ts', (content) =>
+    content.replace(/export const version = '.*?';/, `export const version = '${version}';`)],
+];
+for (const [file, update] of additionalVersionFiles) {
+  const path = resolve(rootDir, file);
+  writeFileSync(path, update(readFileSync(path, 'utf-8')));
+}
+
+git('add', ...versionFiles, metainfoFile, ...additionalVersionFiles.map(([file]) => file));
 git('commit', '-m', `player@${version}`);
 git('tag', `player@${version}`);
 console.log(`Created player@${version}`);
