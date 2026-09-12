@@ -634,5 +634,17 @@
     "queue": "Queue",
     "exitTvMode": "Exit TV mode",
     "emptyDashboard": "Start exploring music to see your favorites here"
+  },
+  "podcastBrowser": {
+    "available": "Available podcasts",
+    "favorites": "Favorite podcasts",
+    "back": "Back to podcasts",
+    "loading": "Loading episodes...",
+    "empty": "No episodes available.",
+    "loadError": "Unable to load episodes. Please try again.",
+    "open": "Open {{name}}",
+    "play": "Play {{name}}",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites"
   }
 }

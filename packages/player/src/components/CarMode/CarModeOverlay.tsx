@@ -19,8 +19,8 @@ import { pickArtwork } from '@aurora/model';
 import { RepeatMode } from '@aurora/plugin-sdk';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
-import { playbackManager } from '../../services/playback';
 import { personalizationEngine } from '../../services/personalizationEngine';
+import { playbackManager } from '../../services/playback';
 import { useCarModeStore } from '../../stores/carModeStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
@@ -130,7 +130,7 @@ export const CarModeOverlay: FC = () => {
       className="fixed inset-0 z-50 flex flex-col justify-between overflow-hidden bg-zinc-950 text-white select-none"
     >
       {/* Top Header Bar */}
-      <div className="aurora-car-header relative z-10 flex flex-wrap items-center justify-between gap-2 px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
+      <div className="aurora-car-header relative z-10 flex shrink-0 flex-wrap items-center justify-between gap-2 px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-800/80 px-3.5 py-1.5 shadow-lg backdrop-blur-md">
             <Car size={18} className="animate-pulse text-emerald-400" />
@@ -196,7 +196,7 @@ export const CarModeOverlay: FC = () => {
       </div>
 
       {/* Bottom Controls Area */}
-      <div className="aurora-car-player relative z-10 mx-auto flex w-full max-w-2xl flex-col gap-4 border-t border-zinc-800/80 bg-zinc-900 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+2rem)]">
+      <div className="aurora-car-player relative z-10 mx-auto flex w-full max-w-2xl shrink-0 flex-col gap-4 border-t border-zinc-800/80 bg-zinc-900 px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+2rem)]">
         {/* Scrubber / Progress Bar */}
         <div className="w-full space-y-1">
           <div className="relative flex items-center">
@@ -228,50 +228,50 @@ export const CarModeOverlay: FC = () => {
         </div>
 
         {/* Giant Primary Buttons */}
-        <div className="aurora-car-controls flex flex-col items-center gap-3 px-2 sm:px-6">
+        <div className="aurora-driving-controls flex flex-col items-center gap-3 px-2 sm:px-6">
           <div className="flex w-full items-center justify-center gap-4">
             <button
-            onClick={goToPrevious}
-            className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
-            title="Anterior"
-          >
-            <SkipBack size={32} />
+              onClick={goToPrevious}
+              className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
+              title="Anterior"
+            >
+              <SkipBack size={32} />
             </button>
 
-          {/* Play / Pause - HUGE */}
+            {/* Play / Pause - HUGE */}
             <button
-            onClick={playbackManager.toggle}
-            className="flex size-20 items-center justify-center rounded-full bg-emerald-500 font-bold text-zinc-950 shadow-2xl shadow-emerald-500/30 transition-all hover:bg-emerald-400 active:scale-95 sm:size-24"
-            title={isPlaying ? 'Pausa' : 'Reproducir'}
-          >
-            {isPlaying ? (
-              <Pause size={44} className="fill-current" />
-            ) : (
-              <Play size={44} className="translate-x-0.5 fill-current" />
-            )}
+              onClick={playbackManager.toggle}
+              className="flex size-20 items-center justify-center rounded-full bg-emerald-500 font-bold text-zinc-950 shadow-2xl shadow-emerald-500/30 transition-all hover:bg-emerald-400 active:scale-95 sm:size-24"
+              title={isPlaying ? 'Pausa' : 'Reproducir'}
+            >
+              {isPlaying ? (
+                <Pause size={44} className="fill-current" />
+              ) : (
+                <Play size={44} className="translate-x-0.5 fill-current" />
+              )}
             </button>
 
-          {/* Next Track */}
+            {/* Next Track */}
             <button
-            onClick={goToNext}
-            className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
-            title="Siguiente"
-          >
-            <SkipForward size={32} />
+              onClick={goToNext}
+              className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
+              title="Siguiente"
+            >
+              <SkipForward size={32} />
             </button>
           </div>
 
           <div className="flex w-full items-center justify-center gap-5">
             <button
-            onClick={handleToggleFavorite}
-            className={`rounded-full p-3 transition-all active:scale-90 ${
-              isFav
-                ? 'border border-red-500/40 bg-red-950/60 text-red-500'
-                : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
-            }`}
-            title="Favorito"
-          >
-            <Heart size={24} className={isFav ? 'fill-current' : ''} />
+              onClick={handleToggleFavorite}
+              className={`rounded-full p-3 transition-all active:scale-90 ${
+                isFav
+                  ? 'border border-red-500/40 bg-red-950/60 text-red-500'
+                  : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
+              }`}
+              title="Favorito"
+            >
+              <Heart size={24} className={isFav ? 'fill-current' : ''} />
             </button>
 
             <button
@@ -287,13 +287,13 @@ export const CarModeOverlay: FC = () => {
             </button>
 
             <button
-            onClick={handleDislike}
-            className="rounded-full bg-zinc-800/60 p-3 text-zinc-400 transition-all hover:text-red-400 active:scale-90"
-            title="No me gusta"
-            aria-label="No me gusta esta canción"
-            data-testid="car-mode-dislike-button"
-          >
-            <ThumbsDown size={24} />
+              onClick={handleDislike}
+              className="rounded-full bg-zinc-800/60 p-3 text-zinc-400 transition-all hover:text-red-400 active:scale-90"
+              title="No me gusta"
+              aria-label="No me gusta esta canción"
+              data-testid="car-mode-dislike-button"
+            >
+              <ThumbsDown size={24} />
             </button>
           </div>
         </div>

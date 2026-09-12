@@ -1,10 +1,15 @@
-import { Heart, Mic2 } from 'lucide-react';
+import { ArrowLeft, Heart, Mic2, Play } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
+import { z } from 'zod';
 
-import type { PodcastRef } from '@aurora/model';
-import { Button, Card, CardGrid, ViewShell } from '@aurora/ui';
+import { i18n, useTranslation } from '@aurora/i18n';
+import type { PodcastRef, Track } from '@aurora/model';
+import { ViewShell } from '@aurora/ui';
 
+import { httpHost } from '../../services/httpHost';
+import { playbackManager } from '../../services/playback';
 import { usePodcastStore } from '../../stores/podcastStore';
+import { useQueueStore } from '../../stores/queueStore';
 
 export const PODCASTS: PodcastRef[] = [
   {
@@ -40,103 +45,182 @@ export const PODCASTS: PodcastRef[] = [
   },
 ];
 
+const directorySchema = z.object({
+  results: z.array(
+    z.object({
+      collectionId: z.number().optional(),
+      collectionName: z.string().optional(),
+      artworkUrl600: z.string().optional(),
+      kind: z.string().optional(),
+      trackId: z.number().optional(),
+      trackName: z.string().optional(),
+      episodeUrl: z.string().url().optional(),
+      trackTimeMillis: z.number().optional(),
+    }),
+  ),
+});
+const requestDirectory = async (path: string) => {
+  const response = await httpHost.fetch(`https://itunes.apple.com/${path}`);
+  if (response.status !== 200)
+    throw new Error(i18n.t('podcastBrowser:loadError'));
+  return directorySchema.parse(JSON.parse(response.body)).results;
+};
 export const Podcasts: FC = () => {
+  const { t } = useTranslation('podcastBrowser');
+  const [selected, setSelected] = useState<PodcastRef | null>(null);
+  const [episodes, setEpisodes] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [artwork, setArtwork] = useState<Record<string, string>>({});
-  const favorites = usePodcastStore((state) => state.favorites);
-  const loaded = usePodcastStore((state) => state.loaded);
-  const load = usePodcastStore((state) => state.load);
-  const toggleFavorite = usePodcastStore((state) => state.toggleFavorite);
+  const { favorites, load, toggleFavorite } = usePodcastStore();
   useEffect(() => {
-    if (!loaded) {
-      void load();
+    void load();
+  }, [load]);
+  useEffect(() => {
+    let active = true;
+    for (const podcast of PODCASTS) {
+      void requestDirectory(
+        `search?term=${encodeURIComponent(podcast.name)}&entity=podcast&limit=1`,
+      )
+        .then((results) => {
+          const image = results[0]?.artworkUrl600;
+          if (active && image)
+            setArtwork((previous) => ({ ...previous, [podcast.id]: image }));
+        })
+        .catch(() => {});
     }
-  }, [load, loaded]);
-  useEffect(() => {
-    let cancelled = false;
-    const loadArtwork = async () => {
-      const entries = await Promise.all(
-        PODCASTS.map(async (podcast) => {
-          try {
-            const response = await fetch(
-              `https://itunes.apple.com/search?term=${encodeURIComponent(podcast.name)}&entity=podcast&limit=1`,
-            );
-            const data = (await response.json()) as {
-              results?: Array<{ artworkUrl600?: string; artworkUrl100?: string }>;
-            };
-            const image = data.results?.[0]?.artworkUrl600 ?? data.results?.[0]?.artworkUrl100;
-            return image ? [podcast.id, image] as const : null;
-          } catch {
-            return null;
-          }
-        }),
-      );
-      if (!cancelled) {
-        setArtwork(Object.fromEntries(entries.filter((entry): entry is readonly [string, string] => entry !== null)));
-      }
+    return () => {
+      active = false;
     };
-    void loadArtwork();
-    return () => { cancelled = true; };
   }, []);
+  useEffect(() => {
+    if (!selected) return;
+    let active = true;
+    setLoading(true);
+    setError('');
+    setEpisodes([]);
+    const fetchEpisodes = async () => {
+      const matches = await requestDirectory(
+        `search?term=${encodeURIComponent(selected.name)}&entity=podcast&limit=1`,
+      );
+      const show = matches[0];
+      if (!show?.collectionId) throw new Error(i18n.t('podcastBrowser:empty'));
+      const entries = await requestDirectory(
+        `lookup?id=${show.collectionId}&entity=podcastEpisode&limit=200`,
+      );
+      const tracks: Track[] = entries
+        .filter((entry) => entry.kind === 'podcast-episode' && entry.episodeUrl)
+        .map((entry) => ({
+          title: entry.trackName ?? selected.name,
+          artists: [{ name: selected.name, roles: ['host'] }],
+          source: {
+            provider: 'podcast-audio',
+            id: String(entry.trackId),
+            url: entry.episodeUrl,
+          },
+          durationMs: entry.trackTimeMillis,
+          artwork: {
+            items: show.artworkUrl600
+              ? [{ url: show.artworkUrl600, purpose: 'thumbnail' }]
+              : [],
+          },
+        }));
+      if (active) setEpisodes(tracks);
+    };
+    void fetchEpisodes()
+      .catch((reason: Error) => {
+        if (active) setError(reason.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [selected]);
+  const playEpisode = (track: Track) => {
+    const queue = useQueueStore.getState();
+    const nextIndex = queue.items.length;
+    queue.addToQueue([track]);
+    queue.goToIndex(nextIndex);
+    playbackManager.play();
+  };
+  const renderShow = (podcast: PodcastRef) => {
+    const favorite = favorites.some((item) => item.id === podcast.id);
+    return (
+      <div
+        key={podcast.id}
+        className="border-border bg-background-secondary flex min-w-0 items-center gap-2 rounded-xl border p-2"
+      >
+        <button
+          aria-label={t('open', { name: podcast.name })}
+          onClick={() => setSelected(podcast)}
+          className="flex min-w-0 flex-1 items-center gap-3 text-left"
+        >
+          {artwork[podcast.id] ? (
+            <img
+              src={artwork[podcast.id]}
+              alt=""
+              className="size-12 shrink-0 rounded-lg object-cover"
+            />
+          ) : (
+            <Mic2 className="size-12 shrink-0" />
+          )}
+          <span className="min-w-0">
+            <strong className="block truncate text-sm">{podcast.name}</strong>
+            <span className="block truncate text-xs opacity-60">
+              {podcast.publisher}
+            </span>
+          </span>
+        </button>
+        <button
+          className="flex size-11 shrink-0 items-center justify-center"
+          aria-label={t(favorite ? 'removeFavorite' : 'addFavorite')}
+          onClick={() => void toggleFavorite(podcast)}
+        >
+          <Heart size={20} fill={favorite ? 'currentColor' : 'none'} />
+        </button>
+      </div>
+    );
+  };
   return (
     <ViewShell>
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">Podcasts disponibles</h2>
-        <CardGrid>
-          {PODCASTS.map((podcast) => {
-            const favorite = favorites.some((item) => item.id === podcast.id);
-            return (
-              <Card
-                key={podcast.id}
-                title={podcast.name}
-                subtitle={podcast.publisher}
-                src={artwork[podcast.id]}
-                image={!artwork[podcast.id] ? <Mic2 className="m-auto size-16 opacity-60" /> : undefined}
-                action={
-                  <Button
-                    size="icon"
-                    variant="noShadow"
-                    aria-label={
-                      favorite ? 'Quitar de favoritos' : 'Añadir a favoritos'
-                    }
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      void toggleFavorite(podcast);
-                    }}
-                  >
-                    <Heart fill={favorite ? 'currentColor' : 'none'} />
-                  </Button>
-                }
-                onClick={() =>
-                  window.open(
-                    podcast.sourceUrl,
-                    '_blank',
-                    'noopener,noreferrer',
-                  )
-                }
-              />
-            );
-          })}
-        </CardGrid>
-        {favorites.length > 0 && (
+      <section className="flex w-full min-w-0 flex-col gap-3">
+        {selected ? (
           <>
-            <h2 className="text-xl font-bold">Podcasts favoritos</h2>
-            <CardGrid>
-              {favorites.map((podcast) => (
-                <Card
-                  key={podcast.id}
-                  title={podcast.name}
-                  subtitle={podcast.publisher}
-                  src={artwork[podcast.id]}
-                  onClick={() =>
-                    window.open(
-                      podcast.sourceUrl,
-                      '_blank',
-                      'noopener,noreferrer',
-                    )
-                  }
-                />
-              ))}
-            </CardGrid>
+            <button
+              onClick={() => setSelected(null)}
+              className="flex items-center gap-2 text-sm"
+            >
+              <ArrowLeft size={18} />
+              {t('back')}
+            </button>
+            <h2 className="text-lg font-bold">{selected.name}</h2>
+            {loading && <p role="status">{t('loading')}</p>}
+            {error && <p role="alert">{error}</p>}
+            {!loading && !error && episodes.length === 0 && <p>{t('empty')}</p>}
+            {episodes.map((episode) => (
+              <button
+                key={episode.source.id}
+                aria-label={t('play', { name: episode.title })}
+                onClick={() => playEpisode(episode)}
+                className="border-border flex min-w-0 items-center gap-3 border-b py-3 text-left"
+              >
+                <Play size={20} className="text-primary shrink-0" />
+                <span className="min-w-0 text-sm">{episode.title}</span>
+              </button>
+            ))}
+          </>
+        ) : (
+          <>
+            {favorites.length > 0 && (
+              <>
+                <h2 className="text-sm font-semibold">{t('favorites')}</h2>
+                {favorites.map(renderShow)}
+              </>
+            )}
+            <h2 className="text-sm font-semibold">{t('available')}</h2>
+            {PODCASTS.map(renderShow)}
           </>
         )}
       </section>

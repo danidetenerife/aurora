@@ -6,9 +6,9 @@ import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
 import { Card, CardGrid, EmptyState, ViewShell } from '@aurora/ui';
 
-import { useFavoritesStore } from '../../stores/favoritesStore';
 import { MobileItemPages } from '../../components/MobileItemPages';
 import { isCapacitorEnvironment } from '../../services/universalStore';
+import { useFavoritesStore } from '../../stores/favoritesStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
 import { useArtistCardImage } from './useArtistCardImage';
 
@@ -30,13 +30,32 @@ const ArtistCard: FC<ArtistCardProps> = ({
   providerId,
 }) => {
   const resolvedSrc = useArtistCardImage(name, localArtworkUrl, providerId);
+  if (isCapacitorEnvironment()) {
+    return (
+      <div className="mobile-artist-chip">
+        <button type="button" onClick={onClick} className="mobile-artist-open">
+          {resolvedSrc ? <img src={resolvedSrc} alt="" /> : <User size={24} />}
+          <span>{name}</span>
+        </button>
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={removeLabel}
+          title={removeLabel}
+          className="mobile-artist-remove"
+        >
+          <Trash2 size={16} />
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="group relative w-42">
       <Card
         title={name}
         src={resolvedSrc}
         onClick={onClick}
-        className="w-full border-border/60 bg-background-secondary hover:bg-background-tertiary"
+        className="border-border/60 bg-background-secondary hover:bg-background-tertiary w-full"
       />
       <button
         type="button"
@@ -56,7 +75,11 @@ const ArtistCard: FC<ArtistCardProps> = ({
 };
 
 const ArtistCollection: FC<{ items: React.ReactNode[] }> = ({ items }) =>
-  isCapacitorEnvironment() ? <MobileItemPages items={items} /> : <CardGrid>{items}</CardGrid>;
+  isCapacitorEnvironment() ? (
+    <MobileItemPages items={items} />
+  ) : (
+    <CardGrid>{items}</CardGrid>
+  );
 
 export const FavoriteArtists: FC = () => {
   const { t } = useTranslation('favorites');
@@ -66,7 +89,13 @@ export const FavoriteArtists: FC = () => {
   const sortedArtists = useMemo(() => sortByAddedAtDesc(artists), [artists]);
 
   return (
-    <ViewShell data-testid="favorite-artists-view" title={t('artists.title')} classes={isCapacitorEnvironment() ? { root: 'aurora-mobile-library' } : undefined}>
+    <ViewShell
+      data-testid="favorite-artists-view"
+      title={t('artists.title')}
+      classes={
+        isCapacitorEnvironment() ? { root: 'aurora-mobile-library' } : undefined
+      }
+    >
       {sortedArtists.length === 0 ? (
         <EmptyState
           icon={<User size={48} />}
@@ -75,8 +104,9 @@ export const FavoriteArtists: FC = () => {
           className="flex-1"
         />
       ) : (
-        <div className="relative flex w-full flex-col gap-4">
-          <div className="pointer-events-none absolute top-0 right-0 z-10">
+        <div className="relative flex h-full min-h-0 w-full flex-col gap-2">
+          <div className="flex shrink-0 items-center justify-between">
+            <span className="text-sm font-semibold">{t('artists.title')}</span>
             <button
               type="button"
               onClick={() => {
@@ -84,12 +114,13 @@ export const FavoriteArtists: FC = () => {
               }}
               aria-label={t('artists.clearAll', 'Borrar todos')}
               title={t('artists.clearAll', 'Borrar todos')}
-              className="pointer-events-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-accent-red transition-colors hover:bg-accent-red/15 focus-visible:outline-2 focus-visible:outline-accent-red"
+              className="text-accent-red hover:bg-accent-red/15 focus-visible:outline-accent-red pointer-events-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-2"
             >
               <Trash2 size={17} />
             </button>
           </div>
-          <ArtistCollection items={sortedArtists.map((entry) => {
+          <ArtistCollection
+            items={sortedArtists.map((entry) => {
               const localArtworkUrl = pickArtwork(
                 entry.ref?.artwork,
                 'cover',
@@ -119,7 +150,8 @@ export const FavoriteArtists: FC = () => {
                   }}
                 />
               );
-            })} />
+            })}
+          />
         </div>
       )}
     </ViewShell>

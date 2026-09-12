@@ -1,0 +1,80 @@
+.mobile-player-panel {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
+  background: var(--background-secondary);
+  border-top: 1px solid var(--border);
+}
+.mobile-player-panel > :first-child {
+  width: 100%;
+  min-width: 0;
+}
+.mobile-player-panel [data-testid='now-playing-title'],
+.mobile-player-panel [data-testid='player-now-playing-artist'] {
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+.mobile-player-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  gap: 0;
+  padding-top: 4px;
+}
+.aurora-workspace .mobile-player-buttons .aurora-transport,
+.mobile-player-buttons > div,
+.mobile-player-buttons .aurora-playback-controls {
+  display: contents;
+}
+.aurora-workspace .mobile-player-buttons button {
+  flex: 0 1 36px;
+  min-width: 0;
+  width: clamp(28px, 8vw, 36px);
+  height: 40px;
+  padding: 4px;
+  border: 0;
+  box-shadow: none;
+  transform: none;
+}
+.mobile-player-buttons svg {
+  width: 18px;
+  height: 18px;
+}
+.mobile-player-buttons
+  :is([data-testid='player-play-button'], [data-testid='player-pause-button']) {
+  background: var(--primary);
+  border-radius: 50%;
+}
+.aurora-driving-controls {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+.aurora-driving-controls > div {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  justify-content: center;
+}
+.aurora-driving-controls button {
+  flex-shrink: 0;
+}
+@media (max-height: 600px) {
+  .aurora-driving-controls > div {
+    gap: 12px;
+  }
+  .aurora-driving-controls button {
+    width: 44px;
+    height: 44px;
+    padding: 8px;
+  }
+  .aurora-driving-controls svg {
+    width: 24px;
+    height: 24px;
+  }
+}

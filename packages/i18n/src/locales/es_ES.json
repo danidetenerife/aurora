@@ -621,5 +621,17 @@
       "plugin": "Plugin",
       "docs": "Documentación"
     }
+  },
+  "podcastBrowser": {
+    "available": "Podcasts disponibles",
+    "favorites": "Podcasts favoritos",
+    "back": "Volver a podcasts",
+    "loading": "Cargando episodios...",
+    "empty": "No hay episodios disponibles.",
+    "loadError": "No se pudieron cargar los episodios. Prueba de nuevo.",
+    "open": "Abrir {{name}}",
+    "play": "Reproducir {{name}}",
+    "addFavorite": "Guardar favorito",
+    "removeFavorite": "Quitar de favoritos"
   }
 }

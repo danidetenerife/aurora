@@ -109,23 +109,6 @@
   }
 }
 
-.aurora-workspace .aurora-car-controls {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  justify-items: center;
-  padding-inline: 0;
-  gap: 4px;
-}
-
-.aurora-workspace .aurora-car-controls > button {
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  aspect-ratio: 1;
-  padding: 0.5rem;
-  box-shadow: none;
-}
-
 @media (max-height: 500px) {
   .aurora-workspace .aurora-car-track > :first-child {
     display: none;

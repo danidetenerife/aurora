@@ -41,6 +41,7 @@ i18n.use(initReactI18next).init({
     'dashboard',
     'plugins',
     'streaming',
+    'podcastBrowser',
   ],
   interpolation: {
     escapeValue: false,

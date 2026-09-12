@@ -11,7 +11,10 @@ import { personalizationEngine } from '../../services/personalizationEngine';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
 
-export const ConnectedNowPlaying: FC = () => {
+export const ConnectedNowPlaying: FC<{
+  actionsOnly?: boolean;
+  hideActions?: boolean;
+}> = ({ actionsOnly = false, hideActions = false }) => {
   const { t: tTrack } = useTranslation('track');
   const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
@@ -55,6 +58,32 @@ export const ConnectedNowPlaying: FC = () => {
     useQueueStore.getState().goToNext();
   };
 
+  const actions = track && (
+    <div className="flex items-center gap-0.5 sm:gap-1">
+      <FavoriteButton
+        size="sm"
+        isFavorite={isFavorite}
+        onToggle={handleToggleFavorite}
+        ariaLabelAdd={tTrack('actions.addToFavorites')}
+        ariaLabelRemove={tTrack('actions.removeFromFavorites')}
+      />
+      <Button
+        size="icon-sm"
+        variant="text"
+        onClick={handleDislike}
+        aria-label={tTrack('actions.dislike')}
+        title={tTrack('actions.dislike')}
+        data-testid="now-playing-dislike-button"
+      >
+        <ThumbsDown
+          size={16}
+          className="text-foreground-secondary hover:text-accent-red transition-colors"
+        />
+      </Button>
+    </div>
+  );
+  if (actionsOnly) return <>{actions}</>;
+
   return (
     <PlayerBar.NowPlaying
       title={title}
@@ -93,32 +122,7 @@ export const ConnectedNowPlaying: FC = () => {
               })
           : undefined
       }
-      action={
-        track && (
-          <div className="flex items-center gap-0.5 sm:gap-1">
-            <FavoriteButton
-              size="sm"
-              isFavorite={isFavorite}
-              onToggle={handleToggleFavorite}
-              ariaLabelAdd={tTrack('actions.addToFavorites')}
-              ariaLabelRemove={tTrack('actions.removeFromFavorites')}
-            />
-            <Button
-              size="icon-sm"
-              variant="text"
-              onClick={handleDislike}
-              aria-label={tTrack('actions.dislike')}
-              title={tTrack('actions.dislike')}
-              data-testid="now-playing-dislike-button"
-            >
-              <ThumbsDown
-                size={16}
-                className="text-foreground-secondary hover:text-accent-red transition-colors"
-              />
-            </Button>
-          </div>
-        )
-      }
+      action={hideActions ? undefined : actions}
     />
   );
 };

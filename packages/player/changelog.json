@@ -1,199 +1,441 @@
 [
   {
+    "date": "2026-09-12T15:00",
+    "description": "Repara la barra de controles y el modo coche, compacta los artistas favoritos y reproduce podcasts dentro de Aurora.",
+    "type": "fix",
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
+  },
+  {
     "date": "2026-09-12T13:45",
     "description": "Ajusta los botones de sincronización y QR para que compartan el ancho disponible en móvil sin desbordarse.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Sincronización", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Sincronización",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T13:35",
     "description": "Reordena los controles del modo coche: anterior, reproducir y siguiente arriba; favorito, aleatorio y no me gusta debajo.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Modo coche", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Modo coche",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T13:25",
     "description": "Corrige el desbordamiento de la barra de reproducción móvil que apilaba verticalmente el título y el artista.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Interfaz", "color": "purple" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      }
+    ]
   },
   {
     "date": "2026-09-12T13:20",
     "description": "Compacta las fichas de artistas favoritos en móvil y sustituye el botón de borrado por un control discreto de icono.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Interfaz", "color": "purple" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      }
+    ]
   },
   {
     "date": "2026-09-12T13:10",
     "description": "Reorganiza la barra móvil: muestra título y artista arriba y agrupa los controles de reproducción en una fila inferior más clara.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Interfaz", "color": "purple" }, { "label": "Android", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      },
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-12T13:00",
     "description": "Mejora la vista de favoritos de artistas, muestra carátulas de podcasts e iconos de plugins, y hace visibles las listas públicas de Spotify y YouTube Music al buscar listas.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Interfaz", "color": "purple" }, { "label": "Playlists", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      },
+      {
+        "label": "Playlists",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T12:05",
     "description": "Añade la búsqueda de listas, listas favoritas con corazón y una sección de Podcasts con favoritos en las interfaces compatibles.",
     "type": "feature",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Playlists", "color": "purple" }, { "label": "Podcasts", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Playlists",
+        "color": "purple"
+      },
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T11:35",
     "description": "Muestra playlists públicas de YouTube Music y Spotify en la sección Listas, con acceso directo a su importación.",
     "type": "feature",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Playlists", "color": "purple" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Playlists",
+        "color": "purple"
+      }
+    ]
   },
   {
     "date": "2026-09-12T10:30",
     "description": "Usa el logotipo de Aurora en el icono de Android, Android Auto y Google TV.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Android Auto", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Android Auto",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T10:25",
     "description": "Añade el control No me gusta al modo coche y a Android Auto; la canción se marca para excluirla y avanza la reproducción.",
     "type": "feature",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android Auto", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android Auto",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T10:20",
     "description": "Keep complete song titles visible in Android views and correct malformed Spanish text in synchronization settings.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-12T10:00",
     "description": "Fix Android responsive overflow in settings, playlists and artists, restore artist avatars and identifiers, and add browsable queue and search actions for Android Auto.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Android Auto", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Android Auto",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-12T09:15",
     "description": "Replace the oversized Android dashboard with compact recommendations and pages sized to the available screen height, keeping the full mix available for playback without scrolling the home screen.",
     "type": "improvement",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T22:35",
     "description": "Simplify Android settings, display the Aurora wordmark above search, improve responsive mobile layouts and enable automatic mobile APK update checks and downloads from GitHub Releases.",
     "type": "improvement",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T22:25",
     "description": "Fix Android startup logging errors by using the system console when the desktop bridge is unavailable.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T18:00",
     "description": "Resolve and enable reliable audio and video playback on Google TV and Android TV with seamless track switching and background playback.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Google TV", "color": "green" }, { "label": "Playback", "color": "blue" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Google TV",
+        "color": "green"
+      },
+      {
+        "label": "Playback",
+        "color": "blue"
+      }
+    ]
   },
   {
     "date": "2026-09-11T16:55",
     "description": "Restore artist name display directly under song titles in track tables across all screen sizes and devices.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Interface", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Interface",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T16:45",
     "description": "Add dislike button to now playing bar and track context menu actions to blacklist songs and artists, instantly skipping tracks, applying score penalties, and excluding them from recommendations across synced devices.",
     "type": "feat",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Recommendations", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Recommendations",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T16:20",
     "description": "Make music discovery and queue autoplay completely automatic and seamless in the background; remove the misleading and redundant discovery button from the player controls bar.",
     "type": "feat",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Playback", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Playback",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T16:00",
     "description": "Add user-owned cloud synchronization via WebDAV (Nextcloud, ownCloud, NAS) and private GitHub Gists, manual library backup export/import, and instant pairing via QR code configuration between desktop and mobile devices.",
     "type": "feat",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Sync", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Sync",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T12:30",
     "description": "Use direct audio output, respect playback interruptions, block playback during phone calls, restore selection of resolved queue tracks and simplify car controls. Keep video controls exclusive to Google TV, avoid competing TV update downloads, and wait for desktop installation before offering a restart.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Playback", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Playback",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-11T12:00",
     "description": "Refresh mobile and desktop presentation with clearer navigation, responsive playback controls and safe-area spacing. Remove full-screen blur transitions while preserving existing actions, themes and Google TV presentation.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Interface", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Interface",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-10T07:00",
     "description": "Rebuild Google TV with a lightweight Spanish interface, fixed playback controls, deterministic remote navigation, single button activation and optional music videos. Preserve mobile and desktop behavior.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Google TV", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Google TV",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-09T13:00",
     "description": "Fix Chromecast HD Google TV (Android TV 14) startup identification, fit the TV layout to the screen, initialize remote focus and avoid phone-only permissions and rendering overhead on TV.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Google TV", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Google TV",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-08T20:00",
     "description": "Make history rankings interactive: play songs and open artist and album pages by clicking their names, including individual artist credits.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "History", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "History",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-08T18:00",
     "description": "Restore Spanish recommendation text and keep the Panel list fixed while playing. Apply newly learned recommendations on the next visit instead of reshuffling the visible list.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Panel", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Panel",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-08T19:00",
     "description": "Keep listening preferences learning across mobile and desktop, including partial plays and skips. Merge offline listening without losing or duplicating plays, and refresh personalized recommendations when preferences change.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Personalization & Sync", "color": "purple" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Personalization & Sync",
+        "color": "purple"
+      }
+    ]
   },
   {
     "date": "2026-09-08T18:00",
     "description": "Prefer AAC-LC and stereo HLS audio renditions over the first low-quality HE-AAC track when resolving songs on Android.",
     "type": "fix",
-    "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android Audio", "color": "green" }]
+    "contributors": [
+      "danidetenerife"
+    ],
+    "tags": [
+      {
+        "label": "Android Audio",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-03T22:00",

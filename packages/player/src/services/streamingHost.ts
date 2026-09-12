@@ -99,6 +99,7 @@ export const createStreamingHost = (): StreamingHost => ({
   },
 
   resolveStreamForCandidate: async (candidate: StreamCandidate) => {
+    if (candidate.source.provider === 'podcast-audio' && candidate.stream) return candidate;
     const provider = getActiveStreamingProvider();
 
     if (!provider) {
