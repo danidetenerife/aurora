@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T13:45",
+    "description": "Ajusta los botones de sincronización y QR para que compartan el ancho disponible en móvil sin desbordarse.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }, { "label": "Sincronización", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T13:35",
     "description": "Reordena los controles del modo coche: anterior, reproducir y siguiente arriba; favorito, aleatorio y no me gusta debajo.",
     "type": "fix",

@@ -323,13 +323,13 @@ export const SyncSettingsView: FC = () => {
           </div>
         </div>
 
-        <div className="flex gap-2 pt-1">
+        <div className="grid grid-cols-3 gap-2 pt-1 sm:flex">
           <Button
             variant="default"
             size="sm"
             disabled={isSyncing}
             onClick={() => void handleSyncNow()}
-            className="flex flex-1 items-center justify-center gap-1.5"
+            className="min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-normal text-center"
           >
             <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
             Sincronizar ahora
@@ -338,7 +338,7 @@ export const SyncSettingsView: FC = () => {
             variant="secondary"
             size="sm"
             onClick={() => void handleShowQr()}
-            className="flex items-center gap-1.5"
+            className="min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-normal text-center"
             title="Compartir configuración con otro dispositivo"
           >
             <QrCode size={14} />
@@ -348,7 +348,7 @@ export const SyncSettingsView: FC = () => {
             variant="secondary"
             size="sm"
             onClick={() => setIsScannerOpen(true)}
-            className="flex items-center gap-1.5"
+            className="min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-normal text-center"
             title="Escanear QR de otro dispositivo"
           >
             <Camera size={14} />
