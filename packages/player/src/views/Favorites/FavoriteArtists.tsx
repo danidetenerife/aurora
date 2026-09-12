@@ -4,7 +4,7 @@ import { FC, useMemo } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
-import { Button, Card, CardGrid, EmptyState, ViewShell } from '@aurora/ui';
+import { Card, CardGrid, EmptyState, ViewShell } from '@aurora/ui';
 
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { MobileItemPages } from '../../components/MobileItemPages';
@@ -36,7 +36,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
         title={name}
         src={resolvedSrc}
         onClick={onClick}
-        className="w-full"
+        className="w-full border-border/60 bg-background-secondary hover:bg-background-tertiary"
       />
       <button
         type="button"
@@ -77,17 +77,17 @@ export const FavoriteArtists: FC = () => {
       ) : (
         <div className="relative flex w-full flex-col gap-4">
           <div className="pointer-events-none absolute top-0 right-0 z-10">
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
+              type="button"
               onClick={() => {
                 void clearArtists();
               }}
-              className="pointer-events-auto text-accent-red hover:bg-accent-red/10 text-xs font-semibold"
+              aria-label={t('artists.clearAll', 'Borrar todos')}
+              title={t('artists.clearAll', 'Borrar todos')}
+              className="pointer-events-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-accent-red transition-colors hover:bg-accent-red/15 focus-visible:outline-2 focus-visible:outline-accent-red"
             >
-              <Trash2 size={14} className="mr-1 inline" />
-              <span className="hidden sm:inline">{t('artists.clearAll', 'Borrar todos')}</span>
-            </Button>
+              <Trash2 size={17} />
+            </button>
           </div>
           <ArtistCollection items={sortedArtists.map((entry) => {
               const localArtworkUrl = pickArtwork(

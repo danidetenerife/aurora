@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T13:20",
+    "description": "Compacta las fichas de artistas favoritos en móvil y sustituye el botón de borrado por un control discreto de icono.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Interfaz", "color": "purple" }]
+  },
+  {
     "date": "2026-09-12T13:10",
     "description": "Reorganiza la barra móvil: muestra título y artista arriba y agrupa los controles de reproducción en una fila inferior más clara.",
     "type": "fix",
