@@ -6,6 +6,7 @@
 
 * [Getting started](user-manual/getting-started.md)
 * [Installation](user-manual/installation.md)
+* [Sincronización privada con GitHub Gist](user-manual/github-gist-sync.md)
 
 ## Core Concepts
 
