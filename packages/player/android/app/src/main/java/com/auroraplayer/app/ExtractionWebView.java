@@ -11,15 +11,29 @@ final class ExtractionWebView extends WebView {
 
     ExtractionWebView(Context context) {
         super(context);
-        setAlpha(0.01f);
+        setVisibility(View.INVISIBLE);
+        setAlpha(0f);
         setFocusable(false);
         setFocusableInTouchMode(false);
+        setClickable(false);
+        setLongClickable(false);
+        setEnabled(false);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;
+    }
+
+    @Override
+    public boolean requestFocus(int direction, android.graphics.Rect previouslyFocusedRect) {
         return false;
     }
 }

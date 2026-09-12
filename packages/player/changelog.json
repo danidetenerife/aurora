@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T22:45",
+    "description": "Corrige definitivamente el bloqueo y congelación de la app al inicio: se elimina la inyección de iframes en el DOM, se aísla la WebView nativa en modo invisible sin captura de eventos ni foco, y se desactiva la descarga automática intrusiva de actualizaciones en el arranque.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }, { "label": "Rendimiento", "color": "blue" }, { "label": "Estabilidad", "color": "purple" }]
+  },
+  {
     "date": "2026-09-12T22:00",
     "description": "Corrige la WebView invisible del extractor de audio en Android para que no intercepte pulsaciones ni capture el foco. Libera las extracciones y sus temporizadores al cerrar la actividad y evita retener llamadas completadas.",
     "type": "fix",

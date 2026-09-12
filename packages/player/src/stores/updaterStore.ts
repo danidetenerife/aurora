@@ -10,7 +10,7 @@ import { errorMessage } from '../utils/errorMessage';
 import { reportError } from '../utils/logging';
 import { getSetting } from './settingsStore';
 
-const CURRENT_VERSION = '1.48.44';
+const CURRENT_VERSION = '1.48.45';
 const GITHUB_REPO = 'danidetenerife/aurora';
 const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
@@ -147,7 +147,10 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
           error: null,
         });
 
-        await get().downloadUpdate();
+        const autoInstall = getSetting('core.updates.autoInstall');
+        if (autoInstall === true) {
+          await get().downloadUpdate();
+        }
       } else {
         set({
           isUpdateAvailable: false,

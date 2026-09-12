@@ -193,8 +193,9 @@ public class YtStreamExtractorPlugin extends Plugin {
             if (root != null) {
                 ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ExtractionWebView.VIEW_WIDTH, ExtractionWebView.VIEW_HEIGHT);
-                root.addView(hidden, 0, params);
+                root.addView(hidden, params);
             }
+            MainActivity.ensureActiveWebView();
 
             String embedUrl = "https://www.youtube.com/embed/" + videoId
                 + "?autoplay=1&mute=1&controls=0&playsinline=1&hl=es&gl=ES&enablejsapi=1";
@@ -229,6 +230,7 @@ public class YtStreamExtractorPlugin extends Plugin {
             webView.clearHistory();
             webView.removeAllViews();
             webView.destroy();
+            MainActivity.ensureActiveWebView();
         } catch (Throwable t) {
             Log.w(TAG, "Cleanup failed", t);
         }

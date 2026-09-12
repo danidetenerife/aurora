@@ -40,6 +40,7 @@ public class MainActivity extends BridgeActivity {
                         }
                         webView.resumeTimers();
                         webView.onResume();
+                        webView.requestFocus();
                     }
                 } catch (Throwable t) {}
             });
