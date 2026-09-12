@@ -7,14 +7,14 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      class="flex w-full items-center gap-2"
+      class="scrollbar-hide flex w-full items-center gap-2 overflow-x-auto"
       id="tabs-:r0:-list"
       role="tablist"
     >
       <button
         aria-controls="headlessui-tabs-panel-:r7:"
         aria-selected="true"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         data-selected=""
         id="headlessui-tabs-tab-:r1:"
@@ -27,7 +27,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
       <button
         aria-controls="headlessui-tabs-panel-:r9:"
         aria-selected="false"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:r3:"
         role="tab"
@@ -39,7 +39,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
       <button
         aria-controls="headlessui-tabs-panel-:rb:"
         aria-selected="false"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:r5:"
         role="tab"
@@ -474,14 +474,14 @@ exports[`Tabs > (Snapshot) renders in composition mode 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      class="flex w-full items-center gap-2"
+      class="scrollbar-hide flex w-full items-center gap-2 overflow-x-auto"
       id="tabs-:rq:-list"
       role="tablist"
     >
       <button
         aria-controls="headlessui-tabs-panel-:rv:"
         aria-selected="true"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         data-selected=""
         id="headlessui-tabs-tab-:rr:"
@@ -494,7 +494,7 @@ exports[`Tabs > (Snapshot) renders in composition mode 1`] = `
       <button
         aria-controls="headlessui-tabs-panel-:r11:"
         aria-selected="false"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:rt:"
         role="tab"
@@ -550,14 +550,14 @@ exports[`Tabs > (Snapshot) switches tabs 1`] = `
   >
     <div
       aria-orientation="horizontal"
-      class="flex w-full items-center gap-2"
+      class="scrollbar-hide flex w-full items-center gap-2 overflow-x-auto"
       id="tabs-:rd:-list"
       role="tablist"
     >
       <button
         aria-controls="headlessui-tabs-panel-:rk:"
         aria-selected="false"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:re:"
         role="tab"
@@ -569,7 +569,7 @@ exports[`Tabs > (Snapshot) switches tabs 1`] = `
       <button
         aria-controls="headlessui-tabs-panel-:rm:"
         aria-selected="false"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state=""
         id="headlessui-tabs-tab-:rg:"
         role="tab"
@@ -581,7 +581,7 @@ exports[`Tabs > (Snapshot) switches tabs 1`] = `
       <button
         aria-controls="headlessui-tabs-panel-:ro:"
         aria-selected="true"
-        class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2"
+        class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2 shrink-0 whitespace-nowrap"
         data-headlessui-state="hover"
         data-hover=""
         data-selected=""

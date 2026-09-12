@@ -7,3 +7,11 @@
 @utility stroke-text-* {
   -webkit-text-stroke-color: --value(--color-*, [color]);
 }
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -16,7 +16,7 @@ export const TabsList: FC<TabsListProps> = ({ children, className }) => {
   return (
     <TabList
       id={listId}
-      className={cn('flex w-full items-center gap-2', listClassName, className)}
+      className={cn('scrollbar-hide flex w-full items-center gap-2 overflow-x-auto', listClassName, className)}
     >
       {children}
     </TabList>

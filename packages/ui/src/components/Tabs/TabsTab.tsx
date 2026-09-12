@@ -23,7 +23,7 @@ export const TabsTab: FC<TabsTabProps> = ({
           type="button"
           disabled={disabled}
           variant={selected ? 'default' : 'text'}
-          className={cn(tabClassName, className)}
+          className={cn('shrink-0 whitespace-nowrap', tabClassName, className)}
           data-selected={selected ? '' : undefined}
         >
           {children}

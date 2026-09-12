@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import type { FC } from 'react';
+import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
-import type { MetadataProvider, SearchResults } from '@aurora/plugin-sdk';
+import type { MetadataProvider, SearchResults, Track } from '@aurora/plugin-sdk';
 import {
   Button,
   Card,
@@ -19,6 +20,8 @@ import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { useActiveProvider } from '../../hooks/useActiveProvider';
 import { httpHost } from '../../services/httpHost';
 import { metadataHost } from '../../services/metadataHost';
+import { playbackManager } from '../../services/playback';
+import { useQueueStore } from '../../stores/queueStore';
 import { SearchEmptyState } from './SearchEmptyState';
 
 const SearchContent: FC<{
@@ -65,6 +68,57 @@ const SearchContent: FC<{
     );
   }
 
+  const playPodcast = async (podcastId: string, podcastName: string) => {
+    const loadingToast = toast.loading(`Cargando ${podcastName}...`);
+    try {
+      const lookupResponse = await httpHost.fetch(
+        `https://itunes.apple.com/lookup?id=${podcastId}&entity=podcastEpisode&limit=20`,
+      );
+      const lookupData = JSON.parse(lookupResponse.body) as {
+        results?: Array<{
+          kind?: string;
+          trackName?: string;
+          trackId?: number;
+          episodeUrl?: string;
+          trackTimeMillis?: number;
+          artworkUrl600?: string;
+        }>;
+      };
+      const firstEpisode = lookupData.results?.find(
+        (entry) => entry.kind === 'podcast-episode' && entry.episodeUrl,
+      );
+      if (firstEpisode) {
+        const episodeTrack: Track = {
+          title: firstEpisode.trackName ?? podcastName,
+          artists: [{ name: podcastName, roles: ['host'] }],
+          source: {
+            provider: 'podcast-audio',
+            id: String(firstEpisode.trackId),
+            url: firstEpisode.episodeUrl!,
+          },
+          durationMs: firstEpisode.trackTimeMillis,
+          artwork: {
+            items: firstEpisode.artworkUrl600
+              ? [{ url: firstEpisode.artworkUrl600, purpose: 'thumbnail' }]
+              : [],
+          },
+        };
+        const queue = useQueueStore.getState();
+        queue.addToQueue([episodeTrack]);
+        queue.goToIndex(queue.items.length - 1);
+        playbackManager.play();
+        toast.dismiss(loadingToast);
+        toast.success(`Reproduciendo: ${firstEpisode.trackName ?? podcastName}`);
+      } else {
+        toast.dismiss(loadingToast);
+        toast.error(`No se encontraron episodios de ${podcastName}`);
+      }
+    } catch {
+      toast.dismiss(loadingToast);
+      toast.error(`Error al cargar ${podcastName}`);
+    }
+  };
+
   const tabsItems = [
     podcasts.length > 0 && {
       id: 'podcasts',
@@ -72,9 +126,11 @@ const SearchContent: FC<{
       content: (
         <div className="flex min-w-0 flex-col gap-2">
           {podcasts.map((podcast) => (
-            <div
+            <button
               key={podcast.id}
-              className="border-border bg-background-secondary flex min-w-0 items-center gap-3 rounded-xl border p-2"
+              type="button"
+              className="border-border bg-background-secondary hover:bg-primary/10 flex min-w-0 cursor-pointer items-center gap-3 rounded-xl border p-2 text-left transition-colors"
+              onClick={() => playPodcast(podcast.id, podcast.name)}
             >
               {podcast.artwork ? (
                 <img
@@ -89,7 +145,7 @@ const SearchContent: FC<{
                   {podcast.publisher}
                 </small>
               </span>
-            </div>
+            </button>
           ))}
         </div>
       ),
