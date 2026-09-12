@@ -30,7 +30,10 @@
   font-size: 16px;
 }
 
-.aurora-workspace[data-native-mobile] .aurora-apk-topbar svg :is(#text2, #text2 *) {
+.aurora-workspace[data-native-mobile]
+  .aurora-apk-topbar
+  svg
+  :is(#text2, #text2 *) {
   fill: var(--foreground) !important;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: 800;
@@ -129,6 +132,26 @@
   }
 }
 
+.aurora-car-track h1,
+.aurora-car-track p {
+  max-width: 100%;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.aurora-car-track h1 {
+  font-size: clamp(1.15rem, 4.5vw, 2.25rem);
+  line-height: 1.12;
+}
+
+.aurora-car-track p {
+  font-size: clamp(1rem, 3.5vw, 1.5rem);
+  line-height: 1.2;
+}
+
 .aurora-workspace .aurora-topbar {
   height: 64px;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -162,7 +185,9 @@
 .aurora-workspace [data-testid='sidebar-navigation-item'] {
   min-height: 44px;
   border-radius: 10px;
-  transition: background-color 120ms ease, color 120ms ease;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .aurora-workspace .aurora-player {
@@ -176,8 +201,12 @@
   transition-property: background-color, color;
 }
 
-.aurora-workspace .aurora-playback-controls > button[data-testid='player-play-button'],
-.aurora-workspace .aurora-playback-controls > button[data-testid='player-pause-button'] {
+.aurora-workspace
+  .aurora-playback-controls
+  > button[data-testid='player-play-button'],
+.aurora-workspace
+  .aurora-playback-controls
+  > button[data-testid='player-pause-button'] {
   background: var(--primary);
   border-color: var(--primary);
 }
@@ -240,7 +269,10 @@ body:has(.aurora-workspace) [id^='headlessui-dialog-panel-'] form button {
   white-space: normal;
 }
 
-body:has(.aurora-workspace) [id^='headlessui-dialog-panel-'] form > div:last-child {
+body:has(.aurora-workspace)
+  [id^='headlessui-dialog-panel-']
+  form
+  > div:last-child {
   flex-wrap: wrap;
 }
 
