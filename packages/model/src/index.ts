@@ -57,6 +57,14 @@ export type PlaylistRef = {
   source: ProviderRef;
 };
 
+export type PodcastRef = {
+  id: string;
+  name: string;
+  publisher: string;
+  artworkUrl?: string;
+  sourceUrl: string;
+};
+
 export type Track = {
   title: string;
   artists: ArtistCredit[];

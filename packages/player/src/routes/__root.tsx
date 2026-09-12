@@ -5,6 +5,7 @@ import {
   GaugeIcon,
   HistoryIcon,
   ListMusicIcon,
+  Mic2Icon,
   MusicIcon,
   SettingsIcon,
   UserIcon,
@@ -134,6 +135,11 @@ const DesktopMobileRootComponent = () => {
                   to="/playlists"
                   icon={<ListMusicIcon />}
                   label={t('playlists')}
+                />
+                <SidebarNavigationItem
+                  to="/podcasts"
+                  icon={<Mic2Icon />}
+                  label="Podcasts"
                 />
                 <SidebarNavigationItem
                   to="/history"

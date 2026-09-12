@@ -27,6 +27,11 @@ export const TvNavRail: FC = () => {
       label: t('playlists'),
       action: () => setActiveSection('playlists'),
     },
+    {
+      id: 'podcasts',
+      label: 'Podcasts',
+      action: () => setActiveSection('podcasts'),
+    },
     { id: 'queue', label: t('queue'), action: () => setActiveSection('queue') },
     {
       id: 'player',

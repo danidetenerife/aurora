@@ -2,6 +2,7 @@ import { Link, useRouterState } from '@tanstack/react-router';
 import {
   GaugeIcon,
   ListMusicIcon,
+  Mic2Icon,
   MusicIcon,
   SettingsIcon,
   UserIcon,
@@ -41,6 +42,12 @@ export const ConnectedMobileNav: FC = () => {
       icon: <ListMusicIcon className="size-6" />,
       label: 'Playlists',
       isActive: currentPath.startsWith('/playlists'),
+    },
+    {
+      to: '/podcasts',
+      icon: <Mic2Icon className="size-6" />,
+      label: 'Podcasts',
+      isActive: currentPath.startsWith('/podcasts'),
     },
   ];
 
