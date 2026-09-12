@@ -33,6 +33,7 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
     private static final String CATEGORY_FAVORITES = "cat_favorites";
     private static final String CATEGORY_PLAYLISTS = "cat_playlists";
     private static final String CATEGORY_QUEUE = "cat_queue";
+    private static final String CATEGORY_PODCASTS = "cat_podcasts";
     private static final String ACTION_DISLIKE = "com.auroraplayer.ACTION_DISLIKE";
 
     private MediaSessionCompat fallbackSession;
@@ -112,7 +113,7 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             public void onPlayFromMediaId(String mediaId, Bundle extras) {
                 Log.i(TAG, "Auto Callback: onPlayFromMediaId=" + mediaId);
                 NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-                if (nms != null) nms.notifyMediaAction("playid:" + mediaId, -1);
+                if (nms != null) nms.notifyMediaAction(mediaId != null && mediaId.startsWith("podcast:") ? mediaId : "playid:" + mediaId, -1);
                 forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", true);
             }
 
@@ -252,12 +253,25 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 .build();
             items.add(new MediaBrowserCompat.MediaItem(playlistDesc, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
 
+            MediaDescriptionCompat podcastsDesc = new MediaDescriptionCompat.Builder()
+                .setMediaId(CATEGORY_PODCASTS)
+                .setTitle("Podcasts")
+                .setSubtitle("Podcasts favoritos y disponibles")
+                .build();
+            items.add(new MediaBrowserCompat.MediaItem(podcastsDesc, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
+
             MediaDescriptionCompat queueDesc = new MediaDescriptionCompat.Builder()
                 .setMediaId(CATEGORY_QUEUE)
                 .setTitle("Cola actual")
                 .setSubtitle("Pistas en cola")
                 .build();
             items.add(new MediaBrowserCompat.MediaItem(queueDesc, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
+        } else if (CATEGORY_PODCASTS.equals(parentMediaId)) {
+            addPodcast(items, "todopoderosos", "Todopoderosos", "Espacio Fundación Telefónica");
+            addPodcast(items, "nude-project", "The Nude Project", "Nude Project");
+            addPodcast(items, "historia-national", "Historia National Geographic", "National Geographic");
+            addPodcast(items, "daily", "The Daily", "The New York Times");
+            addPodcast(items, "serial", "Serial", "Serial Productions");
         } else if (CATEGORY_QUEUE.equals(parentMediaId) || CATEGORY_FAVORITES.equals(parentMediaId) || CATEGORY_PLAYLISTS.equals(parentMediaId)) {
             String json = getSharedPreferences("aurora_auto", MODE_PRIVATE).getString("catalog", "[]");
             try {
@@ -277,6 +291,15 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         }
 
         result.sendResult(items);
+    }
+
+    private void addPodcast(List<MediaBrowserCompat.MediaItem> items, String id, String title, String publisher) {
+        MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+            .setMediaId("podcast:" + id)
+            .setTitle(title)
+            .setSubtitle(publisher)
+            .build();
+        items.add(new MediaBrowserCompat.MediaItem(description, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
     }
 
     @Override
