@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 import { TopBar, TopBarLogo, TopBarNavigation } from '@aurora/ui';
 
-import AuroraLogo from '../../../ui/src/assets/logo-full.svg?react';
+import AuroraWavesLogo from '../../../ui/src/assets/logo-icon-waves.png';
 import { useCanGoForward } from '../hooks/useCanGoForward';
 import { isCapacitorEnvironment } from '../services/universalStore';
 import { SearchBox } from './SearchBox';
@@ -18,11 +18,17 @@ export const ConnectedTopBar: FC = () => {
     return (
       <TopBar draggable={false} className="aurora-apk-topbar">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <AuroraLogo
-            role="img"
-            aria-label="Aurora"
-            className="h-9 w-auto max-w-[55%]"
-          />
+          <div className="flex min-w-0 items-center gap-2">
+            <img
+              src={AuroraWavesLogo}
+              role="img"
+              aria-label="Aurora"
+              className="h-9 w-9 shrink-0 object-contain"
+            />
+            <span className="font-heading truncate text-4xl font-extrabold tracking-tight text-foreground">
+              aurora
+            </span>
+          </div>
           <div className="flex max-w-full flex-wrap items-center gap-2">
             <TopBarNavigation
               onBack={() => router.history.back()}
