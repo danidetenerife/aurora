@@ -32,6 +32,7 @@ type NativeMediaSessionPluginInterface = {
   }): Promise<void>;
   pauseStream(): Promise<void>;
   resumeStream(): Promise<void>;
+  updateAutoCatalog(options: { json: string }): Promise<void>;
   seekStream(options: {
     positionMs: number;
   }): Promise<void>;
@@ -58,6 +59,7 @@ const NativeMediaSessionPlugin =
         playStream: () => Promise.resolve(),
         pauseStream: () => Promise.resolve(),
         resumeStream: () => Promise.resolve(),
+        updateAutoCatalog: () => Promise.resolve(),
         seekStream: () => Promise.resolve(),
         getPlaybackStatus: () =>
           Promise.resolve({ isPlaying: false, positionMs: 0, durationMs: 0 }),

@@ -9,6 +9,7 @@ import {
   SettingsIcon,
   UserIcon,
 } from 'lucide-react';
+import { useEffect } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import {
@@ -42,8 +43,12 @@ import { GlobalShortcuts } from '../shortcuts';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { useStartupStore } from '../stores/startupStore';
+import { useUpdaterStore } from '../stores/updaterStore';
 
 import '../styles/workspace.css';
+import '../styles/mobile-dashboard.css';
+
+const MOBILE_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
 
 const DesktopMobileRootComponent = () => {
   const { t } = useTranslation('navigation');
@@ -59,6 +64,28 @@ const DesktopMobileRootComponent = () => {
   } = useLayoutStore();
   const openSettings = useSettingsModalStore((state) => state.open);
   const isStartingUp = useStartupStore((state) => state.isStartingUp);
+  useEffect(() => {
+    if (!isCapacitorEnvironment() || isStartingUp) {
+      return;
+    }
+    const checkForUpdate = () => {
+      const updater = useUpdaterStore.getState();
+      if (
+        !updater.lastChecked ||
+        Date.now() - updater.lastChecked.getTime() >= MOBILE_UPDATE_INTERVAL_MS
+      ) {
+        void updater.checkForUpdate();
+      }
+    };
+    const timer = window.setInterval(checkForUpdate, MOBILE_UPDATE_INTERVAL_MS);
+    window.addEventListener('focus', checkForUpdate);
+    window.addEventListener('online', checkForUpdate);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', checkForUpdate);
+      window.removeEventListener('online', checkForUpdate);
+    };
+  }, [isStartingUp]);
   return (
     <PlayerShell
       className="aurora-workspace"

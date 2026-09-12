@@ -16,8 +16,6 @@ export const commands = {
 	getStartupLogs: () => __TAURI_INVOKE<StartupLogEntry[]>("get_startup_logs"),
 	streamServerPort: () => __TAURI_INVOKE<number>("stream_server_port"),
 	ytdlpEnsureInstalled: () => typedError<boolean, string>(__TAURI_INVOKE("ytdlp_ensure_installed")),
-	bridgeRespond: (response: BridgeResponse) => typedError<null, string>(__TAURI_INVOKE("bridge_respond", { response })),
-	bridgeNotify: (notification: BridgeNotification) => typedError<null, string>(__TAURI_INVOKE("bridge_notify", { notification })),
 	historyRecordEvent: (event: PlayEvent) => typedError<null, string>(__TAURI_INVOKE("history_record_event", { event })),
 	historyFetch: (page: PageRequest) => typedError<Page<HistoryEntry>, string>(__TAURI_INVOKE("history_fetch", { page })),
 	historyDeleteRange: (range: TimeRange) => typedError<null, string>(__TAURI_INVOKE("history_delete_range", { range })),
@@ -32,16 +30,6 @@ export const commands = {
 };
 
 /* Types */
-export type BridgeNotification = {
-	subsystem: string,
-};
-
-export type BridgeResponse = {
-	traceId: string,
-} & BridgeResponseBody;
-
-export type BridgeResponseBody = { status: "success"; data: unknown } | { status: "error"; error: string };
-
 export type DailyListeningTime = {
 	date: string,
 	value: number,

@@ -12,7 +12,7 @@ html[data-platform="tv"], [data-platform="tv"] body, [data-platform="tv"] #root 
   box-sizing: border-box; background: #101114; color: #f4f4f5;
 }
 [data-platform="tv"] .tv-navigation { display: flex; align-items: center; gap: .5rem; min-width: 0; }
-[data-platform="tv"] .tv-brand { color: #62e2bd; font-weight: 800; margin-right: auto; }
+[data-platform="tv"] .tv-brand { display: flex; align-items: center; gap: .5rem; color: #62e2bd; font-weight: 800; margin-right: auto; }
 [data-platform="tv"] .tv-shell button {
   font: inherit; cursor: pointer; color: inherit; border: 2px solid transparent;
   background: #25272d; border-radius: .5rem; padding: .6rem .8rem;

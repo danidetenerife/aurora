@@ -6,6 +6,8 @@ import { type FC } from 'react';
 import { useTranslation } from '@aurora/i18n';
 import { EmptyState, ScrollableArea, ViewShell } from '@aurora/ui';
 
+import { MobileItemPages } from '../../components/MobileItemPages';
+import { isCapacitorEnvironment } from '../../services/universalStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { CreatePlaylistDialog } from './components/CreatePlaylistDialog';
 import { PlaylistCardGrid } from './components/PlaylistCardGrid';
@@ -27,11 +29,12 @@ const PlaylistsContent: FC = () => {
     toggleSortDirection,
     sortedPlaylists,
   } = usePlaylistSort(filteredPlaylists);
+  const native = isCapacitorEnvironment();
   const hasPlaylists = !isEmpty(index);
   const hasResults = !isEmpty(filteredPlaylists);
 
   return (
-    <ViewShell data-testid="playlists-view" title={t('title')}>
+    <ViewShell data-testid="playlists-view" title={native ? t('navigation:playlists') : t('title')} classes={native ? { root: 'aurora-mobile-library' } : undefined}>
       <PlaylistsToolbar
         filter={filter}
         onFilterChange={setFilter}
@@ -61,7 +64,15 @@ const PlaylistsContent: FC = () => {
         />
       )}
 
-      {hasPlaylists && hasResults && (
+      {hasPlaylists && hasResults && native && (
+        <MobileItemPages items={sortedPlaylists.map((playlist) => (
+          <button key={playlist.id} type="button" className="aurora-mobile-library-row" onClick={() => void navigate({ to: '/playlists/$playlistId', params: { playlistId: playlist.id } })}>
+            <ListMusic size={28} />
+            <span className="min-w-0"><strong className="block truncate">{playlist.name}</strong><span className="block text-xs">{t('trackCount', { count: playlist.itemCount })}</span></span>
+          </button>
+        ))} />
+      )}
+      {hasPlaylists && hasResults && !native && (
         <ScrollableArea className="flex-1 overflow-hidden">
           <PlaylistCardGrid
             playlists={sortedPlaylists}

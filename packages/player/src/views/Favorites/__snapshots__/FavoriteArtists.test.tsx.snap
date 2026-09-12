@@ -213,7 +213,7 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
               </button>
               <button
                 aria-label="Eliminar de favoritos"
-                class="bg-black/60 hover:bg-accent-red text-white absolute top-3.5 right-3.5 z-20 flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 focus-visible:opacity-100 shadow-md cursor-pointer"
+                class="hover:bg-accent-red absolute top-3.5 right-3.5 z-20 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 active:scale-95"
                 title="Eliminar de favoritos"
                 type="button"
               >
@@ -319,7 +319,7 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
               </button>
               <button
                 aria-label="Eliminar de favoritos"
-                class="bg-black/60 hover:bg-accent-red text-white absolute top-3.5 right-3.5 z-20 flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 focus-visible:opacity-100 shadow-md cursor-pointer"
+                class="hover:bg-accent-red absolute top-3.5 right-3.5 z-20 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 active:scale-95"
                 title="Eliminar de favoritos"
                 type="button"
               >

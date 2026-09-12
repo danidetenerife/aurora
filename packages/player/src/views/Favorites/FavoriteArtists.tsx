@@ -7,7 +7,8 @@ import { pickArtwork } from '@aurora/model';
 import { Button, Card, CardGrid, EmptyState, ViewShell } from '@aurora/ui';
 
 import { useFavoritesStore } from '../../stores/favoritesStore';
-import { useProvidersStore } from '../../stores/providersStore';
+import { MobileItemPages } from '../../components/MobileItemPages';
+import { isCapacitorEnvironment } from '../../services/universalStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
 import { useArtistCardImage } from './useArtistCardImage';
 
@@ -17,6 +18,7 @@ type ArtistCardProps = {
   onClick: () => void;
   onRemove: () => void;
   removeLabel: string;
+  providerId: string;
 };
 
 const ArtistCard: FC<ArtistCardProps> = ({
@@ -25,8 +27,9 @@ const ArtistCard: FC<ArtistCardProps> = ({
   onClick,
   onRemove,
   removeLabel,
+  providerId,
 }) => {
-  const resolvedSrc = useArtistCardImage(name, localArtworkUrl);
+  const resolvedSrc = useArtistCardImage(name, localArtworkUrl, providerId);
   return (
     <div className="group relative w-42">
       <Card
@@ -52,6 +55,9 @@ const ArtistCard: FC<ArtistCardProps> = ({
   );
 };
 
+const ArtistCollection: FC<{ items: React.ReactNode[] }> = ({ items }) =>
+  isCapacitorEnvironment() ? <MobileItemPages items={items} /> : <CardGrid>{items}</CardGrid>;
+
 export const FavoriteArtists: FC = () => {
   const { t } = useTranslation('favorites');
   const navigate = useNavigate();
@@ -60,7 +66,7 @@ export const FavoriteArtists: FC = () => {
   const sortedArtists = useMemo(() => sortByAddedAtDesc(artists), [artists]);
 
   return (
-    <ViewShell data-testid="favorite-artists-view" title={t('artists.title')}>
+    <ViewShell data-testid="favorite-artists-view" title={t('artists.title')} classes={isCapacitorEnvironment() ? { root: 'aurora-mobile-library' } : undefined}>
       {sortedArtists.length === 0 ? (
         <EmptyState
           icon={<User size={48} />}
@@ -83,8 +89,7 @@ export const FavoriteArtists: FC = () => {
               {t('artists.clearAll', 'Borrar todos')}
             </Button>
           </div>
-          <CardGrid>
-            {sortedArtists.map((entry) => {
+          <ArtistCollection items={sortedArtists.map((entry) => {
               const localArtworkUrl = pickArtwork(
                 entry.ref?.artwork,
                 'cover',
@@ -98,6 +103,7 @@ export const FavoriteArtists: FC = () => {
                 <ArtistCard
                   key={`${sourceProvider}-${sourceId}-${artistName}`}
                   name={artistName}
+                  providerId={sourceProvider}
                   localArtworkUrl={localArtworkUrl}
                   removeLabel={t(
                     'actions.removeFromFavorites',
@@ -107,18 +113,13 @@ export const FavoriteArtists: FC = () => {
                     void removeArtist(entry.ref.source, artistName);
                   }}
                   onClick={() => {
-                    const activeMetadata = useProvidersStore
-                      .getState()
-                      .getActive('metadata');
-                    const targetProvider = activeMetadata ?? 'spotify';
                     void navigate({
-                      to: `/artist/${targetProvider}/${encodeURIComponent(artistName)}`,
+                      to: `/artist/${sourceProvider}/${encodeURIComponent(sourceId)}`,
                     });
                   }}
                 />
               );
-            })}
-          </CardGrid>
+            })} />
         </div>
       )}
     </ViewShell>

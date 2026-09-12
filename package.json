@@ -6,7 +6,6 @@
   "packageManager": "pnpm@10.33.4",
   "scripts": {
     "dev": "turbo dev --filter=@aurora/player --filter=@aurora/ui",
-    "dev:remote": "VITE_HOST=0.0.0.0 turbo dev --filter=@aurora/player --filter=@aurora/ui",
     "build": "turbo build",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",

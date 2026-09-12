@@ -8,6 +8,7 @@ import type { MetadataProvider } from '@aurora/plugin-sdk';
 import { Badge, Loader } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../../components/ConnectedTrackTable';
+import { MobileTrackPages } from '../../../components/MobileTrackPages';
 import { useProviders } from '../../../hooks/useProviders';
 import { discoveryHost } from '../../../services/discoveryHost';
 import {
@@ -16,6 +17,7 @@ import {
   type GenreScore,
 } from '../../../services/personalizationEngine';
 import { providersHost } from '../../../services/providersHost';
+import { isCapacitorEnvironment } from '../../../services/universalStore';
 
 type TaggedCandidate = {
   track: Track;
@@ -295,6 +297,8 @@ export const PersonalizedMixWidget: FC = () => {
         <div className="flex items-center justify-center p-8">
           <Loader data-testid="dashboard-personalized-loader" size="lg" />
         </div>
+      ) : isCapacitorEnvironment() ? (
+        <MobileTrackPages tracks={visibleTracks ?? []} />
       ) : (
         <ConnectedTrackTable
           tracks={visibleTracks ?? []}

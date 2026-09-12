@@ -15,10 +15,12 @@ type ConnectedTrackTableProps = Omit<
   'actions' | 'meta' | 'labels'
 > & {
   actions?: Pick<TrackTableActions<Track>, 'onRemove' | 'onReorder'>;
+  playbackTracks?: Track[];
 };
 
 export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
-  const { actions: externalActions, ...restProps } = props;
+  const { actions: externalActions, playbackTracks, ...restProps } = props;
+  const queueTracks = playbackTracks ?? restProps.tracks;
   const trackActions = useTrackActions();
   const queueActions = useQueueActions();
   const labels = useTrackTableLabels();
@@ -35,15 +37,15 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
       actions={{
         onAddToQueue: trackActions.addToQueue,
         onPlayNow: (track) => {
-          if (restProps.tracks && restProps.tracks.length > 0) {
-            const trackIndex = restProps.tracks.findIndex(
+          if (queueTracks.length > 0) {
+            const trackIndex = queueTracks.findIndex(
               (t) =>
                 (t.source?.id && t.source?.id === track.source?.id) ||
                 (t.title === track.title &&
                   t.artists?.[0]?.name === track.artists?.[0]?.name),
             );
             queueActions.clearQueue();
-            queueActions.addToQueue(restProps.tracks);
+            queueActions.addToQueue(queueTracks);
             if (trackIndex > 0) {
               queueActions.goToIndex(trackIndex);
             }
@@ -57,10 +59,10 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
         onReorder: externalActions?.onReorder,
         onPlayAll: () => {
           queueActions.clearQueue();
-          queueActions.addToQueue(restProps.tracks);
+          queueActions.addToQueue(queueTracks);
         },
         onAddAllToQueue: () => {
-          queueActions.addToQueue(restProps.tracks);
+          queueActions.addToQueue(queueTracks);
         },
         onArtistClick: (artistName) => {
           const activeMetadata =

@@ -11,6 +11,7 @@ import { FC } from 'react';
 import { useTranslation } from '@aurora/i18n';
 import { SettingsPanel } from '@aurora/ui';
 
+import { isCapacitorEnvironment } from '../services/universalStore';
 import {
   useSettingsModalStore,
   type SettingsTab,
@@ -67,7 +68,12 @@ export const ConnectedSettingsModal: FC = () => {
   const { t } = useTranslation('preferences');
   const { isOpen, close, activeTab, setActiveTab } = useSettingsModalStore();
 
-  const tabs = SETTINGS_TABS.map((tab) => ({
+  const visibleTabs = isCapacitorEnvironment()
+    ? SETTINGS_TABS.filter(
+        (tab) => !['shortcuts', 'logs', 'whats-new'].includes(tab.id),
+      )
+    : SETTINGS_TABS;
+  const tabs = visibleTabs.map((tab) => ({
     ...tab,
     label:
       tab.id === 'sync' ? 'Sincronización' : t(`${tab.id}.title`, tab.label),
@@ -78,7 +84,9 @@ export const ConnectedSettingsModal: FC = () => {
       isOpen={isOpen}
       onClose={close}
       tabs={tabs}
-      activeTab={activeTab}
+      activeTab={
+        tabs.some((tab) => tab.id === activeTab) ? activeTab : 'general'
+      }
       onTabChange={(tabId) => setActiveTab(tabId as SettingsTab)}
       navFooter={
         <div className="flex flex-col items-center gap-2">

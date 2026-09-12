@@ -6,8 +6,6 @@ export const taglines = [
   'for Mac',
   'for Windows',
   "that's free and open source",
-  'for AI agents',
-  'with a built-in MCP',
   'for music discovery',
   'with themes',
   'with a ton of plugins',

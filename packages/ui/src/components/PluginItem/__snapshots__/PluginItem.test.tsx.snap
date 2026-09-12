@@ -3,18 +3,18 @@
 exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
 <DocumentFragment>
   <div
-    class="flex w-full flex-col sm:flex-row gap-2"
+    class="flex w-full flex-col gap-2 sm:flex-row"
   >
     <div
       aria-busy="false"
-      class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow opacity-30 relative flex flex-1 cursor-default flex-col gap-2 p-3 sm:p-4 overflow-hidden transition-opacity duration-250"
+      class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow opacity-30 relative flex flex-1 cursor-default flex-col gap-2 overflow-hidden p-3 transition-opacity duration-250 sm:p-4"
       data-testid="plugin-item"
     >
       <div
         class="flex w-full items-start gap-3"
       >
         <div
-          class="border-border text-foreground flex rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center overflow-hidden p-0"
+          class="border-border text-foreground flex rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow h-10 w-10 shrink-0 items-center justify-center overflow-hidden p-0 sm:h-12 sm:w-12"
         >
           <svg
             aria-hidden="true"
@@ -51,7 +51,7 @@ exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
             class="flex items-start justify-between gap-2"
           >
             <h3
-              class="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base sm:text-lg leading-tight font-bold select-none"
+              class="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base leading-tight font-bold select-none sm:text-lg"
             >
               <span
                 data-testid="plugin-name"
@@ -59,7 +59,7 @@ exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
                 Disabled Plugin
               </span>
               <span
-                class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+                class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
               >
                 <span
                   class="mr-1 opacity-60"
@@ -75,7 +75,7 @@ exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
             </h3>
           </div>
           <p
-            class="text-foreground mt-1.5 text-xs sm:text-sm leading-relaxed select-none"
+            class="text-foreground mt-1.5 text-xs leading-relaxed select-none sm:text-sm"
             data-testid="plugin-description"
           >
             This plugin is currently disabled.
@@ -83,14 +83,14 @@ exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
         </div>
       </div>
       <div
-        class="flex items-center justify-between mt-1 pt-2 border-t border-border/40"
+        class="border-border/40 mt-1 flex items-center justify-between border-t pt-2"
       >
         <span
-          class="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-normal"
+          class="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs font-normal sm:text-sm"
           data-testid="plugin-version"
         />
         <div
-          class="flex items-center gap-1.5 shrink-0"
+          class="flex shrink-0 items-center gap-1.5"
         />
       </div>
     </div>
@@ -101,11 +101,11 @@ exports[`PluginItem > (Snapshot) renders disabled state 1`] = `
 exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
 <DocumentFragment>
   <div
-    class="flex w-full flex-col sm:flex-row gap-2"
+    class="flex w-full flex-col gap-2 sm:flex-row"
   >
     <div
       aria-busy="false"
-      class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow relative flex flex-1 cursor-default flex-col gap-2 p-3 sm:p-4 overflow-hidden transition-opacity duration-250"
+      class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow relative flex flex-1 cursor-default flex-col gap-2 overflow-hidden p-3 transition-opacity duration-250 sm:p-4"
       data-testid="plugin-item"
     >
       <div
@@ -118,7 +118,7 @@ exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
             class="flex items-start justify-between gap-2"
           >
             <h3
-              class="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base sm:text-lg leading-tight font-bold select-none"
+              class="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base leading-tight font-bold select-none sm:text-lg"
             >
               <span
                 data-testid="plugin-name"
@@ -126,7 +126,7 @@ exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
                 Accessory Plugin
               </span>
               <span
-                class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+                class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
               >
                 <span
                   class="mr-1 opacity-60"
@@ -149,7 +149,7 @@ exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
             </div>
           </div>
           <p
-            class="text-foreground mt-1.5 text-xs sm:text-sm leading-relaxed select-none"
+            class="text-foreground mt-1.5 text-xs leading-relaxed select-none sm:text-sm"
             data-testid="plugin-description"
           >
             Has accessory on the right.
@@ -157,14 +157,14 @@ exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
         </div>
       </div>
       <div
-        class="flex items-center justify-between mt-1 pt-2 border-t border-border/40"
+        class="border-border/40 mt-1 flex items-center justify-between border-t pt-2"
       >
         <span
-          class="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-normal"
+          class="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs font-normal sm:text-sm"
           data-testid="plugin-version"
         />
         <div
-          class="flex items-center gap-1.5 shrink-0"
+          class="flex shrink-0 items-center gap-1.5"
         />
       </div>
     </div>
@@ -175,18 +175,18 @@ exports[`PluginItem > (Snapshot) renders rightAccessory content 1`] = `
 exports[`PluginItem > (Snapshot) renders with all props 1`] = `
 <DocumentFragment>
   <div
-    class="flex w-full flex-col sm:flex-row gap-2"
+    class="flex w-full flex-col gap-2 sm:flex-row"
   >
     <div
       aria-busy="false"
-      class="text-foreground h-full w-full rounded-md border-(length:--border-width) bg-accent-orange/30 shadow-shadow ring-accent-orange ring-2 select-none ring-inset relative flex flex-1 cursor-default flex-col gap-2 p-3 sm:p-4 overflow-hidden transition-opacity duration-250 border-accent-red"
+      class="text-foreground h-full w-full rounded-md border-(length:--border-width) bg-accent-orange/30 shadow-shadow ring-accent-orange ring-2 select-none ring-inset relative flex flex-1 cursor-default flex-col gap-2 overflow-hidden p-3 transition-opacity duration-250 sm:p-4 border-accent-red"
       data-testid="plugin-item"
     >
       <div
         class="flex w-full items-start gap-3"
       >
         <div
-          class="border-border text-foreground flex rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center overflow-hidden p-0"
+          class="border-border text-foreground flex rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow h-10 w-10 shrink-0 items-center justify-center overflow-hidden p-0 sm:h-12 sm:w-12"
         >
           <svg
             aria-hidden="true"
@@ -223,7 +223,7 @@ exports[`PluginItem > (Snapshot) renders with all props 1`] = `
             class="flex items-start justify-between gap-2"
           >
             <h3
-              class="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base sm:text-lg leading-tight font-bold select-none"
+              class="text-foreground inline-flex flex-wrap items-baseline gap-1.5 text-base leading-tight font-bold select-none sm:text-lg"
             >
               <span
                 data-testid="plugin-name"
@@ -231,7 +231,7 @@ exports[`PluginItem > (Snapshot) renders with all props 1`] = `
                 YouTube Music
               </span>
               <span
-                class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+                class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
               >
                 <span
                   class="mr-1 opacity-60"
@@ -247,7 +247,7 @@ exports[`PluginItem > (Snapshot) renders with all props 1`] = `
             </h3>
           </div>
           <p
-            class="text-foreground mt-1.5 text-xs sm:text-sm leading-relaxed select-none"
+            class="text-foreground mt-1.5 text-xs leading-relaxed select-none sm:text-sm"
             data-testid="plugin-description"
           >
             Stream music directly from YouTube Music with full search and playlist support.
@@ -255,10 +255,10 @@ exports[`PluginItem > (Snapshot) renders with all props 1`] = `
         </div>
       </div>
       <div
-        class="flex items-center justify-between mt-1 pt-2 border-t border-border/40"
+        class="border-border/40 mt-1 flex items-center justify-between border-t pt-2"
       >
         <span
-          class="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs sm:text-sm font-normal"
+          class="text-foreground-secondary flex flex-wrap items-center gap-1.5 text-xs font-normal sm:text-sm"
           data-testid="plugin-version"
         >
           <span
@@ -268,7 +268,7 @@ exports[`PluginItem > (Snapshot) renders with all props 1`] = `
           </span>
         </span>
         <div
-          class="flex items-center gap-1.5 shrink-0"
+          class="flex shrink-0 items-center gap-1.5"
         >
           <button
             class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none size-8 justify-center"

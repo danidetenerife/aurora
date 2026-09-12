@@ -278,7 +278,7 @@ export const SyncSettingsView: FC = () => {
   };
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6 p-4">
+    <div className="aurora-sync-settings mx-auto flex w-full min-w-0 max-w-xl flex-col gap-6 p-4">
       {/* Top Status Card */}
       <div className="border-border bg-background-secondary flex flex-col gap-3 rounded-xl border-(length:--border-width) p-4">
         <div className="flex items-center justify-between">

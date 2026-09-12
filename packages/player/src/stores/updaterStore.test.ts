@@ -1,10 +1,23 @@
 import { check, Update, type DownloadEvent } from '@tauri-apps/plugin-updater';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { ApkUpdaterPlugin } from '../services/apkUpdater';
+import { setSetting } from './settingsStore';
 import { useUpdaterStore } from './updaterStore';
 
 vi.mock('@tauri-apps/plugin-updater', () => ({
   check: vi.fn(),
+}));
+
+vi.mock('../services/apkUpdater', () => ({
+  ApkUpdaterPlugin: {
+    getAppVersion: vi.fn(async () => ({
+      version: '1.47.1',
+      versionCode: 14701,
+    })),
+    downloadAndInstall: vi.fn(async () => ({ success: true })),
+    addListener: vi.fn(async () => ({ remove: vi.fn() })),
+  },
 }));
 
 describe('useUpdaterStore', () => {
@@ -31,6 +44,56 @@ describe('useUpdaterStore', () => {
       window as unknown as { __TAURI_INTERNALS__: unknown }
     ).__TAURI_INTERNALS__ = {};
   });
+
+  it('automatically downloads the mobile APK even when the TV asset comes first', async () => {
+    delete (window as Window & { __TAURI_INTERNALS__?: unknown })
+      .__TAURI_INTERNALS__;
+    await setSetting('core.updates.autoInstall', true);
+    vi.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        tag_name: 'player@1.49.0',
+        assets: [
+          {
+            name: 'aurora-google-tv.apk',
+            browser_download_url: 'https://example.com/tv.apk',
+          },
+          {
+            name: 'aurora-android.apk',
+            browser_download_url: 'https://example.com/mobile.apk',
+          },
+        ],
+      }),
+    } as Response);
+    await useUpdaterStore.getState().checkForUpdate();
+    expect(ApkUpdaterPlugin.downloadAndInstall).toHaveBeenCalledExactlyOnceWith(
+      { url: 'https://example.com/mobile.apk' },
+    );
+    await setSetting('core.updates.autoInstall', false);
+  });
+
+  it.each(['plugin-sdk@9.0.0', 'not-a-version', 'v1.0.0'])(
+    'does not install an unrelated or older release: %s',
+    async (tag) => {
+      delete (window as Window & { __TAURI_INTERNALS__?: unknown })
+        .__TAURI_INTERNALS__;
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          tag_name: tag,
+          assets: [
+            {
+              name: 'aurora.apk',
+              browser_download_url: 'https://example.com/app.apk',
+            },
+          ],
+        }),
+      } as Response);
+      await useUpdaterStore.getState().checkForUpdate();
+      expect(useUpdaterStore.getState().isUpdateAvailable).toBe(false);
+      expect(ApkUpdaterPlugin.downloadAndInstall).not.toHaveBeenCalled();
+    },
+  );
 
   describe('initial state', () => {
     it('starts with no update available', () => {

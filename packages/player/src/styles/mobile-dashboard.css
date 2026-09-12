@@ -1,0 +1,472 @@
+.aurora-workspace[data-native-mobile] .aurora-apk-topbar {
+  gap: 4px;
+  padding: 4px 12px 8px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-apk-topbar svg[role='img'] {
+  height: 24px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-apk-topbar input {
+  height: 36px;
+  font-size: 14px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-apk-topbar button {
+  height: 32px;
+  width: 32px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-library,
+.aurora-workspace[data-native-mobile] .aurora-mobile-library {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library > h1 {
+  display: none;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library > .aurora-scrollable-area {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library .aurora-playlists-toolbar {
+  flex: 0 0 auto;
+  margin-bottom: 6px;
+  gap: 4px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library .aurora-playlists-toolbar > button {
+  min-height: 32px;
+  height: 32px;
+  padding-inline: 8px;
+  font-size: 12px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library .aurora-mobile-pages {
+  flex: 1;
+}
+
+.aurora-mobile-library-row {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 64px;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.aurora-mobile-item-rows > * {
+  min-width: 0;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-item-rows .group.relative.w-42 {
+  width: 100%;
+  height: 64px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-item-rows .group.relative.w-42 > button {
+  width: 100%;
+  height: 64px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-item-rows .group.relative.w-42 > button > div:first-child {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  aspect-ratio: auto;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-item-rows [data-testid='card-title'],
+.aurora-workspace[data-native-mobile] .aurora-mobile-item-rows [data-testid='card-title'] + div {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library [data-testid='empty-state'] {
+  gap: 8px;
+  padding: 16px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library [data-testid='empty-state'] svg {
+  width: 32px;
+  height: 32px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library [data-testid='empty-state'] h3 {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-library [data-testid='empty-state'] p {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-sync-settings {
+  gap: 8px;
+  padding: 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-sync-settings > * {
+  min-width: 0;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-sync-settings .flex.gap-2 {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel {
+    width: calc(100vw - 16px);
+    height: calc(100dvh - 76px);
+    max-height: calc(100dvh - 76px);
+    margin-top: 28px;
+    margin-bottom: 48px;
+    border-radius: 12px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel nav {
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 auto;
+    overflow: hidden;
+    padding: 4px;
+    padding-right: 56px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel nav > div {
+    min-width: 0;
+    width: 100%;
+    gap: 2px;
+    width: calc(100% - 48px);
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel nav button {
+    min-width: 0;
+    width: 0 !important;
+    flex: 1 1 0;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px 2px;
+    font-size: 9px;
+    line-height: 12px;
+    white-space: normal !important;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel nav button > span:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel nav button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel > div:last-child {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel .aurora-sync-settings input {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel .aurora-sync-settings p {
+    overflow-wrap: anywhere;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel .aurora-sync-settings .grid {
+    min-width: 0;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel h1,
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel h2,
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel h3 {
+    font-size: 16px !important;
+    line-height: 20px !important;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel h1 {
+    font-size: 24px !important;
+    line-height: 28px !important;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='title'] {
+    display: none;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel p,
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel label,
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel span {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [class*='p-6'] {
+    padding: 12px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [class*='p-4'] {
+    padding: 8px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [class*='gap-6'] {
+    gap: 8px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel button {
+    min-height: 32px;
+    height: auto;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='plugin-item'],
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='plugin-store-item'] {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='plugin-item'] h3,
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='plugin-store-item'] h3 {
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='plugin-item'] p,
+  body:has(.aurora-workspace[data-native-mobile]) .aurora-settings-panel [data-testid='plugin-store-item'] p {
+    font-size: 11px;
+    line-height: 14px;
+  }
+}
+
+.aurora-workspace[data-native-mobile] .aurora-content:has(.aurora-mobile-dashboard) {
+  overflow: hidden;
+  scrollbar-gutter: auto;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-content > .aurora-mobile-dashboard {
+  padding: 8px 12px;
+}
+
+.aurora-mobile-dashboard,
+.aurora-mobile-dashboard-content,
+.aurora-mobile-dashboard [data-testid='dashboard-personalized-mix'],
+.aurora-mobile-pages {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.aurora-mobile-dashboard [data-testid='dashboard-personalized-mix'] > p,
+.aurora-mobile-dashboard [data-testid='dashboard-personalized-mix'] > :first-child > :last-child {
+  display: none;
+}
+
+.aurora-mobile-dashboard h2 {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.aurora-mobile-dashboard-content > select {
+  flex-shrink: 0;
+  height: 32px;
+  margin-bottom: 4px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.aurora-mobile-dashboard-content:has(> select) [data-testid='dashboard-personalized-mix'] > :first-child {
+  display: none;
+}
+
+.aurora-mobile-dashboard-content:has(> select) [data-testid='dashboard-top-tracks'] > h2 {
+  display: none;
+}
+
+.aurora-mobile-dashboard [data-testid='dashboard-personalized-mix'] > :first-child {
+  flex-shrink: 0;
+}
+
+.aurora-mobile-pages {
+  flex: 1;
+  gap: 4px;
+}
+
+.aurora-mobile-pages-toolbar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 6px;
+  height: 36px;
+}
+
+.aurora-mobile-pages-toolbar button {
+  width: 36px;
+  height: 36px;
+  box-shadow: none;
+}
+
+.aurora-mobile-page-rows {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.aurora-mobile-page-rows .overflow-auto {
+  overflow: hidden;
+}
+
+.aurora-mobile-page-rows table {
+  table-layout: fixed;
+  width: 100%;
+  border: 0;
+}
+
+.aurora-mobile-page-rows td {
+  height: 56px;
+  padding-block: 3px;
+}
+
+.aurora-mobile-page-rows td img {
+  width: 36px;
+  height: 36px;
+}
+
+.aurora-mobile-page-rows .line-clamp-2,
+.aurora-mobile-page-rows .line-clamp-1 {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: initial;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.aurora-mobile-page-rows td {
+  vertical-align: middle;
+}
+
+.aurora-mobile-page-rows td .line-clamp-2 {
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.aurora-mobile-page-rows td .line-clamp-1 {
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-player {
+  height: auto;
+  padding: 4px 12px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-player > div {
+  row-gap: 2px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-player .truncate {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.aurora-workspace[data-native-mobile] [data-testid='now-playing-title'],
+.aurora-workspace[data-native-mobile] [data-testid='player-now-playing-artist'] {
+  overflow: visible !important;
+  max-width: none;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-player .text-xs.font-bold {
+  line-height: 14px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-player .text-\[11px\] {
+  line-height: 12px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-nav {
+  padding-top: 2px;
+  gap: 2px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-nav > :is(a, button) {
+  min-height: 40px;
+  font-size: 11px;
+  gap: 2px;
+}
+
+.aurora-workspace[data-native-mobile] .aurora-mobile-nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .aurora-mobile-dashboard-content {
+    position: relative;
+  }
+
+  .aurora-mobile-dashboard-content > select {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    width: 35%;
+  }
+
+  .aurora-mobile-dashboard-content:has(> select) .aurora-mobile-pages-toolbar {
+    padding-left: calc(35% + 8px);
+  }
+  .aurora-workspace[data-native-mobile] .aurora-apk-topbar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    padding-block: 2px;
+  }
+
+  .aurora-workspace[data-native-mobile] .aurora-content > .aurora-mobile-dashboard {
+    padding-block: 2px;
+  }
+
+  .aurora-mobile-dashboard-content > select {
+    height: 24px;
+    margin-bottom: 0;
+    font-size: 12px;
+  }
+
+  .aurora-mobile-pages-toolbar,
+  .aurora-mobile-pages-toolbar button {
+    height: 32px;
+  }
+
+  .aurora-workspace[data-native-mobile] .aurora-player > div > :first-child > div > :first-child {
+    width: 32px;
+    height: 32px;
+  }
+}

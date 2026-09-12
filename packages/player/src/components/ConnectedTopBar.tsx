@@ -3,7 +3,9 @@ import { FC } from 'react';
 
 import { TopBar, TopBarLogo, TopBarNavigation } from '@aurora/ui';
 
+import AuroraLogo from '../../../ui/src/assets/logo-full.svg?react';
 import { useCanGoForward } from '../hooks/useCanGoForward';
+import { isCapacitorEnvironment } from '../services/universalStore';
 import { SearchBox } from './SearchBox';
 import { UpdateBadge } from './UpdateBadge';
 
@@ -11,6 +13,30 @@ export const ConnectedTopBar: FC = () => {
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const canGoForward = useCanGoForward();
+
+  if (isCapacitorEnvironment()) {
+    return (
+      <TopBar draggable={false} className="aurora-apk-topbar">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <AuroraLogo
+            role="img"
+            aria-label="Aurora"
+            className="h-9 w-auto max-w-[55%]"
+          />
+          <div className="flex max-w-full flex-wrap items-center gap-2">
+            <TopBarNavigation
+              onBack={() => router.history.back()}
+              onForward={() => router.history.forward()}
+              canGoBack={canGoBack}
+              canGoForward={canGoForward}
+            />
+            <UpdateBadge />
+          </div>
+        </div>
+        <SearchBox />
+      </TopBar>
+    );
+  }
 
   return (
     <TopBar draggable={false} className="aurora-topbar">

@@ -3,19 +3,42 @@ import { act } from '@testing-library/react';
 import { i18n } from '@aurora/i18n';
 
 import { personalizationEngine } from '../../services/personalizationEngine';
+import { isCapacitorEnvironment } from '../../services/universalStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { DashboardWrapper } from './Dashboard.test-wrapper';
 import { PersonalizedMixWrapper } from './PersonalizedMix.test-wrapper';
 
+vi.mock('../../services/universalStore', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../services/universalStore')>()),
+  isCapacitorEnvironment: vi.fn(() => false),
+}));
+
 describe('personalized recommendations', () => {
   beforeEach(async () => {
+    vi.mocked(isCapacitorEnvironment).mockReturnValue(false);
     DashboardWrapper.reset();
     await i18n.changeLanguage('es_ES');
     localStorage.clear();
     useFavoritesStore.setState({ tracks: [], artists: [], albums: [] });
     usePlaylistStore.setState({ playlists: [] });
+  });
+
+  it('pages mobile recommendations while keeping the entire mix available for playback', async () => {
+    vi.mocked(isCapacitorEnvironment).mockReturnValue(true);
+    await PersonalizedMixWrapper.mount();
+    await PersonalizedMixWrapper.waitForRows();
+    expect(PersonalizedMixWrapper.rows).toHaveLength(1);
+    const firstTitle = PersonalizedMixWrapper.visibleTitle;
+    await PersonalizedMixWrapper.nextPage();
+    const nextTitle = PersonalizedMixWrapper.visibleTitle;
+    expect(nextTitle).not.toBe(firstTitle);
+    await PersonalizedMixWrapper.playVisible();
+    expect(useQueueStore.getState().getCurrentItem()?.track.title).toBe(
+      nextTitle,
+    );
+    expect(useQueueStore.getState().items).toHaveLength(4);
   });
 
   afterEach(async () => {

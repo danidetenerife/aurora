@@ -1,4 +1,3 @@
-pub mod bridge;
 pub mod commands;
 pub mod db;
 pub mod history;
@@ -27,6 +26,7 @@ fn maximize_for_gamescope(app: &tauri::App) {
     }
 }
 
+#[cfg(debug_assertions)]
 fn typescript_export_config() -> specta_typescript::Typescript {
     specta_typescript::Typescript::default().header("/* eslint-disable */")
 }
@@ -44,8 +44,6 @@ fn specta_builder() -> tauri_specta::Builder<tauri::Wry> {
         logging::get_startup_logs,
         stream_server::stream_server_port,
         ytdlp_setup::ytdlp_ensure_installed,
-        bridge::bridge_respond,
-        bridge::bridge_notify,
         history::commands::history_record_event,
         history::commands::history_fetch,
         history::commands::history_delete_range,
@@ -96,7 +94,6 @@ pub fn run() {
         .invoke_handler(specta_builder.invoke_handler())
         .setup(|app| {
             logging::mark_startup_complete();
-            bridge::init_bridge(app.handle().clone());
             stream_server::init_stream_server(app.handle().clone());
             sync_server::init_sync_server(app.handle());
             history::init_history(app.handle().clone());

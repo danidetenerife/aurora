@@ -265,7 +265,7 @@ exports[`App > should render snapshot 1`] = `
               <input
                 autocapitalize="none"
                 autocorrect="off"
-                class="border-border text-foreground placeholder:text-foreground-secondary w-full px-3 transition-colors focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-none bg-background rounded-md border-(length:--border-width) h-8 pl-9 pr-8"
+                class="border-border text-foreground placeholder:text-foreground-secondary w-full px-3 transition-colors focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:outline-none bg-background rounded-md border-(length:--border-width) h-8 pr-8 pl-9"
                 data-headlessui-state=""
                 data-testid="search-box"
                 enterkeyhint="search"
@@ -1065,7 +1065,7 @@ exports[`App > should render snapshot 1`] = `
                   </svg>
                 </button>
                 <button
-                  class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center sm:size-10 shadow-none"
+                  class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center shadow-none sm:size-10"
                   data-headlessui-state=""
                   data-testid="player-play-button"
                   type="button"

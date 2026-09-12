@@ -10,7 +10,7 @@ import { errorMessage } from '../utils/errorMessage';
 import { reportError } from '../utils/logging';
 import { getSetting } from './settingsStore';
 
-const CURRENT_VERSION = '1.48.9';
+const CURRENT_VERSION = '1.48.10';
 const GITHUB_REPO = 'danidetenerife/aurora';
 const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
@@ -112,7 +112,7 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
       }
 
       const release: GitHubRelease = await response.json();
-      const latestTag = release.tag_name.replace(/^v/, '');
+      const latestTag = release.tag_name.replace(/^(?:player@|v)/, '');
       let currentClean = CURRENT_VERSION.replace(/^v/, '');
       try {
         const appVer = await ApkUpdaterPlugin.getAppVersion();
@@ -123,13 +123,18 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
         // Fallback to CURRENT_VERSION
       }
 
-      const isNewer =
-        semver.valid(latestTag) && semver.valid(currentClean)
-          ? semver.gt(latestTag, currentClean)
-          : latestTag !== currentClean;
+      const isNewer = Boolean(
+        semver.valid(latestTag) &&
+        semver.valid(currentClean) &&
+        semver.gt(latestTag, currentClean),
+      );
 
-      const apkAsset = release.assets?.find((asset) =>
-        asset.name.toLowerCase().endsWith('.apk'),
+      const apkAsset = release.assets?.find(
+        (asset) =>
+          asset.name.toLowerCase().endsWith('.apk') &&
+          !/google[-_ ]?tv|android[-_ ]?tv|(?:^|[-_.])tv(?:[-_.]|$)|tvpreview/i.test(
+            asset.name,
+          ),
       );
 
       if (isNewer && apkAsset) {

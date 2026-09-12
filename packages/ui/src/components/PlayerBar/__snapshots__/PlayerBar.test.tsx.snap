@@ -113,7 +113,7 @@ exports[`PlayerBar > (Snapshot) active states render 1`] = `
             </svg>
           </button>
           <button
-            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center sm:size-10 shadow-none"
+            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center shadow-none sm:size-10"
             data-headlessui-state=""
             data-testid="player-pause-button"
             type="button"
@@ -409,7 +409,7 @@ exports[`PlayerBar > (Snapshot) default render 1`] = `
             </svg>
           </button>
           <button
-            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center sm:size-10 shadow-none"
+            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center shadow-none sm:size-10"
             data-headlessui-state=""
             data-testid="player-play-button"
             type="button"
@@ -697,7 +697,7 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
               </svg>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center sm:size-10 shadow-none"
+              class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center shadow-none sm:size-10"
               data-headlessui-state=""
               data-testid="player-play-button"
               type="button"
@@ -1004,7 +1004,7 @@ exports[`PlayerBar > (Snapshot) no artwork fallback 1`] = `
             </svg>
           </button>
           <button
-            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center sm:size-10 shadow-none"
+            class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border border-(length:--border-width) size-8 justify-center shadow-none sm:size-10"
             data-headlessui-state=""
             data-testid="player-play-button"
             type="button"

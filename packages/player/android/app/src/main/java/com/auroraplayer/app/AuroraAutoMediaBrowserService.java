@@ -15,6 +15,8 @@ import androidx.media.MediaBrowserServiceCompat;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * AuroraAutoMediaBrowserService
@@ -31,6 +33,7 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
     private static final String CATEGORY_FAVORITES = "cat_favorites";
     private static final String CATEGORY_PLAYLISTS = "cat_playlists";
     private static final String CATEGORY_QUEUE = "cat_queue";
+    private static final String ACTION_DISLIKE = "com.auroraplayer.ACTION_DISLIKE";
 
     private MediaSessionCompat fallbackSession;
 
@@ -98,15 +101,26 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             }
 
             @Override
+            public void onCustomAction(String action, Bundle extras) {
+                if (ACTION_DISLIKE.equals(action)) {
+                    NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
+                    if (nms != null) nms.notifyMediaAction("dislike", -1);
+                }
+            }
+
+            @Override
             public void onPlayFromMediaId(String mediaId, Bundle extras) {
                 Log.i(TAG, "Auto Callback: onPlayFromMediaId=" + mediaId);
+                NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
+                if (nms != null) nms.notifyMediaAction("playid:" + mediaId, -1);
                 forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", true);
             }
 
             @Override
             public void onPlayFromSearch(String query, Bundle extras) {
                 Log.i(TAG, "Auto Callback: onPlayFromSearch query=" + query);
-                forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", true);
+                NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
+                if (nms != null) nms.notifyMediaAction("search:" + (query == null ? "" : query), -1);
             }
         });
 
@@ -120,6 +134,9 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 PlaybackStateCompat.ACTION_STOP
             )
             .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
+            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
+            ).build())
             .build();
 
         fallbackSession.setPlaybackState(initialState);
@@ -226,24 +243,62 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 .setTitle("Favoritos")
                 .setSubtitle("Canciones favoritas")
                 .build();
-            items.add(new MediaBrowserCompat.MediaItem(favDesc, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            items.add(new MediaBrowserCompat.MediaItem(favDesc, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
 
             MediaDescriptionCompat playlistDesc = new MediaDescriptionCompat.Builder()
                 .setMediaId(CATEGORY_PLAYLISTS)
                 .setTitle("Listas de reproducción")
                 .setSubtitle("Tus playlists")
                 .build();
-            items.add(new MediaBrowserCompat.MediaItem(playlistDesc, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            items.add(new MediaBrowserCompat.MediaItem(playlistDesc, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
 
             MediaDescriptionCompat queueDesc = new MediaDescriptionCompat.Builder()
                 .setMediaId(CATEGORY_QUEUE)
                 .setTitle("Cola actual")
                 .setSubtitle("Pistas en cola")
                 .build();
-            items.add(new MediaBrowserCompat.MediaItem(queueDesc, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            items.add(new MediaBrowserCompat.MediaItem(queueDesc, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
+        } else if (CATEGORY_QUEUE.equals(parentMediaId) || CATEGORY_FAVORITES.equals(parentMediaId) || CATEGORY_PLAYLISTS.equals(parentMediaId)) {
+            String json = getSharedPreferences("aurora_auto", MODE_PRIVATE).getString("catalog", "[]");
+            try {
+                JSONArray catalog = new JSONArray(json);
+                for (int index = 0; index < catalog.length(); index++) {
+                    JSONObject item = catalog.getJSONObject(index);
+                    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+                        .setMediaId(item.optString("id"))
+                        .setTitle(item.optString("title", "Canción"))
+                        .setSubtitle(item.optString("artist", ""))
+                        .build();
+                    items.add(new MediaBrowserCompat.MediaItem(description, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+                }
+            } catch (Exception error) {
+                Log.w(TAG, "Invalid cached Auto catalog", error);
+            }
         }
 
         result.sendResult(items);
+    }
+
+    @Override
+    public void onSearch(String query, Bundle extras, Result<List<MediaBrowserCompat.MediaItem>> result) {
+        List<MediaBrowserCompat.MediaItem> matches = new ArrayList<>();
+        String normalized = query == null ? "" : query.toLowerCase();
+        String json = getSharedPreferences("aurora_auto", MODE_PRIVATE).getString("catalog", "[]");
+        try {
+            JSONArray catalog = new JSONArray(json);
+            for (int index = 0; index < catalog.length(); index++) {
+                JSONObject item = catalog.getJSONObject(index);
+                String title = item.optString("title", "");
+                String artist = item.optString("artist", "");
+                if (title.toLowerCase().contains(normalized) || artist.toLowerCase().contains(normalized)) {
+                    MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+                        .setMediaId(item.optString("id"))
+                        .setTitle(title).setSubtitle(artist).build();
+                    matches.add(new MediaBrowserCompat.MediaItem(description, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+                }
+            }
+        } catch (Exception error) { Log.w(TAG, "Invalid Auto search catalog", error); }
+        result.sendResult(matches);
     }
 
     @Override

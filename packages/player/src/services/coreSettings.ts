@@ -1,6 +1,7 @@
 import type { SettingDefinition } from '@aurora/plugin-sdk';
 
 import { registerCoreSettings } from '../stores/settingsStore';
+import { isCapacitorEnvironment } from './universalStore';
 
 const LANGUAGE_OPTIONS = [
   { value: 'en_US', label: 'English' },
@@ -208,7 +209,7 @@ export const CORE_SETTINGS: SettingDefinition[] = [
     description: 'preferences.updates.autoInstall.description',
     category: 'updates',
     kind: 'boolean',
-    default: false,
+    default: isCapacitorEnvironment(),
     widget: { type: 'toggle' },
   },
   {

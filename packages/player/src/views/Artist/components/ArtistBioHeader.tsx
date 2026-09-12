@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { pickArtwork } from '@aurora/model';
 import { Loader } from '@aurora/ui';
 
+import { useArtistCardImage } from '../../Favorites/useArtistCardImage';
 import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { useArtistBio } from '../hooks/useArtistBio';
 import { ArtistErrorBanner } from './ArtistErrorBanner';
@@ -25,6 +26,8 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
     error,
     refetch,
   } = useArtistBio(providerId, artistId);
+
+  const avatarUrl = useArtistCardImage(artist?.name ?? '', pickArtwork(artist?.artwork, 'avatar', AVATAR_SIZE_PX)?.url, providerId);
 
   if (isLoading) {
     return (
@@ -49,7 +52,6 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
     return null;
   }
 
-  const avatar = pickArtwork(artist.artwork, 'avatar', AVATAR_SIZE_PX);
 
   return (
     <div className="border-border bg-primary shadow-shadow relative m-4 rounded-md border-(length:--border-width) p-6">
@@ -61,10 +63,10 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
         data-testid="artist-favorite-button"
       />
       <div className="flex items-center gap-5">
-        {avatar && (
+        {avatarUrl && (
           <img
             className="border-border shadow-shadow h-24 w-24 shrink-0 rounded-full border-(length:--border-width) object-cover"
-            src={avatar.url}
+            src={avatarUrl}
             alt={`${artist.name} avatar`}
           />
         )}

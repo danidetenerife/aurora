@@ -201,9 +201,12 @@ describe('PluginLoader', () => {
       );
     });
 
-    it('provides limited require for plugin-sdk', async () => {
-      const pluginContents =
-        "const { AuroraPluginAPI } = require('@aurora/plugin-sdk'); module.exports = { testAdd: AuroraPluginAPI.add() }";
+    it.each([
+      ['@aurora/plugin-sdk', 'AuroraPluginAPI'],
+      ['@nuclearplayer/plugin-sdk', 'NuclearPluginAPI'],
+      ['@nuclearplayer/plugin-sdk', 'AuroraPluginAPI'],
+    ])('loads %s through %s', async (moduleName, apiName) => {
+      const pluginContents = `const { ${apiName} } = require('${moduleName}'); module.exports = { testAdd: ${apiName}.add() }`;
       const manifest = makeManifest({ main: 'index.ts' });
       PluginFsMock.setReadTextFileByMap({
         '/test/plugin/path/package.json': JSON.stringify(manifest),

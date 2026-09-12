@@ -1,5 +1,47 @@
 [
   {
+    "date": "2026-09-12T10:25",
+    "description": "Añade el control No me gusta al modo coche y a Android Auto; la canción se marca para excluirla y avanza la reproducción.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android Auto", "color": "blue" }]
+  },
+  {
+    "date": "2026-09-12T10:20",
+    "description": "Keep complete song titles visible in Android views and correct malformed Spanish text in synchronization settings.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }]
+  },
+  {
+    "date": "2026-09-12T10:00",
+    "description": "Fix Android responsive overflow in settings, playlists and artists, restore artist avatars and identifiers, and add browsable queue and search actions for Android Auto.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }, { "label": "Android Auto", "color": "blue" }]
+  },
+  {
+    "date": "2026-09-12T09:15",
+    "description": "Replace the oversized Android dashboard with compact recommendations and pages sized to the available screen height, keeping the full mix available for playback without scrolling the home screen.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }]
+  },
+  {
+    "date": "2026-09-11T22:35",
+    "description": "Simplify Android settings, display the Aurora wordmark above search, improve responsive mobile layouts and enable automatic mobile APK update checks and downloads from GitHub Releases.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }]
+  },
+  {
+    "date": "2026-09-11T22:25",
+    "description": "Fix Android startup logging errors by using the system console when the desktop bridge is unavailable.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android", "color": "green" }]
+  },
+  {
     "date": "2026-09-11T18:00",
     "description": "Resolve and enable reliable audio and video playback on Google TV and Android TV with seamless track switching and background playback.",
     "type": "fix",

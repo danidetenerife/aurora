@@ -4,6 +4,9 @@ import { useMemo } from 'react';
 import type { AttributedResult } from '@aurora/plugin-sdk';
 import { CardsRow, CardsRowItem, CardsRowLabels, Loader } from '@aurora/ui';
 
+import { MobileCardPages } from '../../../components/MobileCardPages';
+import { isCapacitorEnvironment } from '../../../services/universalStore';
+
 type DashboardCardsWidgetProps<T> = {
   results: AttributedResult<T>[] | undefined;
   isLoading: boolean;
@@ -34,6 +37,23 @@ export const DashboardCardsWidget = <T,>({
 
   if (isEmpty(results)) {
     return null;
+  }
+
+  if (isCapacitorEnvironment()) {
+    return (
+      <MobileCardPages
+        labels={labels}
+        items={results!.flatMap((result) =>
+          result.items.map((item) => {
+            const mapped = mapItem(item, result);
+            return {
+              ...mapped,
+              subtitle: mapped.subtitle ?? result.providerName,
+            };
+          }),
+        )}
+      />
+    );
   }
 
   return (

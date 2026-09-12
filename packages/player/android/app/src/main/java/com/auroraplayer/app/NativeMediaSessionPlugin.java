@@ -314,6 +314,14 @@ public class NativeMediaSessionPlugin extends Plugin {
         notifyListeners("mediaAction", data, true);
     }
 
+    @PluginMethod
+    public void updateAutoCatalog(PluginCall call) {
+        String json = call.getString("json", "[]");
+        getContext().getSharedPreferences("aurora_auto", Context.MODE_PRIVATE)
+                .edit().putString("catalog", json).apply();
+        call.resolve();
+    }
+
     @Override
     protected void handleOnDestroy() {
         super.handleOnDestroy();

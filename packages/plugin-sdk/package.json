@@ -10,9 +10,6 @@
     ".": {
       "import": "./src/index.ts",
       "types": "./dist/index.d.ts"
-    },
-    "./mcp": {
-      "import": "./src/mcp/index.ts"
     }
   },
   "files": [
@@ -23,7 +20,7 @@
     "dev": "vite",
     "build": "tsc && vite build && api-extractor run --local && pnpm clean:dts",
     "build:npm": "tsc && vite build --mode npm && api-extractor run --local && pnpm clean:dts",
-    "clean:dts": "node -e \"const fs = require('fs'); ['dist/api','dist/mcp','dist/react','dist/test','dist/types','dist/types.d.ts','dist/tsdoc-metadata.json'].forEach(p => fs.rmSync(p, {recursive: true, force: true}));\"",
+    "clean:dts": "node -e \"const fs = require('fs'); ['dist/api','dist/react','dist/test','dist/types','dist/types.d.ts','dist/tsdoc-metadata.json'].forEach(p => fs.rmSync(p, {recursive: true, force: true}));\"",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:coverage": "vitest --run --coverage",

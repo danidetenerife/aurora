@@ -10,6 +10,21 @@ describe('Logger', () => {
     vi.clearAllMocks();
   });
 
+  it('logs without the desktop bridge on Android', async () => {
+    const desktopBridge = window.__TAURI_INTERNALS__;
+    vi.stubGlobal('__TAURI_INTERNALS__', undefined);
+    const consoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+
+    await expect(
+      Logger.playback.info('Track started'),
+    ).resolves.toBeUndefined();
+    expect(consoleInfo).toHaveBeenCalledWith('[playback] Track started');
+    expect(tauriLog.info).not.toHaveBeenCalled();
+
+    vi.stubGlobal('__TAURI_INTERNALS__', desktopBridge);
+    consoleInfo.mockRestore();
+  });
+
   it('prefixes messages with scope and calls correct Tauri log function', async () => {
     await Logger.playback.info('Track started');
     await Logger.streaming.trace('Timing');

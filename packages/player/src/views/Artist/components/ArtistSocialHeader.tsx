@@ -12,6 +12,7 @@ import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
 import { Loader, StatChip } from '@aurora/ui';
 
+import { useArtistCardImage } from '../../Favorites/useArtistCardImage';
 import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { useArtistSocialStats } from '../hooks/useArtistSocialStats';
 
@@ -46,6 +47,8 @@ export const ArtistSocialHeader: FC<ArtistSocialHeaderProps> = ({
     isError,
   } = useArtistSocialStats(providerId, artistId);
 
+  const avatarUrl = useArtistCardImage(stats?.name ?? '', pickArtwork(stats?.artwork, 'avatar', AVATAR_SIZE_PX)?.url, providerId);
+
   if (isLoading) {
     return (
       <div
@@ -74,7 +77,6 @@ export const ArtistSocialHeader: FC<ArtistSocialHeaderProps> = ({
     return null;
   }
 
-  const avatar = pickArtwork(stats.artwork, 'avatar', AVATAR_SIZE_PX);
 
   const location = [stats.city, stats.country].filter(Boolean).join(', ');
 
@@ -120,10 +122,10 @@ export const ArtistSocialHeader: FC<ArtistSocialHeaderProps> = ({
         data-testid="artist-favorite-button"
       />
       <div className="flex items-center gap-5">
-        {avatar && (
+        {avatarUrl && (
           <img
             className="border-border shadow-shadow h-24 w-24 rounded-full border-(length:--border-width) object-cover"
-            src={avatar.url}
+            src={avatarUrl}
             alt={`${stats.name} avatar`}
           />
         )}

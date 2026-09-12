@@ -2,7 +2,6 @@ import React from 'react';
 
 import App, { defaultQueryClient } from './App';
 import { initLogStream } from './hooks/useLogStream';
-import { initBridgeHandler } from './services/bridge/bridgeHandler';
 import { registerBuiltInCoreSettings } from './services/coreSettings';
 import { initDiscoveryService } from './services/discoveryService';
 import { initHistoryService } from './services/history';
@@ -95,9 +94,6 @@ export const initPlayerApp = async (
     } catch {}
 
     if (isTauriEnvironment()) {
-      try {
-        await initBridgeHandler();
-      } catch {}
       try {
         await initPlaybackEventBridge();
       } catch {}

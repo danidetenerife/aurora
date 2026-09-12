@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { useCarModeStore } from '../../stores/carModeStore';
-import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { createMockTrack } from '../../test/utils/mockTrack';
@@ -70,5 +69,14 @@ describe('CarModeOverlay', () => {
     expect(screen.getByTitle('Anterior')).toBeInTheDocument();
     expect(screen.getByTitle('Siguiente')).toBeInTheDocument();
     expect(screen.getByTitle('Pausa')).toBeInTheDocument();
+  });
+
+  it('renders a dislike control for the current song', () => {
+    render(<CarModeOverlay />);
+
+    expect(screen.getByTestId('car-mode-dislike-button')).toHaveAttribute(
+      'aria-label',
+      'No me gusta esta canción',
+    );
   });
 });

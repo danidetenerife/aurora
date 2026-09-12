@@ -27,7 +27,6 @@ Aurora is a free, open-source music player without ads or tracking. Search for a
 ```bash
 # Development
 pnpm dev                    # Run player in dev mode
-pnpm dev:remote             # Same, but binds Vite to 0.0.0.0 so the remote control UI is reachable from other devices
 pnpm storybook              # Run Storybook
 
 # Build
@@ -294,11 +293,9 @@ packages/ui/src/components/Badge/
 
 The Tauri backend lives in `packages/player/src-tauri/src/`. Modules:
 
-- `bridge/` - bidirectional RPC. Lets Rust servers call into the frontend (`Bridge::call` emits a `bridge:request` event, frontend replies via the `bridge_respond` command).
-- `http_api/` - Axum REST + SSE server for Aurora Jam remote control
-- `mcp/` - MCP server exposing player functions as tools to LLM clients
-- `mpd/` - MPD-protocol TCP server for clients like ncmpcpp
 - `stream_server.rs` - local audio proxy adding CORS + Range so the browser can play blocked streams
+- `sync_server/` - local P2P sync server for mobile and desktop
+- `history/` - listening history SQLite database and analytics engine
 - `http.rs` - `http_fetch` command, a CORS-bypassing HTTP proxy for the frontend
 - `ytdlp.rs` / `ytdlp_setup.rs` - yt-dlp subprocess wrapper; auto-downloads the binary
 - `discord.rs` - Discord Rich Presence

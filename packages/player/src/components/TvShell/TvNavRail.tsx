@@ -2,6 +2,7 @@ import { setFocus } from '@noriginmedia/norigin-spatial-navigation';
 import { FC } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
+import { TopBarLogo } from '@aurora/ui';
 
 import { useTvStore } from '../../stores/tvStore';
 import { TvButton } from './TvButton';
@@ -35,7 +36,10 @@ export const TvNavRail: FC = () => {
   ];
   return (
     <nav data-testid="tv-nav-rail" className="tv-navigation">
-      <span className="tv-brand">AURORA</span>
+      <div className="tv-brand">
+        <TopBarLogo className="h-6 w-6" />
+        <span>AURORA</span>
+      </div>
       {items.map((item, index) => (
         <TvButton
           key={item.id}

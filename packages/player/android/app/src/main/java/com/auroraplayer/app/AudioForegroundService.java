@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.support.v4.media.MediaMetadataCompat;
@@ -37,6 +38,7 @@ public class AudioForegroundService extends Service {
     public static final String ACTION_UPDATE_METADATA = "com.auroraplayer.UPDATE_METADATA";
     public static final String ACTION_UPDATE_PLAYBACK_STATE = "com.auroraplayer.UPDATE_PLAYBACK_STATE";
     public static final String ACTION_UPDATE_POSITION = "com.auroraplayer.UPDATE_POSITION";
+    public static final String ACTION_DISLIKE = "com.auroraplayer.ACTION_DISLIKE";
 
     private static final int NOTIFICATION_ID = 1;
 
@@ -201,6 +203,13 @@ public class AudioForegroundService extends Service {
             }
 
             @Override
+            public void onCustomAction(String action, Bundle extras) {
+                if (ACTION_DISLIKE.equals(action)) {
+                    notifyJsMediaAction("dislike");
+                }
+            }
+
+            @Override
             public void onSeekTo(long pos) {
                 seekStream(pos);
                 NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
@@ -229,6 +238,9 @@ public class AudioForegroundService extends Service {
                 PlaybackStateCompat.ACTION_STOP
             )
             .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
+            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
+            ).build())
             .build();
         mediaSession.setPlaybackState(initialState);
     }
@@ -392,6 +404,9 @@ public class AudioForegroundService extends Service {
                 PlaybackStateCompat.ACTION_STOP
             )
             .setState(state, positionMs, isPlaying ? 1.0f : 0f)
+            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
+            ).build())
             .build();
 
         mediaSession.setPlaybackState(playbackState);
@@ -426,6 +441,9 @@ public class AudioForegroundService extends Service {
                 PlaybackStateCompat.ACTION_STOP
             )
             .setState(state, positionMs, currentlyPlaying ? 1.0f : 0f)
+            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
+            ).build())
             .build();
 
         mediaSession.setPlaybackState(playbackState);
@@ -450,6 +468,9 @@ public class AudioForegroundService extends Service {
             .setState(isPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED,
                       pos,
                       isPlaying ? 1.0f : 0f)
+            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
+            ).build())
             .build();
         mediaSession.setPlaybackState(playbackState);
         updateNotification(null, null);

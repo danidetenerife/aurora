@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import type { MetadataProvider } from '@aurora/plugin-sdk';
+import { pickArtwork } from '@aurora/model';
 
-import { providersHost } from '../../services/providersHost';
+import { metadataHost } from '../../services/metadataHost';
 import { useProvidersStore } from '../../stores/providersStore';
 
 const imageCache = new Map<string, string>();
@@ -10,11 +10,13 @@ const imageCache = new Map<string, string>();
 export const useArtistCardImage = (
   artistName: string,
   localArtworkUrl?: string,
+  providerId?: string,
 ): string | undefined => {
-  const activeProviderId = useProvidersStore((state) =>
+  const selectedProviderId = useProvidersStore((state) =>
     state.getActive('metadata'),
   );
 
+  const activeProviderId = providerId ?? selectedProviderId;
   const isYtThumbnail =
     typeof localArtworkUrl === 'string' &&
     localArtworkUrl.includes('i.ytimg.com');
@@ -40,27 +42,21 @@ export const useArtistCardImage = (
       return;
     }
 
+    setResolvedUrl(undefined);
     if (!activeProviderId || !artistName) {
       return;
     }
 
-    const provider = providersHost.get<MetadataProvider>(
-      activeProviderId,
-      'metadata',
-    );
-    if (!provider?.searchArtists) {
-      return;
-    }
-
     let cancelled = false;
-    provider
-      .searchArtists({ query: artistName, limit: 1 })
+    metadataHost
+      .search({ query: artistName, types: ['artists'], limit: 5 }, activeProviderId)
       .then((results) => {
         if (cancelled) {
           return;
         }
-        const artwork = results?.[0]?.artwork;
-        const imageUrl = artwork?.items?.[0]?.url;
+        const match = results.artists?.find((artist) => artist.name.toLocaleLowerCase() === artistName.toLocaleLowerCase());
+        const artwork = match?.artwork;
+        const imageUrl = pickArtwork(artwork, 'avatar', 300)?.url;
         if (imageUrl) {
           imageCache.set(cacheKey, imageUrl);
           setResolvedUrl(imageUrl);

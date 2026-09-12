@@ -2,7 +2,9 @@ import { pickArtwork } from '@aurora/model';
 
 import { useQueueStore } from '../stores/queueStore';
 import { useSoundStore } from '../stores/soundStore';
+import { metadataHost } from './metadataHost';
 import { NativeMediaSessionPlugin } from './nativeMediaSession';
+import { personalizationEngine } from './personalizationEngine';
 import { playbackManager } from './playback';
 import { isCapacitorEnvironment } from './universalStore';
 
@@ -63,6 +65,14 @@ export const initMediaSessionService = () => {
     lastSentItemId = currentItem.id;
 
     const track = currentItem.track;
+    if (isCapacitorEnvironment()) {
+      const catalog = state.items.slice(0, 100).map((item) => ({
+        id: item.id,
+        title: item.track.title,
+        artist: item.track.artists?.map((credit) => credit.name).join(', ') || '',
+      }));
+      NativeMediaSessionPlugin.updateAutoCatalog({ json: JSON.stringify(catalog) }).catch(() => {});
+    }
     const artwork = pickArtwork(track.artwork, 'thumbnail', 512);
     const artist =
       track.artists?.map((artistCredit) => artistCredit.name).join(', ') || '';
@@ -145,6 +155,30 @@ export const initMediaSessionService = () => {
 
   if (isCapacitorEnvironment()) {
     NativeMediaSessionPlugin.addListener('mediaAction', (data) => {
+      if (data.action.startsWith('playid:')) {
+        const requestedId = data.action.slice('playid:'.length);
+        const queue = useQueueStore.getState();
+        const requestedIndex = queue.items.findIndex((item) => item.id === requestedId);
+        if (requestedIndex >= 0) {
+          queue.goToIndex(requestedIndex);
+          playbackManager.play();
+        }
+        return;
+      }
+      if (data.action.startsWith('search:')) {
+        const query = data.action.slice('search:'.length).trim();
+        if (query) {
+          void metadataHost.search({ query, types: ['tracks'], limit: 10 }).then((results) => {
+            const tracks = results.tracks ?? [];
+            if (tracks.length) {
+              useQueueStore.getState().addToQueue(tracks);
+              useQueueStore.getState().goToIndex(useQueueStore.getState().items.length - tracks.length);
+              playbackManager.play();
+            }
+          });
+        }
+        return;
+      }
       switch (data.action) {
         case 'callstart':
           useSoundStore.getState().setCallActive(true);
@@ -165,6 +199,17 @@ export const initMediaSessionService = () => {
         case 'previoustrack':
           useQueueStore.getState().goToPrevious();
           break;
+        case 'dislike': {
+          const currentTrack = useQueueStore.getState().getCurrentItem()?.track;
+          if (currentTrack) {
+            const trackId =
+              currentTrack.source?.id ||
+              `${currentTrack.artists?.[0]?.name}-${currentTrack.title}`;
+            void personalizationEngine.blacklistTrack(trackId);
+            useQueueStore.getState().goToNext();
+          }
+          break;
+        }
         case 'seekto':
           if (data.seekPositionMs != null && data.seekPositionMs >= 0) {
             useSoundStore.getState().seekTo(data.seekPositionMs / 1000);

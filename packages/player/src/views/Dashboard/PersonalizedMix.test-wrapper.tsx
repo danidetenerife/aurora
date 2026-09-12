@@ -1,6 +1,8 @@
 import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { i18n } from '@aurora/i18n';
+
 import { providersHost } from '../../services/providersHost';
 import { useStartupStore } from '../../stores/startupStore';
 import { MetadataProviderBuilder } from '../../test/builders/MetadataProviderBuilder';
@@ -9,6 +11,22 @@ import { DashboardWrapper } from './Dashboard.test-wrapper';
 const RECOMMENDATION_UPDATE_SETTLE_MS = 1200;
 
 export const PersonalizedMixWrapper = {
+  async waitForRows() {
+    return within(this.section).findAllByTestId('track-row');
+  },
+  get visibleTitle() {
+    return within(this.rows[0]).getByText(/^Mix for /).textContent;
+  },
+  async playVisible() {
+    await userEvent.click(this.rows[0]);
+  },
+  async nextPage() {
+    await userEvent.click(
+      within(this.section).getByRole('button', {
+        name: i18n.t('pagination:next'),
+      }),
+    );
+  },
   async mount() {
     providersHost.clear();
     useStartupStore.setState({

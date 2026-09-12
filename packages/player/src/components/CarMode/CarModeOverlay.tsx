@@ -10,6 +10,7 @@ import {
   Shuffle,
   SkipBack,
   SkipForward,
+  ThumbsDown,
 } from 'lucide-react';
 import { FC, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -19,6 +20,7 @@ import { RepeatMode } from '@aurora/plugin-sdk';
 
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { playbackManager } from '../../services/playback';
+import { personalizationEngine } from '../../services/personalizationEngine';
 import { useCarModeStore } from '../../stores/carModeStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
@@ -84,6 +86,17 @@ export const CarModeOverlay: FC = () => {
     } else {
       void addTrack(currentTrack);
     }
+  };
+
+  const handleDislike = () => {
+    if (!currentTrack) {
+      return;
+    }
+    const trackId =
+      currentTrack.source?.id ||
+      `${currentTrack.artists?.[0]?.name}-${currentTrack.title}`;
+    void personalizationEngine.blacklistTrack(trackId);
+    goToNext();
   };
 
   const handleToggleRepeat = () => {
@@ -276,6 +289,17 @@ export const CarModeOverlay: FC = () => {
             title="Favorito"
           >
             <Heart size={24} className={isFav ? 'fill-current' : ''} />
+          </button>
+
+          {/* Dislike */}
+          <button
+            onClick={handleDislike}
+            className="rounded-full bg-zinc-800/60 p-3 text-zinc-400 transition-all hover:text-red-400 active:scale-90"
+            title="No me gusta"
+            aria-label="No me gusta esta canción"
+            data-testid="car-mode-dislike-button"
+          >
+            <ThumbsDown size={24} />
           </button>
         </div>
       </div>

@@ -1,5 +1,7 @@
 import * as tauriLog from '@tauri-apps/plugin-log';
 
+import { isTauriEnvironment } from './universalStore';
+
 const MAX_LOG_LENGTH = 4000;
 const PREVIEW_MAX_ENTRIES = 3;
 const PREVIEW_MAX_VALUE_LENGTH = 20;
@@ -17,8 +19,6 @@ export const LOG_SCOPES = [
   'dashboard',
   'discord',
   'discovery',
-  'mcp',
-  'mpd',
   'playback',
   'streaming',
   'plugins',
@@ -29,7 +29,6 @@ export const LOG_SCOPES = [
   'themes',
   'updates',
   'queue',
-  'http-api',
   'metadata',
   'playlists',
 ] as const;
@@ -39,6 +38,10 @@ export type LogScope = (typeof LOG_SCOPES)[number];
 const createScopedLogger = (scope: string): ScopedLogger => {
   const logWithScope = (level: LogLevel, message: string): Promise<void> => {
     const formattedMessage = `[${scope}] ${message}`;
+    if (!isTauriEnvironment()) {
+      console[level === 'trace' ? 'debug' : level](formattedMessage);
+      return Promise.resolve();
+    }
     return tauriLog[level](formattedMessage);
   };
 
