@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T13:10",
+    "description": "Reorganiza la barra móvil: muestra título y artista arriba y agrupa los controles de reproducción en una fila inferior más clara.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Interfaz", "color": "purple" }, { "label": "Android", "color": "green" }]
+  },
+  {
     "date": "2026-09-12T13:00",
     "description": "Mejora la vista de favoritos de artistas, muestra carátulas de podcasts e iconos de plugins, y hace visibles las listas públicas de Spotify y YouTube Music al buscar listas.",
     "type": "fix",
