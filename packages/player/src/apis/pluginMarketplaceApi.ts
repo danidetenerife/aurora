@@ -26,6 +26,7 @@ const MarketplacePluginSchema = z.object({
   version: z.string().min(1).optional(),
   downloadUrl: z.url().optional(),
   addedAt: z.iso.datetime(),
+  icon: z.object({ type: z.literal('link'), link: z.url() }).optional(),
 });
 
 const RegistrySchema = z.object({

@@ -24,6 +24,7 @@ type PluginStoreItemProps = Omit<ComponentProps<'div'>, 'children'> & {
     installed?: string;
     by?: string;
   };
+  icon?: string;
 };
 
 export const PluginStoreItem: FC<PluginStoreItemProps> = ({
@@ -37,6 +38,7 @@ export const PluginStoreItem: FC<PluginStoreItemProps> = ({
   isInstalling = false,
   onInstall,
   labels = {},
+  icon,
   className,
   ...props
 }) => {
@@ -57,7 +59,9 @@ export const PluginStoreItem: FC<PluginStoreItemProps> = ({
       )}
       {...props}
     >
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        {icon && <img src={icon} alt="" className="h-12 w-12 shrink-0 rounded object-contain" draggable={false} />}
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none">
             <span data-testid="plugin-store-item-name">{name}</span>
@@ -87,6 +91,7 @@ export const PluginStoreItem: FC<PluginStoreItemProps> = ({
         >
           {description}
         </p>
+        </div>
       </div>
 
       <div className="shrink-0 flex items-center justify-end sm:justify-start">

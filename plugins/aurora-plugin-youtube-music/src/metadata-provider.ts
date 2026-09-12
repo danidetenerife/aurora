@@ -118,8 +118,10 @@ export const createMetadataProvider = (
     }
 
     if (shouldSearchPlaylists) {
+      const normalized = params.query.trim().toLowerCase();
+      const genericPlaylistQuery = ['lista', 'listas', 'playlist', 'playlists'].includes(normalized);
       results.playlists = PUBLIC_PLAYLISTS.filter((playlist) =>
-        playlist.name.toLowerCase().includes(params.query.toLowerCase()),
+        genericPlaylistQuery || playlist.name.toLowerCase().includes(normalized),
       ).slice(0, limit);
     }
 

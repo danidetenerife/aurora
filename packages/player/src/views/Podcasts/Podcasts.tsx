@@ -1,5 +1,5 @@
 import { Heart, Mic2 } from 'lucide-react';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import type { PodcastRef } from '@aurora/model';
 import { Button, Card, CardGrid, ViewShell } from '@aurora/ui';
@@ -41,6 +41,7 @@ export const PODCASTS: PodcastRef[] = [
 ];
 
 export const Podcasts: FC = () => {
+  const [artwork, setArtwork] = useState<Record<string, string>>({});
   const favorites = usePodcastStore((state) => state.favorites);
   const loaded = usePodcastStore((state) => state.loaded);
   const load = usePodcastStore((state) => state.load);
@@ -50,8 +51,34 @@ export const Podcasts: FC = () => {
       void load();
     }
   }, [load, loaded]);
+  useEffect(() => {
+    let cancelled = false;
+    const loadArtwork = async () => {
+      const entries = await Promise.all(
+        PODCASTS.map(async (podcast) => {
+          try {
+            const response = await fetch(
+              `https://itunes.apple.com/search?term=${encodeURIComponent(podcast.name)}&entity=podcast&limit=1`,
+            );
+            const data = (await response.json()) as {
+              results?: Array<{ artworkUrl600?: string; artworkUrl100?: string }>;
+            };
+            const image = data.results?.[0]?.artworkUrl600 ?? data.results?.[0]?.artworkUrl100;
+            return image ? [podcast.id, image] as const : null;
+          } catch {
+            return null;
+          }
+        }),
+      );
+      if (!cancelled) {
+        setArtwork(Object.fromEntries(entries.filter((entry): entry is readonly [string, string] => entry !== null)));
+      }
+    };
+    void loadArtwork();
+    return () => { cancelled = true; };
+  }, []);
   return (
-    <ViewShell title="Podcasts">
+    <ViewShell>
       <section className="space-y-4">
         <h2 className="text-xl font-bold">Podcasts disponibles</h2>
         <CardGrid>
@@ -62,7 +89,8 @@ export const Podcasts: FC = () => {
                 key={podcast.id}
                 title={podcast.name}
                 subtitle={podcast.publisher}
-                image={<Mic2 className="m-auto size-16 opacity-60" />}
+                src={artwork[podcast.id]}
+                image={!artwork[podcast.id] ? <Mic2 className="m-auto size-16 opacity-60" /> : undefined}
                 action={
                   <Button
                     size="icon"
@@ -98,6 +126,7 @@ export const Podcasts: FC = () => {
                   key={podcast.id}
                   title={podcast.name}
                   subtitle={podcast.publisher}
+                  src={artwork[podcast.id]}
                   onClick={() =>
                     window.open(
                       podcast.sourceUrl,

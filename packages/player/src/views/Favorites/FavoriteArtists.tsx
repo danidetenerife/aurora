@@ -75,18 +75,18 @@ export const FavoriteArtists: FC = () => {
           className="flex-1"
         />
       ) : (
-        <div className="flex w-full flex-col gap-4">
-          <div className="flex justify-end">
+        <div className="relative flex w-full flex-col gap-4">
+          <div className="pointer-events-none absolute top-0 right-0 z-10">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => {
                 void clearArtists();
               }}
-              className="text-accent-red hover:bg-accent-red/10 text-xs font-semibold"
+              className="pointer-events-auto text-accent-red hover:bg-accent-red/10 text-xs font-semibold"
             >
               <Trash2 size={14} className="mr-1 inline" />
-              {t('artists.clearAll', 'Borrar todos')}
+              <span className="hidden sm:inline">{t('artists.clearAll', 'Borrar todos')}</span>
             </Button>
           </div>
           <ArtistCollection items={sortedArtists.map((entry) => {

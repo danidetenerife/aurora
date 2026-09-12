@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T13:00",
+    "description": "Mejora la vista de favoritos de artistas, muestra carátulas de podcasts e iconos de plugins, y hace visibles las listas públicas de Spotify y YouTube Music al buscar listas.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Interfaz", "color": "purple" }, { "label": "Playlists", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T12:05",
     "description": "Añade la búsqueda de listas, listas favoritas con corazón y una sección de Podcasts con favoritos en las interfaces compatibles.",
     "type": "feature",

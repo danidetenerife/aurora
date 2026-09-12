@@ -1,4 +1,4 @@
-export const version = '1.48.16';
+export const version = '1.48.17';
 export const versionTag = `v${version}`;
 export const releaseTag = `v${version}`;
 export const releaseUrl = (filename: string) =>

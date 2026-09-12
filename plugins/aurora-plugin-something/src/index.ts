@@ -71,10 +71,13 @@ const createProvider = (): MetadataProvider =>
       const data = await client!.searchTracks(params.query, params.limit ?? 15);
       return data.map(mapTrackToAuroraTrack);
     },
-    searchPlaylists: async ({ query, limit = 15 }) =>
-      PUBLIC_PLAYLISTS.filter((playlist) =>
-        playlist.name.toLowerCase().includes(query.toLowerCase()),
-      ).slice(0, limit),
+    searchPlaylists: async ({ query, limit = 15 }) => {
+      const normalized = query.trim().toLowerCase();
+      const genericPlaylistQuery = ['lista', 'listas', 'playlist', 'playlists'].includes(normalized);
+      return PUBLIC_PLAYLISTS.filter((playlist) =>
+        genericPlaylistQuery || playlist.name.toLowerCase().includes(normalized),
+      ).slice(0, limit);
+    },
     fetchArtistBio: async (artistUri: string): Promise<ArtistBio> => {
       const artist = await client!.getArtistOverview(artistUri);
       return mapArtistToArtistBio(artist);
