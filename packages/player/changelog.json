@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T13:35",
+    "description": "Reordena los controles del modo coche: anterior, reproducir y siguiente arriba; favorito, aleatorio y no me gusta debajo.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Modo coche", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T13:25",
     "description": "Corrige el desbordamiento de la barra de reproducción móvil que apilaba verticalmente el título y el artista.",
     "type": "fix",

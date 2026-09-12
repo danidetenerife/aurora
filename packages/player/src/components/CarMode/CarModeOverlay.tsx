@@ -153,6 +153,18 @@ export const CarModeOverlay: FC = () => {
           <ChevronDown size={18} />
           <span>Salir</span>
         </button>
+        <button
+          onClick={handleToggleRepeat}
+          className={`flex size-11 items-center justify-center rounded-full border text-zinc-200 transition-all active:scale-95 ${
+            repeatMode !== 'off'
+              ? 'border-emerald-500/40 bg-emerald-950/60 text-emerald-400'
+              : 'border-zinc-700 bg-zinc-800/90 hover:bg-zinc-700'
+          }`}
+          title="Repetir"
+          aria-label="Repetir"
+        >
+          {repeatMode === 'one' ? <Repeat1 size={21} /> : <Repeat size={21} />}
+        </button>
       </div>
 
       {/* Main Track Display (Center) */}
@@ -216,31 +228,18 @@ export const CarModeOverlay: FC = () => {
         </div>
 
         {/* Giant Primary Buttons */}
-        <div className="aurora-car-controls flex items-center justify-between gap-3 px-2 sm:px-6">
-          {/* Shuffle */}
-          <button
-            onClick={() => setShuffleEnabled(!shuffleEnabled)}
-            className={`rounded-full p-3 transition-all active:scale-90 ${
-              shuffleEnabled
-                ? 'border border-emerald-500/40 bg-emerald-950/60 text-emerald-400'
-                : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
-            }`}
-            title="Aleatorio"
-          >
-            <Shuffle size={24} />
-          </button>
-
-          {/* Previous Track */}
-          <button
+        <div className="aurora-car-controls flex flex-col items-center gap-3 px-2 sm:px-6">
+          <div className="flex w-full items-center justify-center gap-4">
+            <button
             onClick={goToPrevious}
             className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
             title="Anterior"
           >
             <SkipBack size={32} />
-          </button>
+            </button>
 
           {/* Play / Pause - HUGE */}
-          <button
+            <button
             onClick={playbackManager.toggle}
             className="flex size-20 items-center justify-center rounded-full bg-emerald-500 font-bold text-zinc-950 shadow-2xl shadow-emerald-500/30 transition-all hover:bg-emerald-400 active:scale-95 sm:size-24"
             title={isPlaying ? 'Pausa' : 'Reproducir'}
@@ -250,36 +249,20 @@ export const CarModeOverlay: FC = () => {
             ) : (
               <Play size={44} className="translate-x-0.5 fill-current" />
             )}
-          </button>
+            </button>
 
           {/* Next Track */}
-          <button
+            <button
             onClick={goToNext}
             className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
             title="Siguiente"
           >
             <SkipForward size={32} />
-          </button>
+            </button>
+          </div>
 
-          {/* Repeat */}
-          <button
-            onClick={handleToggleRepeat}
-            className={`rounded-full p-3 transition-all active:scale-90 ${
-              repeatMode !== 'off'
-                ? 'border border-emerald-500/40 bg-emerald-950/60 text-emerald-400'
-                : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
-            }`}
-            title="Repetir"
-          >
-            {repeatMode === 'one' ? (
-              <Repeat1 size={24} />
-            ) : (
-              <Repeat size={24} />
-            )}
-          </button>
-
-          {/* Favorite */}
-          <button
+          <div className="flex w-full items-center justify-center gap-5">
+            <button
             onClick={handleToggleFavorite}
             className={`rounded-full p-3 transition-all active:scale-90 ${
               isFav
@@ -289,10 +272,21 @@ export const CarModeOverlay: FC = () => {
             title="Favorito"
           >
             <Heart size={24} className={isFav ? 'fill-current' : ''} />
-          </button>
+            </button>
 
-          {/* Dislike */}
-          <button
+            <button
+              onClick={() => setShuffleEnabled(!shuffleEnabled)}
+              className={`rounded-full p-3 transition-all active:scale-90 ${
+                shuffleEnabled
+                  ? 'border border-emerald-500/40 bg-emerald-950/60 text-emerald-400'
+                  : 'bg-zinc-800/60 text-zinc-400 hover:text-white'
+              }`}
+              title="Aleatorio"
+            >
+              <Shuffle size={24} />
+            </button>
+
+            <button
             onClick={handleDislike}
             className="rounded-full bg-zinc-800/60 p-3 text-zinc-400 transition-all hover:text-red-400 active:scale-90"
             title="No me gusta"
@@ -300,7 +294,8 @@ export const CarModeOverlay: FC = () => {
             data-testid="car-mode-dislike-button"
           >
             <ThumbsDown size={24} />
-          </button>
+            </button>
+          </div>
         </div>
       </div>
     </div>
