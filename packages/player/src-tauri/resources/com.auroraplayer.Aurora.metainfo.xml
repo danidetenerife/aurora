@@ -84,6 +84,44 @@
   </requires>
 
   <releases>
+    <release version="1.48.34" date="2026-09-12">
+      <description>
+        <ul>
+          <li>Mejora integral en la ficha y reproducción de podcasts: texto negro de alto contraste en la cabecera y descripción sobre fondo verde, alineación perfecta sin recorte de la columna 'Duración' en dispositivos móviles, preservación de las carátulas reales de cada episodio sin sobreescrituras por canciones de iTunes, y acción atómica playTracks para reproducir de forma inmediata el episodio pulsado.</li>
+          <li>Eliminación total del truncamiento de texto en la tabla de episodios y vistas de podcasts: los títulos completos se muestran en múltiples líneas sin puntos suspensivos ni recortes, se oculta la columna redundante de artista dando el ancho completo al título, y se asegura la reproducción del audio exacto del episodio.</li>
+          <li>Corrige la reproducción de episodios de podcasts para que reproduzcan el audio exacto del episodio en lugar de buscar canciones aleatorias, elimina todo truncamiento de textos y descripciones en la sección de podcasts, y optimiza el diseño en dispositivos móviles para mostrar los episodios inmediatamente.</li>
+          <li>Ficha completa de podcast integrada con YouTube Music: al hacer click en cualquier podcast desde el buscador o la sección de podcasts se abre la ficha con carátula, autor, descripción y el listado de episodios reproducibles directamente mediante el motor de streaming de YouTube.</li>
+          <li>Corrige el error 'No se ha podido cargar tu selección' en Android Auto mostrando un estado de buffering inmediato, añade portadas reales a los podcasts descargando imágenes en segundo plano, y arregla las playlists populares para que se reproduzcan directamente sin mostrar una lista vacía.</li>
+          <li>Renovación gráfica integral de Android Auto: interfaz visual con ContentStyle en cuadrícula, carátulas en alta resolución en todas las canciones, listas y podcasts, tarjetas visuales de búsqueda para conducción y reproducción inmediata de playlists y búsquedas.</li>
+          <li>Corrige el aviso repetitivo de lista importada al navegar o consultar listas remotas, y llena la vista con listas populares de Spotify y YouTube Music cuando no hay listas personales creadas.</li>
+          <li>Añade podcasts al buscador, elimina el encabezado grande de búsqueda, prioriza las listas propias y muestra listas públicas populares de YouTube Music sin barras de desplazamiento visibles.</li>
+          <li>Repara la barra de controles y el modo coche, compacta los artistas favoritos y reproduce podcasts dentro de Aurora.</li>
+          <li>Ajusta los botones de sincronización y QR para que compartan el ancho disponible en móvil sin desbordarse.</li>
+          <li>Reordena los controles del modo coche: anterior, reproducir y siguiente arriba; favorito, aleatorio y no me gusta debajo.</li>
+          <li>Corrige el desbordamiento de la barra de reproducción móvil que apilaba verticalmente el título y el artista.</li>
+          <li>Compacta las fichas de artistas favoritos en móvil y sustituye el botón de borrado por un control discreto de icono.</li>
+          <li>Reorganiza la barra móvil: muestra título y artista arriba y agrupa los controles de reproducción en una fila inferior más clara.</li>
+          <li>Mejora la vista de favoritos de artistas, muestra carátulas de podcasts e iconos de plugins, y hace visibles las listas públicas de Spotify y YouTube Music al buscar listas.</li>
+          <li>Añade la búsqueda de listas, listas favoritas con corazón y una sección de Podcasts con favoritos en las interfaces compatibles.</li>
+          <li>Muestra playlists públicas de YouTube Music y Spotify en la sección Listas, con acceso directo a su importación.</li>
+          <li>Usa el logotipo de Aurora en el icono de Android, Android Auto y Google TV.</li>
+          <li>Añade el control No me gusta al modo coche y a Android Auto; la canción se marca para excluirla y avanza la reproducción.</li>
+          <li>Keep complete song titles visible in Android views and correct malformed Spanish text in synchronization settings.</li>
+          <li>Fix Android responsive overflow in settings, playlists and artists, restore artist avatars and identifiers, and add browsable queue and search actions for Android Auto.</li>
+          <li>Replace the oversized Android dashboard with compact recommendations and pages sized to the available screen height, keeping the full mix available for playback without scrolling the home screen.</li>
+          <li>Simplify Android settings, display the Aurora wordmark above search, improve responsive mobile layouts and enable automatic mobile APK update checks and downloads from GitHub Releases.</li>
+          <li>Fix Android startup logging errors by using the system console when the desktop bridge is unavailable.</li>
+          <li>Resolve and enable reliable audio and video playback on Google TV and Android TV with seamless track switching and background playback.</li>
+          <li>Restore artist name display directly under song titles in track tables across all screen sizes and devices.</li>
+          <li>Add dislike button to now playing bar and track context menu actions to blacklist songs and artists, instantly skipping tracks, applying score penalties, and excluding them from recommendations across synced devices.</li>
+          <li>Make music discovery and queue autoplay completely automatic and seamless in the background; remove the misleading and redundant discovery button from the player controls bar.</li>
+          <li>Add user-owned cloud synchronization via WebDAV (Nextcloud, ownCloud, NAS) and private GitHub Gists, manual library backup export/import, and instant pairing via QR code configuration between desktop and mobile devices.</li>
+          <li>Use direct audio output, respect playback interruptions, block playback during phone calls, restore selection of resolved queue tracks and simplify car controls. Keep video controls exclusive to Google TV, avoid competing TV update downloads, and wait for desktop installation before offering a restart.</li>
+          <li>Refresh mobile and desktop presentation with clearer navigation, responsive playback controls and safe-area spacing. Remove full-screen blur transitions while preserving existing actions, themes and Google TV presentation.</li>
+          <li>Rebuild Google TV with a lightweight Spanish interface, fixed playback controls, deterministic remote navigation, single button activation and optional music videos. Preserve mobile and desktop behavior.</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.48.0" date="2026-09-09">
       <description>
         <ul>
