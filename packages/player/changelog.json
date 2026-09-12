@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-12T15:10",
+    "description": "Añade podcasts al buscador, elimina el encabezado grande de búsqueda, prioriza las listas propias y muestra listas públicas populares de YouTube Music sin barras de desplazamiento visibles.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Interfaz", "color": "purple" }, { "label": "Búsqueda", "color": "blue" }]
+  },
+  {
     "date": "2026-09-12T15:00",
     "description": "Repara la barra de controles y el modo coche, compacta los artistas favoritos y reproduce podcasts dentro de Aurora.",
     "type": "fix",

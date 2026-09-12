@@ -66,7 +66,7 @@ export const EditorialPlaylistsWidget: FC = () => {
         data-testid="dashboard-editorial-playlists"
         results={results}
         isLoading={isLoading}
-        title={t('editorial-playlists')}
+        title={t('editorial-playlists', 'Últimas y populares de YouTube Music')}
         labels={{
           filterPlaceholder: t('filter-playlists'),
           nothingFound: t('nothing-found'),
