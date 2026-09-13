@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import isEqual from 'lodash-es/isEqual';
 
 import type { ArtworkSet, QueueItem, Track } from '@aurora/model';
 
@@ -88,7 +89,7 @@ export const enrichTrackArtwork = async (item: QueueItem): Promise<void> => {
         const target = state.items.find(
           (queueItem) => queueItem.id === item.id,
         );
-        if (target) {
+        if (target && !isEqual(target.track.artwork, artwork)) {
           target.track.artwork = artwork;
         }
       }),
@@ -123,7 +124,7 @@ export const enrichFavoriteTracks = async (): Promise<void> => {
         isYouTubeOrGenericArtwork(currentFirstUrl)
       ) {
         const enrichedArtwork = await resolveArtworkForTrack(entry.ref);
-        if (enrichedArtwork) {
+        if (enrichedArtwork && !isEqual(entry.ref.artwork, enrichedArtwork)) {
           hasUpdates = true;
           return {
             ...entry,
@@ -139,6 +140,14 @@ export const enrichFavoriteTracks = async (): Promise<void> => {
   );
 
   if (hasUpdates) {
-    useFavoritesStore.setState({ tracks: updatedFavorites });
+    useFavoritesStore.setState((state) => {
+      const tracks = state.tracks.map((entry) => {
+        const originalIndex = favorites.indexOf(entry);
+        return originalIndex >= 0 ? updatedFavorites[originalIndex] : entry;
+      });
+      return tracks.some((entry, index) => entry !== state.tracks[index])
+        ? { tracks }
+        : state;
+    });
   }
 };
