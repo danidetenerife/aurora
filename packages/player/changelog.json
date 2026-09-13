@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-13T08:35",
+    "description": "Mejora los controles de reproducción y la interfaz móvil: elimina el tooltip persistente de Modo Coche sobre los controles y ajusta el botón de canción anterior al estándar (1 toque para reiniciar la canción actual, 2 toques seguidos para ir a la anterior).",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Reproductor", "color": "green" }, { "label": "Modo Coche", "color": "blue" }, { "label": "Móvil", "color": "purple" }]
+  },
+  {
     "date": "2026-09-13T08:00",
     "description": "Corrige el congelamiento al abrir Canciones con favoritos de YouTube o podcasts: la actualización de carátulas ya no vuelve a guardar portadas idénticas en un bucle continuo. Conserva también los cambios realizados en favoritos mientras se buscan portadas.",
     "type": "fix",

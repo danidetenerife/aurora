@@ -73,6 +73,22 @@ npx pnpm --filter @aurora/player build:frontend
 Write-Host "[2/4] Compilando Android APK..." -ForegroundColor Yellow
 cmd.exe /c "cd packages\player && npx cap sync android && android\build-apk.bat"
 
+# 6b. Install to Android device if connected
+try {
+    $devices = & adb devices 2>$null | Where-Object { $_ -match '\bdevice$' }
+    if ($devices) {
+        Write-Host "[ADB] Dispositivo Android detectado. Instalando APK en el móvil..." -ForegroundColor Cyan
+        & adb install -r -d "$Root\ejecutables\aurora-music-player.apk"
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "[ADB] ¡APK instalado exitosamente en el móvil!" -ForegroundColor Green
+        } else {
+            Write-Host "[ADB] Aviso: adb install finalizó con código $LASTEXITCODE" -ForegroundColor Yellow
+        }
+    }
+} catch {
+    Write-Host "[ADB] Error intentando instalar con adb: $_" -ForegroundColor Yellow
+}
+
 # 7. Build Tauri Desktop EXE
 Write-Host "[3/4] Compilando instalador Windows..." -ForegroundColor Yellow
 $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
@@ -121,8 +137,20 @@ if (-not (Test-Path -LiteralPath $GeneratedSignature)) {
 
 # 8. Sync Git and Publish Release
 Write-Host "[4/4] Subiendo a GitHub y publicando Release $Tag..." -ForegroundColor Green
+
+$releaseNotes = ""
+$changelogPath = "$Root\packages\player\changelog.json"
+if (Test-Path $changelogPath) {
+    try {
+        $changelog = Get-Content $changelogPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($changelog.Count -gt 0 -and $changelog[0].description) {
+            $releaseNotes = "Aurora Music Player ${Tag}: " + $changelog[0].description
+        }
+    } catch {}
+}
+
 powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\auto-sync-github.ps1"
-powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\publish-release.ps1" -Version $NextVer
+powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\publish-release.ps1" -Version $NextVer -Notes "$releaseNotes"
 
 Write-Host "==========================================================" -ForegroundColor Green
 Write-Host " ¡Versión $NextVer ($Tag) compilada y publicada con éxito!" -ForegroundColor Green

@@ -48,10 +48,9 @@ export const CarModeOverlay: FC = () => {
   const currentItem = useQueueStore((state) => state.getCurrentItem());
   const currentTrack = currentItem?.track;
 
-  const { goToNext, goToPrevious } = useQueueStore(
+  const { goToNext } = useQueueStore(
     useShallow((state) => ({
       goToNext: state.goToNext,
-      goToPrevious: state.goToPrevious,
     })),
   );
 
@@ -127,7 +126,7 @@ export const CarModeOverlay: FC = () => {
   return (
     <div
       data-testid="car-mode-overlay"
-      className="fixed inset-0 z-50 flex flex-col justify-between overflow-hidden bg-zinc-950 text-white select-none"
+      className="fixed inset-0 z-[100] flex flex-col justify-between overflow-hidden bg-zinc-950 text-white select-none"
     >
       {/* Top Header Bar */}
       <div className="aurora-car-header relative z-10 flex shrink-0 flex-wrap items-center justify-between gap-2 px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
@@ -231,7 +230,10 @@ export const CarModeOverlay: FC = () => {
         <div className="aurora-driving-controls flex flex-col items-center gap-3 px-2 sm:px-6">
           <div className="flex w-full items-center justify-center gap-4">
             <button
-              onClick={goToPrevious}
+              onClick={() => {
+                setSeekingValue(null);
+                playbackManager.previous();
+              }}
               className="flex size-16 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-800 text-white shadow-lg transition-transform hover:bg-zinc-700 active:scale-90 sm:size-18"
               title="Anterior"
             >

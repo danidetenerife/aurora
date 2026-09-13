@@ -136,7 +136,7 @@ export const initMediaSessionService = (): void => {
       });
 
       navigator.mediaSession.setActionHandler('previoustrack', () => {
-        useQueueStore.getState().goToPrevious();
+        playbackManager.previous();
       });
 
       navigator.mediaSession.setActionHandler('nexttrack', () => {
@@ -414,7 +414,7 @@ export const initMediaSessionService = (): void => {
           useQueueStore.getState().goToNext();
           break;
         case 'previoustrack':
-          useQueueStore.getState().goToPrevious();
+          playbackManager.previous();
           break;
         case 'dislike': {
           const currentTrack = useQueueStore.getState().getCurrentItem()?.track;

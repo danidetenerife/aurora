@@ -17,7 +17,7 @@ export const GlobalShortcuts: FC = () => {
   });
 
   useShortcut('playback.previous', () => {
-    useQueueStore.getState().goToPrevious();
+    playbackManager.previous();
   });
 
   useShortcut('playback.seekForward', () => {

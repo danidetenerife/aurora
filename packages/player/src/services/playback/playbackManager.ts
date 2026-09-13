@@ -6,6 +6,8 @@ import { getSetting } from '../../stores/settingsStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { eventBus } from '../eventBus';
 
+const DOUBLE_PRESS_WINDOW_MS = 2500;
+
 export type StartTrackOptions = {
   autoPlay: boolean;
 };
@@ -13,6 +15,19 @@ export type StartTrackOptions = {
 export class PlaybackManager {
   private mountedItemId: string | null = null;
   private playRequested = false;
+  private lastPreviousCallTime = 0;
+
+  previous = (): void => {
+    const now = Date.now();
+    if (now - this.lastPreviousCallTime < DOUBLE_PRESS_WINDOW_MS) {
+      this.lastPreviousCallTime = now;
+      useQueueStore.getState().goToPrevious();
+      return;
+    }
+
+    this.lastPreviousCallTime = now;
+    useSoundStore.getState().seekTo(0);
+  };
 
   play = (): void => {
     const { status } = useSoundStore.getState();

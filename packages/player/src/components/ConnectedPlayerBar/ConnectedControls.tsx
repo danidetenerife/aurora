@@ -21,10 +21,9 @@ export const ConnectedControls: FC = () => {
     useCoreSetting<RepeatMode>('playback.repeat');
   const { castState, openCastPicker } = useMediaRouter();
 
-  const { goToNext, goToPrevious } = useQueueStore(
+  const { goToNext } = useQueueStore(
     useShallow((state) => ({
       goToNext: state.goToNext,
-      goToPrevious: state.goToPrevious,
     })),
   );
   const status = useSoundStore((state) => state.status);
@@ -49,7 +48,7 @@ export const ConnectedControls: FC = () => {
         repeatMode={repeatMode ?? 'off'}
         onPlayPause={playbackManager.toggle}
         onNext={goToNext}
-        onPrevious={goToPrevious}
+        onPrevious={playbackManager.previous}
         onShuffleToggle={handleToggleShuffle}
         onRepeatToggle={handleToggleRepeat}
         showDiscovery={false}
@@ -80,21 +79,19 @@ export const ConnectedControls: FC = () => {
           <Airplay size={16} />
         </Button>
       </Tooltip>
-      <Tooltip
-        content="Modo Coche"
-        side="top"
-        wrapperClassName="aurora-car-control"
-      >
+      <div className="aurora-car-control">
         <Button
           size="icon-sm"
           className="sm:size-10"
           variant="text"
+          title="Modo Coche"
+          aria-label="Modo Coche"
           onClick={() => useCarModeStore.getState().toggleCarMode()}
           data-testid="player-car-mode-button"
         >
           <Car size={16} />
         </Button>
-      </Tooltip>
+      </div>
     </div>
   );
 };
