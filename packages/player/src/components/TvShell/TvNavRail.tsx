@@ -1,4 +1,3 @@
-import { setFocus } from '@noriginmedia/norigin-spatial-navigation';
 import { FC } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
@@ -34,15 +33,15 @@ export const TvNavRail: FC = () => {
     },
     { id: 'queue', label: t('queue'), action: () => setActiveSection('queue') },
     {
-      id: 'player',
-      label: t('player'),
-      action: () => setFocus('tv-control-play'),
+      id: 'settings',
+      label: 'GitHub',
+      action: () => setActiveSection('settings'),
     },
   ];
   return (
     <nav data-testid="tv-nav-rail" className="tv-navigation">
       <div className="tv-brand">
-        <TopBarLogo className="h-6 w-6" />
+        <TopBarLogo className="h-9 w-9" />
         <span>AURORA</span>
       </div>
       {items.map((item, index) => (
@@ -54,11 +53,7 @@ export const TvNavRail: FC = () => {
           destinations={{
             left: `tv-nav-${items[Math.max(0, index - 1)].id}`,
             right: `tv-nav-${items[Math.min(items.length - 1, index + 1)].id}`,
-            down:
-              item.id === 'player' ||
-              (item.id === 'dashboard' && activeSection === 'dashboard')
-                ? 'tv-control-play'
-                : 'TV_CONTENT',
+            down: 'TV_CONTENT',
           }}
           onClick={item.action}
         >

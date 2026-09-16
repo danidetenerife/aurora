@@ -4,3 +4,7 @@ export { TvNowPlayingBar } from './TvNowPlayingBar';
 export { TvSearchOverlay } from './TvSearchOverlay';
 export { TvFocusableCard } from './TvFocusableCard';
 export { TvContentRow } from './TvContentRow';
+export { TvDashboard } from './TvDashboard';
+export { TvSyncSection } from './TvSyncSection';
+export { TvCoverArtView } from './TvCoverArtView';
+export { TvPodcastDetail } from './TvPodcastDetail';

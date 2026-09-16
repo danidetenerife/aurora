@@ -115,5 +115,53 @@ describe('Discovery', () => {
       });
       expect(useQueueStore.getState().items).toHaveLength(3);
     });
+
+    it('proactively fetches when on second-to-last track in queue', async () => {
+      await SoundWrapper.mount();
+      await SoundWrapper.initAndPlay(1);
+      SoundWrapper.fireCanPlay();
+
+      await waitFor(() => {
+        expect(useQueueStore.getState().items).toHaveLength(4);
+      });
+    });
+
+    it('filters out tracks already present in the session', async () => {
+      const existingItem: Track = {
+        title: 'Track 1',
+        artists: [{ name: 'Test Artist', roles: ['primary'] }],
+        source: { provider: 'test', id: 'track 1' },
+      };
+      getRecommendations.mockResolvedValueOnce([existingItem]);
+
+      await SoundWrapper.mount();
+      await SoundWrapper.initAndPlay(2);
+      SoundWrapper.fireCanPlay();
+
+      await waitFor(() => {
+        expect(getRecommendations).toHaveBeenCalled();
+      });
+      expect(
+        useQueueStore
+          .getState()
+          .items.filter((item) => item.track.title === 'Track 1'),
+      ).toHaveLength(1);
+    });
+
+    it('seamlessly transitions to new track at end of queue via finishTrack without looping', async () => {
+      await SoundWrapper.mount();
+      await SoundWrapper.initAndPlay(2);
+      SoundWrapper.fireCanPlay();
+
+      await waitFor(() => {
+        expect(useQueueStore.getState().items).toHaveLength(4);
+      });
+
+      SoundWrapper.fireEnded();
+
+      await waitFor(() => {
+        expect(useQueueStore.getState().currentIndex).toBe(3);
+      });
+    });
   });
 });

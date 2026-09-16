@@ -15,6 +15,7 @@ import android.os.PowerManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import androidx.activity.OnBackPressedCallback;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.WebViewListener;
 
@@ -74,6 +75,7 @@ public class MainActivity extends BridgeActivity {
         setupScreenStateReceiver();
         requestNotificationPermission();
         startAudioService();
+        setupTvBackCallback();
     }
 
     private void requestNotificationPermission() {
@@ -255,6 +257,34 @@ public class MainActivity extends BridgeActivity {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    private void setupTvBackCallback() {
+        if (!TvWebView.isTelevision(this)) {
+            return;
+        }
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                WebView webView = getBridge() != null ? getBridge().getWebView() : null;
+                if (webView != null) {
+                    webView.evaluateJavascript(
+                        "window.dispatchEvent(new CustomEvent('tv:back', { cancelable: true }))",
+                        unhandled -> {
+                            if ("true".equals(unhandled)) {
+                                setEnabled(false);
+                                getOnBackPressedDispatcher().onBackPressed();
+                                setEnabled(true);
+                            }
+                        }
+                    );
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                    setEnabled(true);
+                }
+            }
+        });
     }
 
     @Override

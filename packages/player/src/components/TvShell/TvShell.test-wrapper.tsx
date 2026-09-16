@@ -1,16 +1,22 @@
 import { setFocus } from '@noriginmedia/norigin-spatial-navigation';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import App from '../../App';
 import { resetTvDetectionCache } from '../../services/tvDetection';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { useStartupStore } from '../../stores/startupStore';
 import { useTvStore } from '../../stores/tvStore';
+import { TvShell } from './TvShell';
 
 export const TvShellWrapper = {
+  async focusPlayback() {
+    await act(async () => setFocus('tv-control-play'));
+  },
+  get favorites() {
+    return screen.getByTestId('tv-nav-item-favorites');
+  },
   seedPlayback() {
     useQueueStore.setState({
       currentIndex: 0,
@@ -59,7 +65,11 @@ export const TvShellWrapper = {
       isSearchOpen: false,
       showVideo: false,
     });
-    render(<App queryClientProp={new QueryClient()} />);
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <TvShell />
+      </QueryClientProvider>,
+    );
     await screen.findByTestId('tv-shell');
   },
   get shell() {

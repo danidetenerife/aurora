@@ -18,7 +18,11 @@ export const TvButton: FC<TvButtonProps> = ({
   const { ref, focused, focusSelf } = useFocusable({
     focusKey,
     onFocus: () => {
-      ref.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      ref.current?.scrollIntoView({
+        block: 'center',
+        inline: 'nearest',
+        behavior: 'smooth',
+      });
     },
     onArrowPress: (direction) => {
       const destination =

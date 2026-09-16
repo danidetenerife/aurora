@@ -21,7 +21,9 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
             <img
               alt="Aurora"
               class="ml-0.5 object-contain h-6 w-6"
+              height="24"
               src="/@fs/C:/Users/Danid/Desktop/proyectos/nuclear-master/packages/ui/src/assets/logo-icon-waves.png"
+              width="24"
             />
             <span
               class="font-heading hidden bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-sm font-extrabold tracking-wider text-transparent select-none sm:inline"
@@ -1699,9 +1701,11 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
                 class="aurora-car-control"
               >
                 <button
+                  aria-label="Modo Coche"
                   class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 justify-center sm:size-10"
                   data-headlessui-state=""
                   data-testid="player-car-mode-button"
+                  title="Modo Coche"
                   type="button"
                 >
                   <svg

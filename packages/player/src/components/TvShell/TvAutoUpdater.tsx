@@ -1,127 +1,116 @@
 import { FC, useEffect, useState } from 'react';
 import semver from 'semver';
 
+import { useTranslation } from '@aurora/i18n';
+
 import { ApkUpdaterPlugin } from '../../services/apkUpdater';
 import { Logger } from '../../services/logger';
 import { useSoundStore } from '../../stores/soundStore';
 
-const CURRENT_FALLBACK_VERSION = '1.48.4';
-const GITHUB_REPO = 'danidetenerife/aurora';
-const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+const GITHUB_LATEST_RELEASE_URL =
+  'https://api.github.com/repos/danidetenerife/aurora/releases/latest';
 const CHECK_INTERVAL_MS = 10 * 60 * 1000;
-
-type GitHubAsset = {
-  name: string;
-  browser_download_url: string;
-  size: number;
-};
+const REQUEST_TIMEOUT_MS = 30 * 1000;
+const COMPLETE_PERCENT = 100;
 
 type GitHubRelease = {
   tag_name: string;
-  name: string;
-  body: string;
-  assets: GitHubAsset[];
+  assets: { name: string; browser_download_url: string }[];
 };
 
 export const TvAutoUpdater: FC = () => {
+  const { t } = useTranslation();
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [targetVersion, setTargetVersion] = useState<string | null>(null);
+  const [targetVersion, setTargetVersion] = useState('');
 
   useEffect(() => {
-    if (import.meta.env.MODE === 'test') {
-      return;
-    }
-
     let isCancelled = false;
     let checkInProgress = false;
     let attemptedVersion: string | null = null;
+    let requestController: AbortController | null = null;
+    let listenerHandle: { remove: () => void } | null = null;
 
     const checkForTvUpdate = async () => {
       if (
         isCancelled ||
         checkInProgress ||
+        document.visibilityState === 'hidden' ||
         useSoundStore.getState().status === 'playing'
       ) {
         return;
       }
       checkInProgress = true;
+      requestController = new AbortController();
+      const requestTimeout = setTimeout(
+        () => requestController?.abort(),
+        REQUEST_TIMEOUT_MS,
+      );
       try {
         const response = await fetch(GITHUB_LATEST_RELEASE_URL, {
-          headers: {
-            Accept: 'application/vnd.github.v3+json',
-          },
+          headers: { Accept: 'application/vnd.github.v3+json' },
+          signal: requestController.signal,
+          cache: 'no-store',
         });
-
         if (!response.ok) {
-          return;
+          throw new Error(`GitHub API returned status ${response.status}`);
         }
-
         const release: GitHubRelease = await response.json();
-        const latestTag = release.tag_name.replace(/^v/, '');
-
-        let currentClean = CURRENT_FALLBACK_VERSION.replace(/^v/, '');
-        try {
-          const appVer = await ApkUpdaterPlugin.getAppVersion();
-          if (appVer?.version) {
-            currentClean = appVer.version.replace(/^v/, '');
-          }
-        } catch {
-          // fallback to CURRENT_FALLBACK_VERSION
-        }
-
-        const isNewer =
-          semver.valid(latestTag) && semver.valid(currentClean)
-            ? semver.gt(latestTag, currentClean)
-            : latestTag !== currentClean;
-
-        const apkAsset = release.assets?.find(
+        const latestVersion = release.tag_name.replace(/^(?:player@|v)/, '');
+        const appVersion = await ApkUpdaterPlugin.getAppVersion();
+        const currentVersion = appVersion.version.replace(/^(?:player@|v)/, '');
+        const apkAsset = release.assets.find(
           (asset) =>
             asset.name.toLowerCase().endsWith('.apk') &&
-            /(?:google[-_ ]?tv|android[-_ ]?tv|[-_.]tv[-_.])/i.test(asset.name),
+            /google[-_ ]?tv|android[-_ ]?tv|(?:^|[-_.])tv(?:[-_.]|$)/i.test(
+              asset.name,
+            ) &&
+            !/unsigned|tvpreview/i.test(asset.name),
         );
-
         if (
-          isNewer &&
-          apkAsset &&
-          !isCancelled &&
-          attemptedVersion !== latestTag &&
-          useSoundStore.getState().status !== 'playing'
+          !semver.valid(latestVersion) ||
+          !semver.valid(currentVersion) ||
+          !semver.gt(latestVersion, currentVersion) ||
+          !apkAsset ||
+          isCancelled ||
+          attemptedVersion === latestVersion ||
+          (document.visibilityState as DocumentVisibilityState) === 'hidden' ||
+          useSoundStore.getState().status === 'playing'
         ) {
-          attemptedVersion = latestTag;
-          Logger.updates.info(
-            `TvAutoUpdater: New version ${release.tag_name} detected. Starting automatic background update...`,
-          );
-          setIsDownloading(true);
-          setTargetVersion(release.tag_name);
-
-          let listenerHandle: { remove: () => void } | null = null;
-          try {
-            listenerHandle = await ApkUpdaterPlugin.addListener(
-              'downloadProgress',
-              (data) => {
-                if (!isCancelled) {
-                  setDownloadProgress(data.percent);
-                }
-              },
-            );
-          } catch {
-            // ignore
-          }
-
-          try {
-            await ApkUpdaterPlugin.downloadAndInstall({
-              url: apkAsset.browser_download_url,
-            });
-          } finally {
-            if (listenerHandle) {
-              listenerHandle.remove();
-            }
-          }
+          return;
         }
-      } catch (err) {
-        Logger.updates.warn(`TvAutoUpdater check failed: ${err}`);
+        clearTimeout(requestTimeout);
+        setIsDownloading(true);
+        setDownloadProgress(0);
+        setTargetVersion(release.tag_name);
+        listenerHandle = await ApkUpdaterPlugin.addListener(
+          'downloadProgress',
+          (data) => {
+            if (!isCancelled) {
+              setDownloadProgress(
+                Math.max(0, Math.min(COMPLETE_PERCENT, Math.round(data.percent))),
+              );
+            }
+          },
+        );
+        if (isCancelled) {
+          return;
+        }
+        const result = await ApkUpdaterPlugin.downloadAndInstall({
+          url: apkAsset.browser_download_url,
+        });
+        if (!result.success) {
+          throw new Error('Android update request failed');
+        }
+        attemptedVersion = latestVersion;
+      } catch (error) {
+        if (!isCancelled) {
+          Logger.updates.warn(`TvAutoUpdater check failed: ${error}`);
+        }
       } finally {
+        clearTimeout(requestTimeout);
+        listenerHandle?.remove();
+        listenerHandle = null;
         checkInProgress = false;
         if (!isCancelled) {
           setIsDownloading(false);
@@ -130,12 +119,21 @@ export const TvAutoUpdater: FC = () => {
     };
 
     void checkForTvUpdate();
-
     const interval = setInterval(checkForTvUpdate, CHECK_INTERVAL_MS);
+    const onResume = () => void checkForTvUpdate();
+    document.addEventListener('visibilitychange', onResume);
+    window.addEventListener('focus', onResume);
+    window.addEventListener('online', onResume);
 
     return () => {
       isCancelled = true;
+      requestController?.abort();
+      listenerHandle?.remove();
+      listenerHandle = null;
       clearInterval(interval);
+      document.removeEventListener('visibilitychange', onResume);
+      window.removeEventListener('focus', onResume);
+      window.removeEventListener('online', onResume);
     };
   }, []);
 
@@ -146,37 +144,29 @@ export const TvAutoUpdater: FC = () => {
   return (
     <div
       role="status"
+      className="tv-update-status"
       style={{
         position: 'fixed',
-        top: '1.25rem',
-        right: '2.5rem',
+        top: '6rem',
+        right: '4.5vw',
+        maxWidth: '24rem',
         zIndex: 9999,
         background: '#185745',
         border: '2px solid #62e2bd',
         borderRadius: '0.5rem',
-        padding: '0.5rem 1rem',
+        padding: '0.75rem 1rem',
         color: '#f4f4f5',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.6)',
+        pointerEvents: 'none',
+        fontSize: '1rem',
+        fontWeight: 600,
       }}
     >
-      <div
-        style={{
-          width: '0.85rem',
-          height: '0.85rem',
-          border: '2px solid #62e2bd',
-          borderTopColor: 'transparent',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite',
-        }}
-      />
-      <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
-        {downloadProgress < 100
-          ? `Actualizando Aurora a ${targetVersion ?? 'nueva versión'}... (${downloadProgress}%)`
-          : 'Instalando actualización...'}
-      </span>
+      {downloadProgress < COMPLETE_PERCENT
+        ? t('tv.updateDownloading', {
+            version: targetVersion,
+            percent: downloadProgress,
+          })
+        : t('tv.updateOpeningInstaller')}
     </div>
   );
 };

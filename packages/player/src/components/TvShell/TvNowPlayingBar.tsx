@@ -10,6 +10,7 @@ import { FC } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 
+import { eventBus } from '../../services/eventBus';
 import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
@@ -46,7 +47,13 @@ export const TvNowPlayingBar: FC = () => {
       id: 'next',
       label: t('next'),
       icon: <SkipForward />,
-      action: () => useQueueStore.getState().goToNext(),
+      action: () => {
+        const seek = useSoundStore.getState().seek;
+        eventBus.emit('playbackSkipped', {
+          positionMs: Math.round(seek * 1000),
+        });
+        useQueueStore.getState().goToNext();
+      },
     },
     {
       id: 'video',

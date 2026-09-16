@@ -13,6 +13,19 @@ export const isGoogleTVEnvironment = (): boolean => {
     return false;
   }
 
+  try {
+    if (
+      window.location.search.includes('tv=1') ||
+      window.location.search.includes('platform=tv') ||
+      localStorage.getItem('aurora:tv_mode') === 'true'
+    ) {
+      cachedResult = true;
+      return true;
+    }
+  } catch {
+    // ignore
+  }
+
   const userAgent = navigator.userAgent;
   const isTVUserAgent = TV_USER_AGENT_PATTERN.test(userAgent);
 

@@ -2,6 +2,7 @@ package com.auroraplayer.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.view.View;
@@ -13,6 +14,24 @@ final class TvWebView {
     private static final String TV_USER_AGENT = YtStreamExtractorPlugin.MOBILE_UA + " Aurora GoogleTV";
 
     static boolean isTelevision(Context context) {
+        if (context != null) {
+            try {
+                android.content.SharedPreferences prefs = context.getSharedPreferences("aurora_prefs", Context.MODE_PRIVATE);
+                if (prefs.getBoolean("force_tv_mode", false)) {
+                    return true;
+                }
+            } catch (Throwable t) {}
+            if (context instanceof Activity) {
+                Intent intent = ((Activity) context).getIntent();
+                if (intent != null && (intent.getBooleanExtra("tv", false) || intent.getBooleanExtra("tv_mode", false))) {
+                    try {
+                        context.getSharedPreferences("aurora_prefs", Context.MODE_PRIVATE)
+                            .edit().putBoolean("force_tv_mode", true).apply();
+                    } catch (Throwable t) {}
+                    return true;
+                }
+            }
+        }
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_TYPE_MASK;
         return mode == Configuration.UI_MODE_TYPE_TELEVISION
             || context.getPackageName().equals("com.auroraplayer.app.tvpreview")

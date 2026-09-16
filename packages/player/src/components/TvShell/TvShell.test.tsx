@@ -11,7 +11,7 @@ describe('Google TV shell', () => {
   it('reaches playback with arrows and activates each control exactly once', async () => {
     TvShellWrapper.seedPlayback();
     await TvShellWrapper.mount();
-    await userEvent.keyboard('{ArrowDown}');
+    await TvShellWrapper.focusPlayback();
     expect(TvShellWrapper.playButton).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     expect(TvShellWrapper.pauseButton).toHaveFocus();

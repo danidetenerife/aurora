@@ -100,6 +100,7 @@ describe('Global keyboard shortcuts', () => {
     });
 
     await user.keyboard('{Control>}{ArrowLeft}{/Control}');
+    await user.keyboard('{Control>}{ArrowLeft}{/Control}');
 
     expect(useQueueStore.getState().currentIndex).toBe(0);
   });

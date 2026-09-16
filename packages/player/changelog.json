@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-09-15T21:30",
+    "description": "Reproducción de videoclips a pantalla completa en Google TV con cola infinita: elimina barras y marcos para ofrecer una experiencia edge-to-edge con controles HUD auto-ocultables, soporte para mando a distancia (D-Pad) y autoreposición continua de canciones relacionadas sin interrupción.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Google TV", "color": "green" }, { "label": "Videoclips", "color": "purple" }]
+  },
+  {
+    "date": "2026-09-14T22:00",
+    "description": "Corrige los videoclips en Google TV: conserva las peticiones originales de YouTube y utiliza un único reproductor para audio y vídeo. El mando permite cerrar el videoclip o la búsqueda con Atrás y volver al menú sin perder la reproducción.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Google TV", "color": "green" }]
+  },
+  {
     "date": "2026-09-13T08:35",
     "description": "Mejora los controles de reproducción y la interfaz móvil: elimina el tooltip persistente de Modo Coche sobre los controles y ajusta el botón de canción anterior al estándar (1 toque para reiniciar la canción actual, 2 toques seguidos para ir a la anterior).",
     "type": "feature",

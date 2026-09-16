@@ -1,9 +1,9 @@
 import type { AudioSource } from '@aurora/hifi';
 import type { QueueItem } from '@aurora/model';
-
 import { useQueueStore } from '../../stores/queueStore';
 import { getSetting } from '../../stores/settingsStore';
 import { useSoundStore } from '../../stores/soundStore';
+import { ensureUpcomingTracks } from '../discoveryService';
 import { eventBus } from '../eventBus';
 
 const DOUBLE_PRESS_WINDOW_MS = 2500;
@@ -90,7 +90,7 @@ export class PlaybackManager {
     eventBus.emit('trackStarted', item.track);
   };
 
-  finishTrack = (): void => {
+  finishTrack = async (): Promise<void> => {
     const item = useQueueStore.getState().getCurrentItem();
     if (!item) {
       return;
@@ -103,6 +103,15 @@ export class PlaybackManager {
       useSoundStore.getState().seekTo(0);
       eventBus.emit('trackStarted', item.track);
       return;
+    }
+
+    const { items, currentIndex } = useQueueStore.getState();
+    const isLastTrack = currentIndex >= items.length - 1;
+    const isDiscoveryEnabled =
+      (getSetting('core.playback.discovery') as boolean) ?? true;
+
+    if (isLastTrack && isDiscoveryEnabled) {
+      await ensureUpcomingTracks(true);
     }
 
     useQueueStore.getState().goToNext();

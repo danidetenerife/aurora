@@ -1,5 +1,5 @@
 import type { FC, PropsWithChildren } from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { LoggerProvider, Sound, SoundError } from '@aurora/hifi';
 import type { TFunction } from '@aurora/i18n';
@@ -22,7 +22,7 @@ const describePlaybackError = (error: Error, t: TFunction): string => {
   return errorMessage(error);
 };
 
-const extractYouTubeId = (track?: Track, srcUrl?: string): string | null => {
+export const extractYouTubeId = (track?: Track, srcUrl?: string): string | null => {
   if (srcUrl) {
     const match = srcUrl.match(
       /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
@@ -47,29 +47,18 @@ const extractYouTubeId = (track?: Track, srcUrl?: string): string | null => {
 export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('streaming');
   const { src, status, seek } = useSoundStore();
+  const isVideoPlaying = useTvStore((state) => state.isVideoPlaying);
   const crossfadeMs = 0;
-  const showVideo = useTvStore((state) => state.showVideo);
-  const setShowVideo = useTvStore((state) => state.setShowVideo);
-  const currentTrack = useQueueStore((state) => state.getCurrentItem()?.track);
-  const mediaSource = useMemo(() => {
-    if (src && /youtube\.com|youtu\.be/.test(src.url)) {
-      return src;
-    }
-    const videoId = extractYouTubeId(currentTrack, src?.url);
-    if (videoId) {
-      return {
-        url: `https://www.youtube.com/watch?v=${videoId}`,
-        protocol: 'https' as const,
-        startPositionSeconds: useSoundStore.getState().seek,
-      };
-    }
-    return src;
-  }, [src, currentTrack]);
+  const mediaSource = src;
   const preload: HTMLAudioElement['preload'] = 'auto';
   const crossOrigin = undefined;
   const [volume01] = useCoreSetting<number>('playback.volume');
   const [muted] = useCoreSetting<boolean>('playback.muted');
-  const volumePercent = muted ? 0 : Math.round((volume01 ?? 1) * 100);
+  const volumePercent = isVideoPlaying
+    ? 0
+    : muted
+      ? 0
+      : Math.round((volume01 ?? 1) * 100);
 
   useEffect(() => {
     LoggerProvider.init(Logger.streaming);
@@ -130,8 +119,7 @@ export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
           src={mediaSource}
           status={status}
           seek={seek}
-          showVideo={Boolean(showVideo)}
-          onCloseVideo={() => setShowVideo(false)}
+          showVideo={false}
           volume={volumePercent}
           preload={preload}
           crossOrigin={crossOrigin}

@@ -491,6 +491,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
   return (
     <div
       id="aurora-youtube-player-container"
+      data-show-video={showVideo ? 'true' : 'false'}
       onMouseMove={resetHideTimer}
       onTouchStart={resetHideTimer}
       style={

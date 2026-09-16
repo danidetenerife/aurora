@@ -31,7 +31,9 @@ exports[`TitleBar > (Snapshot) renders Mac variant 1`] = `
       <img
         alt="Aurora"
         class="ml-0.5 object-contain w-6 h-4"
+        height="24"
         src="/src/assets/logo-icon-waves.png"
+        width="24"
       />
       Aurora
     </span>
@@ -131,7 +133,9 @@ exports[`TitleBar > (Snapshot) renders Windows variant 1`] = `
       <img
         alt="Aurora"
         class="ml-0.5 object-contain w-6 h-4"
+        height="24"
         src="/src/assets/logo-icon-waves.png"
+        width="24"
       />
       Aurora
     </span>

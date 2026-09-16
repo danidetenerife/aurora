@@ -9,7 +9,6 @@ import type {
 
 import { httpHost } from './httpHost';
 import { selectHlsAudio } from './selectHlsAudio';
-import { isGoogleTVEnvironment } from './tvDetection';
 import { isCapacitorEnvironment, isTauriEnvironment } from './universalStore';
 import { YtStreamExtractor } from './ytStreamExtractor';
 
@@ -183,19 +182,6 @@ export const ytdlpHost: YtdlpHost = {
       videoId = match[1];
     }
 
-    if (isGoogleTVEnvironment()) {
-      return {
-        stream_url: `https://www.youtube.com/watch?v=${videoId}`,
-        duration: null,
-        title: null,
-        container: null,
-        codec: null,
-        album: null,
-        artists: [],
-        album_artists: [],
-        upload_date: null,
-      };
-    }
 
     const directInfo = await extractAudioStreamDirect(videoId);
     if (directInfo) {

@@ -14,5 +14,7 @@ export const TopBarLogo: FC<TopBarLogoProps> = ({ className }) => (
     src={AuroraWavesLogo}
     alt="Aurora"
     className={cn('ml-0.5 object-contain', logoClass, className)}
+    width={24}
+    height={24}
   />
 );

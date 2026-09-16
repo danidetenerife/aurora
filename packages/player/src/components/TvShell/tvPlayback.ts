@@ -3,6 +3,9 @@ import type { Track } from '@aurora/model';
 import { playbackManager } from '../../services/playback';
 import { streamResolution } from '../../services/streamResolution';
 import { useQueueStore } from '../../stores/queueStore';
+import { replenishTvQueue } from './tvInfiniteQueue';
+
+const AUTO_REPLENISH_THRESHOLD = 3;
 
 export const playTvTracks = (tracks: Track[], startIndex = 0) => {
   if (!tracks.length) {
@@ -20,4 +23,9 @@ export const playTvTracks = (tracks: Track[], startIndex = 0) => {
   } else {
     playbackManager.play();
   }
+
+  if (tracks.length <= AUTO_REPLENISH_THRESHOLD) {
+    void replenishTvQueue();
+  }
 };
+

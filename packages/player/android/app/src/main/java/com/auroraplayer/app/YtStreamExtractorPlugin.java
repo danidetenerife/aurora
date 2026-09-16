@@ -52,11 +52,35 @@ public class YtStreamExtractorPlugin extends Plugin {
             return;
         }
 
-        getActivity().runOnUiThread(() -> startExtraction(call, videoId.trim()));
+        getActivity().runOnUiThread(() -> startExtraction(call, videoId.trim(), false));
+    }
+
+    @PluginMethod
+    public void extractVideoUrl(PluginCall call) {
+        String videoId = call.getString("videoId");
+        if (videoId == null || videoId.trim().isEmpty()) {
+            call.reject("videoId is required");
+            return;
+        }
+
+        getActivity().runOnUiThread(() -> startExtraction(call, videoId.trim(), true));
+    }
+
+    @PluginMethod
+    public void getVideoProxyPort(PluginCall call) {
+        try {
+            VideoProxyServer proxy = VideoProxyServer.getInstance();
+            proxy.start();
+            JSObject result = new JSObject();
+            result.put("port", proxy.getPort());
+            call.resolve(result);
+        } catch (Exception e) {
+            call.reject("Could not start video proxy: " + e.getMessage());
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private void startExtraction(PluginCall call, String videoId) {
+    private void startExtraction(PluginCall call, String videoId, boolean isVideo) {
         WebView hidden;
         try {
             hidden = new ExtractionWebView(getContext());
@@ -145,14 +169,19 @@ public class YtStreamExtractorPlugin extends Plugin {
                     String lowerUrl = url.toLowerCase();
 
                     boolean isGoogleVideo = lowerUrl.contains("googlevideo.com");
+
+                    if (isGoogleVideo && isVideo) {
+                        Log.d(TAG, "VIDEO EXTRACTION - Saw googlevideo URL: " + url.substring(0, Math.min(url.length(), 200)));
+                    }
                     boolean isHls = isGoogleVideo && (lowerUrl.contains("hls_playlist") || lowerUrl.contains("/playlist/index.m3u8"));
-                    boolean isVideoItag = lowerUrl.contains("itag/133") || lowerUrl.contains("itag/134") ||
+                    boolean isCombinedItag = lowerUrl.contains("itag/18") || lowerUrl.contains("itag/22");
+                    boolean isVideoOnlyItag = lowerUrl.contains("itag/133") || lowerUrl.contains("itag/134") ||
                                           lowerUrl.contains("itag/135") || lowerUrl.contains("itag/136") ||
                                           lowerUrl.contains("itag/137") || lowerUrl.contains("itag/242") ||
                                           lowerUrl.contains("itag/243") || lowerUrl.contains("itag/244") ||
                                           lowerUrl.contains("itag/247") || lowerUrl.contains("itag/248") ||
-                                          lowerUrl.contains("itag/278") || lowerUrl.contains("itag/18") ||
-                                          lowerUrl.contains("itag/22");
+                                          lowerUrl.contains("itag/278");
+                    boolean isVideoItag = isCombinedItag || isVideoOnlyItag;
                     boolean isHlsAudio = isHls && !isVideoItag && !lowerUrl.contains("file/seg.ts");
 
                     boolean isDashAudio = isGoogleVideo && lowerUrl.contains("videoplayback") &&
@@ -160,15 +189,25 @@ public class YtStreamExtractorPlugin extends Plugin {
                                            lowerUrl.contains("audio%2f") || lowerUrl.contains("audio/")) &&
                                           !lowerUrl.contains("mime=video") && !lowerUrl.contains("mime%3dvideo");
 
+                    boolean isDashVideo = isGoogleVideo && lowerUrl.contains("videoplayback") &&
+                                          (lowerUrl.contains("mime=video") || lowerUrl.contains("mime%3dvideo") ||
+                                           lowerUrl.contains("video%2f") || lowerUrl.contains("video/mp4"));
+
                     boolean isDubbed = (lowerUrl.contains("dubbed-auto") || lowerUrl.contains("dubbed")) &&
                                        !lowerUrl.contains("lang=es") &&
                                        !lowerUrl.contains("acont=original");
 
                     boolean isValidAudio = (isHlsAudio || isDashAudio) && !isDubbed;
+                    boolean isAnyVideoPlayback = isGoogleVideo && lowerUrl.contains("videoplayback") && !lowerUrl.contains("generate_204");
+                    boolean isHlsVideo = isHls && !lowerUrl.contains("file/seg.ts");
+                    boolean isValidVideo = (isAnyVideoPlayback || isHlsVideo) && !isDubbed;
 
-                    if (!settled.get() && isValidAudio) {
+                    boolean matched = isVideo ? isValidVideo : isValidAudio;
+
+                    if (!settled.get() && matched) {
                         if (settled.compareAndSet(false, true)) {
-                            Log.i(TAG, "Successfully intercepted audio stream URL for " + videoId + ": " + url);
+                            String kind = isVideo ? "video" : "audio";
+                            Log.i(TAG, "Successfully intercepted " + kind + " stream URL for " + videoId + ": " + url);
                             mainHandler.removeCallbacks(stage1TimeoutRunnable);
                             mainHandler.removeCallbacks(stage2TimeoutRunnable);
 
@@ -203,7 +242,7 @@ public class YtStreamExtractorPlugin extends Plugin {
         } catch (RuntimeException error) {
             if (settled.compareAndSet(false, true)) {
                 cleanupRunnable.run();
-                call.reject("Could not start audio extraction: " + error.getMessage());
+                call.reject("Could not start extraction: " + error.getMessage());
             }
         }
     }
