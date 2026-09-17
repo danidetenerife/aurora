@@ -1,22 +1,31 @@
 import type { Track } from '@aurora/model';
 
+import { registerTrackInSet } from '../../services/discoveryService';
 import { playbackManager } from '../../services/playback';
 import { streamResolution } from '../../services/streamResolution';
 import { useQueueStore } from '../../stores/queueStore';
-import { replenishTvQueue } from './tvInfiniteQueue';
+import {
+  replenishTvQueue,
+  resetTvSession,
+} from './tvInfiniteQueue';
 
-const AUTO_REPLENISH_THRESHOLD = 3;
+const AUTO_REPLENISH_THRESHOLD = 5;
 
 export const playTvTracks = (tracks: Track[], startIndex = 0) => {
   if (!tracks.length) {
     return;
   }
+
+  resetTvSession();
+
   const queue = useQueueStore.getState();
-  queue.clearQueue();
-  queue.addToQueue(tracks);
-  if (startIndex > 0 && startIndex < tracks.length) {
-    queue.goToIndex(startIndex);
+  queue.playTracks(tracks, startIndex);
+
+  const sessionPlayedIds = new Set<string>();
+  for (const track of tracks) {
+    registerTrackInSet(track, sessionPlayedIds);
   }
+
   const currentItem = useQueueStore.getState().getCurrentItem();
   if (currentItem) {
     void streamResolution.resolve(currentItem, { autoPlay: true });
@@ -28,4 +37,3 @@ export const playTvTracks = (tracks: Track[], startIndex = 0) => {
     void replenishTvQueue();
   }
 };
-

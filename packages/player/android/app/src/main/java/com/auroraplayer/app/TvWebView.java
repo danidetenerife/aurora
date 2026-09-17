@@ -5,13 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 final class TvWebView {
-    private static final String TV_USER_AGENT = YtStreamExtractorPlugin.MOBILE_UA + " Aurora GoogleTV";
+    private static final String TV_USER_AGENT = YtStreamExtractorPlugin.MOBILE_UA;
 
     static boolean isTelevision(Context context) {
         if (context != null) {
@@ -34,8 +35,11 @@ final class TvWebView {
         }
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_TYPE_MASK;
         return mode == Configuration.UI_MODE_TYPE_TELEVISION
+            || mode == Configuration.UI_MODE_TYPE_CAR
             || context.getPackageName().equals("com.auroraplayer.app.tvpreview")
-            || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+            || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+            || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE));
     }
 
     static void configure(Activity activity, WebView webView) {
@@ -56,6 +60,16 @@ final class TvWebView {
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        webView.setBackgroundColor(0xFF0F0F12);
+        try {
+            webView.addJavascriptInterface(new Object() {
+                @android.webkit.JavascriptInterface
+                public boolean isTv() { return true; }
+            }, "AndroidTV");
+        } catch (Throwable t) {}
+        try {
+            webView.evaluateJavascript("window.__AURORA_TV_MODE__ = true; try { localStorage.setItem('aurora:tv_mode', 'true'); } catch(e){}", null);
+        } catch (Throwable t) {}
         ViewGroup.LayoutParams layout = webView.getLayoutParams();
         if (layout != null) {
             layout.width = ViewGroup.LayoutParams.MATCH_PARENT;

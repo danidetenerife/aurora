@@ -72,6 +72,7 @@ export type TrackTableProps<T extends Track = Track> = {
     ContextMenuWrapper?: FC<ContextMenuWrapperProps<T>>;
     noTruncate?: boolean;
     hideSubtitleArtist?: boolean;
+    isCurrentTrack?: (track: T) => boolean;
   };
   rowHeight?: number;
   overscan?: number;

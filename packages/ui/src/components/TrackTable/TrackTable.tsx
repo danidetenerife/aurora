@@ -91,6 +91,7 @@ export function TrackTable<T extends Track = Track>({
       onAlbumClick: actions?.onAlbumClick,
       noTruncate: meta?.noTruncate,
       hideSubtitleArtist: meta?.hideSubtitleArtist,
+      isCurrentTrack: meta?.isCurrentTrack,
     },
   });
 
@@ -120,6 +121,7 @@ export function TrackTable<T extends Track = Track>({
         features: resolvedFeatures,
         actions,
         labels,
+        meta,
       }}
     >
       <div className="flex h-full flex-col">

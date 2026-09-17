@@ -20,6 +20,9 @@ export type PodcastDetail = {
   episodes: Track[];
 };
 
+const SEARCH_RESULT_LIMIT = 20;
+const EPISODE_LIMIT = 50;
+
 type YtmInnerTubeSearchResponse = {
   contents?: {
     tabbedSearchResultsRenderer?: {
@@ -157,67 +160,22 @@ const YTM_BASE_URL = 'https://music.youtube.com/youtubei/v1';
 const YTM_CLIENT_NAME = 'WEB_REMIX';
 const YTM_CLIENT_VERSION = '1.20240101.01.00';
 const YTM_PODCAST_PARAMS = 'EgWKAQJQAWoSEBEQEBAEEAMQBRAJEAoQFRAO';
-const DEFAULT_LOCALE = 'es';
-const DEFAULT_COUNTRY = 'ES';
-const SEARCH_RESULT_LIMIT = 25;
-const EPISODE_LIMIT = 200;
+const getClientLocale = (): string => {
+  if (typeof navigator !== 'undefined' && navigator.language) {
+    return navigator.language.split('-')[0] || 'en';
+  }
+  return 'en';
+};
 
-const CURATED_YTM_PODCASTS: PodcastSearchResult[] = [
-  {
-    id: 'MPSPPLzuFY9Ixj9Z4G5-eRHblrmwMOY7tLUCHi',
-    name: 'The Wild Project',
-    publisher: 'Jordi Wild',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPLlDZ74Qz5KgziPV5gTjd5QDsey1znyS_d',
-    name: 'Terrores Criminales',
-    publisher: 'Terrores Nocturnos Podcast',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPLVYKDE9WjKYQ',
-    name: 'Nadie Sabe Nada',
-    publisher: 'SER Podcast',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPL01FNQnUl7YKuI7iD1lwxKz8Ho3J8L8Of',
-    name: 'ROCA PROJECT',
-    publisher: 'Carlos Roca',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPLIijRqUddPmhs7b8p_0VxYA3Dvh4629EJ',
-    name: 'Extra Anormal Podcast',
-    publisher: 'Podcast Extra Anormal',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPL0rT9kkqIgDewaqNB7hwUJ1_TxGr4jiCt',
-    name: 'Gusgri Podcast',
-    publisher: 'Doble G',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPLHlflR-J9dJdapDdWtWq0u--YEUc5PYki',
-    name: 'Tom Segura En Español Podcast',
-    publisher: 'Tom Segura',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPLP7xxvt-QP_wmLIqw00IIROfaMIzSBNlk',
-    name: 'Conversaciones en español',
-    publisher: 'Joel Zárate',
-    source: 'youtube-music',
-  },
-  {
-    id: 'MPSPPLhLv3Z_8fvFh5lPIb-Xo-gTYjKQm0GDuv',
-    name: 'Salida de Emergencia',
-    publisher: 'Salida de Emergencia',
-    source: 'youtube-music',
-  },
-];
+const getClientCountry = (): string => {
+  if (typeof navigator !== 'undefined' && navigator.language) {
+    const parts = navigator.language.split('-');
+    if (parts.length > 1) {
+      return parts[1].toUpperCase();
+    }
+  }
+  return 'US';
+};
 
 const parseDurationToMillis = (text?: string): number | undefined => {
   if (!text) {
@@ -273,8 +231,8 @@ class PodcastService {
             client: {
               clientName: YTM_CLIENT_NAME,
               clientVersion: YTM_CLIENT_VERSION,
-              hl: DEFAULT_LOCALE,
-              gl: DEFAULT_COUNTRY,
+              hl: getClientLocale(),
+              gl: getClientCountry(),
             },
           },
           query,
@@ -372,29 +330,19 @@ class PodcastService {
 
   async getFeaturedPodcasts(): Promise<PodcastSearchResult[]> {
     try {
-      const [popularYtm, spanishYtm] = await Promise.all([
-        this.searchYtmPodcasts('podcasts populares'),
-        this.searchYtmPodcasts('podcasts en español'),
-      ]);
-
-      const seenIds = new Set<string>();
-      const combined: PodcastSearchResult[] = [];
-
-      for (const item of [...popularYtm, ...spanishYtm, ...CURATED_YTM_PODCASTS]) {
-        if (!seenIds.has(item.id)) {
-          seenIds.add(item.id);
-          combined.push(item);
-        }
-      }
-
-      if (combined.length > 0) {
-        return combined;
+      const ytmResults = await this.searchYtmPodcasts('podcasts');
+      if (ytmResults.length > 0) {
+        return ytmResults;
       }
     } catch {
-      // fallback
+      // Fall through to iTunes fallback
     }
 
-    return CURATED_YTM_PODCASTS;
+    try {
+      return await this.searchItunesPodcasts('podcast');
+    } catch {
+      return [];
+    }
   }
 
   async searchPodcasts(query: string): Promise<PodcastSearchResult[]> {
@@ -511,8 +459,8 @@ class PodcastService {
             client: {
               clientName: YTM_CLIENT_NAME,
               clientVersion: YTM_CLIENT_VERSION,
-              hl: DEFAULT_LOCALE,
-              gl: DEFAULT_COUNTRY,
+              hl: getClientLocale(),
+              gl: getClientCountry(),
             },
           },
           browseId,
@@ -544,7 +492,8 @@ class PodcastService {
           .join('');
       const headerThumbnails =
         headerSection?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails;
-      const initialArtwork = headerThumbnails?.[headerThumbnails.length - 1]?.url;
+      const initialArtwork =
+        headerThumbnails?.[headerThumbnails.length - 1]?.url;
 
       const secondarySection =
         data.contents?.twoColumnBrowseResultsRenderer?.secondaryContents;
@@ -553,7 +502,9 @@ class PodcastService {
           ?.musicShelfRenderer;
       const rawEpisodeList = episodeShelf?.contents ?? [];
       const firstEpThumb =
-        rawEpisodeList[0]?.musicMultiRowListItemRenderer?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.slice(-1)[0]?.url;
+        rawEpisodeList[0]?.musicMultiRowListItemRenderer?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails?.slice(
+          -1,
+        )[0]?.url;
       const showArtwork = initialArtwork || firstEpThumb;
 
       const episodes: Track[] = [];
@@ -567,10 +518,8 @@ class PodcastService {
         const episodeThumb =
           thumbnails?.[thumbnails.length - 1]?.url ?? showArtwork;
 
-
         const durText =
-          row?.playbackProgress?.musicPlaybackProgressRenderer?.durationText
-            ?.runs
+          row?.playbackProgress?.musicPlaybackProgressRenderer?.durationText?.runs
             ?.map((run) => run.text)
             .filter(Boolean)
             .join('') ||

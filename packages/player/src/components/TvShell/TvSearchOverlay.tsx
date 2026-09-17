@@ -119,7 +119,7 @@ export const TvSearchOverlay: FC = () => {
                 subtitle={track.artists
                   ?.map((artist) => artist.name)
                   .join(', ')}
-                src={pickArtwork(track.artwork, 'thumbnail', 200)?.url}
+                src={pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 300)?.url}
                 onClick={() => {
                   playTvTracks([track]);
                   closeSearch();

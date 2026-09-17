@@ -317,20 +317,23 @@
 
 .aurora-mobile-pages {
   flex: 1;
-  gap: 4px;
+  gap: 6px;
 }
 
 .aurora-mobile-pages-toolbar {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 6px;
-  height: 36px;
+  gap: 8px;
+  height: 48px;
 }
 
 .aurora-mobile-pages-toolbar button {
-  width: 36px;
-  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   box-shadow: none;
 }
 
@@ -338,6 +341,9 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .aurora-mobile-page-rows .overflow-auto {
@@ -350,39 +356,50 @@
   border: 0;
 }
 
+.aurora-mobile-page-rows tr {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.aurora-mobile-page-rows tr[data-active-track='true'] {
+  background-color: rgba(34, 197, 94, 0.12) !important;
+  border-left: 4px solid var(--accent-green, #22c55e) !important;
+}
+
+.aurora-mobile-page-rows tr[data-active-track='true'] button span:first-child {
+  color: var(--accent-green, #22c55e) !important;
+  font-weight: 700 !important;
+}
+
 .aurora-mobile-page-rows td {
-  height: 56px;
-  padding-block: 3px;
+  height: 64px;
+  padding-block: 4px;
+  vertical-align: middle;
 }
 
 .aurora-mobile-page-rows td img {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
 }
 
 .aurora-mobile-page-rows .line-clamp-2,
 .aurora-mobile-page-rows .line-clamp-1 {
   display: block;
-  overflow: visible;
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: initial;
-  text-overflow: clip;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.aurora-mobile-page-rows td {
-  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .aurora-mobile-page-rows td .line-clamp-2 {
-  font-size: 12px;
-  line-height: 14px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
 }
 
 .aurora-mobile-page-rows td .line-clamp-1 {
-  font-size: 10px;
-  line-height: 12px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--foreground-secondary);
 }
 
 .aurora-workspace[data-native-mobile] .aurora-player {

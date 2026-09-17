@@ -15,6 +15,8 @@ export const isGoogleTVEnvironment = (): boolean => {
 
   try {
     if (
+      (window as unknown as { AndroidTV?: unknown }).AndroidTV !== undefined ||
+      (window as unknown as { __AURORA_TV_MODE__?: boolean }).__AURORA_TV_MODE__ === true ||
       window.location.search.includes('tv=1') ||
       window.location.search.includes('platform=tv') ||
       localStorage.getItem('aurora:tv_mode') === 'true'

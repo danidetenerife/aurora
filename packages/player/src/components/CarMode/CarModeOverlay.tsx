@@ -35,8 +35,7 @@ const formatSeconds = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-export const CarModeOverlay: FC = () => {
-  const isCarMode = useCarModeStore((state) => state.isCarMode);
+const CarModeOverlayContent: FC = () => {
   const exitCarMode = useCarModeStore((state) => state.exitCarMode);
   const isBluetoothConnected = useCarModeStore(
     (state) => state.isBluetoothConnected,
@@ -116,11 +115,6 @@ export const CarModeOverlay: FC = () => {
   }, [currentTrack]);
 
   const [seekingValue, setSeekingValue] = useState<number | null>(null);
-
-  if (!isCarMode) {
-    return null;
-  }
-
   const effectiveTime = seekingValue ?? seek;
 
   return (
@@ -132,7 +126,7 @@ export const CarModeOverlay: FC = () => {
       <div className="aurora-car-header relative z-10 flex shrink-0 flex-wrap items-center justify-between gap-2 px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-800/80 px-3.5 py-1.5 shadow-lg backdrop-blur-md">
-            <Car size={18} className="animate-pulse text-emerald-400" />
+            <Car size={18} className="text-emerald-400" />
             <span className="text-xs font-bold tracking-wider text-zinc-200 uppercase">
               Modo Coche
             </span>
@@ -302,4 +296,12 @@ export const CarModeOverlay: FC = () => {
       </div>
     </div>
   );
+};
+
+export const CarModeOverlay: FC = () => {
+  const isCarMode = useCarModeStore((state) => state.isCarMode);
+  if (!isCarMode) {
+    return null;
+  }
+  return <CarModeOverlayContent />;
 };

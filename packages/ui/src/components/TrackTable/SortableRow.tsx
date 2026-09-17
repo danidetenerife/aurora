@@ -20,7 +20,8 @@ export function SortableRow<T extends Track = Track>({
   isReorderable = false,
   style: externalStyle,
 }: SortableRowProps<T>) {
-  const { actions } = useTrackTableContext<T>();
+  const { actions, meta } = useTrackTableContext<T>();
+  const isCurrent = Boolean(meta?.isCurrentTrack?.(row.original));
   const {
     attributes,
     listeners,
@@ -42,6 +43,7 @@ export function SortableRow<T extends Track = Track>({
   return (
     <tr
       data-testid="track-row"
+      data-active-track={isCurrent ? 'true' : undefined}
       ref={setNodeRef}
       style={style}
       onClick={() => actions.onPlayNow?.(row.original)}
@@ -51,6 +53,8 @@ export function SortableRow<T extends Track = Track>({
           '': !isDragging,
           'z-50': isDragging,
           'cursor-grab': isReorderable,
+          'border-l-4 border-l-accent-green bg-accent-green/10 font-bold':
+            isCurrent,
         },
       )}
       {...attributes}

@@ -4,7 +4,6 @@ import type { MetadataProvider } from '@aurora/plugin-sdk';
 
 import { useQueueStore } from '../stores/queueStore';
 import { useSettingsStore } from '../stores/settingsStore';
-import { useSoundStore } from '../stores/soundStore';
 import { reportError } from '../utils/logging';
 import { discoveryHost } from './discoveryHost';
 import { eventBus } from './eventBus';
@@ -71,6 +70,7 @@ export const getIntelligentAutoplayTracks = async (
   contextTracks: Track[],
   existingQueueIds: Set<string>,
   limit = RECOMMENDATION_LIMIT,
+  recordInSession = true,
 ): Promise<Track[]> => {
   try {
     const [topArtists, topGenres, blacklist, seedTracks, listens] =
@@ -227,17 +227,22 @@ export const getIntelligentAutoplayTracks = async (
       return true;
     });
 
+    const variety = useSettingsStore.getState().getValue('core.playback.discoveryVariety') as number ?? 0.5;
+
     const ranked = personalizationEngine.scoreAndRankTracks(
       filtered,
       topArtists,
       listens,
       blacklist,
+      variety,
     );
 
     const chosen = ranked.slice(0, limit);
-    for (const trackItem of chosen) {
-      registerTrackInSet(trackItem, sessionTrackIds);
-      registerTrackInSet(trackItem, existingQueueIds);
+    if (recordInSession) {
+      for (const trackItem of chosen) {
+        registerTrackInSet(trackItem, sessionTrackIds);
+        registerTrackInSet(trackItem, existingQueueIds);
+      }
     }
 
     return chosen;
@@ -335,18 +340,7 @@ export const ensureUpcomingTracks = async (
       }
 
       if (recommended.length > 0) {
-        const previousLength = items.length;
         useQueueStore.getState().addToQueue(recommended);
-
-        const currentSoundStatus = useSoundStore.getState().status;
-        const currentQueueState = useQueueStore.getState();
-        if (
-          currentSoundStatus === 'stopped' &&
-          currentQueueState.currentIndex === previousLength - 1
-        ) {
-          currentQueueState.goToNext();
-          useSoundStore.getState().play();
-        }
       }
 
       return recommended;

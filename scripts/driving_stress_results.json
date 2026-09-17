@@ -1,0 +1,8 @@
+﻿{
+  "testName": "Zero-Touch Driving Stress & Highway Simulation",
+  "device": "emulator-5554",
+  "baselineMem": "           TOTAL PSS:   101078            TOTAL RSS:   223180       TOTAL SWAP PSS:      385",
+  "finalMem": "           TOTAL PSS:   107116            TOTAL RSS:   229760       TOTAL SWAP PSS:      207",
+  "cpuInfo": " +0% 5706/com.auroraplayer.app: 0% user + 0% kernel",
+  "zeroTouchAutoReturnVerified": true
+}

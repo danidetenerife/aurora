@@ -4,6 +4,7 @@ import { FC, forwardRef } from 'react';
 
 import { Track } from '@aurora/model';
 
+import { cn } from '../../../utils';
 import { Button } from '../../Button';
 import { useTrackTableContext } from '../TrackTableContext';
 import { ContextMenuWrapperProps } from '../types';
@@ -14,6 +15,7 @@ type TitleCellMeta = {
   ContextMenuWrapper?: FC<ContextMenuWrapperProps>;
   noTruncate?: boolean;
   hideSubtitleArtist?: boolean;
+  isCurrentTrack?: (track: Track) => boolean;
 };
 
 type AddToQueueButtonProps = {
@@ -75,6 +77,7 @@ export const TitleCell = <T extends Track>({
   const hasAddToQueue = Boolean(meta?.onAddToQueue);
   const hasContextMenu = Boolean(ContextMenuWrapper);
   const hasActions = hasAddToQueue || hasContextMenu;
+  const isCurrent = Boolean(meta?.isCurrentTrack?.(track));
   const artistName =
     track.artists && track.artists.length > 0
       ? track.artists
@@ -98,11 +101,12 @@ export const TitleCell = <T extends Track>({
           }}
         >
           <span
-            className={
+            className={cn(
               noTruncate
-                ? 'text-foreground text-sm leading-snug font-semibold break-words whitespace-normal'
-                : 'text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words'
-            }
+                ? 'text-sm leading-snug font-semibold break-words whitespace-normal'
+                : 'line-clamp-2 text-sm leading-snug font-semibold break-words',
+              isCurrent ? 'text-accent-green font-bold' : 'text-foreground',
+            )}
           >
             {getValue()}
           </span>

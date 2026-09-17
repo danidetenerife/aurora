@@ -11,9 +11,20 @@ import { DashboardEmptyState } from './components/DashboardEmptyState';
 import { PersonalizedMixWidget } from './components/PersonalizedMixWidget';
 import { DASHBOARD_WIDGETS } from './dashboardWidgets';
 
+const getTimeOfDayGreeting = (): string => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) {
+    return 'Buenos días';
+  }
+  if (hour >= 12 && hour < 20) {
+    return 'Buenas tardes';
+  }
+  return 'Buenas noches';
+};
+
 const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
   const { t } = useTranslation('dashboard');
-  const [selectedSection, setSelectedSection] = useState('mix');
+  const [selectedSection, setSelectedSection] = useState('all');
   const dashboardProviders = useProviders('dashboard') as DashboardProvider[];
   const metadataProviders = useProviders('metadata');
 
@@ -37,7 +48,8 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
   );
 
   if (isCapacitorEnvironment()) {
-    const sections = [
+    const filterPills = [
+      { id: 'all', title: 'Todo' },
       ...(metadataProviders.length
         ? [
             {
@@ -58,24 +70,64 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
         content: <widget.component />,
       })),
     ];
-    const current =
-      sections.find((section) => section.id === selectedSection) ?? sections[0];
+
+    const currentSection =
+      filterPills.find((section) => section.id === selectedSection) ??
+      filterPills[0];
+
     return (
-      <div className="aurora-mobile-dashboard-content">
-        {sections.length > 1 && (
-          <select
-            aria-label={t('title')}
-            value={current.id}
-            onChange={(event) => setSelectedSection(event.target.value)}
-          >
-            {sections.map((section) => (
-              <option key={section.id} value={section.id}>
-                {section.title}
-              </option>
-            ))}
-          </select>
-        )}
-        {current?.content}
+      <div className="aurora-mobile-dashboard-content flex flex-col gap-4">
+        {/* Dynamic Spotify Greeting */}
+        <div
+          data-testid="mobile-dashboard-greeting"
+          className="flex items-center justify-between px-1 pt-2 shrink-0"
+        >
+          <h1 className="text-2xl font-black tracking-tight text-foreground">
+            {getTimeOfDayGreeting()}
+          </h1>
+        </div>
+
+        {/* Spotify-style Horizontal Filter Pills */}
+        <div
+          data-testid="mobile-filter-pills"
+          className="flex items-center gap-2 overflow-x-auto pb-1 shrink-0 no-scrollbar select-none"
+        >
+          {filterPills.map((pill) => {
+            const isActive =
+              selectedSection === pill.id ||
+              (selectedSection === 'all' && pill.id === 'all');
+            return (
+              <button
+                key={pill.id}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setSelectedSection(pill.id)}
+                className={`flex-none rounded-full px-4 py-1.5 text-xs font-bold transition-all active:scale-95 cursor-pointer ${
+                  isActive
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'bg-background-secondary text-foreground-secondary border border-border/70 hover:text-foreground'
+                }`}
+              >
+                {pill.title}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Feed Content: Single Section or Unified Feed */}
+        <div className="flex flex-col gap-6 pb-24 overflow-y-auto">
+          {selectedSection === 'all' ? (
+            <>
+              {metadataProviders.length > 0 && <PersonalizedMixWidget />}
+              {activeWidgets.map((widget) => {
+                const WidgetComponent = widget.component;
+                return <WidgetComponent key={widget.capability} />;
+              })}
+            </>
+          ) : (
+            currentSection?.content
+          )}
+        </div>
       </div>
     );
   }

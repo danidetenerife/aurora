@@ -220,6 +220,8 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -243,7 +245,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 1
                     </span>
@@ -298,6 +300,8 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -321,7 +325,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 2
                     </span>
@@ -376,6 +380,8 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -399,7 +405,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 3
                     </span>
@@ -658,6 +664,8 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -681,7 +689,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 1
                     </span>
@@ -736,6 +744,8 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -759,7 +769,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 2
                     </span>
@@ -814,6 +824,8 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -837,7 +849,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 3
                     </span>
@@ -892,6 +904,8 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -915,7 +929,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 4
                     </span>
@@ -970,6 +984,8 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -993,7 +1009,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 5
                     </span>
@@ -1269,6 +1285,8 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -1292,7 +1310,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 1
                     </span>
@@ -1347,6 +1365,8 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -1370,7 +1390,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 2
                     </span>
@@ -1425,6 +1445,8 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -1448,7 +1470,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 3
                     </span>
@@ -1503,6 +1525,8 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -1526,7 +1550,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 4
                     </span>
@@ -1581,6 +1605,8 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -1604,7 +1630,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 5
                     </span>
@@ -1866,6 +1892,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -1889,7 +1917,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 1
                       </span>
@@ -1944,6 +1972,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -1967,7 +1997,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 2
                       </span>
@@ -2022,6 +2052,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2045,7 +2077,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 3
                       </span>
@@ -2100,6 +2132,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2123,7 +2157,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 4
                       </span>
@@ -2178,6 +2212,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2201,7 +2237,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 5
                       </span>
@@ -2256,6 +2292,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2279,7 +2317,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 6
                       </span>
@@ -2334,6 +2372,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2357,7 +2397,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 7
                       </span>
@@ -2412,6 +2452,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2435,7 +2477,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 8
                       </span>
@@ -2490,6 +2532,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2513,7 +2557,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 9
                       </span>
@@ -2568,6 +2612,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2591,7 +2637,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 10
                       </span>
@@ -2646,6 +2692,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2669,7 +2717,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 11
                       </span>
@@ -2724,6 +2772,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2747,7 +2797,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 12
                       </span>
@@ -2802,6 +2852,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2825,7 +2877,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 13
                       </span>
@@ -2880,6 +2932,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2903,7 +2957,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 14
                       </span>
@@ -2958,6 +3012,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -2981,7 +3037,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 15
                       </span>
@@ -3036,6 +3092,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -3059,7 +3117,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 16
                       </span>
@@ -3114,6 +3172,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -3137,7 +3197,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 17
                       </span>
@@ -3192,6 +3252,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -3215,7 +3277,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 18
                       </span>
@@ -3270,6 +3332,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -3293,7 +3357,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 19
                       </span>
@@ -3348,6 +3412,8 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                     <img
                       alt=""
                       class="h-10 w-10 min-w-10 rounded object-cover"
+                      decoding="async"
+                      loading="lazy"
                       src="https://i.imgur.com/4euOws2.jpg"
                     />
                   </div>
@@ -3371,7 +3437,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                       class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                     >
                       <span
-                        class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                        class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                       >
                         Track 20
                       </span>
@@ -3694,6 +3760,8 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -3717,7 +3785,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 1
                     </span>
@@ -3772,6 +3840,8 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -3795,7 +3865,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 2
                     </span>
@@ -3850,6 +3920,8 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                   <img
                     alt=""
                     class="h-10 w-10 min-w-10 rounded object-cover"
+                    decoding="async"
+                    loading="lazy"
                     src="https://i.imgur.com/4euOws2.jpg"
                   />
                 </div>
@@ -3873,7 +3945,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                     class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                   >
                     <span
-                      class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                      class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                     >
                       Track 3
                     </span>

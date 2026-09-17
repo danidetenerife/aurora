@@ -1,5 +1,26 @@
 [
   {
+    "date": "2026-09-17T08:50",
+    "description": "Seguridad al volante manos libres y erradicación de datos hardcodeados: implementa avance automático de páginas al sonar la cola (Zero-Touch Sync), retorno automático de 8 segundos y botón rápido de sincronización tras navegación manual, gestos táctiles de deslizamiento (swipe), resaltado de alto contraste para la pista en reproducción, elimina definitivamente el catálogo hardcodeado de podcasts con carga 100% dinámica, y suprime más de 240 re-renderizados por minuto en Modo Coche para un consumo mínimo de batería.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Modo Coche", "color": "green" }, { "label": "Móvil", "color": "blue" }, { "label": "Batería", "color": "orange" }, { "label": "Podcasts", "color": "purple" }]
+  },
+  {
+    "date": "2026-09-17T06:30",
+    "description": "Modernización de la experiencia móvil estilo Spotify y optimización del algoritmo de personalización: introduce chips de filtro horizontales (Todo, Mix, Canciones, Artistas) y saludo horario dinámico en el Dashboard móvil, añade afinidad por vectores de género, filtro anti-fatiga y disyuntor de saltos consecutivos al motor de aprendizaje, y reduce el consumo de batería en móviles desacoplando escrituras a disco cada 15s y evitando re-renderizados innecesarios.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Móvil", "color": "green" }, { "label": "Algoritmo", "color": "blue" }, { "label": "Batería", "color": "orange" }]
+  },
+  {
+    "date": "2026-09-16T22:30",
+    "description": "Perfecciona la experiencia en Google TV: arregla la carga de carátulas en todas las secciones mediante política no-referrer, adopta formato 1:1 cuadrado para portadas de música, añade botón 'No me gusta' y miniatura en la barra de reproducción, y conecta el ajuste de variedad de descubrimiento al algoritmo de cola infinita.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Google TV", "color": "green" }, { "label": "Cola Infinita", "color": "blue" }, { "label": "Carátulas", "color": "purple" }]
+  },
+  {
     "date": "2026-09-15T21:30",
     "description": "Reproducción de videoclips a pantalla completa en Google TV con cola infinita: elimina barras y marcos para ofrecer una experiencia edge-to-edge con controles HUD auto-ocultables, soporte para mando a distancia (D-Pad) y autoreposición continua de canciones relacionadas sin interrupción.",
     "type": "feature",

@@ -23,6 +23,7 @@ import { pickArtwork, type Track } from '@aurora/model';
 import type { MetadataProvider } from '@aurora/plugin-sdk';
 
 import { useProviders } from '../../hooks/useProviders';
+import { getIntelligentAutoplayTracks } from '../../services/discoveryService';
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { providersHost } from '../../services/providersHost';
 import { useFavoritesStore } from '../../stores/favoritesStore';
@@ -147,6 +148,7 @@ const DEFAULT_HERO_TRACK: Track = {
 export const TvDashboard: FC = () => {
   const [recommendedTracks, setRecommendedTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortedMoods, setSortedMoods] = useState(TV_MOOD_CAPSULES);
 
   const favorites = useFavoritesStore((state) => state.tracks);
   const playlists = usePlaylistStore((state) => state.index);
@@ -192,23 +194,80 @@ export const TvDashboard: FC = () => {
   const loadRecommendations = async () => {
     try {
       const topArtists = await personalizationEngine.getTopArtists();
-      const topGenres = await personalizationEngine.getTopGenres(3);
+      const topGenres = await personalizationEngine.getTopGenres(10);
 
-      const queries: string[] = [];
-      if (topArtists.length > 0) {
-        queries.push(...topArtists.slice(0, 2).map((artist) => artist.name));
-      }
       if (topGenres.length > 0) {
-        queries.push(
-          ...topGenres.slice(0, 2).map((genre) => `${genre.genre} hits`),
+        const genreKeywords = new Map<string, number>();
+        for (const genreScore of topGenres) {
+          for (const word of genreScore.genre.split(/[\s-]+/)) {
+            const normalized = word.toLowerCase().trim();
+            if (normalized.length > 2) {
+              genreKeywords.set(
+                normalized,
+                (genreKeywords.get(normalized) ?? 0) + genreScore.score,
+              );
+            }
+          }
+        }
+
+        const moodAffinityMap = new Map<string, number>();
+        for (const mood of TV_MOOD_CAPSULES) {
+          const queryWords = mood.query.toLowerCase().split(/[\s-]+/);
+          const titleWords = mood.title.toLowerCase().split(/[\s&-]+/);
+          const allWords = [...queryWords, ...titleWords];
+          let affinity = 0;
+          for (const word of allWords) {
+            affinity += genreKeywords.get(word.trim()) ?? 0;
+          }
+          moodAffinityMap.set(mood.id, affinity);
+        }
+
+        const sorted = [...TV_MOOD_CAPSULES].sort(
+          (moodA, moodB) =>
+            (moodAffinityMap.get(moodB.id) ?? 0) -
+            (moodAffinityMap.get(moodA.id) ?? 0),
         );
-      }
-      if (queries.length === 0) {
-        queries.push('Top Hits 2026', 'Latin Hits');
+        setSortedMoods(sorted);
       }
 
-      if (metadataProvider?.search) {
-        const results: Track[] = [];
+      const seedTracks = await personalizationEngine.getSeedTracks(3);
+      const contextTracks = seedTracks.length > 0
+        ? seedTracks
+        : topArtists.slice(0, 2).map((artist) => ({
+            title: '',
+            artists: [{ name: artist.name, roles: [] as const }],
+            source: { provider: 'seed' as const, id: artist.name },
+          } as Track));
+
+      let results: Track[] = [];
+
+      if (contextTracks.length > 0) {
+        try {
+          results = await getIntelligentAutoplayTracks(
+            contextTracks,
+            new Set<string>(),
+            12,
+            false,
+          );
+        } catch {
+          // fall through to search fallback
+        }
+      }
+
+      if (results.length < 4 && metadataProvider?.search) {
+        const queries: string[] = [];
+        if (topArtists.length > 0) {
+          queries.push(...topArtists.slice(0, 2).map((artist) => artist.name));
+        }
+        if (topGenres.length > 0) {
+          queries.push(
+            ...topGenres.slice(0, 2).map((genre) => `${genre.genre} hits`),
+          );
+        }
+        if (queries.length === 0) {
+          queries.push("Today's Top Hits", 'Top 50 Global', 'Billboard Hot 100');
+        }
+
         for (const query of queries) {
           try {
             const searchRes = await metadataProvider.search({
@@ -218,22 +277,26 @@ export const TvDashboard: FC = () => {
             if (searchRes.tracks?.length) {
               results.push(...searchRes.tracks.slice(0, 4));
             }
-          } catch {}
-        }
-        if (results.length > 0) {
-          const seen = new Set<string>();
-          const unique = results.filter((track) => {
-            const key = `${track.title}-${track.artists?.[0]?.name}`;
-            if (seen.has(key)) {
-              return false;
-            }
-            seen.add(key);
-            return true;
-          });
-          setRecommendedTracks(unique);
+          } catch {
+            // search query failed, continue to next
+          }
         }
       }
+
+      if (results.length > 0) {
+        const seen = new Set<string>();
+        const unique = results.filter((track) => {
+          const key = `${(track.artists?.[0]?.name ?? '').toLowerCase().trim()}-${(track.title ?? '').toLowerCase().trim()}`;
+          if (seen.has(key)) {
+            return false;
+          }
+          seen.add(key);
+          return true;
+        });
+        setRecommendedTracks(unique);
+      }
     } catch {
+      // recommendations fetch failed gracefully
     } finally {
       setLoading(false);
     }
@@ -268,7 +331,7 @@ export const TvDashboard: FC = () => {
 
   const heroTrack = recommendedTracks[0] ?? DEFAULT_HERO_TRACK;
   const heroArtUrl =
-    pickArtwork(heroTrack.artwork, 'thumbnail', 600)?.url ??
+    pickArtwork(heroTrack.artwork ?? heroTrack.album?.artwork, 'thumbnail', 600)?.url ??
     'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop';
   const isHeroFavorite = favorites.some(
     (item) =>
@@ -352,7 +415,7 @@ export const TvDashboard: FC = () => {
           </div>
           <div className="tv-hero-art-side">
             <div className="tv-hero-art-card">
-              <img src={heroArtUrl} alt="" />
+              <img src={heroArtUrl} alt="" referrerPolicy="no-referrer" />
             </div>
           </div>
         </div>
@@ -470,7 +533,7 @@ export const TvDashboard: FC = () => {
                       subtitle={track.artists
                         ?.map((artist) => artist.name)
                         .join(', ')}
-                      src={pickArtwork(track.artwork, 'thumbnail', 300)?.url}
+                      src={pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 300)?.url}
                       focusKey={`tv-dash-rec-${index}`}
                       destinations={{
                         up: 'tv-stat-favs',
@@ -514,7 +577,7 @@ export const TvDashboard: FC = () => {
 
           <FocusContext.Provider value={rowMoods.focusKey}>
             <div ref={rowMoods.ref} className="tv-row-scroller">
-              {TV_MOOD_CAPSULES.map((mood, index) => {
+            {sortedMoods.map((mood, index) => {
                 const Icon = mood.icon;
                 return (
                   <TvButton

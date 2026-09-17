@@ -18,13 +18,13 @@ export type { UserListenRecord } from './listeningProfile.mjs';
 const SKIP_THRESHOLD_MS = 30_000;
 const IMMEDIATE_SKIP_THRESHOLD_MS = 8_000;
 const COMPLETION_RATIO_THRESHOLD = 0.8;
-const CHECKPOINT_MS = 15_000;
+const CHECKPOINT_MS = 60_000;
 const DEFAULT_DURATION_MS = 180_000;
 const MILLISECONDS_PER_SECOND = 1000;
 const MILLISECONDS_PER_DAY = 86_400_000;
 const RECENCY_HALF_LIFE_DAYS = 21;
 const REPLAY_WINDOW_DAYS = 1;
-const MAX_TRACKS_PER_ARTIST = 3;
+const COOLDOWN_WINDOW_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export type ArtistScore = {
   name: string;
@@ -50,19 +50,48 @@ const exponentialDecay = (daysAgo: number): number =>
   Math.exp((-Math.LN2 * daysAgo) / RECENCY_HALF_LIFE_DAYS);
 
 const completionRate = (record: UserListenRecord): number => {
-  if (record.durationMs <= 0 || record.playCount <= 0) {
+  const durationMs = record.durationMs;
+  const playCount = record.playCount;
+  const totalListenMs = record.totalListenMs;
+
+  if (
+    !Number.isFinite(durationMs) ||
+    !Number.isFinite(playCount) ||
+    !Number.isFinite(totalListenMs) ||
+    durationMs <= 0 ||
+    playCount <= 0
+  ) {
     return 0;
   }
-  return Math.min(
-    1,
-    record.totalListenMs / (record.playCount * record.durationMs),
-  );
+  const ratio = totalListenMs / (playCount * durationMs);
+  return Math.max(0, Math.min(1, ratio));
 };
 
-const loyaltyBonus = (record: UserListenRecord): number =>
-  Math.log2(
-    1 + Math.max(0, (Date.now() - record.firstPlayedAt) / MILLISECONDS_PER_DAY),
+const loyaltyBonus = (record: UserListenRecord): number => {
+  if (
+    !record.firstPlayedAt ||
+    !Number.isFinite(record.firstPlayedAt) ||
+    record.firstPlayedAt <= 0
+  ) {
+    return 0;
+  }
+  const days = Math.max(
+    0,
+    (Date.now() - record.firstPlayedAt) / MILLISECONDS_PER_DAY,
   );
+  return Math.min(3.0, Math.log2(1 + days));
+};
+
+const getDeterministicJitter = (trackId: string): number => {
+  const day = Math.floor(Date.now() / MILLISECONDS_PER_DAY);
+  let hash = 0;
+  const str = trackId + day;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return 0.85 + ((Math.abs(hash) % 1000) / 1000) * 0.3; // [0.85, 1.15]
+};
 
 export class PersonalizationEngine {
   private static instance: PersonalizationEngine;
@@ -70,6 +99,8 @@ export class PersonalizationEngine {
   private session: ListeningSession | null = null;
   private listeners = new Set<(origin: 'local' | 'remote') => void>();
   private unsubscribe: Array<() => void> = [];
+  private saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private consecutiveSkips = 0;
   private artistResolutionCache = new Map<
     string,
     { spotifyUri?: string; genres: string[] }
@@ -190,6 +221,11 @@ export class PersonalizationEngine {
   private finishSession(completed: boolean, skipped = false): void {
     const session = this.session;
     this.session = null;
+    if (skipped) {
+      this.consecutiveSkips++;
+    } else if (completed) {
+      this.consecutiveSkips = 0;
+    }
     if (session) {
       this.saveSession(session, completed, skipped);
     }
@@ -229,6 +265,9 @@ export class PersonalizationEngine {
     session.savedMs = session.listenedMs;
     session.countedPlay ||= playCount > 0;
 
+    const isMajorEvent =
+      playCount > 0 || skipCount > 0 || immediateSkipCount > 0 || completed;
+
     if (listenMs || playCount || skipCount || immediateSkipCount) {
       void this.recordListening(
         session.track,
@@ -236,6 +275,7 @@ export class PersonalizationEngine {
         playCount,
         skipCount,
         immediateSkipCount,
+        isMajorEvent,
       ).catch((error) => {
         void Logger.history.error(
           'Unable to save listening profile: ' + String(error),
@@ -259,6 +299,8 @@ export class PersonalizationEngine {
   private mutate(
     update: (records: UserListenRecord[]) => Promise<UserListenRecord[]>,
     origin: 'local' | 'remote',
+    persistImmediately = true,
+    notifyListeners = true,
   ): Promise<void> {
     const write = this.pendingWrite.then(async () => {
       const records = mergeListenRecords(
@@ -270,11 +312,35 @@ export class PersonalizationEngine {
         return;
       }
       await this.profileStore.set('listens', updated);
-      await this.profileStore.save();
-      this.notify(origin);
+      if (persistImmediately) {
+        if (this.saveDebounceTimer) {
+          clearTimeout(this.saveDebounceTimer);
+          this.saveDebounceTimer = null;
+        }
+        await this.profileStore.save();
+      } else {
+        if (!this.saveDebounceTimer) {
+          this.saveDebounceTimer = setTimeout(() => {
+            this.saveDebounceTimer = null;
+            void this.profileStore.save();
+          }, 2000);
+        }
+      }
+      if (notifyListeners) {
+        this.notify(origin);
+      }
     });
     this.pendingWrite = write.catch(() => undefined);
     return write;
+  }
+
+  async flushPendingSaves(): Promise<void> {
+    if (this.saveDebounceTimer) {
+      clearTimeout(this.saveDebounceTimer);
+      this.saveDebounceTimer = null;
+    }
+    await this.pendingWrite;
+    await this.profileStore.save();
   }
 
   async mergeRemoteListens(remoteListens: UserListenRecord[]): Promise<void> {
@@ -296,6 +362,7 @@ export class PersonalizationEngine {
       completed ? 1 : 0,
       completed ? 0 : 1,
       isImmediate ? 1 : 0,
+      true,
     );
   }
 
@@ -305,45 +372,52 @@ export class PersonalizationEngine {
     playCount: number,
     skipCount: number,
     immediateSkipCount = 0,
+    persistImmediately = true,
   ): Promise<void> {
-    return this.mutate(async (records) => {
-      let deviceId = await this.profileStore.get<string>('deviceId');
-      if (!deviceId) {
-        deviceId = crypto.randomUUID();
-        await this.profileStore.set('deviceId', deviceId);
-      }
-      const artistName = track.artists[0]?.name || 'Unknown';
-      const trackId = track.source.id || artistName + '-' + track.title;
-      const existing = records.find((record) => record.trackId === trackId);
-      const counters = existing?.contributions?.[deviceId];
-      const now = Date.now();
-      const updated: UserListenRecord = {
-        ...existing,
-        trackId,
-        title: track.title,
-        artist: artistName,
-        source: track.source,
-        artistSource: track.artists[0]?.source,
-        durationMs: track.durationMs ?? DEFAULT_DURATION_MS,
-        firstPlayedAt: existing?.firstPlayedAt ?? now,
-        lastPlayedAt: now,
-        playCount: 0,
-        skipCount: 0,
-        immediateSkipCount: 0,
-        totalListenMs: 0,
-        contributions: {
-          ...existing?.contributions,
-          [deviceId]: {
-            playCount: (counters?.playCount ?? 0) + playCount,
-            skipCount: (counters?.skipCount ?? 0) + skipCount,
-            immediateSkipCount:
-              (counters?.immediateSkipCount ?? 0) + immediateSkipCount,
-            totalListenMs: (counters?.totalListenMs ?? 0) + listenMs,
+    const notifyListeners = persistImmediately;
+    return this.mutate(
+      async (records) => {
+        let deviceId = await this.profileStore.get<string>('deviceId');
+        if (!deviceId) {
+          deviceId = crypto.randomUUID();
+          await this.profileStore.set('deviceId', deviceId);
+        }
+        const artistName = track.artists[0]?.name || 'Unknown';
+        const trackId = track.source.id || artistName + '-' + track.title;
+        const existing = records.find((record) => record.trackId === trackId);
+        const counters = existing?.contributions?.[deviceId];
+        const now = Date.now();
+        const updated: UserListenRecord = {
+          ...existing,
+          trackId,
+          title: track.title,
+          artist: artistName,
+          source: track.source,
+          artistSource: track.artists[0]?.source,
+          durationMs: track.durationMs ?? DEFAULT_DURATION_MS,
+          firstPlayedAt: existing?.firstPlayedAt ?? now,
+          lastPlayedAt: now,
+          playCount: 0,
+          skipCount: 0,
+          immediateSkipCount: 0,
+          totalListenMs: 0,
+          contributions: {
+            ...existing?.contributions,
+            [deviceId]: {
+              playCount: (counters?.playCount ?? 0) + playCount,
+              skipCount: (counters?.skipCount ?? 0) + skipCount,
+              immediateSkipCount:
+                (counters?.immediateSkipCount ?? 0) + immediateSkipCount,
+              totalListenMs: (counters?.totalListenMs ?? 0) + listenMs,
+            },
           },
-        },
-      };
-      return mergeListenRecords(records, [updated]);
-    }, 'local');
+        };
+        return mergeListenRecords(records, [updated]);
+      },
+      'local',
+      persistImmediately,
+      notifyListeners,
+    );
   }
 
   // --- Blacklist / Dislike Management ---
@@ -716,8 +790,6 @@ export class PersonalizationEngine {
       }));
   }
 
-  // --- 70/20/10 Balanced Ranking ---
-
   scoreAndRankTracks(
     candidates: Array<{
       track: Track;
@@ -729,6 +801,7 @@ export class PersonalizationEngine {
       tracks: [],
       artists: [],
     },
+    variety: number = 0.5,
   ): Track[] {
     const listeningByTrack = new Map(
       listens.map((record) => [record.trackId, record]),
@@ -736,8 +809,30 @@ export class PersonalizationEngine {
     const artistAffinityMap = new Map<string, number>();
     const maxScore = Math.max(1, ...topArtists.map((artist) => artist.score));
     for (const artist of topArtists) {
-      artistAffinityMap.set(artist.name.toLowerCase(), artist.score / maxScore);
+      const normalizedAffinity =
+        Math.log(1 + Math.max(0, artist.score)) / Math.log(1 + maxScore);
+      artistAffinityMap.set(artist.name.toLowerCase(), normalizedAffinity);
     }
+
+    // Build user genre weights from top artists
+    const userGenreWeights = new Map<string, number>();
+    for (const artist of topArtists) {
+      const artistWeight =
+        artistAffinityMap.get(artist.name.toLowerCase()) ?? 0;
+      for (const genre of artist.genres ?? []) {
+        const clean = genre.toLowerCase().trim();
+        if (clean) {
+          userGenreWeights.set(
+            clean,
+            (userGenreWeights.get(clean) ?? 0) + artistWeight,
+          );
+        }
+      }
+    }
+    const maxGenreWeight = Math.max(
+      1,
+      ...Array.from(userGenreWeights.values()),
+    );
 
     const sourceWeights: Record<string, number> = {
       related: 1.0,
@@ -752,6 +847,9 @@ export class PersonalizationEngine {
     const familiarCandidates: Array<{ track: Track; score: number }> = [];
     const relatedCandidates: Array<{ track: Track; score: number }> = [];
     const discoveryCandidates: Array<{ track: Track; score: number }> = [];
+
+    const now = Date.now();
+    const hasSkipStreak = this.consecutiveSkips >= 3;
 
     for (const candidate of candidates) {
       const trackId =
@@ -774,9 +872,29 @@ export class PersonalizationEngine {
         continue;
       }
 
-      const affinity = artistAffinityMap.get(artistName) ?? 0;
+      let affinity = artistAffinityMap.get(artistName) ?? 0;
+
+      // Genre vector matching for unfamiliar or discovery tracks
+      if (affinity === 0 && userGenreWeights.size > 0) {
+        const candidateTags = (candidate.track.tags ?? []).map((t) =>
+          t.toLowerCase().trim(),
+        );
+        let bestGenreScore = 0;
+        for (const tag of candidateTags) {
+          if (userGenreWeights.has(tag)) {
+            bestGenreScore = Math.max(
+              bestGenreScore,
+              userGenreWeights.get(tag)! / maxGenreWeight,
+            );
+          }
+        }
+        if (bestGenreScore > 0) {
+          affinity = bestGenreScore * 0.75;
+        }
+      }
+
       const sourceBonus = sourceWeights[candidate.source] ?? 0.5;
-      const freshnessNoise = 0.8 + Math.random() * 0.4;
+      const freshnessNoise = getDeterministicJitter(trackId);
       const listen = listeningByTrack.get(trackId);
 
       const skipRatio =
@@ -789,10 +907,31 @@ export class PersonalizationEngine {
       const immediatePenalty =
         immediateSkips > 0 ? Math.pow(0.2, immediateSkips) : 1.0;
 
+      // Anti-fatigue / cooldown for tracks played in the last 4 hours
+      let cooldownMultiplier = 1.0;
+      if (listen?.lastPlayedAt) {
+        const timeSincePlay = now - listen.lastPlayedAt;
+        if (timeSincePlay >= 0 && timeSincePlay < COOLDOWN_WINDOW_MS) {
+          cooldownMultiplier = Math.max(
+            0.35,
+            timeSincePlay / COOLDOWN_WINDOW_MS,
+          );
+        }
+      }
+
+      // Skip streak circuit breaker: if user is skipping rapidly, boost familiar and reduce discovery noise
+      const streakMultiplier = hasSkipStreak
+        ? candidate.source === 'topTracks'
+          ? 1.3
+          : 0.7
+        : 1.0;
+
       const finalScore =
         (affinity * 0.4 + sourceBonus * 0.25 + 0.2 + freshnessNoise * 0.15) *
         skipWeight *
-        immediatePenalty;
+        immediatePenalty *
+        cooldownMultiplier *
+        streakMultiplier;
 
       const item = { track: candidate.track, score: finalScore };
 
@@ -810,14 +949,17 @@ export class PersonalizationEngine {
     relatedCandidates.sort((a, b) => b.score - a.score);
     discoveryCandidates.sort((a, b) => b.score - a.score);
 
-    // Target 70% familiar, 20% related, 10% discovery mix
+    // Target familiar/related mix based on variety setting
     const totalDesired =
       familiarCandidates.length +
       relatedCandidates.length +
       discoveryCandidates.length;
-    const targetFamiliar = Math.round(totalDesired * 0.7);
-    const targetRelated = Math.round(totalDesired * 0.2);
+    const familiarWeight = Math.max(0.1, 0.85 - variety * 0.7);
+    const relatedWeight = 0.15 + variety * 0.2;
+    const targetFamiliar = Math.round(totalDesired * familiarWeight);
+    const targetRelated = Math.round(totalDesired * relatedWeight);
 
+    const dynamicMaxTracks = Math.max(1, Math.round(4 - variety * 2));
     const merged: Track[] = [];
     const pushFromPool = (
       pool: Array<{ track: Track; score: number }>,
@@ -827,7 +969,7 @@ export class PersonalizationEngine {
       for (const entry of pool) {
         const artist = (entry.track.artists[0]?.name ?? '').toLowerCase();
         const currentCount = artistTrackCount.get(artist) ?? 0;
-        if (currentCount >= MAX_TRACKS_PER_ARTIST) {
+        if (currentCount >= dynamicMaxTracks) {
           continue;
         }
         artistTrackCount.set(artist, currentCount + 1);

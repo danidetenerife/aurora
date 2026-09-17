@@ -71,9 +71,14 @@ export const ThumbnailCell = <T extends Track>({
       .then((data: { results?: Array<{ artworkUrl100?: string }> }) => {
         const rawArtwork = data?.results?.[0]?.artworkUrl100;
         if (rawArtwork && isMounted) {
-          const highRes = rawArtwork.replace('100x100bb.jpg', '600x600bb.jpg');
-          coverCache.set(cacheKey, highRes);
-          setResolvedUrl(highRes);
+          if (coverCache.size > 150) {
+            const oldestKey = coverCache.keys().next().value;
+            if (oldestKey) {
+              coverCache.delete(oldestKey);
+            }
+          }
+          coverCache.set(cacheKey, rawArtwork);
+          setResolvedUrl(rawArtwork);
         } else if (isMounted && initialUrl) {
           setResolvedUrl(initialUrl);
         }
@@ -101,6 +106,8 @@ export const ThumbnailCell = <T extends Track>({
             className="h-10 w-10 min-w-10 rounded object-cover"
             src={displayUrl}
             alt=""
+            loading="lazy"
+            decoding="async"
             onError={() => setHasError(true)}
           />
         ) : (

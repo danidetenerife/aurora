@@ -279,9 +279,13 @@ export const PersonalizedMixWidget: FC = () => {
           <h2 className="text-lg font-bold">{t('personalizedMix.title')}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {topGenres.slice(0, 3).map((g) => (
-            <Badge key={g.genre} variant="pill" className="text-xs capitalize">
-              {g.genre}
+          {topGenres.slice(0, 3).map((genreScore) => (
+            <Badge
+              key={genreScore.genre}
+              variant="pill"
+              className="text-xs capitalize"
+            >
+              {genreScore.genre}
             </Badge>
           ))}
           <Badge variant="pill" className="text-xs">

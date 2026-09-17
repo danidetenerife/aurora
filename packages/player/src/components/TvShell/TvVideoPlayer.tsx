@@ -9,11 +9,13 @@ import {
   Play,
   SkipBack,
   SkipForward,
+  ThumbsDown,
   X,
 } from 'lucide-react';
 
 import { Logger } from '../../services/logger';
 import { musicVideoService } from '../../services/musicVideoService';
+import { personalizationEngine } from '../../services/personalizationEngine';
 import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
@@ -59,9 +61,9 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 
   const artworkUrl = useMemo(
     () =>
-      pickArtwork(track?.artwork, 'thumbnail', 800)?.url ??
+      pickArtwork(track?.artwork ?? track?.album?.artwork, 'thumbnail', 800)?.url ??
       'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop',
-    [track?.artwork],
+    [track?.artwork, track?.album?.artwork],
   );
 
   const resetOverlayTimer = useCallback(() => {
@@ -122,6 +124,14 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     useQueueStore.getState().goToPrevious();
     resetOverlayTimer();
   }, [resetOverlayTimer]);
+
+  const handleDislike = useCallback(() => {
+    if (track) {
+      const trackId = track.source?.id || `${track.artists?.[0]?.name || ''}-${track.title || ''}`;
+      void personalizationEngine.blacklistTrack(trackId);
+    }
+    handleNext();
+  }, [track, handleNext]);
 
   useEffect(() => {
     let cancelled = false;
@@ -330,6 +340,9 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         } else if (payload?.event === 'initialDelivery') {
           disableSubtitles();
           setIsVideoPlaying(true);
+        } else if (payload?.event === 'onError') {
+          setError(true);
+          setIsVideoPlaying(false);
         }
       } catch {}
     };
@@ -402,7 +415,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 
         <div className="relative z-10 flex flex-col items-center gap-6 max-w-2xl text-center">
           <div className="h-56 w-56 overflow-hidden rounded-3xl border-2 border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <img src={artworkUrl} alt="" className="h-full w-full object-cover" />
+            <img src={artworkUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
           </div>
 
           <div className="flex flex-col items-center gap-2">
@@ -447,6 +460,14 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
             >
               <SkipForward className="h-5 w-5" />
             </button>
+            <button
+              onClick={handleDislike}
+              aria-label="No me gusta"
+              title="No me gusta"
+              className="tv-video-ctrl-btn"
+            >
+              <ThumbsDown className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
@@ -462,7 +483,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     );
   }
 
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${targetVideoId}?autoplay=1&enablejsapi=1&playsinline=1&controls=0&rel=0&iv_load_policy=3&modestbranding=1`;
+  const embedUrl = `https://www.youtube.com/embed/${targetVideoId}?autoplay=1&enablejsapi=1&playsinline=1&controls=0&rel=0&iv_load_policy=3&modestbranding=1`;
 
   return (
     <div data-testid="tv-video-player" className="tv-video-container">
@@ -470,24 +491,18 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         ref={iframeRef}
         src={embedUrl}
         title={resolvedVideoTitle || track?.title || 'Videoclip'}
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
         tabIndex={-1}
         className="tv-video-frame"
         onLoad={() => {
-          setIsVideoPlaying(true);
           disableSubtitles();
-          iframeRef.current?.contentWindow?.postMessage(
-            JSON.stringify({ event: 'listening' }),
-            '*',
-          );
-          iframeRef.current?.contentWindow?.postMessage(
-            JSON.stringify({ event: 'command', func: 'unMute' }),
-            '*',
-          );
-          iframeRef.current?.contentWindow?.postMessage(
-            JSON.stringify({ event: 'command', func: 'playVideo' }),
-            '*',
-          );
+          try {
+            iframeRef.current?.contentWindow?.postMessage(
+              JSON.stringify({ event: 'listening' }),
+              '*',
+            );
+          } catch {}
         }}
       />
 
@@ -569,6 +584,15 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
                 className="tv-video-ctrl-btn"
               >
                 <SkipForward className="h-5 w-5" />
+              </button>
+              <button
+                onClick={handleDislike}
+                aria-label="No me gusta"
+                title="No me gusta"
+                tabIndex={showOverlay ? 0 : -1}
+                className="tv-video-ctrl-btn"
+              >
+                <ThumbsDown className="h-5 w-5" />
               </button>
             </div>
           </div>

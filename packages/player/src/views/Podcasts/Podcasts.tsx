@@ -1,63 +1,27 @@
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Heart, Mic2 } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import type { PodcastRef } from '@aurora/model';
-import { ViewShell } from '@aurora/ui';
+import { Button, ViewShell } from '@aurora/ui';
 
 import { podcastService } from '../../services/podcastService';
 import { usePodcastStore } from '../../stores/podcastStore';
 
-export const PODCASTS: PodcastRef[] = [
-  {
-    id: 'MPSPPLzuFY9Ixj9Z4G5-eRHblrmwMOY7tLUCHi',
-    name: 'The Wild Project',
-    publisher: 'Jordi Wild',
-    sourceUrl:
-      'https://music.youtube.com/browse/MPSPPLzuFY9Ixj9Z4G5-eRHblrmwMOY7tLUCHi',
-  },
-  {
-    id: 'MPSPPLlDZ74Qz5KgziPV5gTjd5QDsey1znyS_d',
-    name: 'Terrores Criminales',
-    publisher: 'Terrores Nocturnos Podcast',
-    sourceUrl:
-      'https://music.youtube.com/browse/MPSPPLlDZ74Qz5KgziPV5gTjd5QDsey1znyS_d',
-  },
-  {
-    id: 'MPSPPLVYKDE9WjKYQ',
-    name: 'Nadie Sabe Nada',
-    publisher: 'SER Podcast',
-    sourceUrl: 'https://music.youtube.com/browse/MPSPPLVYKDE9WjKYQ',
-  },
-  {
-    id: 'MPSPPL01FNQnUl7YKuI7iD1lwxKz8Ho3J8L8Of',
-    name: 'ROCA PROJECT',
-    publisher: 'Carlos Roca',
-    sourceUrl:
-      'https://music.youtube.com/browse/MPSPPL01FNQnUl7YKuI7iD1lwxKz8Ho3J8L8Of',
-  },
-  {
-    id: 'MPSPPLIijRqUddPmhs7b8p_0VxYA3Dvh4629EJ',
-    name: 'Extra Anormal Podcast',
-    publisher: 'Podcast Extra Anormal',
-    sourceUrl:
-      'https://music.youtube.com/browse/MPSPPLIijRqUddPmhs7b8p_0VxYA3Dvh4629EJ',
-  },
-  {
-    id: 'MPSPPL0rT9kkqIgDewaqNB7hwUJ1_TxGr4jiCt',
-    name: 'Gusgri Podcast',
-    publisher: 'Doble G',
-    sourceUrl:
-      'https://music.youtube.com/browse/MPSPPL0rT9kkqIgDewaqNB7hwUJ1_TxGr4jiCt',
-  },
-  {
-    id: 'todopoderosos',
-    name: 'Todopoderosos',
-    publisher: 'Espacio Fundación Telefónica',
-    sourceUrl: 'https://music.youtube.com/search?q=todopoderosos',
-  },
-];
+const PodcastCardSkeleton: FC = () => (
+  <div
+    data-testid="podcast-card-skeleton"
+    className="border-border bg-background-secondary flex min-w-0 animate-pulse items-center gap-3 rounded-xl border p-3"
+  >
+    <div className="bg-background-tertiary size-16 shrink-0 rounded-lg" />
+    <div className="flex min-w-0 flex-1 flex-col gap-2">
+      <div className="bg-background-tertiary h-4 w-40 rounded" />
+      <div className="bg-background-tertiary h-3 w-24 rounded" />
+    </div>
+  </div>
+);
 
 const PodcastCardCover: FC<{ src?: string }> = ({ src }) => {
   const [hasError, setHasError] = useState(false);
@@ -84,44 +48,33 @@ const PodcastCardCover: FC<{ src?: string }> = ({ src }) => {
 export const Podcasts: FC = () => {
   const { t } = useTranslation('podcastBrowser');
   const navigate = useNavigate();
-  const [catalog, setCatalog] = useState<PodcastRef[]>(PODCASTS);
-  const [artwork, setArtwork] = useState<Record<string, string>>({});
   const { favorites, load, toggleFavorite } = usePodcastStore();
+
+  const {
+    data: catalog = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<PodcastRef[]>({
+    queryKey: ['featured-podcasts'],
+    queryFn: async () => {
+      const results = await podcastService.getFeaturedPodcasts();
+      return results.map((item) => ({
+        id: item.id,
+        name: item.name,
+        publisher: item.publisher,
+        artworkUrl: item.artwork,
+        sourceUrl: item.id.startsWith('http')
+          ? item.id
+          : `https://music.youtube.com/browse/${item.id}`,
+      }));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
     void load();
   }, [load]);
-
-  useEffect(() => {
-    let active = true;
-    void podcastService
-      .getFeaturedPodcasts()
-      .then((results) => {
-        if (!active || results.length === 0) {
-          return;
-        }
-        const mapped: PodcastRef[] = results.map((item) => ({
-          id: item.id,
-          name: item.name,
-          publisher: item.publisher,
-          artworkUrl: item.artwork,
-          sourceUrl: `https://music.youtube.com/browse/${item.id}`,
-        }));
-        setCatalog(mapped);
-        const artMap: Record<string, string> = {};
-        for (const item of results) {
-          if (item.artwork) {
-            artMap[item.id] = item.artwork;
-          }
-        }
-        setArtwork((previous) => ({ ...previous, ...artMap }));
-      })
-      .catch(() => {});
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const handleOpenPodcast = (podcast: PodcastRef) => {
     void navigate({
@@ -132,7 +85,7 @@ export const Podcasts: FC = () => {
 
   const renderShow = (podcast: PodcastRef) => {
     const favorite = favorites.some((item) => item.id === podcast.id);
-    const coverArt = podcast.artworkUrl || artwork[podcast.id];
+    const coverArt = podcast.artworkUrl;
 
     return (
       <div
@@ -147,7 +100,6 @@ export const Podcasts: FC = () => {
         >
           <PodcastCardCover src={coverArt} />
           <span className="min-w-0 flex-1">
-
             <strong className="text-foreground block text-sm font-bold break-words whitespace-normal">
               {podcast.name}
             </strong>
@@ -182,7 +134,34 @@ export const Podcasts: FC = () => {
           </>
         )}
         <h2 className="text-sm font-semibold">{t('available')}</h2>
-        <div className="flex flex-col gap-2">{catalog.map(renderShow)}</div>
+        {isLoading && (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 6 }, (_, index) => (
+              <PodcastCardSkeleton key={`skeleton-${index}`} />
+            ))}
+          </div>
+        )}
+        {isError && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-12 text-center">
+            <p className="text-accent-red text-sm font-medium">
+              {t('loadError', { defaultValue: 'Unable to load podcasts' })}
+            </p>
+            <Button variant="default" onClick={() => void refetch()}>
+              {t('retry', { defaultValue: 'Retry' })}
+            </Button>
+          </div>
+        )}
+        {!isLoading && !isError && catalog.length === 0 && (
+          <div
+            data-testid="empty-state"
+            className="text-foreground-secondary py-12 text-center text-sm"
+          >
+            {t('empty', { defaultValue: 'No podcasts found' })}
+          </div>
+        )}
+        {!isLoading && !isError && catalog.length > 0 && (
+          <div className="flex flex-col gap-2">{catalog.map(renderShow)}</div>
+        )}
       </section>
     </ViewShell>
   );

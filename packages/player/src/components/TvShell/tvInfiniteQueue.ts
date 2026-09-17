@@ -1,36 +1,152 @@
-﻿import type { Track } from '@aurora/model';
+import type { Track } from '@aurora/model';
 
+import {
+  getIntelligentAutoplayTracks,
+  isTrackInSet,
+  registerTrackInSet,
+  resetDiscoverySession,
+} from '../../services/discoveryService';
 import { Logger } from '../../services/logger';
 import { metadataHost } from '../../services/metadataHost';
+import { personalizationEngine } from '../../services/personalizationEngine';
 import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
-import { POPULAR_TV_PLAYLISTS, TV_MOOD_CAPSULES } from './TvDashboard';
 
-const MIN_REMAINING_THRESHOLD = 3;
-const TARGET_FETCH_LIMIT = 15;
-const MAX_BATCH_ADD = 10;
-const SEARCH_PER_QUERY_LIMIT = 10;
+const MIN_REMAINING_THRESHOLD = 5;
+const TARGET_FETCH_LIMIT = 25;
+const MAX_BATCH_ADD = 15;
+const SEARCH_PER_QUERY_LIMIT = 12;
+const COOLDOWN_MS = 8_000;
+const URGENT_REMAINING_THRESHOLD = 1;
 
 let isReplenishing = false;
-let moodCycleIndex = 0;
+let lastReplenishTime = 0;
 
-const createTrackKey = (track: Track): string => {
-  const sourceId = track.source?.id?.toLowerCase().trim();
-  if (sourceId) {
-    return sourceId;
+const sessionPlayedIds = new Set<string>();
+
+const buildPersonalizedQueries = async (
+  currentTrack: Track | undefined,
+): Promise<string[]> => {
+  const queries: string[] = [];
+
+  try {
+    const [topArtists, topGenres, blacklist] = await Promise.all([
+      personalizationEngine.getTopArtists(),
+      personalizationEngine.getTopGenres(5),
+      personalizationEngine.getBlacklist(),
+    ]);
+
+    const blacklistedArtists = new Set(
+      blacklist.artists.map((artist) => artist.toLowerCase().trim()),
+    );
+
+    const currentArtist = currentTrack?.artists?.[0]?.name?.trim();
+
+    if (currentArtist && !blacklistedArtists.has(currentArtist.toLowerCase())) {
+      queries.push(`${currentArtist} radio`);
+
+      const relatedArtists = topArtists
+        .filter(
+          (artist) =>
+            artist.name.toLowerCase() !== currentArtist.toLowerCase() &&
+            !blacklistedArtists.has(artist.name.toLowerCase()),
+        )
+        .slice(0, 2);
+
+      for (const related of relatedArtists) {
+        queries.push(`${related.name} best songs`);
+      }
+    }
+
+    for (const genreScore of topGenres.slice(0, 3)) {
+      queries.push(`${genreScore.genre} hits`);
+    }
+
+    if (topArtists.length > 0) {
+      const nonBlacklisted = topArtists.filter(
+        (artist) => !blacklistedArtists.has(artist.name.toLowerCase()),
+      );
+      if (nonBlacklisted.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * Math.min(nonBlacklisted.length, 8),
+        );
+        const randomArtist = nonBlacklisted[randomIndex];
+        if (randomArtist) {
+          queries.push(`${randomArtist.name} mix`);
+        }
+      }
+    }
+  } catch {
+    Logger.streaming.warn(
+      'TvInfiniteQueue: Failed to build personalized queries, using fallback',
+    );
   }
-  const artist = (track.artists?.[0]?.name ?? '').toLowerCase().trim();
-  const title = (track.title ?? '').toLowerCase().trim();
-  return `${artist}:::${title}`;
+
+  if (queries.length === 0) {
+    queries.push("Today's Top Hits", 'Top 50 Global', 'Billboard Hot 100');
+  }
+
+  return queries;
 };
 
-export const replenishTvQueue = async (): Promise<Track[]> => {
+const searchForFreshTracks = async (
+  queries: string[],
+  existingKeys: Set<string>,
+): Promise<Track[]> => {
+  const discoveredTracks: Track[] = [];
+  const searchDiscoveredKeys = new Set<string>();
+
+  for (const query of queries) {
+    if (discoveredTracks.length >= TARGET_FETCH_LIMIT) {
+      break;
+    }
+    try {
+      const response = await metadataHost.search({
+        query,
+        types: ['tracks'],
+        limit: SEARCH_PER_QUERY_LIMIT,
+      });
+
+      if (response.tracks && Array.isArray(response.tracks)) {
+        for (const track of response.tracks) {
+          if (
+            !isTrackInSet(track, existingKeys) &&
+            !isTrackInSet(track, sessionPlayedIds) &&
+            !isTrackInSet(track, searchDiscoveredKeys)
+          ) {
+            registerTrackInSet(track, searchDiscoveredKeys);
+            discoveredTracks.push(track);
+          }
+        }
+      }
+    } catch (searchError) {
+      Logger.streaming.warn(
+        `TvInfiniteQueue: Search query "${query}" failed: ${searchError}`,
+      );
+    }
+  }
+
+  return discoveredTracks;
+};
+
+export const replenishTvQueue = async (
+  urgent = false,
+): Promise<Track[]> => {
+  const now = Date.now();
+  const timeSinceLastReplenish = now - lastReplenishTime;
+  const cooldownActive = timeSinceLastReplenish < COOLDOWN_MS;
+
   if (isReplenishing) {
     return [];
   }
 
+  if (cooldownActive && !urgent) {
+    return [];
+  }
+
   isReplenishing = true;
+  lastReplenishTime = now;
   try {
     const queueState = useQueueStore.getState();
     const existingItems = queueState.items;
@@ -38,87 +154,97 @@ export const replenishTvQueue = async (): Promise<Track[]> => {
 
     const existingKeys = new Set<string>();
     for (const item of existingItems) {
-      existingKeys.add(createTrackKey(item.track));
+      registerTrackInSet(item.track, existingKeys);
+      registerTrackInSet(item.track, sessionPlayedIds);
     }
 
     const currentTrack =
       existingItems[currentIndex]?.track ??
       existingItems[existingItems.length - 1]?.track;
-    const currentArtist = currentTrack?.artists?.[0]?.name?.trim();
-    const currentTitle = currentTrack?.title?.trim();
 
-    const searchQueries: string[] = [];
+    const contextTracks = existingItems
+      .slice(Math.max(0, currentIndex - 10), currentIndex + 1)
+      .map((item) => item.track);
 
-    if (currentArtist) {
-      searchQueries.push(`${currentArtist} radio`);
-      searchQueries.push(`${currentArtist} hits`);
+    let recommended: Track[] = [];
+
+    try {
+      recommended = await getIntelligentAutoplayTracks(
+        contextTracks,
+        existingKeys,
+        MAX_BATCH_ADD,
+      );
+
+      recommended = recommended.filter(
+        (track) => !isTrackInSet(track, sessionPlayedIds),
+      );
+    } catch (error) {
+      Logger.streaming.warn(
+        `TvInfiniteQueue: Intelligent autoplay failed: ${error}`,
+      );
     }
 
-    if (currentArtist && currentTitle) {
-      searchQueries.push(`${currentArtist} ${currentTitle} mix`);
-    }
-
-    const moodFallback =
-      TV_MOOD_CAPSULES[moodCycleIndex % TV_MOOD_CAPSULES.length];
-    const playlistFallback =
-      POPULAR_TV_PLAYLISTS[moodCycleIndex % POPULAR_TV_PLAYLISTS.length];
-    moodCycleIndex += 1;
-
-    if (playlistFallback?.query) {
-      searchQueries.push(playlistFallback.query);
-    }
-    if (moodFallback?.query) {
-      searchQueries.push(moodFallback.query);
-    }
-    searchQueries.push('Trending Music Global', 'Top Pop Hits');
-
-    const discoveredTracks: Track[] = [];
-
-    for (const query of searchQueries) {
-      if (discoveredTracks.length >= TARGET_FETCH_LIMIT) {
-        break;
-      }
+    if (recommended.length < 5) {
       try {
-        const response = await metadataHost.search({
-          query,
-          types: ['tracks'],
-          limit: SEARCH_PER_QUERY_LIMIT,
+        const blacklist = await personalizationEngine.getBlacklist();
+        const blacklistedArtists = new Set(
+          blacklist.artists.map((artist) => artist.toLowerCase().trim()),
+        );
+        const blacklistedTrackIds = new Set(blacklist.tracks);
+
+        const queries = await buildPersonalizedQueries(currentTrack);
+        const searchResults = await searchForFreshTracks(
+          queries,
+          existingKeys,
+        );
+
+        const filteredSearch = searchResults.filter((track) => {
+          const artistName = (track.artists?.[0]?.name ?? '')
+            .toLowerCase()
+            .trim();
+          const trackSourceId = track.source?.id ?? '';
+
+          if (blacklistedArtists.has(artistName)) {
+            return false;
+          }
+          if (
+            trackSourceId &&
+            blacklistedTrackIds.has(trackSourceId)
+          ) {
+            return false;
+          }
+          if (isTrackInSet(track, existingKeys)) {
+            return false;
+          }
+          return true;
         });
 
-        if (response.tracks && Array.isArray(response.tracks)) {
-          for (const track of response.tracks) {
-            const key = createTrackKey(track);
-            if (!existingKeys.has(key)) {
-              existingKeys.add(key);
-              discoveredTracks.push(track);
-            }
-          }
-        }
-      } catch (searchError) {
+        recommended = [...recommended, ...filteredSearch].slice(
+          0,
+          MAX_BATCH_ADD,
+        );
+      } catch (searchFallbackError) {
         Logger.streaming.warn(
-          `TvInfiniteQueue: Search query "${query}" failed: ${searchError}`,
+          `TvInfiniteQueue: Search fallback failed: ${searchFallbackError}`,
         );
       }
     }
 
-    if (discoveredTracks.length > 0) {
-      const toAdd = discoveredTracks.slice(0, MAX_BATCH_ADD);
-      useQueueStore.getState().addToQueue(toAdd);
+    if (recommended.length > 0) {
+      for (const track of recommended) {
+        registerTrackInSet(track, sessionPlayedIds);
+      }
+
+      useQueueStore.getState().addToQueue(recommended);
       Logger.streaming.info(
-        `TvInfiniteQueue: Replenished queue with ${toAdd.length} fresh tracks. Total queue length: ${useQueueStore.getState().items.length}`,
+        `TvInfiniteQueue: Replenished queue with ${recommended.length} fresh tracks (total: ${useQueueStore.getState().items.length})`,
       );
-      return toAdd;
+      return recommended;
     }
 
-    if (existingItems.length > 0) {
-      const recycledTracks = existingItems.map((item) => item.track);
-      useQueueStore.getState().addToQueue(recycledTracks);
-      Logger.streaming.info(
-        `TvInfiniteQueue: Recycled ${recycledTracks.length} tracks into queue to preserve infinite playback.`,
-      );
-      return recycledTracks;
-    }
-
+    Logger.streaming.warn(
+      'TvInfiniteQueue: No fresh tracks found. Queue will stop naturally instead of recycling.',
+    );
     return [];
   } finally {
     isReplenishing = false;
@@ -131,7 +257,9 @@ export const checkTvQueueThreshold = (): void => {
     return;
   }
   const remainingAhead = items.length - 1 - currentIndex;
-  if (remainingAhead <= MIN_REMAINING_THRESHOLD) {
+  if (remainingAhead <= URGENT_REMAINING_THRESHOLD) {
+    void replenishTvQueue(true);
+  } else if (remainingAhead <= MIN_REMAINING_THRESHOLD) {
     void replenishTvQueue();
   }
 };
@@ -139,9 +267,15 @@ export const checkTvQueueThreshold = (): void => {
 export const playNextInInfiniteQueue = async (): Promise<void> => {
   const { items, currentIndex } = useQueueStore.getState();
   if (currentIndex >= items.length - 1) {
-    await replenishTvQueue();
+    await replenishTvQueue(true);
   }
   await playbackManager.finishTrack();
+};
+
+export const resetTvSession = (): void => {
+  sessionPlayedIds.clear();
+  resetDiscoverySession();
+  lastReplenishTime = 0;
 };
 
 export const initTvInfiniteQueue = (): (() => void) => {
@@ -169,5 +303,6 @@ export const initTvInfiniteQueue = (): (() => void) => {
   return () => {
     unsubQueue();
     unsubSound();
+    resetTvSession();
   };
 };

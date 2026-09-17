@@ -1,21 +1,26 @@
 import {
+  Music,
   Pause,
   Play,
   SkipBack,
   SkipForward,
+  ThumbsDown,
   Video,
   VideoOff,
 } from 'lucide-react';
 import { FC } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
+import { pickArtwork } from '@aurora/model';
 
 import { eventBus } from '../../services/eventBus';
+import { personalizationEngine } from '../../services/personalizationEngine';
 import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { useTvStore } from '../../stores/tvStore';
 import { TvButton } from './TvButton';
+import { playNextInInfiniteQueue } from './tvInfiniteQueue';
 
 export const TvNowPlayingBar: FC = () => {
   const { t } = useTranslation('tv');
@@ -24,6 +29,9 @@ export const TvNowPlayingBar: FC = () => {
   const showVideo = useTvStore((state) => state.showVideo);
   const setShowVideo = useTvStore((state) => state.setShowVideo);
   const playing = status === 'playing';
+  const artworkUrl = current
+    ? pickArtwork(current.track.artwork ?? current.track.album?.artwork, 'thumbnail', 100)?.url
+    : undefined;
   const controls = [
     {
       id: 'prev',
@@ -52,7 +60,7 @@ export const TvNowPlayingBar: FC = () => {
         eventBus.emit('playbackSkipped', {
           positionMs: Math.round(seek * 1000),
         });
-        useQueueStore.getState().goToNext();
+        void playNextInInfiniteQueue();
       },
     },
     {
@@ -61,17 +69,37 @@ export const TvNowPlayingBar: FC = () => {
       icon: showVideo ? <VideoOff /> : <Video />,
       action: () => setShowVideo(!showVideo),
     },
+    {
+      id: 'dislike',
+      label: 'No me gusta',
+      icon: <ThumbsDown />,
+      action: () => {
+        const track = current?.track;
+        if (track) {
+          const trackId = track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
+          void personalizationEngine.blacklistTrack(trackId);
+          void playNextInInfiniteQueue();
+        }
+      },
+    },
   ];
   return (
     <footer data-testid="tv-now-playing-bar" className="tv-player">
       <div className="tv-track-info">
-        <strong>{current?.track.title ?? t('nothingPlaying')}</strong>
-        <span>
-          {current?.track.artists?.map((artist) => artist.name).join(', ')}
-        </span>
-        {current?.status === 'error' && (
-          <span role="alert">{t('playbackError')}</span>
+        {artworkUrl ? (
+          <img src={artworkUrl} alt="" className="tv-player-art" referrerPolicy="no-referrer" />
+        ) : (
+          <Music className="tv-player-art" />
         )}
+        <div className="tv-track-text">
+          <strong>{current?.track.title ?? t('nothingPlaying')}</strong>
+          <span>
+            {current?.track.artists?.map((artist) => artist.name).join(', ')}
+          </span>
+          {current?.status === 'error' && (
+            <span role="alert">{t('playbackError')}</span>
+          )}
+        </div>
       </div>
       <div className="tv-controls">
         {controls.map((control, index) => (

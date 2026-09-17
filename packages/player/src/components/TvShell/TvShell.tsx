@@ -24,7 +24,6 @@ import { useQueueStore } from '../../stores/queueStore';
 import { useStartupStore } from '../../stores/startupStore';
 import { useTvStore } from '../../stores/tvStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
-import { PODCASTS } from '../../views/Podcasts/Podcasts';
 import { StreamResolver } from '../StreamResolver';
 import { TvAutoUpdater } from './TvAutoUpdater';
 import { TvButton } from './TvButton';
@@ -57,7 +56,7 @@ const TvMainContent: FC = () => {
   const loadPodcasts = usePodcastStore((state) => state.load);
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [error, setError] = useState(false);
-  const [podcastList, setPodcastList] = useState<PodcastRef[]>(PODCASTS);
+  const [podcastList, setPodcastList] = useState<PodcastRef[]>([]);
 
   const sortedFavorites = useMemo(
     () => sortByAddedAtDesc(favorites),
@@ -202,7 +201,7 @@ const TvMainContent: FC = () => {
                       key={`user-${playlist.id}`}
                       title={playlist.name}
                       subtitle={`${playlist.itemCount ?? 0} ${t('episodesCount', { defaultValue: 'canciones' })} · Tu lista`}
-                      src={playlist.thumbnails?.[0] ?? pickArtwork(playlist.artwork, 'thumbnail', 200)?.url}
+                      src={playlist.thumbnails?.[0] ?? pickArtwork(playlist.artwork, 'thumbnail', 300)?.url}
                       focusKey={`tv-user-playlist-${playlist.id}`}
                       onClick={() => {
                         void usePlaylistStore
@@ -242,7 +241,7 @@ const TvMainContent: FC = () => {
                     subtitle={track.artists
                       ?.map((artist) => artist.name)
                       .join(', ')}
-                    src={pickArtwork(track.artwork, 'thumbnail', 200)?.url}
+                    src={pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 300)?.url}
                     focusKey={`tv-content-track-${index}`}
                     onClick={() => {
                       if (section === 'favorites') {
