@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.49" date="2026-09-17">
+      <description>
+        <p>Release 1.48.49: Seguridad al volante manos libres, erradicacion de datos hardcodeados y optimizacion extrema de bateria.</p>
+      </description>
+    </release>
+
     <release version="1.48.44" date="2026-09-12">
       <description>
         <p>Release 1.48.44.</p>

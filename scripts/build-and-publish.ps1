@@ -65,6 +65,16 @@ if (Test-Path $WebsiteVersionPath) {
     [System.IO.File]::WriteAllText($WebsiteVersionPath, $webVerStr, $utf8NoBom)
 }
 
+# 4c. Update metainfo.xml
+$MetainfoPath = "$Root\packages\player\src-tauri\resources\com.auroraplayer.Aurora.metainfo.xml"
+if (Test-Path $MetainfoPath) {
+    $rawMeta = [System.IO.File]::ReadAllText($MetainfoPath, [System.Text.Encoding]::UTF8)
+    $todayStr = (Get-Date).ToString("yyyy-MM-dd")
+    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Seguridad al volante manos libres, erradicacion de datos hardcodeados y optimizacion extrema de bateria.</p>`n      </description>`n    </release>`n"
+    $metaStr = $rawMeta -replace "<releases>", "<releases>`n$newReleaseBlock"
+    [System.IO.File]::WriteAllText($MetainfoPath, $metaStr, $utf8NoBom)
+}
+
 # 5. Build frontend
 Write-Host "[1/4] Compilando Frontend..." -ForegroundColor Yellow
 npx pnpm --filter @aurora/player build:frontend
@@ -151,6 +161,14 @@ if (Test-Path $changelogPath) {
 
 powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\auto-sync-github.ps1"
 powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\publish-release.ps1" -Version $NextVer -Notes "$releaseNotes"
+
+try {
+    git tag -a "player@$NextVer" -m "player@$NextVer" -f
+    git push origin "player@$NextVer"
+    git push origin "$Tag"
+} catch {
+    Write-Host "[Git Tags] Aviso al pushear tags: $_" -ForegroundColor Yellow
+}
 
 Write-Host "==========================================================" -ForegroundColor Green
 Write-Host " ¡Versión $NextVer ($Tag) compilada y publicada con éxito!" -ForegroundColor Green
