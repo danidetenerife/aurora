@@ -1,7 +1,7 @@
 [
   {
     "date": "2026-09-18T09:00",
-    "description": "Solución definitiva al problema de reinicio de reproducción a los 5 segundos (transición a streaming nativo de alta velocidad HTTP 206 Partial Content vía proxy Tauri eliminando fallos 403 de MSE), resolución total e hiper-resiliente de carátulas en Historial y Listas editoriales (Spotify y Música Personalizada), incorporación integral de la función 'Álbum Favorito' en toda la app con sincronización, virtualización de cola (QueuePanel) para miles de pistas y optimización de rendimiento en escritorio.",
+    "description": "Rediseño y corrección integral del panel de Ajustes en escritorio: sustituye el menú horizontal recortado por una barra lateral vertical elegante y ergonómica de 240px con alineación perfecta, solución definitiva al problema de reinicio de reproducción a los 5 segundos (streaming nativo HTTP 206 Partial Content vía proxy Tauri eliminando fallos 403 de MSE), resolución de carátulas en Historial y Listas, función 'Álbum Favorito' en toda la app y optimización de rendimiento.",
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [{ "label": "Escritorio", "color": "green" }, { "label": "Carátulas", "color": "purple" }, { "label": "Favoritos", "color": "red" }, { "label": "Rendimiento", "color": "orange" }]

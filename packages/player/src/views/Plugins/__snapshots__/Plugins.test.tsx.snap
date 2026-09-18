@@ -33,7 +33,7 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
       transition="[object Object]"
     >
       <div
-        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) aurora-settings-panel flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl min-w-0 flex-col sm:flex-row p-0 overflow-hidden"
+        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) aurora-settings-panel flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl min-w-0 flex-row max-sm:flex-col p-0 overflow-hidden"
         data-headlessui-state="open"
         data-open=""
         id="headlessui-dialog-panel-:r9:"
@@ -67,18 +67,20 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
           </svg>
         </button>
         <nav
-          class="border-border flex w-full sm:w-56 shrink-0 flex-row sm:flex-col overflow-x-auto sm:overflow-x-visible border-b-(length:--border-width) sm:border-b-0 sm:border-r-(length:--border-width) p-2 sm:p-4 pr-16 sm:pr-4 gap-1.5 scrollbar-none"
+          class="border-border flex w-60 shrink-0 flex-col border-r-(length:--border-width) p-4 gap-2 overflow-y-auto max-sm:w-full max-sm:flex-row max-sm:border-r-0 max-sm:border-b-(length:--border-width) max-sm:overflow-x-auto max-sm:pr-16 max-sm:p-2 scrollbar-none"
         >
           <div
-            class="flex flex-row sm:flex-col gap-1.5 w-full overflow-x-auto sm:overflow-x-visible items-center sm:items-stretch"
+            class="flex flex-col gap-1.5 w-full items-stretch max-sm:flex-row max-sm:items-center max-sm:w-auto"
           >
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 justify-start gap-2 whitespace-nowrap shrink-0"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
               data-headlessui-state=""
               data-testid="settings-tab-general"
               type="button"
             >
-              <span>
+              <span
+                class="shrink-0"
+              >
                 <svg
                   aria-hidden="true"
                   class="lucide lucide-settings2 lucide-settings-2"
@@ -110,15 +112,21 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                   />
                 </svg>
               </span>
-              General
+              <span
+                class="truncate"
+              >
+                General
+              </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 justify-start gap-2 whitespace-nowrap shrink-0"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
               data-headlessui-state=""
               data-testid="settings-tab-shortcuts"
               type="button"
             >
-              <span>
+              <span
+                class="shrink-0"
+              >
                 <svg
                   aria-hidden="true"
                   class="lucide lucide-keyboard"
@@ -165,15 +173,21 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                   />
                 </svg>
               </span>
-              Key Shortcuts
+              <span
+                class="truncate"
+              >
+                Key Shortcuts
+              </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 justify-start gap-2 whitespace-nowrap shrink-0"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
               data-headlessui-state=""
               data-testid="settings-tab-sync"
               type="button"
             >
-              <span>
+              <span
+                class="shrink-0"
+              >
                 <svg
                   aria-hidden="true"
                   class="lucide lucide-laptop"
@@ -195,16 +209,22 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                   />
                 </svg>
               </span>
-              Sincronización
+              <span
+                class="truncate"
+              >
+                Sincronización
+              </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 px-4 py-2 justify-start gap-2 whitespace-nowrap shrink-0"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
               data-headlessui-state="hover"
               data-hover=""
               data-testid="settings-tab-plugins"
               type="button"
             >
-              <span>
+              <span
+                class="shrink-0"
+              >
                 <svg
                   aria-hidden="true"
                   class="lucide lucide-blocks"
@@ -230,15 +250,21 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                   />
                 </svg>
               </span>
-              Plugins
+              <span
+                class="truncate"
+              >
+                Plugins
+              </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 justify-start gap-2 whitespace-nowrap shrink-0"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
               data-headlessui-state=""
               data-testid="settings-tab-logs"
               type="button"
             >
-              <span>
+              <span
+                class="shrink-0"
+              >
                 <svg
                   aria-hidden="true"
                   class="lucide lucide-scroll-text"
@@ -266,15 +292,21 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                   />
                 </svg>
               </span>
-              Logs
+              <span
+                class="truncate"
+              >
+                Logs
+              </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 px-4 py-2 justify-start gap-2 whitespace-nowrap shrink-0"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
               data-headlessui-state=""
               data-testid="settings-tab-whats-new"
               type="button"
             >
-              <span>
+              <span
+                class="shrink-0"
+              >
                 <svg
                   aria-hidden="true"
                   class="lucide lucide-sparkles"
@@ -304,11 +336,15 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
                   />
                 </svg>
               </span>
-              What's New
+              <span
+                class="truncate"
+              >
+                What's New
+              </span>
             </button>
           </div>
           <div
-            class="hidden sm:block mt-auto"
+            class="mt-auto pt-4 border-t-(length:--border-width) border-border/40 w-full max-sm:hidden"
           >
             <div
               class="flex flex-col items-center gap-2"

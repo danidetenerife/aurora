@@ -1,5 +1,5 @@
 import { useTranslation } from '@aurora/i18n';
-import { ScrollableArea, ViewShell } from '@aurora/ui';
+import { ViewShell } from '@aurora/ui';
 
 import { SettingsSection } from './SettingsSection';
 import { useSettingsGroups } from './useSettingsGroups';
@@ -9,19 +9,15 @@ export const Settings = () => {
   const groups = useSettingsGroups();
 
   return (
-    <ViewShell title={t('general.title')}>
-      <div className="flex w-full flex-col items-center justify-center overflow-hidden">
-        <ScrollableArea className="max-w-120 flex-1 overflow-hidden">
-          <div className="px-2">
-            {groups.map((group) => (
-              <SettingsSection
-                key={group.name}
-                title={t(`${group.name}.title`, group.name)}
-                settings={group.settings}
-              />
-            ))}
-          </div>
-        </ScrollableArea>
+    <ViewShell title={t('general.title')} classes={{ scrollableArea: 'px-6' }}>
+      <div className="w-full max-w-2xl space-y-6 pb-8">
+        {groups.map((group) => (
+          <SettingsSection
+            key={group.name}
+            title={t(`${group.name}.title`, group.name)}
+            settings={group.settings}
+          />
+        ))}
       </div>
     </ViewShell>
   );

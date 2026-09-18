@@ -16,8 +16,8 @@ export const SettingsPanelNav: FC<SettingsPanelNavProps> = ({
   onTabChange,
   footer,
 }) => (
-  <nav className="border-border flex w-full sm:w-56 shrink-0 flex-row sm:flex-col overflow-x-auto sm:overflow-x-visible border-b-(length:--border-width) sm:border-b-0 sm:border-r-(length:--border-width) p-2 sm:p-4 pr-16 sm:pr-4 gap-1.5 scrollbar-none">
-    <div className="flex flex-row sm:flex-col gap-1.5 w-full overflow-x-auto sm:overflow-x-visible items-center sm:items-stretch">
+  <nav className="border-border flex w-60 shrink-0 flex-col border-r-(length:--border-width) p-4 gap-2 overflow-y-auto max-sm:w-full max-sm:flex-row max-sm:border-r-0 max-sm:border-b-(length:--border-width) max-sm:overflow-x-auto max-sm:pr-16 max-sm:p-2 scrollbar-none">
+    <div className="flex flex-col gap-1.5 w-full items-stretch max-sm:flex-row max-sm:items-center max-sm:w-auto">
       {tabs.map((tab) => (
         <SettingsPanelNavItem
           key={tab.id}
@@ -29,6 +29,6 @@ export const SettingsPanelNav: FC<SettingsPanelNavProps> = ({
         />
       ))}
     </div>
-    {footer && <div className="hidden sm:block mt-auto">{footer}</div>}
+    {footer && <div className="mt-auto pt-4 border-t-(length:--border-width) border-border/40 w-full max-sm:hidden">{footer}</div>}
   </nav>
 );
