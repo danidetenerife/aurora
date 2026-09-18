@@ -3,8 +3,6 @@ import { invoke } from '@tauri-apps/api/core';
 import { AudioSource } from '@aurora/hifi';
 import type { StreamCandidate } from '@aurora/model';
 
-type ResolvedStream = NonNullable<StreamCandidate['stream']>;
-
 export class AudioSourceFactory {
   private cachedStreamServerPort: number | null = null;
 
@@ -26,16 +24,11 @@ export class AudioSourceFactory {
     const playbackUrl = port ? this.proxiedUrl(stream.url, port) : stream.url;
 
     const durationMs = stream.durationMs ?? candidate.durationMs;
-    if (this.isFmp4(stream) && durationMs && port) {
-      return {
-        url: playbackUrl,
-        protocol: 'mse',
-        durationSeconds: durationMs / 1000,
-        codec: stream.codec,
-      };
-    }
-
-    return { url: playbackUrl, protocol: stream.protocol };
+    return {
+      url: playbackUrl,
+      protocol: stream.protocol,
+      durationSeconds: durationMs ? durationMs / 1000 : undefined,
+    };
   }
 
   private async streamServerPort(): Promise<number | null> {
@@ -58,12 +51,5 @@ export class AudioSourceFactory {
       .replace(/\//g, '_')
       .replace(/=+$/, '');
     return `http://127.0.0.1:${port}/stream/${encoded}`;
-  }
-
-  private isFmp4(stream: ResolvedStream): boolean {
-    return (
-      stream.container === 'm4a' ||
-      stream.mimeType?.includes('audio/mp4') === true
-    );
   }
 }

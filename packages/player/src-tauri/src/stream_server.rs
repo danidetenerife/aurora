@@ -14,7 +14,7 @@ use tokio_util::sync::CancellationToken;
 const PORT_START: u16 = 9100;
 const PORT_END: u16 = 9109;
 
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36";
+const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36";
 
 const FORWARD_HEADERS: &[header::HeaderName] = &[
     header::CONTENT_TYPE,
@@ -89,6 +89,9 @@ async fn proxy_stream(
     let mut upstream_request = client.get(&url);
     if let Some(range_value) = headers.get(header::RANGE) {
         upstream_request = upstream_request.header(header::RANGE, range_value);
+    }
+    if let Some(user_agent) = headers.get(header::USER_AGENT) {
+        upstream_request = upstream_request.header(header::USER_AGENT, user_agent);
     }
 
     let upstream_response = match upstream_request.send().await {

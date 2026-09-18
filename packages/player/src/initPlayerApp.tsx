@@ -137,6 +137,10 @@ export const initPlayerApp = async (
       try {
         void ytdlpEnsureInstalled();
       } catch {}
+      try {
+        const { getCurrentWindow } = await import('@tauri-apps/api/window');
+        await getCurrentWindow().show();
+      } catch {}
     }
   } catch (error) {
     console.error('Initialization error:', error);

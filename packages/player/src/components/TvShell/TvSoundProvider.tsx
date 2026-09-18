@@ -46,7 +46,9 @@ export const extractYouTubeId = (track?: Track, srcUrl?: string): string | null 
 
 export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('streaming');
-  const { src, status, seek } = useSoundStore();
+  const src = useSoundStore((state) => state.src);
+  const status = useSoundStore((state) => state.status);
+  const targetSeek = useSoundStore((state) => state.targetSeek);
   const isVideoPlaying = useTvStore((state) => state.isVideoPlaying);
   const crossfadeMs = 0;
   const mediaSource = src;
@@ -118,7 +120,7 @@ export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
         <Sound
           src={mediaSource}
           status={status}
-          seek={seek}
+          seek={targetSeek ?? undefined}
           showVideo={false}
           volume={volumePercent}
           preload={preload}

@@ -1,7 +1,7 @@
 [
   {
     "date": "2026-09-18T09:00",
-    "description": "Revolución visual y de rendimiento en escritorio: resolución total e hiper-resiliente de carátulas en Historial y Listas editoriales (Spotify y Música Personalizada), incorporación integral de la función 'Álbum Favorito' en cabeceras, menús contextuales, barra de reproducción, búsquedas y cuadrículas con sincronización bidireccional, virtualización de alto rendimiento en la cola de reproducción (QueuePanel) para miles de pistas, y erradicación del 100% de los re-renderizados continuos a 10 Hz desacoplando el seek de audio y limitando escrituras IPC.",
+    "description": "Solución definitiva al problema de reinicio de reproducción a los 5 segundos (transición a streaming nativo de alta velocidad HTTP 206 Partial Content vía proxy Tauri eliminando fallos 403 de MSE), resolución total e hiper-resiliente de carátulas en Historial y Listas editoriales (Spotify y Música Personalizada), incorporación integral de la función 'Álbum Favorito' en toda la app con sincronización, virtualización de cola (QueuePanel) para miles de pistas y optimización de rendimiento en escritorio.",
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [{ "label": "Escritorio", "color": "green" }, { "label": "Carátulas", "color": "purple" }, { "label": "Favoritos", "color": "red" }, { "label": "Rendimiento", "color": "orange" }]

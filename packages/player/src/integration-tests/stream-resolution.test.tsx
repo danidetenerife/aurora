@@ -260,8 +260,8 @@ describe('Stream Resolution Integration', () => {
     });
   });
 
-  describe('when stream is fMP4 (YouTube)', () => {
-    it('produces MSE protocol with durationSeconds for m4a container', async () => {
+  describe('when stream is m4a (YouTube)', () => {
+    it('produces native proxied stream with durationSeconds for m4a container', async () => {
       setupMetadataProvider();
 
       const streamingProvider = new StreamingProviderBuilder()
@@ -288,7 +288,7 @@ describe('Stream Resolution Integration', () => {
       await StreamResolutionWrapper.waitForPlayback();
 
       const src = StreamResolutionWrapper.getSoundState().src;
-      expect(src?.protocol).toBe('mse');
+      expect(src?.protocol).toBe('https');
       expect(src?.durationSeconds).toBe(180);
       expect(src?.url).toContain('http://127.0.0.1:9100/stream/');
     });
