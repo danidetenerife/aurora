@@ -140,6 +140,12 @@ if (Test-Path $GeneratedExe) {
     Copy-Item $GeneratedExe $DestExe -Force
 }
 
+$InstalledExe = "C:\Users\Danid\AppData\Local\Aurora\aurora-music-player.exe"
+$TargetBin = "$Root\packages\player\src-tauri\target\release\aurora-music-player.exe"
+if (Test-Path $TargetBin) {
+    Copy-Item $TargetBin $InstalledExe -Force -ErrorAction SilentlyContinue
+}
+
 $GeneratedSignature = "$GeneratedExe.sig"
 if (-not (Test-Path -LiteralPath $GeneratedSignature)) {
     throw "No se generó la firma del actualizador de escritorio."

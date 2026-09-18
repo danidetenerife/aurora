@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.53" date="2026-09-18">
+      <description>
+        <p>Release 1.48.53: ResoluciÃ³n total de carÃ¡tulas en Historial y Listas, funciÃ³n Ãlbum Favorito en toda la UI, virtualizaciÃ³n de cola y optimizaciÃ³n extrema de rendimiento en escritorio.</p>
+      </description>
+    </release>
+
     <release version="1.48.52" date="2026-09-18">
       <description>
         <p>Release 1.48.52: ResoluciÃ³n total de carÃ¡tulas en Historial y Listas, funciÃ³n Ãlbum Favorito en toda la UI, virtualizaciÃ³n de cola y optimizaciÃ³n extrema de rendimiento en escritorio.</p>

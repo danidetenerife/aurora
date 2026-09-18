@@ -278,12 +278,14 @@ export const SyncSettingsView: FC = () => {
   };
 
   return (
-    <div className="aurora-sync-settings mx-auto flex w-full min-w-0 max-w-xl flex-col gap-6 p-4">
+    <div className="aurora-sync-settings mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-6 p-4">
       {/* Top Status Card */}
-      <div className="border-border bg-background-secondary flex flex-col gap-3 rounded-xl border-(length:--border-width) p-4">
+      <div className="border-border bg-background-secondary flex flex-col gap-4 rounded-xl border-(length:--border-width) p-5 shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Cloud className="text-primary size-6" />
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-lg">
+              <Cloud className="size-6" />
+            </div>
             <div>
               <h2 className="text-base font-bold">Sincronización</h2>
               <p className="text-foreground-secondary text-xs">
@@ -315,7 +317,7 @@ export const SyncSettingsView: FC = () => {
           </Badge>
         </div>
 
-        <div className="border-border/50 text-foreground-secondary flex items-center justify-between border-t pt-2 text-xs">
+        <div className="border-border/50 text-foreground-secondary flex items-center justify-between border-t pt-3 text-xs">
           <span>Última sincronización: {formatRelativeTime(lastSync)}</span>
           <div className="flex items-center gap-2">
             <span>Auto-sync</span>
@@ -323,98 +325,98 @@ export const SyncSettingsView: FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-1 sm:flex">
+        <div className="flex flex-wrap items-center gap-3 pt-1 sm:flex-nowrap">
           <Button
             variant="default"
-            size="sm"
+            size="default"
             disabled={isSyncing}
             onClick={() => void handleSyncNow()}
-            className="min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-normal text-center"
+            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-4 text-xs font-semibold"
           >
-            <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
-            Sincronizar ahora
+            <RefreshCw size={15} className={isSyncing ? 'animate-spin shrink-0' : 'shrink-0'} />
+            <span>Sincronizar ahora</span>
           </Button>
           <Button
             variant="secondary"
-            size="sm"
+            size="default"
             onClick={() => void handleShowQr()}
-            className="min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-normal text-center"
+            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-4 text-xs font-semibold"
             title="Compartir configuración con otro dispositivo"
           >
-            <QrCode size={14} />
-            Compartir QR
+            <QrCode size={15} className="shrink-0" />
+            <span>Compartir QR</span>
           </Button>
           <Button
             variant="secondary"
-            size="sm"
+            size="default"
             onClick={() => setIsScannerOpen(true)}
-            className="min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-normal text-center"
+            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-4 text-xs font-semibold"
             title="Escanear QR de otro dispositivo"
           >
-            <Camera size={14} />
-            Escanear QR
+            <Camera size={15} className="shrink-0" />
+            <span>Escanear QR</span>
           </Button>
         </div>
       </div>
 
       {/* Provider Tabs */}
-      <div className="bg-background-secondary/80 border-border grid grid-cols-4 gap-1 rounded-lg border p-1">
+      <div className="bg-background-secondary border-border grid grid-cols-2 gap-1.5 rounded-xl border p-1.5 sm:grid-cols-4">
         <button
           type="button"
           onClick={() => setActiveTab('webdav')}
-          className={`flex flex-col items-center gap-1 rounded-md px-1 py-2 text-xs font-semibold transition-colors ${
+          className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'webdav'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground-secondary hover:text-foreground'
+              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
-          <Cloud size={16} />
+          <Cloud size={16} className="shrink-0" />
           <span>WebDAV</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('gist')}
-          className={`flex flex-col items-center gap-1 rounded-md px-1 py-2 text-xs font-semibold transition-colors ${
+          className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'gist'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground-secondary hover:text-foreground'
+              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
-          <Github size={16} />
+          <Github size={16} className="shrink-0" />
           <span>GitHub</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('lan')}
-          className={`flex flex-col items-center gap-1 rounded-md px-1 py-2 text-xs font-semibold transition-colors ${
+          className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'lan'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground-secondary hover:text-foreground'
+              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
-          <Wifi size={16} />
+          <Wifi size={16} className="shrink-0" />
           <span>Red Local</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('backup')}
-          className={`flex flex-col items-center gap-1 rounded-md px-1 py-2 text-xs font-semibold transition-colors ${
+          className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'backup'
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground-secondary hover:text-foreground'
+              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
-          <HardDrive size={16} />
-          <span>Copia</span>
+          <HardDrive size={16} className="shrink-0" />
+          <span>Copia manual</span>
         </button>
       </div>
 
       {/* Tab 1: WebDAV / Nextcloud */}
       {activeTab === 'webdav' && (
-        <div className="border-border bg-background-secondary flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4">
+        <div className="border-border bg-background-secondary flex flex-col gap-5 rounded-xl border-(length:--border-width) p-5 shadow-sm">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-bold">
               <Cloud size={16} className="text-primary" /> Nube Personal (WebDAV
@@ -426,9 +428,9 @@ export const SyncSettingsView: FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3.5">
             <div>
-              <label className="text-foreground mb-1 block text-xs font-semibold">
+              <label className="text-foreground mb-1.5 block text-xs font-semibold">
                 URL del servidor WebDAV
               </label>
               <Input
@@ -439,9 +441,9 @@ export const SyncSettingsView: FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-foreground mb-1 block text-xs font-semibold">
+                <label className="text-foreground mb-1.5 block text-xs font-semibold">
                   Usuario
                 </label>
                 <Input
@@ -452,7 +454,7 @@ export const SyncSettingsView: FC = () => {
                 />
               </div>
               <div>
-                <label className="text-foreground mb-1 block text-xs font-semibold">
+                <label className="text-foreground mb-1.5 block text-xs font-semibold">
                   Contraseña / App Token
                 </label>
                 <Input
@@ -466,7 +468,7 @@ export const SyncSettingsView: FC = () => {
             </div>
 
             <div>
-              <label className="text-foreground mb-1 block text-xs font-semibold">
+              <label className="text-foreground mb-1.5 block text-xs font-semibold">
                 Nombre del archivo remoto
               </label>
               <Input
@@ -478,21 +480,19 @@ export const SyncSettingsView: FC = () => {
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap gap-3 pt-2 sm:flex-nowrap">
             <Button
               variant="secondary"
-              size="sm"
               disabled={isTesting}
               onClick={() => void handleTestConnection()}
-              className="flex-1"
+              className="h-10 flex-1 font-semibold"
             >
               {isTesting ? 'Probando...' : 'Probar conexión'}
             </Button>
             <Button
               variant="default"
-              size="sm"
               onClick={() => void handleSaveWebDav()}
-              className="flex-1"
+              className="h-10 flex-1 font-semibold"
             >
               Guardar y sincronizar
             </Button>
@@ -502,7 +502,7 @@ export const SyncSettingsView: FC = () => {
 
       {/* Tab 2: GitHub Gist */}
       {activeTab === 'gist' && (
-        <div className="border-border bg-background-secondary flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4">
+        <div className="border-border bg-background-secondary flex flex-col gap-5 rounded-xl border-(length:--border-width) p-5 shadow-sm">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-bold">
               <Github size={16} className="text-primary" /> Nube GitHub Gist
@@ -515,9 +515,9 @@ export const SyncSettingsView: FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3.5">
             <div>
-              <label className="text-foreground mb-1 block text-xs font-semibold">
+              <label className="text-foreground mb-1.5 block text-xs font-semibold">
                 Personal Access Token (PAT)
               </label>
               <Input
@@ -530,7 +530,7 @@ export const SyncSettingsView: FC = () => {
             </div>
 
             <div>
-              <label className="text-foreground mb-1 block text-xs font-semibold">
+              <label className="text-foreground mb-1.5 block text-xs font-semibold">
                 ID del Gist (Opcional)
               </label>
               <Input
@@ -542,21 +542,19 @@ export const SyncSettingsView: FC = () => {
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap gap-3 pt-2 sm:flex-nowrap">
             <Button
               variant="secondary"
-              size="sm"
               disabled={isTesting}
               onClick={() => void handleTestConnection()}
-              className="flex-1"
+              className="h-10 flex-1 font-semibold"
             >
               {isTesting ? 'Probando...' : 'Probar conexión'}
             </Button>
             <Button
               variant="default"
-              size="sm"
               onClick={() => void handleSaveGist()}
-              className="flex-1"
+              className="h-10 flex-1 font-semibold"
             >
               Guardar y sincronizar
             </Button>
@@ -566,7 +564,7 @@ export const SyncSettingsView: FC = () => {
 
       {/* Tab 3: Red Local LAN */}
       {activeTab === 'lan' && (
-        <div className="border-border bg-background-secondary flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4">
+        <div className="border-border bg-background-secondary flex flex-col gap-5 rounded-xl border-(length:--border-width) p-5 shadow-sm">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-bold">
               <Wifi size={16} className="text-primary" /> Red Local (Wi-Fi)
@@ -601,13 +599,12 @@ export const SyncSettingsView: FC = () => {
               />
               <Button
                 variant="secondary"
-                size="sm"
                 disabled={isSearchingLan}
                 onClick={() => void handleLanDiscovery()}
-                className="flex items-center gap-1"
+                className="h-10 flex items-center gap-1.5 px-4 font-semibold shrink-0"
               >
                 <Search
-                  size={14}
+                  size={15}
                   className={isSearchingLan ? 'animate-spin' : ''}
                 />
                 Buscar en Wi-Fi
@@ -615,12 +612,11 @@ export const SyncSettingsView: FC = () => {
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="pt-2">
             <Button
               variant="default"
-              size="sm"
               onClick={() => void handleSaveLan()}
-              className="w-full"
+              className="h-10 w-full font-semibold"
             >
               Guardar y conectar
             </Button>
@@ -630,7 +626,7 @@ export const SyncSettingsView: FC = () => {
 
       {/* Tab 4: Copia de Seguridad */}
       {activeTab === 'backup' && (
-        <div className="border-border bg-background-secondary flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4">
+        <div className="border-border bg-background-secondary flex flex-col gap-5 rounded-xl border-(length:--border-width) p-5 shadow-sm">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-bold">
               <HardDrive size={16} className="text-primary" /> Copia de
@@ -642,23 +638,23 @@ export const SyncSettingsView: FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-2">
+          <div className="grid grid-cols-2 gap-4 pt-2">
             <Button
               variant="secondary"
               onClick={() => void handleExportBackup()}
-              className="flex h-20 flex-col items-center justify-center gap-2 text-xs font-semibold"
+              className="flex h-24 flex-col items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-transform active:scale-[0.98]"
             >
-              <Download size={20} className="text-primary" />
-              Exportar archivo
+              <Download size={22} className="text-primary" />
+              <span>Exportar archivo</span>
             </Button>
 
             <Button
               variant="secondary"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-20 flex-col items-center justify-center gap-2 text-xs font-semibold"
+              className="flex h-24 flex-col items-center justify-center gap-2 rounded-xl text-xs font-semibold transition-transform active:scale-[0.98]"
             >
-              <Upload size={20} className="text-primary" />
-              Importar archivo
+              <Upload size={22} className="text-primary" />
+              <span>Importar archivo</span>
             </Button>
             <input
               type="file"

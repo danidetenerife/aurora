@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-18T16:00",
+    "description": "Rediseño y optimización ergonómica del menú de Sincronización en escritorio: amplía el contenedor a 672px (max-w-2xl), dota a los botones de acción de altura completa de 40px con texto sin salto de línea ni superposición de iconos, reorganiza las pestañas de proveedores en una cuadrícula moderna con pestañas horizontales e iconos nítidos, y amplía los botones de respaldo y conexión para una legibilidad y usabilidad impecable.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Escritorio", "color": "green" }, { "label": "Ajustes", "color": "purple" }, { "label": "Sincronización", "color": "blue" }]
+  },
+  {
     "date": "2026-09-18T09:00",
     "description": "Rediseño y corrección integral del panel de Ajustes en escritorio: sustituye el menú horizontal recortado por una barra lateral vertical elegante y ergonómica de 240px con alineación perfecta, solución definitiva al problema de reinicio de reproducción a los 5 segundos (streaming nativo HTTP 206 Partial Content vía proxy Tauri eliminando fallos 403 de MSE), resolución de carátulas en Historial y Listas, función 'Álbum Favorito' en toda la app y optimización de rendimiento.",
     "type": "feature",
