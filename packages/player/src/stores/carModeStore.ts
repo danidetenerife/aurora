@@ -31,8 +31,23 @@ const getInitialAutoCarMode = (): boolean => {
   }
 };
 
+const isNativeCarEnvironment = (): boolean => {
+  try {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    return (
+      (window as unknown as { AndroidCar?: unknown }).AndroidCar !== undefined ||
+      (window as unknown as { __AURORA_CAR_MODE__?: boolean }).__AURORA_CAR_MODE__ === true ||
+      localStorage.getItem('aurora:car_mode') === 'true'
+    );
+  } catch {
+    return false;
+  }
+};
+
 export const useCarModeStore = create<CarModeState>((set) => ({
-  isCarMode: false,
+  isCarMode: isNativeCarEnvironment(),
   autoCarModeEnabled: getInitialAutoCarMode(),
   isBluetoothConnected: false,
   bluetoothDeviceName: '',
@@ -66,6 +81,10 @@ export const initCarModeService = async (): Promise<void> => {
     return;
   }
   isInitialized = true;
+
+  if (isNativeCarEnvironment()) {
+    useCarModeStore.setState({ isCarMode: true });
+  }
 
   if (!isCapacitorEnvironment()) {
     return;

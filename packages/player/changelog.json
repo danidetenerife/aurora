@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-09-18T18:15",
+    "description": "Transformación integral de Android Auto y Android Automotive OS (AAOS): experiencia automotriz superior con 100% cobertura de carátulas neo-brutalistas HD, generación dinámica de portadas con degradados y tipografía (AutoArtworkGenerator), pipeline gráfico zero-copy por memoria compartida (ArtworkContentProvider), arquitectura unificada de MediaSessionCompat entre servicios en segundo plano, y pantalla Now Playing completa con carátula a pantalla grande, fondo difuminado dinámico, barra de progreso interactiva y botón de favoritos en tiempo real.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [{ "label": "Android Auto", "color": "green" }, { "label": "AAOS", "color": "blue" }, { "label": "Carátulas", "color": "purple" }, { "label": "Reproductor", "color": "red" }]
+  },
+  {
     "date": "2026-09-18T16:00",
     "description": "Rediseño y optimización ergonómica del menú de Sincronización en escritorio: amplía el contenedor a 672px (max-w-2xl), dota a los botones de acción de altura completa de 40px con texto sin salto de línea ni superposición de iconos, reorganiza las pestañas de proveedores en una cuadrícula moderna con pestañas horizontales e iconos nítidos, y amplía los botones de respaldo y conexión para una legibilidad y usabilidad impecable.",
     "type": "fix",

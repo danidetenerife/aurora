@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-feature
+        android:name="android.hardware.type.automotive"
+        android:required="false" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +13,7 @@
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true"
+        android:appCategory="audio"
         android:theme="@style/AppTheme">
 
         <activity
@@ -19,6 +24,10 @@
             android:launchMode="singleTask"
             android:exported="true"
             android:banner="@drawable/tv_banner">
+
+            <meta-data
+                android:name="distractionOptimized"
+                android:value="true" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,7 +63,27 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data
+                android:name="androidx.car.app.launchable"
+                android:value="true" />
+            <meta-data
+                android:name="distractionOptimized"
+                android:value="true" />
+            <meta-data
+                android:name="android.car.application"
+                android:resource="@xml/automotive_app_desc" />
         </service>
+
+        <provider
+            android:name=".ArtworkContentProvider"
+            android:authorities="com.auroraplayer.app.artwork"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
+        <!-- Android Automotive OS app descriptor -->
+        <meta-data
+            android:name="android.car.application"
+            android:resource="@xml/automotive_app_desc" />
 
         <!-- Android Auto automotive app descriptor -->
         <meta-data

@@ -18,6 +18,8 @@ type NativeMediaSessionPluginInterface = {
     album: string;
     artworkUrl: string;
     durationMs?: number;
+    isFavorite?: boolean;
+    isPodcast?: boolean;
   }): Promise<void>;
   updatePlaybackState(options: {
     isPlaying: boolean;

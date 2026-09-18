@@ -35,9 +35,16 @@ final class TvWebView {
         }
         int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_TYPE_MASK;
         return mode == Configuration.UI_MODE_TYPE_TELEVISION
-            || mode == Configuration.UI_MODE_TYPE_CAR
             || context.getPackageName().equals("com.auroraplayer.app.tvpreview")
-            || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+            || context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+    }
+
+    static boolean isCar(Context context) {
+        if (context == null) {
+            return false;
+        }
+        int mode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_TYPE_MASK;
+        return mode == Configuration.UI_MODE_TYPE_CAR
             || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE));
     }

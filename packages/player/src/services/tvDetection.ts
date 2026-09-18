@@ -15,6 +15,15 @@ export const isGoogleTVEnvironment = (): boolean => {
 
   try {
     if (
+      (window as unknown as { AndroidCar?: unknown }).AndroidCar !== undefined ||
+      (window as unknown as { __AURORA_CAR_MODE__?: boolean }).__AURORA_CAR_MODE__ === true ||
+      localStorage.getItem('aurora:car_mode') === 'true'
+    ) {
+      cachedResult = false;
+      return false;
+    }
+
+    if (
       (window as unknown as { AndroidTV?: unknown }).AndroidTV !== undefined ||
       (window as unknown as { __AURORA_TV_MODE__?: boolean }).__AURORA_TV_MODE__ === true ||
       window.location.search.includes('tv=1') ||
@@ -31,12 +40,7 @@ export const isGoogleTVEnvironment = (): boolean => {
   const userAgent = navigator.userAgent;
   const isTVUserAgent = TV_USER_AGENT_PATTERN.test(userAgent);
 
-  const hasNoTouch = navigator.maxTouchPoints === 0;
-
-  const isAndroidLargeScreen =
-    /Android/i.test(userAgent) && window.innerWidth >= 960;
-
-  cachedResult = isTVUserAgent || (hasNoTouch && isAndroidLargeScreen);
+  cachedResult = isTVUserAgent;
   return cachedResult;
 };
 

@@ -37,6 +37,11 @@ const syncAutoCatalog = (): void => {
   }));
 
   const playlistState = usePlaylistStore.getState();
+  for (const entry of playlistState.index.slice(0, 10)) {
+    if (!playlistState.playlists.has(entry.id)) {
+      void usePlaylistStore.getState().loadPlaylist(entry.id);
+    }
+  }
   const playlists = playlistState.index.slice(0, 20).map((entry) => {
     const fullPlaylist = playlistState.playlists.get(entry.id);
     const items =
@@ -197,6 +202,10 @@ export const initMediaSessionService = (): void => {
     }
 
     const durationMs = track.durationMs;
+    const isFav = track.source
+      ? useFavoritesStore.getState().isTrackFavorite(track.source)
+      : false;
+    const isPod = track.source?.provider === 'podcast';
 
     if (isCapacitorEnvironment()) {
       NativeMediaSessionPlugin.updateMetadata({
@@ -205,12 +214,37 @@ export const initMediaSessionService = (): void => {
         album: albumTitle,
         artworkUrl,
         durationMs,
+        isFavorite: isFav,
+        isPodcast: isPod,
       }).catch(() => {});
     }
   });
 
   useFavoritesStore.subscribe(() => {
     syncAutoCatalog();
+    if (isCapacitorEnvironment()) {
+      const current = useQueueStore.getState().getCurrentItem();
+      if (current?.track) {
+        const track = current.track;
+        const artwork = pickArtwork(track.artwork, 'thumbnail', 512);
+        const artist =
+          track.artists?.map((artistCredit) => artistCredit.name).join(', ') || '';
+        const albumTitle = track.album?.title || '';
+        const artworkUrl = artwork?.url || '';
+        const isFav = track.source
+          ? useFavoritesStore.getState().isTrackFavorite(track.source)
+          : false;
+        NativeMediaSessionPlugin.updateMetadata({
+          title: track.title,
+          artist,
+          album: albumTitle,
+          artworkUrl,
+          durationMs: track.durationMs,
+          isFavorite: isFav,
+          isPodcast: track.source?.provider === 'podcast',
+        }).catch(() => {});
+      }
+    }
   });
 
   usePlaylistStore.subscribe(() => {
@@ -261,6 +295,36 @@ export const initMediaSessionService = (): void => {
 
   if (isCapacitorEnvironment()) {
     NativeMediaSessionPlugin.addListener('mediaAction', (data) => {
+      if (data.action === 'favorite_add') {
+        const currentItem = useQueueStore.getState().getCurrentItem();
+        if (currentItem?.track) {
+          void useFavoritesStore.getState().addTrack(currentItem.track);
+        }
+        return;
+      }
+
+      if (data.action === 'favorite_remove') {
+        const currentItem = useQueueStore.getState().getCurrentItem();
+        if (currentItem?.track?.source) {
+          void useFavoritesStore.getState().removeTrack(currentItem.track.source);
+        }
+        return;
+      }
+
+      if (data.action === 'play_favorites_shuffle') {
+        const favs = useFavoritesStore.getState().tracks;
+        if (favs.length > 0) {
+          const tracks = [...favs.map((entry) => entry.ref)].sort(
+            () => Math.random() - 0.5,
+          );
+          const queue = useQueueStore.getState();
+          queue.addToQueue(tracks);
+          queue.goToIndex(queue.items.length - tracks.length);
+          playbackManager.play();
+        }
+        return;
+      }
+
       if (data.action.startsWith('playid:')) {
         const requestedId = data.action.slice('playid:'.length);
         const queue = useQueueStore.getState();

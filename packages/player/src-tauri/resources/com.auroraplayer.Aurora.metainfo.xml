@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.54" date="2026-09-18">
+      <description>
+        <p>Release 1.48.54: TransformaciÃ³n integral de Android Auto y AAOS: 100% carÃ¡tulas HD neo-brutalistas, generador dinÃ¡mico con degradados, MediaSession unificada y Now Playing completo con controles y favoritos.</p>
+      </description>
+    </release>
+
     <release version="1.48.53" date="2026-09-18">
       <description>
         <p>Release 1.48.53: ResoluciÃ³n total de carÃ¡tulas en Historial y Listas, funciÃ³n Ãlbum Favorito en toda la UI, virtualizaciÃ³n de cola y optimizaciÃ³n extrema de rendimiento en escritorio.</p>

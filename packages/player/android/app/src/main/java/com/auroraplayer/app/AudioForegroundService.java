@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -21,6 +22,10 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 import android.media.MediaPlayer;
+import android.net.Uri;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -39,6 +44,11 @@ public class AudioForegroundService extends Service {
     public static final String ACTION_UPDATE_PLAYBACK_STATE = "com.auroraplayer.UPDATE_PLAYBACK_STATE";
     public static final String ACTION_UPDATE_POSITION = "com.auroraplayer.UPDATE_POSITION";
     public static final String ACTION_DISLIKE = "com.auroraplayer.ACTION_DISLIKE";
+    public static final String ACTION_FAVORITE_ADD = "com.auroraplayer.ACTION_FAVORITE_ADD";
+    public static final String ACTION_FAVORITE_REMOVE = "com.auroraplayer.ACTION_FAVORITE_REMOVE";
+    public static final String ACTION_REWIND_15 = "com.auroraplayer.ACTION_REWIND_15";
+    public static final String ACTION_FORWARD_30 = "com.auroraplayer.ACTION_FORWARD_30";
+    public static final String ACTION_PLAYBACK_SPEED = "com.auroraplayer.ACTION_PLAYBACK_SPEED";
 
     private static final int NOTIFICATION_ID = 1;
 
@@ -52,6 +62,9 @@ public class AudioForegroundService extends Service {
     private String currentArtworkUrl = "";
     private Bitmap currentArtworkBitmap = null;
     private long currentDurationMs = 0;
+    private boolean currentIsFavorite = false;
+    private boolean currentIsPodcast = false;
+    private float currentPlaybackSpeed = 1.0f;
     private final ExecutorService artworkExecutor = Executors.newSingleThreadExecutor();
 
     private boolean currentlyPlaying = false;
@@ -135,6 +148,11 @@ public class AudioForegroundService extends Service {
         acquireLocks();
         createNotificationChannel();
         initMediaSession();
+
+        AuroraAutoMediaBrowserService autoService = AuroraAutoMediaBrowserService.getInstance();
+        if (autoService != null && mediaSession != null) {
+            autoService.setSessionToken(mediaSession.getSessionToken());
+        }
     }
 
     private void acquireLocks() {
@@ -163,12 +181,7 @@ public class AudioForegroundService extends Service {
     }
 
     private void initMediaSession() {
-        mediaSession = new MediaSessionCompat(this, "AuroraMusicPlayer");
-
-        mediaSession.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-            MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        );
+        mediaSession = AuroraMediaSessionHolder.getOrCreateSession(this);
 
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
@@ -204,39 +217,55 @@ public class AudioForegroundService extends Service {
 
             @Override
             public void onCustomAction(String action, Bundle extras) {
-                if (ACTION_DISLIKE.equals(action)) {
+                if (ACTION_FAVORITE_ADD.equals(action)) {
+                    currentIsFavorite = true;
+                    refreshPlaybackStateImmediately();
+                    notifyJsMediaAction("favorite_add");
+                } else if (ACTION_FAVORITE_REMOVE.equals(action)) {
+                    currentIsFavorite = false;
+                    refreshPlaybackStateImmediately();
+                    notifyJsMediaAction("favorite_remove");
+                } else if (ACTION_REWIND_15.equals(action)) {
+                    handleRewind15();
+                } else if (ACTION_FORWARD_30.equals(action)) {
+                    handleForward30();
+                } else if (ACTION_PLAYBACK_SPEED.equals(action)) {
+                    cyclePlaybackSpeed();
+                } else if (ACTION_DISLIKE.equals(action)) {
                     notifyJsMediaAction("dislike");
                 }
             }
 
             @Override
+            public void onFastForward() {
+                handleForward30();
+            }
+
+            @Override
+            public void onRewind() {
+                handleRewind15();
+            }
+
+            @Override
             public void onSeekTo(long pos) {
                 seekStream(pos);
-                NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
-                if (pluginInstance != null) {
-                    pluginInstance.notifyMediaAction("seekto", pos);
-                }
+                NativeMediaSessionPlugin.queueOrDispatchMediaAction(AudioForegroundService.this, "seekto", pos);
             }
 
             @Override
             public void onPlayFromMediaId(String mediaId, Bundle extras) {
                 setBufferingStateWithMetadata(mediaId);
 
-                NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
-                if (pluginInstance != null && mediaId != null) {
+                if (mediaId != null) {
                     String action = mediaId.startsWith("playid:") || mediaId.startsWith("podcast:") || mediaId.startsWith("playlist:") || mediaId.startsWith("playlist_play:") || mediaId.startsWith("search_play:") ? mediaId : "playid:" + mediaId;
-                    pluginInstance.notifyMediaAction(action, -1);
+                    NativeMediaSessionPlugin.queueOrDispatchMediaAction(AudioForegroundService.this, action, -1);
                 }
             }
 
             @Override
             public void onPlayFromSearch(String query, Bundle extras) {
                 setBufferingStateWithMetadata("search:" + (query == null ? "" : query));
-
-                NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
-                if (pluginInstance != null) {
-                    pluginInstance.notifyMediaAction("search:" + (query == null ? "" : query), -1);
-                }
+                NativeMediaSessionPlugin.queueOrDispatchMediaAction(AudioForegroundService.this, "search:" + (query == null ? "" : query), -1);
             }
         });
 
@@ -327,6 +356,11 @@ public class AudioForegroundService extends Service {
         String artworkUrl = intent.getStringExtra("artworkUrl");
         long durationMs = intent.getLongExtra("durationMs", 0);
 
+        boolean isFavorite = intent.getBooleanExtra("isFavorite", false);
+        boolean isPodcast = intent.getBooleanExtra("isPodcast", false);
+        currentIsFavorite = isFavorite;
+        currentIsPodcast = isPodcast;
+
         String newTitle = (title != null && !title.trim().isEmpty()) ? title.trim() : currentTitle;
         String newArtist = (artist != null && !artist.trim().isEmpty()) ? artist.trim() : currentArtist;
         String rawAlbum = (album != null && !album.trim().isEmpty()) ? album.trim() : "";
@@ -349,7 +383,10 @@ public class AudioForegroundService extends Service {
             currentDurationMs = durationMs;
         }
 
+        String mediaId = "track:" + (currentTitle + "_" + currentArtist).replaceAll("[^a-zA-Z0-9_]+", "_");
+
         MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, currentTitle)
             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, currentTitle)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, currentArtist)
@@ -361,18 +398,37 @@ public class AudioForegroundService extends Service {
             metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentDurationMs);
         }
 
-        if (artworkUrl != null && !artworkUrl.isEmpty()) {
-            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artworkUrl);
-            metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artworkUrl);
-        }
+        Uri artUri = (artworkUrl != null && !artworkUrl.isEmpty())
+            ? ArtworkContentProvider.getRemoteUri(artworkUrl)
+            : ArtworkContentProvider.getGeneratedUri(currentTitle, currentArtist, "AURORA");
+        Bitmap artBitmap = (currentArtworkBitmap != null)
+            ? currentArtworkBitmap
+            : AutoArtworkGenerator.generateCover(currentTitle, currentArtist, "AURORA");
 
-        if (currentArtworkBitmap != null) {
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, currentArtworkBitmap);
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, currentArtworkBitmap);
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, currentArtworkBitmap);
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri.toString());
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artUri.toString());
+        metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ART_URI, artUri.toString());
+
+        if (artBitmap != null) {
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artBitmap);
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, artBitmap);
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artBitmap);
         }
 
         mediaSession.setMetadata(metadataBuilder.build());
+
+        MediaDescriptionCompat queueDesc = new MediaDescriptionCompat.Builder()
+            .setMediaId(mediaId)
+            .setTitle(currentTitle)
+            .setSubtitle(currentArtist)
+            .setDescription(currentAlbum)
+            .setIconUri(artUri)
+            .setIconBitmap(artBitmap)
+            .build();
+        List<MediaSessionCompat.QueueItem> queueItems = new ArrayList<>();
+        queueItems.add(new MediaSessionCompat.QueueItem(queueDesc, 0));
+        mediaSession.setQueue(queueItems);
+        mediaSession.setQueueTitle("Aurora - Ahora Suena");
 
         updateNotification(title, artist);
 
@@ -387,15 +443,18 @@ public class AudioForegroundService extends Service {
                 if (bitmap != null && artworkUrl.equals(currentArtworkUrl)) {
                     currentArtworkBitmap = bitmap;
 
+                    String safeArtUri = ArtworkContentProvider.getRemoteUri(artworkUrl).toString();
                     MediaMetadataCompat.Builder updatedMetadataBuilder = new MediaMetadataCompat.Builder()
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, finalTitle)
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, finalTitle)
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, finalArtist)
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, finalArtist)
                         .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, finalAlbum)
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, finalAlbum)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artworkUrl)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artworkUrl)
+                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, safeArtUri)
+                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, safeArtUri)
+                        .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, safeArtUri)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
@@ -405,6 +464,18 @@ public class AudioForegroundService extends Service {
                     }
 
                     mediaSession.setMetadata(updatedMetadataBuilder.build());
+
+                    MediaDescriptionCompat updatedQueueDesc = new MediaDescriptionCompat.Builder()
+                        .setMediaId(mediaId)
+                        .setTitle(finalTitle)
+                        .setSubtitle(finalArtist)
+                        .setDescription(finalAlbum)
+                        .setIconUri(Uri.parse(safeArtUri))
+                        .setIconBitmap(bitmap)
+                        .build();
+                    List<MediaSessionCompat.QueueItem> updatedQueueItems = new ArrayList<>();
+                    updatedQueueItems.add(new MediaSessionCompat.QueueItem(updatedQueueDesc, 0));
+                    mediaSession.setQueue(updatedQueueItems);
 
                     updateNotification(finalTitle, finalArtist);
                 }
@@ -421,14 +492,79 @@ public class AudioForegroundService extends Service {
         PlaybackStateCompat.ACTION_PLAY_PAUSE |
         PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
         PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
+        PlaybackStateCompat.ACTION_FAST_FORWARD |
+        PlaybackStateCompat.ACTION_REWIND |
         PlaybackStateCompat.ACTION_STOP;
 
     private PlaybackStateCompat.Builder newPlaybackStateBuilder() {
-        return new PlaybackStateCompat.Builder()
+        PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder()
             .setActions(SUPPORTED_ACTIONS)
-            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+            .setActiveQueueItemId(0);
+
+        if (currentIsFavorite) {
+            builder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_FAVORITE_REMOVE, "Quitar de favoritos", R.drawable.ic_heart_filled
+            ).build());
+        } else {
+            builder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_FAVORITE_ADD, "Me gusta", R.drawable.ic_heart_outline
+            ).build());
+        }
+
+        if (currentIsPodcast) {
+            builder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_REWIND_15, "-15 seg", R.drawable.ic_replay_15
+            ).build());
+            builder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_FORWARD_30, "+30 seg", R.drawable.ic_forward_30
+            ).build());
+            builder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
+                ACTION_PLAYBACK_SPEED, String.format(java.util.Locale.US, "%.2fx", currentPlaybackSpeed), R.drawable.ic_speed
+            ).build());
+        } else {
+            builder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
                 ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
             ).build());
+        }
+
+        return builder;
+    }
+
+    private void refreshPlaybackStateImmediately() {
+        if (mediaSession == null) return;
+        PlaybackStateCompat state = mediaSession.getController().getPlaybackState();
+        int stateCode = state != null ? state.getState() : PlaybackStateCompat.STATE_PAUSED;
+        long pos = state != null ? state.getPosition() : 0;
+        float rate = state != null ? state.getPlaybackSpeed() : 0f;
+        mediaSession.setPlaybackState(newPlaybackStateBuilder().setState(stateCode, pos, rate).build());
+    }
+
+    private void handleRewind15() {
+        PlaybackStateCompat state = mediaSession != null ? mediaSession.getController().getPlaybackState() : null;
+        long currentPos = state != null ? state.getPosition() : 0;
+        long newPos = Math.max(0, currentPos - 15000);
+        seekStream(newPos);
+        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
+        if (nms != null) nms.notifyMediaAction("seekto", newPos);
+    }
+
+    private void handleForward30() {
+        PlaybackStateCompat state = mediaSession != null ? mediaSession.getController().getPlaybackState() : null;
+        long currentPos = state != null ? state.getPosition() : 0;
+        long newPos = currentPos + 30000;
+        seekStream(newPos);
+        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
+        if (nms != null) nms.notifyMediaAction("seekto", newPos);
+    }
+
+    private void cyclePlaybackSpeed() {
+        if (currentPlaybackSpeed == 1.0f) currentPlaybackSpeed = 1.25f;
+        else if (currentPlaybackSpeed == 1.25f) currentPlaybackSpeed = 1.5f;
+        else if (currentPlaybackSpeed == 1.5f) currentPlaybackSpeed = 2.0f;
+        else currentPlaybackSpeed = 1.0f;
+        refreshPlaybackStateImmediately();
+        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
+        if (nms != null) nms.notifyMediaAction("speed_" + currentPlaybackSpeed, -1);
     }
 
     private void handlePlaybackStateUpdate(Intent intent) {
@@ -507,13 +643,24 @@ public class AudioForegroundService extends Service {
             }
         }
 
-        MediaMetadataCompat bufferingMeta = new MediaMetadataCompat.Builder()
+        Uri artUri = ArtworkContentProvider.getGeneratedUri(loadingTitle, loadingSubtitle, "AURORA");
+        Bitmap instantArt = AutoArtworkGenerator.generateCover(loadingTitle, loadingSubtitle, "AURORA");
+
+        MediaMetadataCompat.Builder bufferingMeta = new MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, loadingTitle)
             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, loadingTitle)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, loadingSubtitle)
             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, loadingSubtitle)
-            .build();
-        mediaSession.setMetadata(bufferingMeta);
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri.toString())
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artUri.toString());
+
+        if (instantArt != null) {
+            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, instantArt);
+            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, instantArt);
+            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, instantArt);
+        }
+
+        mediaSession.setMetadata(bufferingMeta.build());
 
         PlaybackStateCompat bufferingState = newPlaybackStateBuilder()
             .setState(PlaybackStateCompat.STATE_BUFFERING, 0, 1.0f)
@@ -607,10 +754,7 @@ public class AudioForegroundService extends Service {
     }
 
     private void notifyJsMediaAction(String action) {
-        NativeMediaSessionPlugin pluginInstance = NativeMediaSessionPlugin.getInstance();
-        if (pluginInstance != null) {
-            pluginInstance.notifyMediaAction(action, -1);
-        }
+        NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, action, -1);
     }
 
     private Bitmap downloadBitmap(String urlStr) {
@@ -676,7 +820,7 @@ public class AudioForegroundService extends Service {
                 telephonyManager.listen(phoneStateListener, android.telephony.PhoneStateListener.LISTEN_NONE);
             } catch (Throwable ignored) {}
         }
-        if (mediaSession != null) {
+        if (mediaSession != null && AuroraAutoMediaBrowserService.getInstance() == null) {
             mediaSession.setActive(false);
             mediaSession.release();
         }

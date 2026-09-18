@@ -24,6 +24,8 @@ public class NativeMediaSessionPlugin extends Plugin {
     private static final String TAG = "NativeMediaSessionPlugin";
 
     private static NativeMediaSessionPlugin instance;
+    private static String pendingAction = null;
+    private static long pendingPosition = -1;
     private AudioManager audioManager;
     private AudioDeviceCallback audioDeviceCallback;
     private BroadcastReceiver bluetoothReceiver;
@@ -34,6 +36,7 @@ public class NativeMediaSessionPlugin extends Plugin {
     public void load() {
         instance = this;
         setupBluetoothMonitoring();
+        flushPendingMediaAction();
     }
 
     public static NativeMediaSessionPlugin getInstance() {
@@ -175,6 +178,8 @@ public class NativeMediaSessionPlugin extends Plugin {
         intent.putExtra("album", album);
         intent.putExtra("artworkUrl", artworkUrl);
         intent.putExtra("durationMs", durationMs);
+        intent.putExtra("isFavorite", call.getBoolean("isFavorite", false));
+        intent.putExtra("isPodcast", call.getBoolean("isPodcast", false));
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -314,11 +319,40 @@ public class NativeMediaSessionPlugin extends Plugin {
         notifyListeners("mediaAction", data, true);
     }
 
+    public static synchronized void queueOrDispatchMediaAction(Context context, String action, long position) {
+        if (instance != null) {
+            instance.notifyMediaAction(action, position);
+        } else {
+            pendingAction = action;
+            pendingPosition = position;
+            if (context != null) {
+                try {
+                    Intent launchIntent = new Intent(context, MainActivity.class);
+                    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    context.startActivity(launchIntent);
+                } catch (Throwable error) {
+                    Log.w(TAG, "Failed launching MainActivity for queued action", error);
+                }
+            }
+        }
+    }
+
+    public static synchronized void flushPendingMediaAction() {
+        if (instance != null && pendingAction != null) {
+            String action = pendingAction;
+            long position = pendingPosition;
+            pendingAction = null;
+            pendingPosition = -1;
+            instance.notifyMediaAction(action, position);
+        }
+    }
+
     @PluginMethod
     public void updateAutoCatalog(PluginCall call) {
         String json = call.getString("json", "[]");
         getContext().getSharedPreferences("aurora_auto", Context.MODE_PRIVATE)
                 .edit().putString("catalog", json).apply();
+        AuroraAutoMediaBrowserService.onCatalogUpdated();
         call.resolve();
     }
 

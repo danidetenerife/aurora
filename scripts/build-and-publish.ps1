@@ -70,7 +70,7 @@ $MetainfoPath = "$Root\packages\player\src-tauri\resources\com.auroraplayer.Auro
 if (Test-Path $MetainfoPath) {
     $rawMeta = [System.IO.File]::ReadAllText($MetainfoPath, [System.Text.Encoding]::UTF8)
     $todayStr = (Get-Date).ToString("yyyy-MM-dd")
-    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Resolución total de carátulas en Historial y Listas, función Álbum Favorito en toda la UI, virtualización de cola y optimización extrema de rendimiento en escritorio.</p>`n      </description>`n    </release>`n"
+    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Transformación integral de Android Auto y AAOS: 100% carátulas HD neo-brutalistas, generador dinámico con degradados, MediaSession unificada y Now Playing completo con controles y favoritos.</p>`n      </description>`n    </release>`n"
     $metaStr = $rawMeta -replace "<releases>", "<releases>`n$newReleaseBlock"
     [System.IO.File]::WriteAllText($MetainfoPath, $metaStr, $utf8NoBom)
 }
@@ -142,8 +142,12 @@ if (Test-Path $GeneratedExe) {
 
 $InstalledExe = "C:\Users\Danid\AppData\Local\Aurora\aurora-music-player.exe"
 $TargetBin = "$Root\packages\player\src-tauri\target\release\aurora-music-player.exe"
-if (Test-Path $TargetBin) {
-    Copy-Item $TargetBin $InstalledExe -Force -ErrorAction SilentlyContinue
+try {
+    if (Test-Path $TargetBin) {
+        Copy-Item $TargetBin $InstalledExe -Force -ErrorAction SilentlyContinue
+    }
+} catch {
+    Write-Host "[Aviso] No se pudo sobrescribir el ejecutable local instalado (la app de escritorio está en ejecución)." -ForegroundColor Yellow
 }
 
 $GeneratedSignature = "$GeneratedExe.sig"

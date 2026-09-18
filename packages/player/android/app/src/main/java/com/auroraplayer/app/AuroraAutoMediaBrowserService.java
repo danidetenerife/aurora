@@ -2,9 +2,9 @@ package com.auroraplayer.app;
 
 import android.app.PendingIntent;
 import android.content.ContentResolver;
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,15 +15,17 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,132 +38,75 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
     public static final String CONTENT_STYLE_SUPPORTED = "android.media.browse.CONTENT_STYLE_SUPPORTED";
     public static final String CONTENT_STYLE_BROWSABLE_HINT = "android.media.browse.CONTENT_STYLE_BROWSABLE_HINT";
     public static final String CONTENT_STYLE_PLAYABLE_HINT = "android.media.browse.CONTENT_STYLE_PLAYABLE_HINT";
+    public static final String CONTENT_STYLE_SINGLE_ITEM_HINT = "android.media.browse.CONTENT_STYLE_SINGLE_ITEM";
+    public static final String CONTENT_STYLE_GROUP_TITLE_HINT = "android.media.browse.CONTENT_STYLE_GROUP_TITLE";
+
     public static final int CONTENT_STYLE_LIST_ITEM_HINT_VALUE = 1;
     public static final int CONTENT_STYLE_GRID_ITEM_HINT_VALUE = 2;
 
+    public static final String METADATA_KEY_IS_EXPLICIT = "android.media.metadata.IS_EXPLICIT";
+    public static final long METADATA_VALUE_ATTRIBUTE_PRESENT = 1L;
+
+    public static final String EXTRA_COMPLETION_STATUS = "android.media.extra.COMPLETION_STATUS";
+    public static final int COMPLETION_STATUS_NOT_PLAYED = 1;
+    public static final int COMPLETION_STATUS_PARTIALLY_PLAYED = 2;
+    public static final int COMPLETION_STATUS_FULLY_PLAYED = 3;
+    public static final String EXTRA_COMPLETION_PERCENTAGE = "android.media.extra.COMPLETION_PERCENTAGE";
+
     private static final String ROOT_ID = "__AURORA_AUTO_ROOT__";
-    private static final String CATEGORY_NOW_PLAYING = "cat_now_playing";
     private static final String CATEGORY_EXPLORE = "cat_explore";
     private static final String CATEGORY_FAVORITES = "cat_favorites";
     private static final String CATEGORY_PLAYLISTS = "cat_playlists";
     private static final String CATEGORY_PODCASTS = "cat_podcasts";
-    private static final String CATEGORY_DISCOVER = "cat_discover";
-    private static final String CATEGORY_QUEUE = "cat_queue";
-    private static final String ACTION_DISLIKE = "com.auroraplayer.ACTION_DISLIKE";
 
-    private static final int MAX_BITMAP_CACHE_SIZE = 30;
-    private static final int BITMAP_TARGET_SIZE = 256;
     private static final int HTTP_CONNECT_TIMEOUT_MS = 4000;
     private static final int HTTP_READ_TIMEOUT_MS = 4000;
 
-    private MediaSessionCompat fallbackSession;
-    private final ExecutorService bitmapExecutor = Executors.newFixedThreadPool(3);
-    private final Map<String, Bitmap> bitmapCache = new HashMap<>();
+    private static volatile AuroraAutoMediaBrowserService sInstance;
+    private final ExecutorService asyncExecutor = Executors.newFixedThreadPool(4);
+
+    public static AuroraAutoMediaBrowserService getInstance() {
+        return sInstance;
+    }
+
+    public static void onCatalogUpdated() {
+        AuroraAutoMediaBrowserService service = sInstance;
+        if (service != null) {
+            try {
+                service.notifyChildrenChanged(ROOT_ID);
+                service.notifyChildrenChanged(CATEGORY_EXPLORE);
+                service.notifyChildrenChanged(CATEGORY_FAVORITES);
+                service.notifyChildrenChanged(CATEGORY_PLAYLISTS);
+                service.notifyChildrenChanged(CATEGORY_PODCASTS);
+            } catch (Throwable error) {
+                Log.w(TAG, "Failed notifying children update", error);
+            }
+        }
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        initSession();
+        sInstance = this;
+        MediaSessionCompat session = AuroraMediaSessionHolder.getOrCreateSession(this);
+        setSessionToken(session.getSessionToken());
         ensureAudioServiceRunning();
     }
 
-    private void initSession() {
-        AudioForegroundService afs = AudioForegroundService.getInstance();
-        if (afs != null && afs.getMediaSession() != null) {
-            setSessionToken(afs.getMediaSession().getSessionToken());
+    private void handleVoicePlaySearch(String query, Bundle extras) {
+        String cleanQuery = (query == null) ? "" : query.trim();
+        if (cleanQuery.isEmpty()) {
+            forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", true);
             return;
         }
 
-        fallbackSession = new MediaSessionCompat(this, "AuroraAutoMediaSession");
-        fallbackSession.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-            MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        );
-
-        Intent activityIntent = new Intent(this, MainActivity.class);
-        int pFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            pFlags |= PendingIntent.FLAG_IMMUTABLE;
+        String lower = cleanQuery.toLowerCase();
+        if (lower.startsWith("reproduce ") || lower.startsWith("pon ") || lower.startsWith("escuchar ")) {
+            cleanQuery = cleanQuery.substring(cleanQuery.indexOf(' ') + 1).trim();
         }
-        PendingIntent sessionActivity = PendingIntent.getActivity(this, 0, activityIntent, pFlags);
-        fallbackSession.setSessionActivity(sessionActivity);
 
-        fallbackSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPlay() {
-                forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", true);
-            }
-
-            @Override
-            public void onPause() {
-                forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", false);
-            }
-
-            @Override
-            public void onSkipToNext() {
-                forwardActionToAudioService("com.auroraplayer.ACTION_NEXT", null);
-            }
-
-            @Override
-            public void onSkipToPrevious() {
-                forwardActionToAudioService("com.auroraplayer.ACTION_PREVIOUS", null);
-            }
-
-            @Override
-            public void onStop() {
-                forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", false);
-            }
-
-            @Override
-            public void onCustomAction(String action, Bundle extras) {
-                if (ACTION_DISLIKE.equals(action)) {
-                    NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-                    if (nms != null) nms.notifyMediaAction("dislike", -1);
-                }
-            }
-
-            @Override
-            public void onPlayFromMediaId(String mediaId, Bundle extras) {
-                setBufferingState(mediaId);
-
-                NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-                if (nms != null && mediaId != null) {
-                    String action = mediaId.startsWith("playid:") || mediaId.startsWith("podcast:") || mediaId.startsWith("playlist:") || mediaId.startsWith("search_play:") || mediaId.startsWith("playlist_play:")
-                        ? mediaId
-                        : "playid:" + mediaId;
-                    nms.notifyMediaAction(action, -1);
-                }
-            }
-
-            @Override
-            public void onPlayFromSearch(String query, Bundle extras) {
-                setBufferingState("search:" + (query == null ? "" : query));
-
-                NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-                if (nms != null) nms.notifyMediaAction("search:" + (query == null ? "" : query), -1);
-            }
-        });
-
-        PlaybackStateCompat initialState = new PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
-                PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
-                PlaybackStateCompat.ACTION_STOP
-            )
-            .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
-            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
-            ).build())
-            .build();
-
-        fallbackSession.setPlaybackState(initialState);
-        fallbackSession.setActive(true);
-        setSessionToken(fallbackSession.getSessionToken());
+        setBufferingState("search_play:" + cleanQuery);
+        NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "search_play:" + cleanQuery, -1);
     }
 
     private void setBufferingState(String mediaId) {
@@ -178,17 +123,28 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             } else if (mediaId.startsWith("podcast:")) {
                 loadingTitle = "Cargando podcast...";
             } else if (mediaId.startsWith("playlist_play:") || mediaId.startsWith("playlist:")) {
-                loadingTitle = "Cargando playlist...";
+                loadingTitle = "Cargando lista...";
             }
         }
 
-        MediaMetadataCompat bufferingMeta = new MediaMetadataCompat.Builder()
+        Uri artUri = ArtworkContentProvider.getGeneratedUri(loadingTitle, loadingSubtitle, "AURORA");
+        Bitmap instantArt = AutoArtworkGenerator.generateCover(loadingTitle, loadingSubtitle, "AURORA");
+
+        MediaMetadataCompat.Builder bufferingMeta = new MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, loadingTitle)
             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, loadingTitle)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, loadingSubtitle)
             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, loadingSubtitle)
-            .build();
-        session.setMetadata(bufferingMeta);
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri.toString())
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artUri.toString());
+
+        if (instantArt != null) {
+            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, instantArt);
+            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, instantArt);
+            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, instantArt);
+        }
+
+        session.setMetadata(bufferingMeta.build());
 
         PlaybackStateCompat bufferingState = new PlaybackStateCompat.Builder()
             .setActions(
@@ -202,19 +158,12 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 PlaybackStateCompat.ACTION_STOP
             )
             .setState(PlaybackStateCompat.STATE_BUFFERING, 0, 1.0f)
-            .addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
-                ACTION_DISLIKE, "No me gusta", R.drawable.ic_thumb_down
-            ).build())
             .build();
         session.setPlaybackState(bufferingState);
     }
 
     private MediaSessionCompat getActiveSession() {
-        AudioForegroundService afs = AudioForegroundService.getInstance();
-        if (afs != null && afs.getMediaSession() != null) {
-            return afs.getMediaSession();
-        }
-        return fallbackSession;
+        return AuroraMediaSessionHolder.getOrCreateSession(this);
     }
 
     private void ensureAudioServiceRunning() {
@@ -227,32 +176,24 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                     startService(serviceIntent);
                 }
             } catch (Throwable error) {
-                Log.w(TAG, "AudioForegroundService start notice", error);
+                Log.w(TAG, "AudioForegroundService startup error", error);
             }
         }
     }
 
     private void forwardActionToAudioService(String action, Boolean targetPlay) {
         AudioForegroundService afs = AudioForegroundService.getInstance();
-        if (afs != null) {
-            if ("com.auroraplayer.ACTION_PLAY_PAUSE".equals(action) && targetPlay != null) {
-                if (targetPlay) {
-                    afs.resumeStream();
-                } else {
-                    afs.pauseStream();
-                }
-            }
+        if (afs != null && "com.auroraplayer.ACTION_PLAY_PAUSE".equals(action) && targetPlay != null) {
+            if (targetPlay) afs.resumeStream();
+            else afs.pauseStream();
         }
 
-        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-        if (nms != null) {
-            if ("com.auroraplayer.ACTION_NEXT".equals(action)) {
-                nms.notifyMediaAction("nexttrack", -1);
-            } else if ("com.auroraplayer.ACTION_PREVIOUS".equals(action)) {
-                nms.notifyMediaAction("previoustrack", -1);
-            } else if ("com.auroraplayer.ACTION_PLAY_PAUSE".equals(action)) {
-                nms.notifyMediaAction(targetPlay == null || targetPlay ? "play" : "pause", -1);
-            }
+        if ("com.auroraplayer.ACTION_NEXT".equals(action)) {
+            NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "nexttrack", -1);
+        } else if ("com.auroraplayer.ACTION_PREVIOUS".equals(action)) {
+            NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "previoustrack", -1);
+        } else if ("com.auroraplayer.ACTION_PLAY_PAUSE".equals(action)) {
+            NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, targetPlay == null || targetPlay ? "play" : "pause", -1);
         }
 
         try {
@@ -264,19 +205,28 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 startService(intent);
             }
         } catch (Throwable error) {
-            Log.w(TAG, "Failed action intent", error);
+            Log.w(TAG, "Failed forwarding intent", error);
         }
     }
 
-    private Uri getDrawableUri(int resourceId) {
-        return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/" + resourceId);
-    }
-
-    private MediaBrowserCompat.MediaItem createMediaItem(String mediaId, String title, String subtitle, Uri iconUri, boolean browsable, boolean isGrid) {
+    private MediaBrowserCompat.MediaItem createMediaItem(
+            String mediaId,
+            String title,
+            String subtitle,
+            Uri iconUri,
+            boolean browsable,
+            boolean isGrid,
+            @Nullable String groupTitle
+    ) {
         Bundle extras = new Bundle();
         int hint = isGrid ? CONTENT_STYLE_GRID_ITEM_HINT_VALUE : CONTENT_STYLE_LIST_ITEM_HINT_VALUE;
+        extras.putInt(CONTENT_STYLE_SINGLE_ITEM_HINT, hint);
         extras.putInt(CONTENT_STYLE_BROWSABLE_HINT, hint);
         extras.putInt(CONTENT_STYLE_PLAYABLE_HINT, hint);
+
+        if (groupTitle != null && !groupTitle.trim().isEmpty()) {
+            extras.putString(CONTENT_STYLE_GROUP_TITLE_HINT, groupTitle);
+        }
 
         MediaDescriptionCompat.Builder builder = new MediaDescriptionCompat.Builder()
             .setMediaId(mediaId)
@@ -286,28 +236,6 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
 
         if (iconUri != null) {
             builder.setIconUri(iconUri);
-        }
-
-        return new MediaBrowserCompat.MediaItem(
-            builder.build(),
-            browsable ? MediaBrowserCompat.MediaItem.FLAG_BROWSABLE : MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
-        );
-    }
-
-    private MediaBrowserCompat.MediaItem createMediaItemWithBitmap(String mediaId, String title, String subtitle, Bitmap iconBitmap, boolean browsable, boolean isGrid) {
-        Bundle extras = new Bundle();
-        int hint = isGrid ? CONTENT_STYLE_GRID_ITEM_HINT_VALUE : CONTENT_STYLE_LIST_ITEM_HINT_VALUE;
-        extras.putInt(CONTENT_STYLE_BROWSABLE_HINT, hint);
-        extras.putInt(CONTENT_STYLE_PLAYABLE_HINT, hint);
-
-        MediaDescriptionCompat.Builder builder = new MediaDescriptionCompat.Builder()
-            .setMediaId(mediaId)
-            .setTitle(title)
-            .setSubtitle(subtitle)
-            .setExtras(extras);
-
-        if (iconBitmap != null) {
-            builder.setIconBitmap(iconBitmap);
         }
 
         return new MediaBrowserCompat.MediaItem(
@@ -328,9 +256,25 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         Bundle rootExtras = new Bundle();
         rootExtras.putBoolean(CONTENT_STYLE_SUPPORTED, true);
         rootExtras.putInt(CONTENT_STYLE_BROWSABLE_HINT, CONTENT_STYLE_GRID_ITEM_HINT_VALUE);
-        rootExtras.putInt(CONTENT_STYLE_PLAYABLE_HINT, CONTENT_STYLE_GRID_ITEM_HINT_VALUE);
+        rootExtras.putInt(CONTENT_STYLE_PLAYABLE_HINT, CONTENT_STYLE_LIST_ITEM_HINT_VALUE);
+        rootExtras.putBoolean("android.media.browse.SEARCH_SUPPORTED", true);
 
         return new BrowserRoot(ROOT_ID, rootExtras);
+    }
+
+    private Uri getResourceUri(int resId) {
+        try {
+            String type = getResources().getResourceTypeName(resId);
+            String name = getResources().getResourceEntryName(resId);
+            return new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(getPackageName())
+                .appendPath(type)
+                .appendPath(name)
+                .build();
+        } catch (Throwable e) {
+            return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/" + resId);
+        }
     }
 
     @Override
@@ -350,89 +294,101 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
 
         if (ROOT_ID.equals(parentMediaId)) {
-            String currentTitle = "Reproduciendo";
-            String currentSubtitle = "Aurora Player";
-            Uri currentArtwork = null;
-
-            AudioForegroundService afs = AudioForegroundService.getInstance();
-            if (afs != null && afs.getMediaSession() != null) {
-                MediaMetadataCompat meta = afs.getMediaSession().getController().getMetadata();
-                if (meta != null) {
-                    CharSequence titleCs = meta.getText(MediaMetadataCompat.METADATA_KEY_TITLE);
-                    CharSequence artistCs = meta.getText(MediaMetadataCompat.METADATA_KEY_ARTIST);
-                    String artUri = meta.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI);
-                    if (titleCs != null && titleCs.length() > 0) currentTitle = titleCs.toString();
-                    if (artistCs != null && artistCs.length() > 0) currentSubtitle = artistCs.toString();
-                    if (artUri != null && artUri.length() > 0) currentArtwork = Uri.parse(artUri);
-                }
-            }
-            if (currentArtwork == null) {
-                currentArtwork = getDrawableUri(R.drawable.ic_auto_queue);
-            }
-
-            items.add(createMediaItem(CATEGORY_NOW_PLAYING, currentTitle, currentSubtitle, currentArtwork, false, true));
-            items.add(createMediaItem(CATEGORY_EXPLORE, "Explorar & Búsqueda", "Música para conducir y géneros", getDrawableUri(R.drawable.ic_auto_search), true, true));
-            items.add(createMediaItem(CATEGORY_FAVORITES, "Favoritos", "Tus canciones y álbumes guardados", getDrawableUri(R.drawable.ic_auto_favorites), true, true));
-            items.add(createMediaItem(CATEGORY_PLAYLISTS, "Listas de reproducción", "Tus playlists y éxitos populares", getDrawableUri(R.drawable.ic_auto_playlists), true, true));
-            items.add(createMediaItem(CATEGORY_PODCASTS, "Podcasts", "Busca y escucha cualquier podcast", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem(CATEGORY_DISCOVER, "Top Éxitos", "Tendencias mundiales y novedades", getDrawableUri(R.drawable.ic_auto_discover), true, true));
-            items.add(createMediaItem(CATEGORY_QUEUE, "Cola actual", "Pistas en la lista de reproducción", getDrawableUri(R.drawable.ic_auto_queue), true, false));
+            items.add(createMediaItem(
+                CATEGORY_EXPLORE,
+                "Explorar",
+                "Música para conducir y géneros",
+                getResourceUri(R.drawable.ic_auto_discover),
+                true,
+                true,
+                null
+            ));
+            items.add(createMediaItem(
+                CATEGORY_FAVORITES,
+                "Favoritos",
+                "Tus canciones preferidas",
+                getResourceUri(R.drawable.ic_auto_favorites),
+                true,
+                false,
+                null
+            ));
+            items.add(createMediaItem(
+                CATEGORY_PLAYLISTS,
+                "Listas",
+                "Colecciones y listas populares",
+                getResourceUri(R.drawable.ic_auto_playlists),
+                true,
+                true,
+                null
+            ));
+            items.add(createMediaItem(
+                CATEGORY_PODCASTS,
+                "Podcasts",
+                "Programas, comedia e historia",
+                getResourceUri(R.drawable.ic_auto_podcasts),
+                true,
+                true,
+                null
+            ));
         } else if (CATEGORY_EXPLORE.equals(parentMediaId)) {
-            items.add(createMediaItem("search_play:Música para Conducir", "Música para Conducir", "Carretera y viaje", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Top España 2026", "Top España", "Lo más sonado hoy", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Rock Clásico", "Rock Clásicos", "Guitarras y leyendas", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Reggaeton Éxitos", "Reggaetón & Urbano", "Ritmo y fiesta", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Chill Lo-Fi Beats", "Chill & Lo-Fi", "Conducción relajada", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Pop Internacional", "Pop Internacional", "Grandes éxitos mundiales", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Éxitos de los 80 y 90", "Nostalgia 80s y 90s", "Grandes recuerdos", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Electrónica Dance", "Electrónica & Dance", "Energía en ruta", getDrawableUri(R.drawable.ic_auto_discover), false, true));
+            populateExploreCategory(items);
         } else if (CATEGORY_PLAYLISTS.equals(parentMediaId)) {
             populatePlaylistsCategory(items);
         } else if (parentMediaId.startsWith("playlist:")) {
             populatePlaylistTracks(parentMediaId.substring("playlist:".length()), items);
         } else if (CATEGORY_FAVORITES.equals(parentMediaId)) {
             populateFavoritesCategory(items);
-        } else if (CATEGORY_DISCOVER.equals(parentMediaId)) {
-            populateDiscoverCategory(items);
-        } else if (CATEGORY_QUEUE.equals(parentMediaId)) {
-            populateQueueCategory(items);
         }
 
         result.sendResult(items);
     }
 
+    private void populateExploreCategory(List<MediaBrowserCompat.MediaItem> items) {
+        final String GROUP_ROAD = "Música para el viaje";
+        items.add(createMediaItem("search_play:Música para Conducir", "Para Conducir", "Ritmo, asfalto y energía", ArtworkContentProvider.getPresetUri("cover_driving"), false, true, GROUP_ROAD));
+        items.add(createMediaItem("search_play:Top España 2026", "Top España 2026", "Los mayores éxitos del país", ArtworkContentProvider.getPresetUri("cover_spain"), false, true, GROUP_ROAD));
+        items.add(createMediaItem("search_play:Rock Clásico", "Rock Carretera", "Guitarras y leyendas del rock", ArtworkContentProvider.getPresetUri("cover_rock"), false, true, GROUP_ROAD));
+        items.add(createMediaItem("search_play:Reggaeton Éxitos", "Reggaetón & Urbano", "Flow y pista de baile", ArtworkContentProvider.getPresetUri("cover_reggaeton"), false, true, GROUP_ROAD));
+
+        final String GROUP_MOODS = "Géneros y Estados de Ánimo";
+        items.add(createMediaItem("search_play:Chill Lo-Fi Beats", "Chill & Lo-Fi", "Calma y concentración", ArtworkContentProvider.getPresetUri("cover_lofi"), false, true, GROUP_MOODS));
+        items.add(createMediaItem("search_play:Pop Internacional", "Pop Internacional", "Los hits más cantados", ArtworkContentProvider.getPresetUri("cover_pop"), false, true, GROUP_MOODS));
+        items.add(createMediaItem("search_play:Éxitos de los 80 y 90", "Nostalgia 80s 90s", "Éxitos dorados de dos décadas", ArtworkContentProvider.getPresetUri("cover_retro"), false, true, GROUP_MOODS));
+        items.add(createMediaItem("search_play:Electrónica Dance", "Electrónica & Club", "Beats y energía dance", ArtworkContentProvider.getPresetUri("cover_electronic"), false, true, GROUP_MOODS));
+        items.add(createMediaItem("search_play:Tendencias Virales", "Tendencias Virales", "Lo más sonado en redes", ArtworkContentProvider.getPresetUri("cover_viral"), false, true, GROUP_MOODS));
+        items.add(createMediaItem("search_play:Novedades Semanales", "Novedades de la Semana", "Estrenos recién publicados", ArtworkContentProvider.getPresetUri("cover_new"), false, true, GROUP_MOODS));
+    }
+
     private void loadPodcastsAsync(final Result<List<MediaBrowserCompat.MediaItem>> result) {
-        bitmapExecutor.execute(() -> {
+        asyncExecutor.execute(() -> {
             List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
 
-            items.add(createMediaItem("podcast_genre:comedia española podcast", "🎭 Comedia", "Humor y entretenimiento", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:true crime español", "🔍 True Crime", "Crímenes y misterios", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:tecnología podcast español", "💻 Tecnología", "Gadgets, apps e innovación", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:historia podcast español", "📜 Historia", "Relatos del pasado", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:noticias actualidad podcast español", "📰 Noticias", "Actualidad y análisis", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:deportes fútbol podcast", "⚽ Deportes", "Fútbol, NBA y más", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:ciencia divulgación podcast", "🔬 Ciencia", "Divulgación científica", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
-            items.add(createMediaItem("podcast_genre:entrevistas famosos podcast", "🎙️ Entrevistas", "Conversaciones con invitados", getDrawableUri(R.drawable.ic_auto_podcasts), true, true));
+            final String GROUP_GENRES = "Categorías de Podcasts";
+            items.add(createMediaItem("podcast_genre:comedia española podcast", "Comedia & Risas", "Humor, anécdotas y monólogos", ArtworkContentProvider.getPresetUri("cover_podcast_comedy"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:true crime misterio español", "Crimen & Misterio", "Investigación y misterios", ArtworkContentProvider.getPresetUri("cover_podcast_truecrime"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:tecnologia inteligencia artificial podcast", "Tecnología & IA", "Innovación, futuro y gadgets", ArtworkContentProvider.getPresetUri("cover_podcast_tech"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:historia podcast español", "Historia Viva", "Grandes momentos de la humanidad", ArtworkContentProvider.getPresetUri("cover_podcast_history"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:noticias actualidad diario", "Noticias al Día", "La actualidad en minutos", ArtworkContentProvider.getPresetUri("cover_podcast_news"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:deportes motor formula 1 futbol", "Deportes & Motor", "Fútbol, F1 y debates", ArtworkContentProvider.getPresetUri("cover_podcast_sports"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:ciencia cosmos universo", "Ciencia & Cosmos", "Descubrimientos del universo", ArtworkContentProvider.getPresetUri("cover_podcast_science"), true, true, GROUP_GENRES));
+            items.add(createMediaItem("podcast_genre:cultura cine libros", "Cultura & Arte", "Cine, libros y reflexiones", ArtworkContentProvider.getPresetUri("cover_podcast_culture"), true, true, GROUP_GENRES));
 
-            addPodcastWithBitmap(items, "todopoderosos", "Todopoderosos", "Arturo González-Campos, Rodrigo Cortés, Javier Cansado, Juan Gómez-Jurado", "https://static-ivoox.epimg.net/canales/3/2/5/1/11325_big.jpg");
-            addPodcastWithBitmap(items, "the-wild-project", "The Wild Project", "Jordi Wild", "https://i.scdn.co/image/ab6765630000ba8a798f480fe98dfce4b1bc41fc");
-            addPodcastWithBitmap(items, "nude-project", "The Nude Project", "Nude Project Podcast", "https://i.scdn.co/image/ab6765630000ba8a912bbbbce394c8e7e1efca24");
-            addPodcastWithBitmap(items, "historia-national", "Historia National Geographic", "National Geographic España", "https://static-ivoox.epimg.net/canales/1/3/2/1/11231_big.jpg");
-            addPodcastWithBitmap(items, "la-ruina", "La Ruina", "Ignasi Taltavull y Tomàs Fuentes", "https://i.scdn.co/image/ab6765630000ba8aa410d10b784a0d81fc69c6cf");
-            addPodcastWithBitmap(items, "nadie-sabe-nada", "Nadie Sabe Nada", "Andreu Buenafuente y Berto Romero", "https://i.scdn.co/image/ab6765630000ba8a83fa716757545ee2b1fa8519");
-            addPodcastWithBitmap(items, "daily", "The Daily", "The New York Times", "https://i.scdn.co/image/ab6765630000ba8a6b47c050fb36cc7cbe41bb59");
-            addPodcastWithBitmap(items, "serial", "Serial", "Serial Productions & The New York Times", "https://i.scdn.co/image/ab6765630000ba8a72ce10339d67d7168df65448");
+            final String GROUP_FEATURED = "Programas Populares";
+            items.add(createMediaItem("podcast:todopoderosos", "Todopoderosos", "Cultura, cine y humor", ArtworkContentProvider.getRemoteUri("https://static-ivoox.epimg.net/canales/3/2/5/1/11325_big.jpg"), false, true, GROUP_FEATURED));
+            items.add(createMediaItem("podcast:the-wild-project", "The Wild Project", "Charlas e invitados con Jordi Wild", ArtworkContentProvider.getRemoteUri("https://i.scdn.co/image/ab6765630000ba8a798f480fe98dfce4b1bc41fc"), false, true, GROUP_FEATURED));
+            items.add(createMediaItem("podcast:la-ruina", "La Ruina", "Ignasi Taltavull y Tomàs Fuentes", ArtworkContentProvider.getRemoteUri("https://i.scdn.co/image/ab6765630000ba8aa410d10b784a0d81fc69c6cf"), false, true, GROUP_FEATURED));
+            items.add(createMediaItem("podcast:nadie-sabe-nada", "Nadie Sabe Nada", "Andreu Buenafuente y Berto Romero", ArtworkContentProvider.getRemoteUri("https://i.scdn.co/image/ab6765630000ba8a83fa716757545ee2b1fa8519"), false, true, GROUP_FEATURED));
 
             result.sendResult(items);
         });
     }
 
     private void loadPodcastGenreAsync(final String genreQuery, final Result<List<MediaBrowserCompat.MediaItem>> result) {
-        bitmapExecutor.execute(() -> {
+        asyncExecutor.execute(() -> {
             List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
             try {
-                String encodedQuery = java.net.URLEncoder.encode(genreQuery, "UTF-8");
-                URL apiUrl = new URL("https://itunes.apple.com/search?term=" + encodedQuery + "&entity=podcast&limit=15&country=ES");
+                String encodedQuery = URLEncoder.encode(genreQuery, "UTF-8");
+                URL apiUrl = new URL("https://itunes.apple.com/search?term=" + encodedQuery + "&entity=podcast&limit=16&country=ES");
                 HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
                 conn.setConnectTimeout(HTTP_CONNECT_TIMEOUT_MS);
                 conn.setReadTimeout(HTTP_READ_TIMEOUT_MS);
@@ -463,26 +419,11 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                             if (podcastName.isEmpty()) continue;
 
                             String podcastSlug = podcastName.toLowerCase().replaceAll("[^a-z0-9]+", "-");
-                            Bitmap artwork = null;
-                            if (!artworkUrl.isEmpty()) {
-                                artwork = bitmapCache.get(artworkUrl);
-                                if (artwork == null) {
-                                    artwork = downloadBitmap(artworkUrl);
-                                    if (artwork != null) {
-                                        if (bitmapCache.size() >= MAX_BITMAP_CACHE_SIZE) {
-                                            String firstKey = bitmapCache.keySet().iterator().next();
-                                            bitmapCache.remove(firstKey);
-                                        }
-                                        bitmapCache.put(artworkUrl, artwork);
-                                    }
-                                }
-                            }
+                            Uri artUri = !artworkUrl.isEmpty()
+                                ? ArtworkContentProvider.getRemoteUri(artworkUrl)
+                                : ArtworkContentProvider.getPresetUri("cover_podcast_tech");
 
-                            if (artwork != null) {
-                                items.add(createMediaItemWithBitmap("podcast:" + podcastSlug, podcastName, artistName, artwork, false, true));
-                            } else {
-                                items.add(createMediaItem("podcast:" + podcastSlug, podcastName, artistName, getDrawableUri(R.drawable.ic_auto_podcasts), false, true));
-                            }
+                            items.add(createMediaItem("podcast:" + podcastSlug, podcastName, artistName, artUri, false, true, null));
                         }
                     }
                 } else {
@@ -493,61 +434,19 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             }
 
             if (items.isEmpty()) {
-                items.add(createMediaItem("podcast:" + genreQuery, "Buscar: " + genreQuery, "Reproducir último episodio", getDrawableUri(R.drawable.ic_auto_podcasts), false, true));
+                items.add(createMediaItem(
+                    "podcast:" + genreQuery,
+                    "Buscar: " + genreQuery,
+                    "Reproducir último episodio",
+                    ArtworkContentProvider.getPresetUri("cover_podcast_comedy"),
+                    false,
+                    true,
+                    null
+                ));
             }
 
             result.sendResult(items);
         });
-    }
-
-    private void addPodcastWithBitmap(List<MediaBrowserCompat.MediaItem> items, String id, String title, String publisher, String artworkUrl) {
-        Bitmap cachedBitmap = bitmapCache.get(artworkUrl);
-        if (cachedBitmap == null && artworkUrl != null) {
-            cachedBitmap = downloadBitmap(artworkUrl);
-            if (cachedBitmap != null) {
-                if (bitmapCache.size() >= MAX_BITMAP_CACHE_SIZE) {
-                    String firstKey = bitmapCache.keySet().iterator().next();
-                    bitmapCache.remove(firstKey);
-                }
-                bitmapCache.put(artworkUrl, cachedBitmap);
-            }
-        }
-
-        if (cachedBitmap != null) {
-            items.add(createMediaItemWithBitmap("podcast:" + id, title, publisher, cachedBitmap, false, true));
-        } else {
-            items.add(createMediaItem("podcast:" + id, title, publisher, getDrawableUri(R.drawable.ic_auto_podcasts), false, true));
-        }
-    }
-
-    private Bitmap downloadBitmap(String urlStr) {
-        try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(HTTP_CONNECT_TIMEOUT_MS);
-            conn.setReadTimeout(HTTP_READ_TIMEOUT_MS);
-            conn.setDoInput(true);
-            conn.setInstanceFollowRedirects(true);
-            conn.setRequestProperty("User-Agent", "AuroraPlayer/1.0");
-            conn.connect();
-
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                InputStream inputStream = conn.getInputStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
-                conn.disconnect();
-                if (bitmap != null && bitmap.getWidth() > BITMAP_TARGET_SIZE) {
-                    float scale = (float) BITMAP_TARGET_SIZE / bitmap.getWidth();
-                    int newHeight = (int) (bitmap.getHeight() * scale);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, BITMAP_TARGET_SIZE, newHeight, true);
-                }
-                return bitmap;
-            }
-            conn.disconnect();
-        } catch (Throwable error) {
-            Log.w(TAG, "Bitmap download failed: " + urlStr, error);
-        }
-        return null;
     }
 
     private JSONObject getStructuredCatalog() {
@@ -562,22 +461,12 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         return new JSONObject();
     }
 
-    private JSONArray getRawCatalogArray() {
-        String json = getSharedPreferences("aurora_auto", MODE_PRIVATE).getString("catalog", "[]");
-        try {
-            if (json.trim().startsWith("[")) {
-                return new JSONArray(json);
-            }
-        } catch (Exception error) {
-            Log.w(TAG, "Raw catalog parse error", error);
-        }
-        return new JSONArray();
-    }
-
     private void populatePlaylistsCategory(List<MediaBrowserCompat.MediaItem> items) {
         JSONObject catalog = getStructuredCatalog();
         JSONArray playlists = catalog.optJSONArray("playlists");
-        if (playlists != null) {
+        final String GROUP_USER = "Tus Listas Creadas";
+
+        if (playlists != null && playlists.length() > 0) {
             for (int index = 0; index < playlists.length(); index++) {
                 JSONObject playlist = playlists.optJSONObject(index);
                 if (playlist == null) continue;
@@ -586,45 +475,42 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 String artwork = playlist.optString("artworkUrl", "");
                 int count = playlist.optInt("trackCount", 0);
                 String subtitle = count > 0 ? count + " canciones" : "Lista personal";
-                Uri uri = !artwork.isEmpty() ? Uri.parse(artwork) : getDrawableUri(R.drawable.ic_auto_playlists);
+
+                Uri uri = !artwork.isEmpty()
+                    ? ArtworkContentProvider.getRemoteUri(artwork)
+                    : ArtworkContentProvider.getGeneratedUri(name, subtitle, "LISTA");
 
                 JSONArray trackItems = playlist.optJSONArray("items");
                 boolean hasTracks = trackItems != null && trackItems.length() > 0;
-                if (hasTracks) {
-                    items.add(createMediaItem("playlist:" + id, name, subtitle, uri, true, true));
-                } else {
-                    items.add(createMediaItem("playlist_play:" + id, name, subtitle, uri, false, true));
-                }
+                items.add(createMediaItem(
+                    hasTracks ? "playlist:" + id : "playlist_play:" + id,
+                    name,
+                    subtitle,
+                    uri,
+                    hasTracks,
+                    true,
+                    GROUP_USER
+                ));
             }
         }
 
-        JSONArray popular = catalog.optJSONArray("popularPlaylists");
-        if (popular != null) {
-            for (int index = 0; index < popular.length(); index++) {
-                JSONObject playlist = popular.optJSONObject(index);
-                if (playlist == null) continue;
-                String id = playlist.optString("id");
-                String name = playlist.optString("name", "Lista popular");
-                String subtitle = playlist.optString("description", "Éxitos recomendados");
-                Uri uri = getDrawableUri(R.drawable.ic_auto_playlists);
-                String artwork = playlist.optString("artworkUrl", "");
-                if (!artwork.isEmpty()) {
-                    uri = Uri.parse(artwork);
-                }
-                items.add(createMediaItem("playlist_play:" + id, name, subtitle, uri, false, true));
-            }
-        }
-
-        if (items.isEmpty()) {
-            items.add(createMediaItem("playlist_play:spotify_top", "Today's Top Hits", "Éxitos del momento • Spotify", getDrawableUri(R.drawable.ic_auto_playlists), false, true));
-            items.add(createMediaItem("playlist_play:spotify_latino", "Viva Latino", "Los mejores temas latinos", getDrawableUri(R.drawable.ic_auto_playlists), false, true));
-            items.add(createMediaItem("playlist_play:spotify_rock", "Rock Classics", "Leyendas eternas del rock", getDrawableUri(R.drawable.ic_auto_playlists), false, true));
-            items.add(createMediaItem("playlist_play:yt_top", "Top Canciones", "Éxitos de YouTube Music", getDrawableUri(R.drawable.ic_auto_playlists), false, true));
-        }
+        final String GROUP_POPULAR = "Listas Populares";
+        items.add(createMediaItem("playlist_play:spotify_top", "Today's Top Hits", "Los mayores éxitos globales", ArtworkContentProvider.getPresetUri("cover_pop"), false, true, GROUP_POPULAR));
+        items.add(createMediaItem("playlist_play:spotify_latino", "Viva Latino", "Grandes éxitos de música latina", ArtworkContentProvider.getPresetUri("cover_reggaeton"), false, true, GROUP_POPULAR));
+        items.add(createMediaItem("playlist_play:spotify_rock", "Rock Classics", "Leyendas e himnos del rock", ArtworkContentProvider.getPresetUri("cover_rock"), false, true, GROUP_POPULAR));
+        items.add(createMediaItem("playlist_play:yt_top", "Top Canciones", "Éxitos más escuchados en YouTube Music", ArtworkContentProvider.getPresetUri("cover_spain"), false, true, GROUP_POPULAR));
     }
 
     private void populatePlaylistTracks(String playlistId, List<MediaBrowserCompat.MediaItem> items) {
-        items.add(createMediaItem("playlist_play:" + playlistId, "▶ Reproducir todo", "Iniciar playlist completa", getDrawableUri(R.drawable.ic_auto_play_all), false, false));
+        items.add(createMediaItem(
+            "playlist_play:" + playlistId,
+            "▶ Reproducir todo",
+            "Iniciar reproducción completa",
+            ArtworkContentProvider.getPresetUri("cover_driving"),
+            false,
+            false,
+            "Acciones"
+        ));
 
         JSONObject catalog = getStructuredCatalog();
         JSONArray personal = catalog.optJSONArray("playlists");
@@ -642,8 +528,10 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                             String title = track.optString("title", "Pista");
                             String artist = track.optString("artist", "");
                             String artwork = track.optString("artworkUrl", "");
-                            Uri uri = !artwork.isEmpty() ? Uri.parse(artwork) : getDrawableUri(R.drawable.ic_auto_queue);
-                            items.add(createMediaItem("playid:" + id, title, artist, uri, false, false));
+                            Uri uri = !artwork.isEmpty()
+                                ? ArtworkContentProvider.getRemoteUri(artwork)
+                                : ArtworkContentProvider.getGeneratedUri(title, artist, "PISTA");
+                            items.add(createMediaItem("playid:" + id, title, artist, uri, false, false, "Canciones"));
                         }
                     }
                     break;
@@ -657,6 +545,16 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         JSONArray favorites = catalog.optJSONArray("favorites");
 
         if (favorites != null && favorites.length() > 0) {
+            items.add(createMediaItem(
+                "play_favorites_shuffle",
+                "▶ Reproducir favoritos aleatorio",
+                favorites.length() + " canciones guardadas",
+                ArtworkContentProvider.getPresetUri("cover_favorites"),
+                false,
+                false,
+                "Acciones"
+            ));
+
             for (int index = 0; index < favorites.length(); index++) {
                 JSONObject item = favorites.optJSONObject(index);
                 if (item == null) continue;
@@ -664,76 +562,51 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 String title = item.optString("title", "Canción");
                 String artist = item.optString("artist", "");
                 String artwork = item.optString("artworkUrl", "");
-                Uri uri = !artwork.isEmpty() ? Uri.parse(artwork) : getDrawableUri(R.drawable.ic_auto_favorites);
-                items.add(createMediaItem("playid:" + id, title, artist, uri, false, true));
+
+                Uri uri = !artwork.isEmpty()
+                    ? ArtworkContentProvider.getRemoteUri(artwork)
+                    : ArtworkContentProvider.getGeneratedUri(title, artist, "FAV");
+
+                items.add(createMediaItem("playid:" + id, title, artist, uri, false, false, "Tus Canciones Favoritas"));
             }
         } else {
-            items.add(createMediaItem("empty_fav", "Sin favoritos aún", "Marca pistas como favoritas en Aurora", getDrawableUri(R.drawable.ic_auto_favorites), false, false));
-        }
-    }
-
-    private void populateDiscoverCategory(List<MediaBrowserCompat.MediaItem> items) {
-        JSONObject catalog = getStructuredCatalog();
-        JSONArray discover = catalog.optJSONArray("discover");
-
-        if (discover != null && discover.length() > 0) {
-            for (int index = 0; index < discover.length(); index++) {
-                JSONObject item = discover.optJSONObject(index);
-                if (item == null) continue;
-                String id = item.optString("id");
-                String title = item.optString("title", "Canción");
-                String artist = item.optString("artist", "");
-                String artwork = item.optString("artworkUrl", "");
-                Uri uri = !artwork.isEmpty() ? Uri.parse(artwork) : getDrawableUri(R.drawable.ic_auto_discover);
-                items.add(createMediaItem("playid:" + id, title, artist, uri, false, true));
-            }
-        } else {
-            items.add(createMediaItem("search_play:Top Viral 2026", "Top Viral Global", "Tendencias de streaming", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-            items.add(createMediaItem("search_play:Novedades Viernes", "Novedades Viernes", "Lanzamientos destacados", getDrawableUri(R.drawable.ic_auto_discover), false, true));
-        }
-    }
-
-    private void populateQueueCategory(List<MediaBrowserCompat.MediaItem> items) {
-        JSONObject catalog = getStructuredCatalog();
-        JSONArray queue = catalog.optJSONArray("queue");
-        if (queue == null) {
-            queue = getRawCatalogArray();
-        }
-
-        for (int index = 0; index < queue.length(); index++) {
-            JSONObject item = queue.optJSONObject(index);
-            if (item == null) continue;
-            String id = item.optString("id");
-            String title = item.optString("title", "Canción");
-            String artist = item.optString("artist", "");
-            String artwork = item.optString("artworkUrl", "");
-            Uri uri = !artwork.isEmpty() ? Uri.parse(artwork) : getDrawableUri(R.drawable.ic_auto_queue);
-            items.add(createMediaItem("playid:" + id, title, artist, uri, false, false));
+            items.add(createMediaItem(
+                "empty_fav",
+                "Sin favoritos guardados",
+                "Marca canciones con el corazón en Aurora",
+                ArtworkContentProvider.getPresetUri("cover_favorites"),
+                false,
+                false,
+                null
+            ));
         }
     }
 
     @Override
     public void onSearch(String query, Bundle extras, Result<List<MediaBrowserCompat.MediaItem>> result) {
         List<MediaBrowserCompat.MediaItem> matches = new ArrayList<>();
-        String normalized = query == null ? "" : query.toLowerCase().trim();
+        String normalized = stripDiacritics(query == null ? "" : query.toLowerCase().trim());
 
         if (!normalized.isEmpty()) {
             matches.add(createMediaItem(
                 "search_play:" + query,
-                "Reproducir \"" + query + "\"",
-                "Buscar mejores resultados en YouTube Music",
-                getDrawableUri(R.drawable.ic_auto_search),
+                "Reproducir \"" + query + "\" en streaming",
+                "Buscar en YouTube Music y reproducir",
+                ArtworkContentProvider.getPresetUri("cover_driving"),
                 false,
-                true
+                false,
+                "Búsqueda Rápida"
             ));
 
+            String podcastSlug = normalized.replaceAll("[^a-z0-9 ]+", "").trim().replaceAll(" +", "-");
             matches.add(createMediaItem(
-                "podcast:" + query.toLowerCase().replaceAll("[^a-z0-9áéíóúñ ]+", "").trim(),
+                "podcast:" + podcastSlug,
                 "Podcast: \"" + query + "\"",
-                "Buscar podcast y reproducir último episodio",
-                getDrawableUri(R.drawable.ic_auto_podcasts),
+                "Buscar podcast y reproducir episodio",
+                ArtworkContentProvider.getPresetUri("cover_podcast_tech"),
                 false,
-                true
+                false,
+                "Búsqueda Rápida"
             ));
         }
 
@@ -754,39 +627,39 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 String id = item.optString("id");
                 String artwork = item.optString("artworkUrl", "");
 
-                if (title.toLowerCase().contains(normalized) || artist.toLowerCase().contains(normalized)) {
-                    Uri uri = !artwork.isEmpty() ? Uri.parse(artwork) : getDrawableUri(R.drawable.ic_auto_search);
-                    matches.add(createMediaItem("playid:" + id, title, artist, uri, false, true));
+                String itemNorm = stripDiacritics((title + " " + artist).toLowerCase());
+                if (itemNorm.contains(normalized)) {
+                    Uri uri = !artwork.isEmpty()
+                        ? ArtworkContentProvider.getRemoteUri(artwork)
+                        : ArtworkContentProvider.getGeneratedUri(title, artist, "TRACK");
+
+                    matches.add(createMediaItem("playid:" + id, title, artist, uri, false, false, "En tu biblioteca"));
                     if (matches.size() >= 25) break;
                 }
             }
             if (matches.size() >= 25) break;
         }
 
-        JSONArray rawQueue = getRawCatalogArray();
-        for (int index = 0; index < rawQueue.length() && matches.size() < 25; index++) {
-            JSONObject item = rawQueue.optJSONObject(index);
-            if (item == null) continue;
-            String title = item.optString("title", "");
-            String artist = item.optString("artist", "");
-            String id = item.optString("id");
-            if (title.toLowerCase().contains(normalized) || artist.toLowerCase().contains(normalized)) {
-                matches.add(createMediaItem("playid:" + id, title, artist, getDrawableUri(R.drawable.ic_auto_queue), false, false));
-            }
-        }
-
         result.sendResult(matches);
+    }
+
+    private static String stripDiacritics(String str) {
+        if (str == null) return "";
+        String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
     @Override
     public void onDestroy() {
-        if (fallbackSession != null) {
-            fallbackSession.setActive(false);
-            fallbackSession.release();
-            fallbackSession = null;
+        if (sInstance == this) {
+            sInstance = null;
         }
-        bitmapExecutor.shutdownNow();
-        bitmapCache.clear();
+        MediaSessionCompat session = AuroraMediaSessionHolder.getSession();
+        if (session != null && AudioForegroundService.getInstance() == null) {
+            session.setActive(false);
+            session.release();
+        }
+        asyncExecutor.shutdownNow();
         super.onDestroy();
     }
 }
