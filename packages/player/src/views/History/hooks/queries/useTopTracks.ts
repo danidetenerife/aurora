@@ -1,5 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
+import {
+  isYouTubeOrGenericArtwork,
+  resolveTrackCoverUrl,
+} from '../../../../services/coverArtResolver';
 import { personalizationEngine } from '../../../../services/personalizationEngine';
 import type {
   TimeRange,
@@ -10,53 +14,89 @@ import { unwrapResult } from '../../../../services/tauri/results';
 import { isTauriEnvironment } from '../../../../services/universalStore';
 import { useFavoritesStore } from '../../../../stores/favoritesStore';
 
+const FALLBACK_MS_PER_PLAY = 210000;
+
 export const useTopTracks = (range: TimeRange, limit: number) =>
   useQuery({
     queryKey: ['history', 'stats', 'topTracks', range.from, range.to, limit],
     queryFn: async (): Promise<TopTrack[]> => {
+      let rawTracks: TopTrack[] = [];
+
       if (isTauriEnvironment()) {
         try {
-          return unwrapResult(await commands.historyTopTracks(range, limit));
+          rawTracks = unwrapResult(await commands.historyTopTracks(range, limit));
         } catch {
-          // fallback
+          rawTracks = [];
         }
       }
 
-      const listens = await personalizationEngine.getListenRecords();
-      const favTracks = useFavoritesStore.getState().tracks || [];
-      const favMap = new Map<string, string>();
-      for (const ft of favTracks) {
-        if (ft.ref) {
-          const art = ft.ref.artists?.[0]?.name || '';
-          const key = `${art}-${ft.ref.title}`.toLowerCase();
-          const artUrl = ft.ref.artwork?.items?.[0]?.url;
-          if (artUrl) favMap.set(key, artUrl);
+      const favoriteTracks = useFavoritesStore.getState().tracks || [];
+      const favoriteMap = new Map<string, string>();
+      for (const favorite of favoriteTracks) {
+        if (favorite.ref) {
+          const artistName = favorite.ref.artists?.[0]?.name || '';
+          const key = `${artistName}-${favorite.ref.title}`.toLowerCase();
+          const artworkUrl = favorite.ref.artwork?.items?.[0]?.url;
+          if (artworkUrl) {
+            favoriteMap.set(key, artworkUrl);
+          }
         }
       }
 
-      const sorted = [...listens]
-        .sort((a, b) => (b.playCount || 1) - (a.playCount || 1))
-        .slice(0, limit);
+      if (rawTracks.length === 0) {
+        const records = await personalizationEngine.getListenRecords();
+        const sorted = [...records]
+          .sort((first, second) => (second.playCount || 1) - (first.playCount || 1))
+          .slice(0, limit);
 
-      if (sorted.length === 0 && favTracks.length > 0) {
-        return favTracks.slice(0, limit).map((ft, i) => ({
-          title: ft.ref?.title || 'Canción',
-          artists: [ft.ref?.artists?.[0]?.name || 'Artista'],
-          artworkUrl: ft.ref?.artwork?.items?.[0]?.url || null,
-          msPlayed: (10 - i) * 210000,
-          plays: 10 - i,
-        }));
+        if (sorted.length === 0 && favoriteTracks.length > 0) {
+          rawTracks = favoriteTracks.slice(0, limit).map((favorite, index) => ({
+            title: favorite.ref?.title || 'Canción',
+            artists: [favorite.ref?.artists?.[0]?.name || 'Artista'],
+            artworkUrl: favorite.ref?.artwork?.items?.[0]?.url || null,
+            msPlayed: (limit - index) * FALLBACK_MS_PER_PLAY,
+            plays: limit - index,
+          }));
+        } else {
+          rawTracks = sorted.map((record) => {
+            const key = `${record.artist}-${record.title}`.toLowerCase();
+            return {
+              title: record.title,
+              artists: [record.artist],
+              artworkUrl: favoriteMap.get(key) || null,
+              msPlayed: (record.playCount || 1) * FALLBACK_MS_PER_PLAY,
+              plays: record.playCount || 1,
+            };
+          });
+        }
       }
 
-      return sorted.map((item) => {
-        const key = `${item.artist}-${item.title}`.toLowerCase();
-        return {
-          title: item.title,
-          artists: [item.artist],
-          artworkUrl: favMap.get(key) || null,
-          msPlayed: (item.playCount || 1) * 210000,
-          plays: item.playCount || 1,
-        };
-      });
+      return Promise.all(
+        rawTracks.map(async (track) => {
+          if (track.artworkUrl && !isYouTubeOrGenericArtwork(track.artworkUrl)) {
+            return track;
+          }
+
+          const primaryArtist = track.artists[0] ?? '';
+          const key = `${primaryArtist}-${track.title}`.toLowerCase();
+          const favoriteUrl = favoriteMap.get(key);
+          if (favoriteUrl && !isYouTubeOrGenericArtwork(favoriteUrl)) {
+            return {
+              ...track,
+              artworkUrl: favoriteUrl,
+            };
+          }
+
+          const resolvedUrl = await resolveTrackCoverUrl(
+            primaryArtist,
+            track.title,
+          );
+          return {
+            ...track,
+            artworkUrl: resolvedUrl ?? track.artworkUrl ?? null,
+          };
+        }),
+      );
     },
   });
+

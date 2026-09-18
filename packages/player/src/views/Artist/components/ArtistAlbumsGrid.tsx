@@ -6,6 +6,7 @@ import { pickArtwork } from '@aurora/model';
 import { MetadataProvider } from '@aurora/plugin-sdk';
 import { Card, CardGrid, Loader } from '@aurora/ui';
 
+import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { useActiveProvider } from '../../../hooks/useActiveProvider';
 import { useArtistAlbums } from '../hooks/useArtistAlbums';
 
@@ -60,8 +61,16 @@ export const ArtistAlbumsGrid: FC<ArtistAlbumsGridProps> = ({
         <Card
           key={album.source.id}
           title={album.title}
-          subtitle={album.artists?.map((a) => a.name).join(', ')}
+          subtitle={album.artists?.map((artist) => artist.name).join(', ')}
           src={pickArtwork(album.artwork, 'cover', 300)?.url}
+          action={
+            <ConnectedFavoriteButton
+              type="album"
+              source={album.source}
+              data={album}
+              size="sm"
+            />
+          }
           onClick={() =>
             navigate({ to: `/album/${provider!.id}/${album.source.id}` })
           }

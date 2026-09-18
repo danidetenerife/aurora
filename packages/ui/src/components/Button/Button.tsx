@@ -41,19 +41,21 @@ const buttonVariants = cva(
 );
 
 type ButtonProps = ComponentPropsWithoutRef<'button'> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & {
+    as?: 'button' | 'div';
+  };
 
 export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(
-  { variant, size, intent, className, children, type, ...rest },
+  { variant, size, intent, className, children, type, as = 'button', ...rest },
   ref,
 ) {
   return (
     <HeadlessButton
-      as="button"
+      as={as}
       ref={ref}
       className={cn(buttonVariants({ variant, size, intent, className }))}
-      type={type ?? 'button'}
-      {...rest}
+      type={as === 'button' ? (type ?? 'button') : undefined}
+      {...(rest as any)}
     >
       {children}
     </HeadlessButton>

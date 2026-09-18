@@ -11,6 +11,11 @@ import type { PlayEventKind, TrackSnapshot } from '../tauri/bindings';
 import { commands } from '../tauri/bindings';
 import { isTauriEnvironment } from '../universalStore';
 
+import {
+  isYouTubeOrGenericArtwork,
+  resolveTrackCoverUrl,
+} from '../coverArtResolver';
+
 const HISTORY_ENABLED_SETTING = 'core.history.enabled';
 const ARTWORK_TARGET_PX = 256;
 
@@ -26,13 +31,49 @@ const isEnabled = () =>
 
 const currentPositionMs = () => secondsToMs(useSoundStore.getState().seek);
 
-const buildSnapshot = (track: Track): TrackSnapshot => ({
+const resolveSnapshotArtworkUrl = (track: Track): string | null => {
+  const trackArt =
+    pickArtwork(track.artwork, 'thumbnail', ARTWORK_TARGET_PX) ??
+    pickArtwork(track.artwork, 'cover', ARTWORK_TARGET_PX);
+  if (trackArt?.url && !isYouTubeOrGenericArtwork(trackArt.url)) {
+    return trackArt.url;
+  }
+
+  const albumArt =
+    pickArtwork(track.album?.artwork, 'thumbnail', ARTWORK_TARGET_PX) ??
+    pickArtwork(track.album?.artwork, 'cover', ARTWORK_TARGET_PX);
+  if (albumArt?.url && !isYouTubeOrGenericArtwork(albumArt.url)) {
+    return albumArt.url;
+  }
+
+  const candidateUrl = track.streamCandidates?.find(
+    (candidate) =>
+      candidate.thumbnail && !isYouTubeOrGenericArtwork(candidate.thumbnail),
+  )?.thumbnail;
+  if (candidateUrl) {
+    return candidateUrl;
+  }
+
+  return (
+    trackArt?.url ??
+    albumArt?.url ??
+    track.streamCandidates?.[0]?.thumbnail ??
+    null
+  );
+};
+
+const buildSnapshot = (
+  track: Track,
+  explicitArtworkUrl?: string | null,
+): TrackSnapshot => ({
   title: track.title,
   artists: track.artists.map((artist) => artist.name),
   albumTitle: track.album?.title ?? null,
   durationMs: track.durationMs ?? null,
   artworkUrl:
-    pickArtwork(track.artwork, 'thumbnail', ARTWORK_TARGET_PX)?.url ?? null,
+    explicitArtworkUrl !== undefined
+      ? explicitArtworkUrl
+      : resolveSnapshotArtworkUrl(track),
   provider: track.source.provider,
   providerId: track.source.id,
 });
@@ -66,10 +107,28 @@ const recordStarted = async (track: Track) => {
     return;
   }
 
+  let artworkUrl = resolveSnapshotArtworkUrl(track);
+  if (!artworkUrl || isYouTubeOrGenericArtwork(artworkUrl)) {
+    const primaryArtist = track.artists?.[0]?.name;
+    if (primaryArtist && track.title) {
+      try {
+        const resolvedCover = await resolveTrackCoverUrl(
+          primaryArtist,
+          track.title,
+        );
+        if (resolvedCover) {
+          artworkUrl = resolvedCover;
+        }
+      } catch {
+        void 0;
+      }
+    }
+  }
+
   await record(useHistoryStore.getState().beginPlay(), {
     kind: 'started',
     positionMs: 0,
-    snapshot: buildSnapshot(track),
+    snapshot: buildSnapshot(track, artworkUrl),
   });
 };
 

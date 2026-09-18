@@ -481,7 +481,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                           class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                         >
                           <span
-                            class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                            class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                           >
                             Giant Steps
                           </span>
@@ -713,7 +713,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                           class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                         >
                           <span
-                            class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                            class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                           >
                             So What
                           </span>

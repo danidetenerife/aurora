@@ -1,3 +1,4 @@
+import debounce from 'lodash-es/debounce';
 import { create } from 'zustand';
 
 import type {
@@ -9,7 +10,12 @@ import type {
 import { createUniversalStore } from '../services/universalStore';
 
 const SETTINGS_FILE = 'settings.json';
+const SAVE_DEBOUNCE_MS = 500;
 const store = createUniversalStore(SETTINGS_FILE);
+
+const debouncedSave = debounce(() => {
+  void store.save();
+}, SAVE_DEBOUNCE_MS);
 
 type Registry = Record<string, SettingDefinition>;
 type Values = Record<string, SettingValue>;
@@ -66,7 +72,7 @@ export const useSettingsStore = create<State>((set, get) => ({
     const nextValues = { ...get().values, [fullyQualifiedId]: value };
     set({ values: nextValues });
     await store.set(fullyQualifiedId, value as unknown);
-    await store.save();
+    debouncedSave();
   },
 }));
 

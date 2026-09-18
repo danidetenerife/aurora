@@ -24,7 +24,7 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation('streaming');
   const src = useSoundStore((state) => state.src);
   const status = useSoundStore((state) => state.status);
-  const seek = useSoundStore((state) => state.seek);
+  const targetSeek = useSoundStore((state) => state.targetSeek);
   const [crossfadeMs] = useCoreSetting<number>('playback.crossfadeMs');
   const preload: HTMLAudioElement['preload'] = 'auto';
   const crossOrigin = undefined;
@@ -90,7 +90,7 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
         <Sound
           src={src}
           status={status}
-          seek={seek}
+          seek={targetSeek ?? undefined}
           showVideo={false}
           volume={volumePercent}
           preload={preload}

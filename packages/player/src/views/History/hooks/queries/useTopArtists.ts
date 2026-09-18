@@ -1,5 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
+import {
+  isYouTubeOrGenericArtwork,
+  resolveArtistImageUrl,
+} from '../../../../services/coverArtResolver';
 import { personalizationEngine } from '../../../../services/personalizationEngine';
 import type {
   TimeRange,
@@ -10,54 +14,85 @@ import { unwrapResult } from '../../../../services/tauri/results';
 import { isTauriEnvironment } from '../../../../services/universalStore';
 import { useFavoritesStore } from '../../../../stores/favoritesStore';
 
+const FALLBACK_MS_PER_PLAY = 210000;
+
 export const useTopArtists = (range: TimeRange, limit: number) =>
   useQuery({
     queryKey: ['history', 'stats', 'topArtists', range.from, range.to, limit],
     queryFn: async (): Promise<TopArtist[]> => {
+      let rawArtists: TopArtist[] = [];
+
       if (isTauriEnvironment()) {
         try {
-          return unwrapResult(await commands.historyTopArtists(range, limit));
+          rawArtists = unwrapResult(await commands.historyTopArtists(range, limit));
         } catch {
-          // fallback
+          rawArtists = [];
         }
       }
 
-      const listens = await personalizationEngine.getListenRecords();
-      const favArtists = useFavoritesStore.getState().artists || [];
-      const artMap = new Map<string, string>();
-      for (const fa of favArtists) {
-        if (fa.ref && fa.ref.name) {
-          const imgUrl = fa.ref.artwork?.items?.[0]?.url;
-          if (imgUrl) artMap.set(fa.ref.name.toLowerCase(), imgUrl);
+      const favoriteArtists = useFavoritesStore.getState().artists || [];
+      const artworkMap = new Map<string, string>();
+      for (const favorite of favoriteArtists) {
+        if (favorite.ref?.name) {
+          const imageUrl = favorite.ref.artwork?.items?.[0]?.url;
+          if (imageUrl) {
+            artworkMap.set(favorite.ref.name.toLowerCase(), imageUrl);
+          }
         }
       }
 
-      const artistPlays = new Map<string, number>();
-      for (const item of listens) {
-        if (item && item.artist) {
-          const current = artistPlays.get(item.artist) || 0;
-          artistPlays.set(item.artist, current + (item.playCount || 1));
+      if (rawArtists.length === 0) {
+        const records = await personalizationEngine.getListenRecords();
+        const artistPlays = new Map<string, number>();
+        for (const record of records) {
+          if (record?.artist) {
+            const current = artistPlays.get(record.artist) || 0;
+            artistPlays.set(record.artist, current + (record.playCount || 1));
+          }
+        }
+
+        if (artistPlays.size === 0 && favoriteArtists.length > 0) {
+          rawArtists = favoriteArtists.slice(0, limit).map((favorite, index) => ({
+            name: favorite.ref?.name || 'Artista',
+            artworkUrl: favorite.ref?.artwork?.items?.[0]?.url || null,
+            msPlayed: (limit - index) * FALLBACK_MS_PER_PLAY,
+            plays: limit - index,
+          }));
+        } else {
+          const sorted = Array.from(artistPlays.entries())
+            .sort((first, second) => second[1] - first[1])
+            .slice(0, limit);
+
+          rawArtists = sorted.map(([name, plays]) => ({
+            name,
+            artworkUrl: artworkMap.get(name.toLowerCase()) || null,
+            msPlayed: plays * FALLBACK_MS_PER_PLAY,
+            plays,
+          }));
         }
       }
 
-      if (artistPlays.size === 0 && favArtists.length > 0) {
-        return favArtists.slice(0, limit).map((fa, i) => ({
-          name: fa.ref?.name || 'Artista',
-          artworkUrl: fa.ref?.artwork?.items?.[0]?.url || null,
-          msPlayed: (10 - i) * 210000,
-          plays: 10 - i,
-        }));
-      }
+      return Promise.all(
+        rawArtists.map(async (artist) => {
+          if (artist.artworkUrl && !isYouTubeOrGenericArtwork(artist.artworkUrl)) {
+            return artist;
+          }
 
-      const sorted = Array.from(artistPlays.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, limit);
+          const favoriteUrl = artworkMap.get(artist.name.toLowerCase());
+          if (favoriteUrl && !isYouTubeOrGenericArtwork(favoriteUrl)) {
+            return {
+              ...artist,
+              artworkUrl: favoriteUrl,
+            };
+          }
 
-      return sorted.map(([name, plays]) => ({
-        name,
-        artworkUrl: artMap.get(name.toLowerCase()) || null,
-        msPlayed: plays * 210000,
-        plays,
-      }));
+          const resolvedUrl = await resolveArtistImageUrl(artist.name);
+          return {
+            ...artist,
+            artworkUrl: resolvedUrl ?? artist.artworkUrl ?? null,
+          };
+        }),
+      );
     },
   });
+

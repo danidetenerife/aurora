@@ -1,4 +1,5 @@
 import {
+  Disc,
   Heart,
   ListEnd,
   ListMusicIcon,
@@ -8,6 +9,7 @@ import {
   UserX,
 } from 'lucide-react';
 import { FC, ReactNode } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
@@ -17,6 +19,7 @@ import { Input, TrackContextMenu } from '@aurora/ui';
 import { usePlaylistSubmenu } from '../hooks/usePlaylistSubmenu';
 import { useTrackActions } from '../hooks/useTrackActions';
 import { personalizationEngine } from '../services/personalizationEngine';
+import { useFavoritesStore } from '../stores/favoritesStore';
 
 type ConnectedTrackContextMenuProps = {
   track: Track;
@@ -30,8 +33,21 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
   const { t } = useTranslation('track');
   const { t: tCommon } = useTranslation('common');
   const { t: tPlaylists } = useTranslation('playlists');
+  const navigate = useNavigate();
   const trackActions = useTrackActions();
   const playlistSubmenu = usePlaylistSubmenu();
+
+  const isAlbumFavorite = useFavoritesStore((state) =>
+    track.album
+      ? state.albums.some(
+          (entry) =>
+            entry.ref.source.provider === track.album?.source.provider &&
+            entry.ref.source.id === track.album?.source.id,
+        )
+      : false,
+  );
+  const addAlbum = useFavoritesStore((state) => state.addAlbum);
+  const removeAlbum = useFavoritesStore((state) => state.removeAlbum);
 
   const isFavorite = trackActions.isFavorite(track);
   const thumbnail = pickArtwork(track.artwork, 'thumbnail', 64)?.url;
@@ -117,6 +133,45 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
           >
             {t('actions.blacklistArtist')}
           </TrackContextMenu.Action>
+        )}
+        {track.album && (
+          <>
+            <TrackContextMenu.Action
+              icon={
+                <Heart
+                  size={16}
+                  fill={isAlbumFavorite ? 'currentColor' : 'none'}
+                />
+              }
+              onClick={() => {
+                if (isAlbumFavorite) {
+                  void removeAlbum(track.album!.source);
+                } else {
+                  void addAlbum(track.album!);
+                }
+              }}
+              data-testid="track-favorite-album"
+            >
+              {isAlbumFavorite
+                ? t('actions.removeAlbumFromFavorites')
+                : t('actions.addAlbumToFavorites')}
+            </TrackContextMenu.Action>
+            <TrackContextMenu.Action
+              icon={<Disc size={16} />}
+              onClick={() => {
+                void navigate({
+                  to: '/album/$providerId/$albumId',
+                  params: {
+                    providerId: track.album!.source.provider,
+                    albumId: track.album!.source.id,
+                  },
+                });
+              }}
+              data-testid="track-go-to-album"
+            >
+              {t('actions.goToAlbum')}
+            </TrackContextMenu.Action>
+          </>
         )}
         {playlistSubmenu.hasPlaylists && (
           <TrackContextMenu.Submenu>

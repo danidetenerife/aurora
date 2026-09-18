@@ -230,15 +230,17 @@ export const initMediaSessionService = (): void => {
     const seekDelta = Math.abs(state.seek - lastReportedSeek);
     const timeDelta = now - lastReportedTime;
 
-    try {
-      navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
-    } catch {
-      // ignore
+    if (statusChanged) {
+      lastStatus = state.status;
+      try {
+        navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+      } catch {
+        // ignore
+      }
     }
 
     if (isCapacitorEnvironment()) {
       if (statusChanged) {
-        lastStatus = state.status;
         lastReportedSeek = state.seek;
         lastReportedTime = now;
 

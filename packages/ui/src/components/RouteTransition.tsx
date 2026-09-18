@@ -15,19 +15,16 @@ const slideVariants = {
     x: SLIDE_DISTANCE,
     scale: SCALE_FACTOR,
     opacity: 0,
-    filter: 'blur(4px)',
   },
   center: {
     x: 0,
     scale: 1,
     opacity: 1,
-    filter: 'blur(0px)',
   },
   exit: {
     x: -SLIDE_DISTANCE,
     scale: SCALE_FACTOR,
     opacity: 0,
-    filter: 'blur(4px)',
   },
 };
 

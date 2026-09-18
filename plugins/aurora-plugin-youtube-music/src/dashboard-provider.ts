@@ -1,5 +1,6 @@
 import type {
   AlbumRef,
+  ArtworkSet,
   AuroraPluginAPI,
   DashboardProvider,
   PlaylistRef,
@@ -15,10 +16,27 @@ import {
 
 export const DASHBOARD_PROVIDER_ID = 'youtube-music-dashboard';
 
+const COVER_SIZE = 640;
+
+const createCoverArtwork = (url: string): ArtworkSet => ({
+  items: [
+    {
+      url,
+      purpose: 'cover',
+      width: COVER_SIZE,
+      height: COVER_SIZE,
+      source: { provider: 'youtube-music', id: 'cover' },
+    },
+  ],
+});
+
 export const PUBLIC_PLAYLISTS: PlaylistRef[] = [
   {
     id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
     name: 'Top canciones',
+    artwork: createCoverArtwork(
+      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=640&auto=format&fit=crop&q=80',
+    ),
     source: {
       provider: 'youtube-music',
       id: 'PL4fGSI1pDJn6O1LS0XSdF3RyO0Rq_LDeI',
@@ -28,6 +46,9 @@ export const PUBLIC_PLAYLISTS: PlaylistRef[] = [
   {
     id: 'PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI',
     name: 'Éxitos globales',
+    artwork: createCoverArtwork(
+      'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=640&auto=format&fit=crop&q=80',
+    ),
     source: {
       provider: 'youtube-music',
       id: 'PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI',
@@ -35,12 +56,15 @@ export const PUBLIC_PLAYLISTS: PlaylistRef[] = [
     },
   },
   {
-    id: 'PLQog_FHUHAFUj9M1fK9M4w5yX7L7Y7Y7Y',
+    id: 'PL4fGSI1pDJn5kI81J1PX42TOozGzOM1CX',
     name: 'Novedades musicales',
+    artwork: createCoverArtwork(
+      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=640&auto=format&fit=crop&q=80',
+    ),
     source: {
       provider: 'youtube-music',
-      id: 'PLQog_FHUHAFUj9M1fK9M4w5yX7L7Y7Y7Y',
-      url: 'https://music.youtube.com/playlist?list=PLQog_FHUHAFUj9M1fK9M4w5yX7L7Y7Y7Y',
+      id: 'PL4fGSI1pDJn5kI81J1PX42TOozGzOM1CX',
+      url: 'https://music.youtube.com/playlist?list=PL4fGSI1pDJn5kI81J1PX42TOozGzOM1CX',
     },
   },
 ];

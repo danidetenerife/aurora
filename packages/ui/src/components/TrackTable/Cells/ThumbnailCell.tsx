@@ -17,6 +17,7 @@ const isYouTubeOrGeneric = (url?: string): boolean => {
   );
 };
 
+const MAX_CACHE_ENTRIES = 150;
 const coverCache = new Map<string, string>();
 
 export const ThumbnailCell = <T extends Track>({
@@ -63,15 +64,16 @@ export const ThumbnailCell = <T extends Track>({
       return;
     }
 
-    let isMounted = true;
+    const abortController = new AbortController();
     fetch(
       `https://itunes.apple.com/search?term=${encodeURIComponent(`${primaryArtist} ${title}`)}&entity=song&limit=1`,
+      { signal: abortController.signal },
     )
-      .then((res) => res.json())
+      .then((response) => response.json())
       .then((data: { results?: Array<{ artworkUrl100?: string }> }) => {
         const rawArtwork = data?.results?.[0]?.artworkUrl100;
-        if (rawArtwork && isMounted) {
-          if (coverCache.size > 150) {
+        if (rawArtwork && !abortController.signal.aborted) {
+          if (coverCache.size > MAX_CACHE_ENTRIES) {
             const oldestKey = coverCache.keys().next().value;
             if (oldestKey) {
               coverCache.delete(oldestKey);
@@ -79,18 +81,18 @@ export const ThumbnailCell = <T extends Track>({
           }
           coverCache.set(cacheKey, rawArtwork);
           setResolvedUrl(rawArtwork);
-        } else if (isMounted && initialUrl) {
+        } else if (!abortController.signal.aborted && initialUrl) {
           setResolvedUrl(initialUrl);
         }
       })
       .catch(() => {
-        if (isMounted && initialUrl) {
+        if (!abortController.signal.aborted && initialUrl) {
           setResolvedUrl(initialUrl);
         }
       });
 
     return () => {
-      isMounted = false;
+      abortController.abort();
     };
   }, [initialUrl, primaryArtist, title, cacheKey]);
 

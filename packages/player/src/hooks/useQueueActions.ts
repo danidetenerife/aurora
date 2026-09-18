@@ -1,50 +1,39 @@
 import { useCallback } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import type { Track } from '@aurora/model';
 
 import { useQueueStore } from '../stores/queueStore';
 
-// You can't replace this with lodash pick because it causes infinite re-renders
 export const useQueueActions = () => {
-  const {
-    addToQueue,
-    playTracks,
-    addNext,
-    addAt,
-    removeByIds,
-    removeByIndices,
-    clearQueue,
-    reorder,
-    updateItemState,
-    selectCandidate,
-    goToNext,
-    goToPrevious,
-    goToIndex,
-    goToId,
-  } = useQueueStore();
+  const actions = useQueueStore(
+    useShallow((state) => ({
+      addToQueue: state.addToQueue,
+      playTracks: state.playTracks,
+      addNext: state.addNext,
+      addAt: state.addAt,
+      removeByIds: state.removeByIds,
+      removeByIndices: state.removeByIndices,
+      clearQueue: state.clearQueue,
+      reorder: state.reorder,
+      updateItemState: state.updateItemState,
+      selectCandidate: state.selectCandidate,
+      goToNext: state.goToNext,
+      goToPrevious: state.goToPrevious,
+      goToIndex: state.goToIndex,
+      goToId: state.goToId,
+    })),
+  );
 
   const playNow = useCallback(
     (track: Track) => {
-      playTracks([track], 0);
+      actions.playTracks([track], 0);
     },
-    [playTracks],
+    [actions.playTracks],
   );
 
   return {
-    addToQueue,
-    playTracks,
-    addNext,
-    addAt,
-    removeByIds,
-    removeByIndices,
-    clearQueue,
-    reorder,
-    updateItemState,
-    selectCandidate,
-    goToNext,
-    goToPrevious,
-    goToIndex,
-    goToId,
+    ...actions,
     playNow,
   };
 };

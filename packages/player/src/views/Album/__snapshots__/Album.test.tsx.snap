@@ -935,7 +935,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                                 class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                               >
                                 <span
-                                  class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                                  class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                                 >
                                   Going Solo
                                 </span>
@@ -1079,7 +1079,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                                 class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
                               >
                                 <span
-                                  class="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words"
+                                  class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
                                 >
                                   King of California
                                 </span>

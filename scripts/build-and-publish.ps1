@@ -70,7 +70,7 @@ $MetainfoPath = "$Root\packages\player\src-tauri\resources\com.auroraplayer.Auro
 if (Test-Path $MetainfoPath) {
     $rawMeta = [System.IO.File]::ReadAllText($MetainfoPath, [System.Text.Encoding]::UTF8)
     $todayStr = (Get-Date).ToString("yyyy-MM-dd")
-    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Seguridad al volante manos libres, erradicacion de datos hardcodeados y optimizacion extrema de bateria.</p>`n      </description>`n    </release>`n"
+    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Resolución total de carátulas en Historial y Listas, función Álbum Favorito en toda la UI, virtualización de cola y optimización extrema de rendimiento en escritorio.</p>`n      </description>`n    </release>`n"
     $metaStr = $rawMeta -replace "<releases>", "<releases>`n$newReleaseBlock"
     [System.IO.File]::WriteAllText($MetainfoPath, $metaStr, $utf8NoBom)
 }

@@ -6,6 +6,7 @@ import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
 import { Card, CardGrid, EmptyState, ViewShell } from '@aurora/ui';
 
+import { ConnectedFavoriteButton } from '../../components/ConnectedFavoriteButton';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
 
@@ -27,18 +28,35 @@ export const FavoriteAlbums: FC = () => {
         />
       ) : (
         <CardGrid>
-          {sortedAlbums.map((entry) => (
-            <Card
-              key={`${entry.ref.source.provider}-${entry.ref.source.id}`}
-              title={entry.ref.title}
-              src={pickArtwork(entry.ref.artwork, 'cover', 300)?.url}
-              onClick={() =>
-                navigate({
-                  to: `/album/${entry.ref.source.provider}/${entry.ref.source.id}`,
-                })
-              }
-            />
-          ))}
+          {sortedAlbums.map((entry) => {
+            const artistName = entry.ref.artists?.[0]?.name;
+            return (
+              <Card
+                key={`${entry.ref.source.provider}-${entry.ref.source.id}`}
+                title={entry.ref.title}
+                subtitle={artistName}
+                src={pickArtwork(entry.ref.artwork, 'cover', 300)?.url}
+                action={
+                  <ConnectedFavoriteButton
+                    type="album"
+                    source={entry.ref.source}
+                    data={{
+                      title: entry.ref.title,
+                      artists: entry.ref.artists,
+                      artwork: entry.ref.artwork,
+                    }}
+                    size="sm"
+                    data-testid="favorite-album-toggle-button"
+                  />
+                }
+                onClick={() =>
+                  navigate({
+                    to: `/album/${encodeURIComponent(entry.ref.source.provider)}/${encodeURIComponent(entry.ref.source.id)}`,
+                  })
+                }
+              />
+            );
+          })}
         </CardGrid>
       )}
     </ViewShell>

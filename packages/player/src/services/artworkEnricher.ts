@@ -14,14 +14,17 @@ import { metadataHost } from './metadataHost';
 
 const artworkCache = new Map<string, ArtworkSet>();
 
+const MAX_ENRICHMENT_CONCURRENCY = 3;
+
 export const resolveArtworkForTrack = async (
   track: Track,
 ): Promise<ArtworkSet | null> => {
-  const isPodcast =
-    track.source.provider === 'podcast-audio' ||
-    track.source.provider === 'youtube-music' ||
-    track.album?.source.provider === 'youtube-music' ||
-    track.album?.source.provider === 'itunes-podcast';
+  const isPodcast = Boolean(
+    track.isPodcast ||
+      track.source.provider === 'podcast-audio' ||
+      track.album?.source.provider === 'itunes-podcast' ||
+      track.album?.source.provider?.includes('podcast'),
+  );
 
   if (isPodcast) {
     if (track.artwork && track.artwork.items?.length > 0) {
@@ -97,18 +100,35 @@ export const enrichTrackArtwork = async (item: QueueItem): Promise<void> => {
   }
 };
 
-export const enrichTracksInQueue = (): void => {
+export const enrichTracksInQueue = async (): Promise<void> => {
   const items = useQueueStore.getState().items;
-  for (const item of items) {
+  const itemsToEnrich = items.filter((item) => {
     const currentFirstUrl = item.track.artwork?.items?.[0]?.url;
-    if (
+    return (
       !item.track.artwork ||
       !item.track.artwork.items?.length ||
       isYouTubeOrGenericArtwork(currentFirstUrl)
-    ) {
-      void enrichTrackArtwork(item);
-    }
+    );
+  });
+
+  if (itemsToEnrich.length === 0) {
+    return;
   }
+
+  let index = 0;
+  const processNext = async (): Promise<void> => {
+    while (index < itemsToEnrich.length) {
+      const currentItem = itemsToEnrich[index];
+      index += 1;
+      await enrichTrackArtwork(currentItem);
+    }
+  };
+
+  const workers = Array.from(
+    { length: Math.min(MAX_ENRICHMENT_CONCURRENCY, itemsToEnrich.length) },
+    () => processNext(),
+  );
+  await Promise.all(workers);
 };
 
 export const enrichFavoriteTracks = async (): Promise<void> => {

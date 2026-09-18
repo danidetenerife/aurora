@@ -7,6 +7,7 @@ import type { CardsRowItem } from '@aurora/ui';
 
 import { useDashboardNewReleases } from '../hooks/useDashboardData';
 import { useNavigateToEntity } from '../hooks/useNavigateToEntity';
+import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { DashboardCardsWidget } from './DashboardCardsWidget';
 
 export const NewReleasesWidget: FC = () => {
@@ -20,6 +21,14 @@ export const NewReleasesWidget: FC = () => {
       title: album.title,
       subtitle: album.artists?.map((artist) => artist.name).join(', '),
       imageUrl: pickArtwork(album.artwork, 'cover', 300)?.url,
+      action: (
+        <ConnectedFavoriteButton
+          type="album"
+          source={album.source}
+          data={album}
+          size="sm"
+        />
+      ),
       onClick: () =>
         navigateToEntity(
           {

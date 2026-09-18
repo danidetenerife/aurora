@@ -8,6 +8,7 @@ import { useFavoritesStore } from '../stores/favoritesStore';
 
 type ConnectedFavoriteButtonProps = {
   className?: string;
+  size?: 'sm' | 'default';
   'data-testid'?: string;
 } & (
   | { type: 'album'; source: ProviderRef; data: Omit<AlbumRef, 'source'> }
@@ -18,35 +19,41 @@ export const ConnectedFavoriteButton: FC<ConnectedFavoriteButtonProps> = (
   props,
 ) => {
   const { t } = useTranslation('track');
-  const {
-    isAlbumFavorite,
-    isArtistFavorite,
-    addAlbum,
-    addArtist,
-    removeAlbum,
-    removeArtist,
-  } = useFavoritesStore();
+  const { type, source, data, size = 'default', className, 'data-testid': testId } = props;
 
-  const { type, source, data, className, 'data-testid': testId } = props;
-
-  const isFavorite =
+  const isFavorite = useFavoritesStore((state) =>
     type === 'album'
-      ? isAlbumFavorite(source)
-      : isArtistFavorite(source, (data as Omit<ArtistRef, 'source'>).name);
+      ? state.albums.some(
+          (entry) =>
+            entry.ref.source.provider === source.provider &&
+            entry.ref.source.id === source.id,
+        )
+      : state.artists.some(
+          (entry) =>
+            (source?.id && entry.ref.source?.id === source.id) ||
+            entry.ref.name.toLowerCase() ===
+              (data as Omit<ArtistRef, 'source'>).name?.toLowerCase(),
+        ),
+  );
+
+  const addAlbum = useFavoritesStore((state) => state.addAlbum);
+  const addArtist = useFavoritesStore((state) => state.addArtist);
+  const removeAlbum = useFavoritesStore((state) => state.removeAlbum);
+  const removeArtist = useFavoritesStore((state) => state.removeArtist);
 
   const handleToggle = () => {
     if (type === 'album') {
       if (isFavorite) {
-        removeAlbum(source);
+        void removeAlbum(source);
       } else {
-        addAlbum({ ...(data as Omit<AlbumRef, 'source'>), source });
+        void addAlbum({ ...(data as Omit<AlbumRef, 'source'>), source });
       }
     } else {
       const artistData = data as Omit<ArtistRef, 'source'>;
       if (isFavorite) {
-        removeArtist(source, artistData.name);
+        void removeArtist(source, artistData.name);
       } else {
-        addArtist({ ...artistData, source });
+        void addArtist({ ...artistData, source });
       }
     }
   };
@@ -55,6 +62,7 @@ export const ConnectedFavoriteButton: FC<ConnectedFavoriteButtonProps> = (
     <FavoriteButton
       isFavorite={isFavorite}
       onToggle={handleToggle}
+      size={size}
       className={className}
       data-testid={testId}
       ariaLabelAdd={t('actions.addToFavorites')}

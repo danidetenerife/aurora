@@ -90,6 +90,70 @@ export const resolveTrackCoverUrl = async (
   return null;
 };
 
+const ARTIST_STORAGE_KEY_PREFIX = 'aurora_artist_img_';
+const artistMemoryCache = new Map<string, string>();
+
+export const resolveArtistImageUrl = async (
+  artistName: string,
+): Promise<string | null> => {
+  if (!artistName || artistName.trim().toLowerCase() === 'unknown') {
+    return null;
+  }
+
+  const cacheKey = normalizeText(artistName);
+  if (artistMemoryCache.has(cacheKey)) {
+    return artistMemoryCache.get(cacheKey)!;
+  }
+
+  try {
+    const cached = localStorage.getItem(`${ARTIST_STORAGE_KEY_PREFIX}${cacheKey}`);
+    if (cached) {
+      artistMemoryCache.set(cacheKey, cached);
+      return cached;
+    }
+  } catch {
+    void 0;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.deezer.com/search/artist?q=${encodeURIComponent(artistName)}&limit=1`,
+    );
+    if (response.ok) {
+      const data = (await response.json()) as {
+        data?: Array<{ picture_big?: string; picture_medium?: string; picture?: string }>;
+      };
+      const picture =
+        data?.data?.[0]?.picture_big ||
+        data?.data?.[0]?.picture_medium ||
+        data?.data?.[0]?.picture;
+      if (picture) {
+        artistMemoryCache.set(cacheKey, picture);
+        try {
+          localStorage.setItem(`${ARTIST_STORAGE_KEY_PREFIX}${cacheKey}`, picture);
+        } catch {
+          void 0;
+        }
+        return picture;
+      }
+    }
+  } catch {
+    void 0;
+  }
+
+  try {
+    const trackCover = await resolveTrackCoverUrl(artistName, '');
+    if (trackCover) {
+      artistMemoryCache.set(cacheKey, trackCover);
+      return trackCover;
+    }
+  } catch {
+    void 0;
+  }
+
+  return null;
+};
+
 export const createArtworkSetFromUrl = (url: string): ArtworkSet => ({
   items: [
     {

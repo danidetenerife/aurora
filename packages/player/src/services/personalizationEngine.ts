@@ -167,6 +167,7 @@ export class PersonalizationEngine {
           this.finishSession(false);
         } else if (
           state.status === 'paused' ||
+          (!session.countedPlay && session.listenedMs >= SKIP_THRESHOLD_MS) ||
           session.listenedMs - session.savedMs >= CHECKPOINT_MS
         ) {
           this.saveSession(session, false, false);

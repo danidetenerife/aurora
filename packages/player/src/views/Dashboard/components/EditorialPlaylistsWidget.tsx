@@ -36,7 +36,9 @@ export const EditorialPlaylistsWidget: FC<EditorialPlaylistsWidgetProps> = ({
     ): CardsRowItem => ({
       id: `${result.providerId}-${playlist.source.id}`,
       title: playlist.name,
-      imageUrl: pickArtwork(playlist.artwork, 'cover', 300)?.url,
+      imageUrl:
+        pickArtwork(playlist.artwork, 'cover', 300)?.url ??
+        playlist.artwork?.items?.[0]?.url,
       onClick: playlist.source.url
         ? () => navigateToPlaylist(playlist.source.url!)
         : undefined,
@@ -63,7 +65,7 @@ export const EditorialPlaylistsWidget: FC<EditorialPlaylistsWidgetProps> = ({
         </button>
       ),
     }),
-    [navigateToPlaylist],
+    [addPlaylist, isPlaylistFavorite, navigateToPlaylist, removePlaylist],
   );
 
   return (
@@ -91,6 +93,9 @@ export const EditorialPlaylistsWidget: FC<EditorialPlaylistsWidgetProps> = ({
           items={favoritePlaylists.map((entry) => ({
             id: entry.ref.source.id,
             title: entry.ref.name,
+            imageUrl:
+              pickArtwork(entry.ref.artwork, 'cover', 300)?.url ??
+              entry.ref.artwork?.items?.[0]?.url,
             onClick: entry.ref.source.url
               ? () => navigateToPlaylist(entry.ref.source.url!)
               : undefined,

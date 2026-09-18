@@ -1,6 +1,7 @@
 import { DragEndEvent } from '@dnd-kit/core';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Music } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 
 import type { QueueItem as QueueItemType } from '@aurora/model';
 
@@ -9,6 +10,11 @@ import { type QueueItemLabels } from '../QueueItem/types';
 import { ScrollableArea } from '../ScrollableArea';
 import { QueueReorderLayer } from './QueueReorderLayer';
 import { ReorderableQueueItem } from './ReorderableQueueItem';
+
+const VIRTUALIZATION_THRESHOLD = 40;
+const ITEM_HEIGHT_COLLAPSED = 48;
+const ITEM_HEIGHT_EXPANDED = 56;
+const OVERSCAN_COUNT = 5;
 
 export type QueuePanelProps = {
   items: QueueItemType[];
@@ -92,13 +98,39 @@ export const QueuePanel: FC<QueuePanelProps> = ({
   }
 
   const itemIds = items.map((item) => item.id);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const shouldVirtualize = items.length > VIRTUALIZATION_THRESHOLD;
+
+  const rowVirtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => viewportRef.current,
+    estimateSize: () =>
+      isCollapsed ? ITEM_HEIGHT_COLLAPSED : ITEM_HEIGHT_EXPANDED,
+    overscan: OVERSCAN_COUNT,
+    enabled: shouldVirtualize,
+  });
+
+  const virtualItems = rowVirtualizer.getVirtualItems();
+  const paddingTop =
+    shouldVirtualize && virtualItems.length > 0 ? virtualItems[0].start : 0;
+  const paddingBottom =
+    shouldVirtualize && virtualItems.length > 0
+      ? rowVirtualizer.getTotalSize() - virtualItems[virtualItems.length - 1].end
+      : 0;
+
+  const visibleItems =
+    shouldVirtualize && virtualItems.length > 0
+      ? virtualItems
+          .map((virtualRow) => items[virtualRow.index])
+          .filter(Boolean)
+      : items;
 
   return (
     <div
       data-testid="queue-panel"
       className={cn('flex h-full flex-col', classes?.root)}
     >
-      <ScrollableArea>
+      <ScrollableArea viewportRef={viewportRef}>
         <QueueReorderLayer
           enabled={reorderable}
           items={itemIds}
@@ -110,12 +142,20 @@ export const QueuePanel: FC<QueuePanelProps> = ({
               isCollapsed ? 'items-center gap-1 px-1' : 'gap-1',
               classes?.list,
             )}
+            style={
+              shouldVirtualize
+                ? {
+                    paddingTop: `${paddingTop}px`,
+                    paddingBottom: `${paddingBottom}px`,
+                  }
+                : undefined
+            }
           >
-            {items.map((item) => (
+            {visibleItems.map((queueItem) => (
               <ReorderableQueueItem
-                key={item.id}
-                item={item}
-                isCurrent={item.id === currentItemId}
+                key={queueItem.id}
+                item={queueItem}
+                isCurrent={queueItem.id === currentItemId}
                 isCollapsed={isCollapsed}
                 isReorderable={reorderable}
                 onSelect={onSelectItem}

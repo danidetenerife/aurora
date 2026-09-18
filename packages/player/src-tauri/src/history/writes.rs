@@ -11,14 +11,14 @@ impl HistoryDb {
             .map_err(|err| format!("Failed to serialize artists: {err}"))?;
 
         sqlx::query(
-            "INSERT INTO tracks (fingerprint, title, artists, album_title, duration_ms, artwork_url, created_at, updated_at) \
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?) \
-             ON CONFLICT(fingerprint) DO UPDATE SET \
-             album_title = COALESCE(tracks.album_title, excluded.album_title), \
-             duration_ms = COALESCE(tracks.duration_ms, excluded.duration_ms), \
-             artwork_url = COALESCE(tracks.artwork_url, excluded.artwork_url), \
-             updated_at = excluded.updated_at \
-             RETURNING id",
+             "INSERT INTO tracks (fingerprint, title, artists, album_title, duration_ms, artwork_url, created_at, updated_at) \
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?) \
+              ON CONFLICT(fingerprint) DO UPDATE SET \
+              album_title = COALESCE(tracks.album_title, excluded.album_title), \
+              duration_ms = COALESCE(tracks.duration_ms, excluded.duration_ms), \
+              artwork_url = COALESCE(tracks.artwork_url, excluded.artwork_url), \
+              updated_at = excluded.updated_at \
+              RETURNING id",
         )
         .bind(&fp)
         .bind(&snapshot.title)

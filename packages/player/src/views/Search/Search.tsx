@@ -17,6 +17,7 @@ import {
   ViewShell,
 } from '@aurora/ui';
 
+import { ConnectedFavoriteButton } from '../../components/ConnectedFavoriteButton';
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { useActiveProvider } from '../../hooks/useActiveProvider';
 import { metadataHost } from '../../services/metadataHost';
@@ -144,13 +145,22 @@ const SearchContent: FC<{
       label: t('search:results.albums'),
       content: (
         <CardGrid>
-          {results.albums.map((item) => (
+          {results.albums.map((albumItem) => (
             <Card
-              key={item.source.id}
-              title={item.title}
-              src={pickArtwork(item.artwork, 'cover', 300)?.url}
+              key={albumItem.source.id}
+              title={albumItem.title}
+              subtitle={albumItem.artists?.[0]?.name}
+              src={pickArtwork(albumItem.artwork, 'cover', 300)?.url}
+              action={
+                <ConnectedFavoriteButton
+                  type="album"
+                  source={albumItem.source}
+                  data={albumItem}
+                  size="sm"
+                />
+              }
               onClick={() =>
-                navigate({ to: `/album/${providerId}/${item.source.id}` })
+                navigate({ to: `/album/${providerId}/${albumItem.source.id}` })
               }
             />
           ))}

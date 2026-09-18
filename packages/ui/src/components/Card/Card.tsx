@@ -28,6 +28,7 @@ export const Card: FC<CardProps> = ({
   action,
 }) => (
   <Button
+    as={action ? 'div' : 'button'}
     data-testid="card"
     size="flexible"
     className={cn(
@@ -41,7 +42,15 @@ export const Card: FC<CardProps> = ({
       shadow="none"
       className="relative aspect-square w-full items-center justify-center overflow-hidden p-0"
     >
-      {action && <div className="absolute top-2 right-2 z-10">{action}</div>}
+      {action && (
+        <div
+          className="absolute top-2 right-2 z-10"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
+          {action}
+        </div>
+      )}
       {image ?? (
         <ImageReveal
           enabled={imageReveal}

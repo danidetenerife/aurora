@@ -119,7 +119,7 @@ const plugin: AuroraPlugin = {
     client = new MetadataClient(api.Http.fetch);
     api.Providers.register(createProvider());
     api.Providers.register(createPlaylistProvider());
-    api.Providers.register(createDashboardProvider());
+    api.Providers.register(createDashboardProvider(api.Http.fetch));
   },
 
   onDisable(api: AuroraPluginAPI) {

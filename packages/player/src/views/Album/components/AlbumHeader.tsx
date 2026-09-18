@@ -52,7 +52,17 @@ export const AlbumHeader: FC<AlbumHeaderProps> = ({ providerId, albumId }) => {
       <ConnectedFavoriteButton
         type="album"
         source={{ provider: providerId, id: albumId }}
-        data={{ title: album.title, artwork: album.artwork }}
+        data={{
+          title: album.title,
+          artists: album.artists?.map((artistCredit) => ({
+            name: artistCredit.name,
+            source: artistCredit.source ?? {
+              provider: providerId,
+              id: artistCredit.name,
+            },
+          })),
+          artwork: album.artwork,
+        }}
         className="bg-background border-border absolute top-4 right-4 z-10 rounded-md border-(length:--border-width)"
         data-testid="album-favorite-button"
       />

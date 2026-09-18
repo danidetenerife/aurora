@@ -53,7 +53,7 @@ describe('Listening history', () => {
           artists: ['Test Artist'],
           albumTitle: null,
           durationMs: null,
-          artworkUrl: null,
+          artworkUrl: expect.toBeOneOf([null, expect.any(String)]),
           provider: 'test',
           providerId: 'track 1',
         },

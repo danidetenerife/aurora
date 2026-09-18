@@ -10,6 +10,7 @@ import { Button, FavoriteButton, PlayerBar } from '@aurora/ui';
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
+import { ConnectedFavoriteButton } from '../ConnectedFavoriteButton';
 
 export const ConnectedNowPlaying: FC<{
   actionsOnly?: boolean;
@@ -18,11 +19,18 @@ export const ConnectedNowPlaying: FC<{
   const { t: tTrack } = useTranslation('track');
   const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
-  const currentItem = useQueueStore((state) => state.getCurrentItem());
-  const { isTrackFavorite, addTrack, removeTrack } = useFavoritesStore();
-
-  const track = currentItem?.track;
-  const isFavorite = track ? isTrackFavorite(track.source) : false;
+  const track = useQueueStore((state) => state.items[state.currentIndex]?.track);
+  const isFavorite = useFavoritesStore((state) =>
+    track
+      ? state.tracks.some(
+          (entry) =>
+            entry.ref.source?.provider === track.source?.provider &&
+            entry.ref.source?.id === track.source?.id,
+        )
+      : false,
+  );
+  const addTrack = useFavoritesStore((state) => state.addTrack);
+  const removeTrack = useFavoritesStore((state) => state.removeTrack);
 
   const artwork = pickArtwork(track?.artwork, 'thumbnail', 64);
   const title = track?.title ?? 'Sin reproducir';
@@ -34,9 +42,9 @@ export const ConnectedNowPlaying: FC<{
       return;
     }
     if (isFavorite) {
-      removeTrack(track.source);
+      void removeTrack(track.source);
     } else {
-      addTrack(track);
+      void addTrack(track);
     }
   };
 
@@ -67,6 +75,19 @@ export const ConnectedNowPlaying: FC<{
         ariaLabelAdd={tTrack('actions.addToFavorites')}
         ariaLabelRemove={tTrack('actions.removeFromFavorites')}
       />
+      {album && (
+        <ConnectedFavoriteButton
+          type="album"
+          source={album.source}
+          data={{
+            title: album.title,
+            artists: album.artists,
+            artwork: album.artwork,
+          }}
+          size="sm"
+          data-testid="now-playing-favorite-album-button"
+        />
+      )}
       <Button
         size="icon-sm"
         variant="text"
