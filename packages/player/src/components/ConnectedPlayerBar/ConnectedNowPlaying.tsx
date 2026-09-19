@@ -10,7 +10,6 @@ import { Button, FavoriteButton, PlayerBar } from '@aurora/ui';
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useQueueStore } from '../../stores/queueStore';
-import { ConnectedFavoriteButton } from '../ConnectedFavoriteButton';
 
 export const ConnectedNowPlaying: FC<{
   actionsOnly?: boolean;
@@ -77,19 +76,6 @@ export const ConnectedNowPlaying: FC<{
         ariaLabelAdd={tTrack('actions.addToFavorites')}
         ariaLabelRemove={tTrack('actions.removeFromFavorites')}
       />
-      {album && (
-        <ConnectedFavoriteButton
-          type="album"
-          source={album.source}
-          data={{
-            title: album.title,
-            artists: album.artists,
-            artwork: album.artwork,
-          }}
-          size="sm"
-          data-testid="now-playing-favorite-album-button"
-        />
-      )}
       <Button
         size="icon-sm"
         variant="text"
