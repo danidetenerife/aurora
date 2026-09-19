@@ -3,10 +3,10 @@
 exports[`PlayerBar > (Snapshot) active states render 1`] = `
 <DocumentFragment>
   <footer
-    class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) px-2 sm:px-4 py-1.5 h-14 sm:h-16"
+    class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) h-14 px-2 py-1.5 sm:h-16 sm:px-4"
   >
     <div
-      class="flex w-full items-center justify-between sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4"
+      class="flex w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4"
     >
       <div
         class="min-w-0 flex-1 sm:flex-initial"
@@ -15,7 +15,7 @@ exports[`PlayerBar > (Snapshot) active states render 1`] = `
           class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3"
         >
           <div
-            class="border-border bg-background-secondary size-9 sm:size-12 shrink-0 overflow-hidden rounded-md border-(length:--border-width)"
+            class="border-border bg-background-secondary size-9 shrink-0 overflow-hidden rounded-md border-(length:--border-width) sm:size-12"
           >
             <img
               alt=""
@@ -28,7 +28,7 @@ exports[`PlayerBar > (Snapshot) active states render 1`] = `
             class="min-w-0 flex-1"
           >
             <div
-              class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight"
+              class="text-foreground text-xs leading-tight font-bold break-words sm:text-sm"
               data-testid="now-playing-title"
             >
               Crystalized
@@ -43,7 +43,7 @@ exports[`PlayerBar > (Snapshot) active states render 1`] = `
         </div>
       </div>
       <div
-        class="justify-self-center shrink-0"
+        class="shrink-0 justify-self-center"
       >
         <div
           class="flex items-center justify-center gap-1 sm:gap-2"
@@ -212,7 +212,7 @@ exports[`PlayerBar > (Snapshot) active states render 1`] = `
         </div>
       </div>
       <div
-        class="hidden sm:block justify-self-end"
+        class="hidden justify-self-end sm:block"
       >
         <div
           class="flex items-center gap-2"
@@ -299,10 +299,10 @@ exports[`PlayerBar > (Snapshot) active states render 1`] = `
 exports[`PlayerBar > (Snapshot) default render 1`] = `
 <DocumentFragment>
   <footer
-    class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) px-2 sm:px-4 py-1.5 h-14 sm:h-16"
+    class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) h-14 px-2 py-1.5 sm:h-16 sm:px-4"
   >
     <div
-      class="flex w-full items-center justify-between sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4"
+      class="flex w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4"
     >
       <div
         class="min-w-0 flex-1 sm:flex-initial"
@@ -311,7 +311,7 @@ exports[`PlayerBar > (Snapshot) default render 1`] = `
           class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3"
         >
           <div
-            class="border-border bg-background-secondary size-9 sm:size-12 shrink-0 overflow-hidden rounded-md border-(length:--border-width)"
+            class="border-border bg-background-secondary size-9 shrink-0 overflow-hidden rounded-md border-(length:--border-width) sm:size-12"
           >
             <img
               alt=""
@@ -324,7 +324,7 @@ exports[`PlayerBar > (Snapshot) default render 1`] = `
             class="min-w-0 flex-1"
           >
             <div
-              class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight cursor-pointer hover:underline"
+              class="text-foreground text-xs leading-tight font-bold break-words sm:text-sm cursor-pointer hover:underline"
               data-testid="now-playing-title"
             >
               Song Title
@@ -339,7 +339,7 @@ exports[`PlayerBar > (Snapshot) default render 1`] = `
         </div>
       </div>
       <div
-        class="justify-self-center shrink-0"
+        class="shrink-0 justify-self-center"
       >
         <div
           class="flex items-center justify-center gap-1 sm:gap-2"
@@ -497,7 +497,7 @@ exports[`PlayerBar > (Snapshot) default render 1`] = `
         </div>
       </div>
       <div
-        class="hidden sm:block justify-self-end"
+        class="hidden justify-self-end sm:block"
       >
         <div
           class="flex items-center gap-2"
@@ -587,10 +587,10 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
     style="width: 420px;"
   >
     <footer
-      class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) px-2 sm:px-4 py-1.5 h-14 sm:h-16"
+      class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) h-14 px-2 py-1.5 sm:h-16 sm:px-4"
     >
       <div
-        class="flex w-full items-center justify-between sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4"
+        class="flex w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4"
       >
         <div
           class="min-w-0 flex-1 sm:flex-initial"
@@ -599,7 +599,7 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
             class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3"
           >
             <div
-              class="border-border bg-background-secondary size-9 sm:size-12 shrink-0 overflow-hidden rounded-md border-(length:--border-width)"
+              class="border-border bg-background-secondary size-9 shrink-0 overflow-hidden rounded-md border-(length:--border-width) sm:size-12"
             >
               <img
                 alt=""
@@ -612,7 +612,7 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
               class="min-w-0 flex-1"
             >
               <div
-                class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight"
+                class="text-foreground text-xs leading-tight font-bold break-words sm:text-sm"
                 data-testid="now-playing-title"
               >
                 An Incredibly, Ridiculously Long Song Title That Should Truncate Nicely
@@ -627,7 +627,7 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
           </div>
         </div>
         <div
-          class="justify-self-center shrink-0"
+          class="shrink-0 justify-self-center"
         >
           <div
             class="flex items-center justify-center gap-1 sm:gap-2"
@@ -785,7 +785,7 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
           </div>
         </div>
         <div
-          class="hidden sm:block justify-self-end"
+          class="hidden justify-self-end sm:block"
         >
           <div
             class="flex items-center gap-2"
@@ -873,10 +873,10 @@ exports[`PlayerBar > (Snapshot) long metadata truncation 1`] = `
 exports[`PlayerBar > (Snapshot) no artwork fallback 1`] = `
 <DocumentFragment>
   <footer
-    class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) px-2 sm:px-4 py-1.5 h-14 sm:h-16"
+    class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) h-14 px-2 py-1.5 sm:h-16 sm:px-4"
   >
     <div
-      class="flex w-full items-center justify-between sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4"
+      class="flex w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4"
     >
       <div
         class="min-w-0 flex-1 sm:flex-initial"
@@ -885,7 +885,7 @@ exports[`PlayerBar > (Snapshot) no artwork fallback 1`] = `
           class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3"
         >
           <div
-            class="border-border bg-background-secondary size-9 sm:size-12 shrink-0 overflow-hidden rounded-md border-(length:--border-width)"
+            class="border-border bg-background-secondary size-9 shrink-0 overflow-hidden rounded-md border-(length:--border-width) sm:size-12"
           >
             <div
               class="text-foreground-secondary flex size-full items-center justify-center"
@@ -919,7 +919,7 @@ exports[`PlayerBar > (Snapshot) no artwork fallback 1`] = `
             class="min-w-0 flex-1"
           >
             <div
-              class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight"
+              class="text-foreground text-xs leading-tight font-bold break-words sm:text-sm"
               data-testid="now-playing-title"
             >
               Untitled Track
@@ -934,7 +934,7 @@ exports[`PlayerBar > (Snapshot) no artwork fallback 1`] = `
         </div>
       </div>
       <div
-        class="justify-self-center shrink-0"
+        class="shrink-0 justify-self-center"
       >
         <div
           class="flex items-center justify-center gap-1 sm:gap-2"
@@ -1092,7 +1092,7 @@ exports[`PlayerBar > (Snapshot) no artwork fallback 1`] = `
         </div>
       </div>
       <div
-        class="hidden sm:block justify-self-end"
+        class="hidden justify-self-end sm:block"
       >
         <div
           class="flex items-center gap-2"

@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-09-19T20:10",
+    "description": "Navegación interactiva por artista en el Panel y corrección del control de volumen: independiza el título de la pista y el nombre del artista en las celdas de la tabla para que solo se subraye el elemento sobre el que está el cursor y permitir abrir directamente la vista del artista sin reproducir la pista por error, soluciona el rebote y bloqueo del control de volumen al reducirlo implementando estado optimista en tiempo real en el componente Slider y en el hook useSetting, y sincroniza las claves de persistencia para una respuesta instantánea y fluida.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Panel", "color": "blue" },
+      { "label": "Reproductor", "color": "purple" },
+      { "label": "Volumen", "color": "green" },
+      { "label": "Escritorio", "color": "orange" }
+    ]
+  },
+  {
     "date": "2026-09-19T16:45",
     "description": "Renovación dinámica del motor de recomendaciones, corrección del Dashboard móvil y solución de reproducción en Android Auto / AAOS: erradica el bloqueo determinista de 24h introduciendo rotación periódica cada 2 horas y semilla dinámica en el jitter, amplía el muestreo de candidatos a 10 canciones por artista y pondera la frescura para evitar el monopolio del artista #1, incorpora botón de refresco reactivo instantáneo en Recomendado para ti con reinicio de página, desacopla el feed vertical móvil garantizando 4 canciones por página y visibilidad total para Canciones más escuchadas sin colapso a 0px, corrige el bug en el cálculo del índice de cola en MediaSession que causaba la reproducción de pistas antiguas al pulsar listas en Android Auto / AAOS, añade la lista 'Éxitos 80s y 90s' con mapeo de términos retro, y acelera el linting de 15 minutos a 4 segundos excluyendo Gradle de Android.",
     "type": "fix",

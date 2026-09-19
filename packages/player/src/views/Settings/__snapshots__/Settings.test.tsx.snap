@@ -33,14 +33,14 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
       transition="[object Object]"
     >
       <div
-        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) aurora-settings-panel flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl min-w-0 flex-row max-sm:flex-col p-0 overflow-hidden"
+        class="border-border bg-background shadow-shadow relative rounded-md border-(length:--border-width) aurora-settings-panel flex h-[92vh] max-h-[900px] w-[95vw] max-w-6xl min-w-0 flex-row overflow-hidden p-0 max-sm:flex-col sm:h-[80vh] sm:w-[80vw]"
         data-headlessui-state="open"
         data-open=""
         id="headlessui-dialog-panel-:r9:"
       >
         <button
           aria-label="Close"
-          class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y bg-background text-foreground hover:shadow-none size-8 justify-center absolute top-2.5 right-2.5 z-30 shadow-sm border border-border/40"
+          class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y bg-background text-foreground hover:shadow-none size-8 justify-center border-border/40 absolute top-2.5 right-2.5 z-30 border shadow-sm"
           data-headlessui-state=""
           data-testid="dialog-x-close"
           type="button"
@@ -67,13 +67,13 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
           </svg>
         </button>
         <nav
-          class="border-border flex w-60 shrink-0 flex-col border-r-(length:--border-width) p-4 gap-2 overflow-y-auto max-sm:w-full max-sm:flex-row max-sm:border-r-0 max-sm:border-b-(length:--border-width) max-sm:overflow-x-auto max-sm:pr-16 max-sm:p-2 scrollbar-none"
+          class="border-border scrollbar-none flex w-60 shrink-0 flex-col gap-2 overflow-y-auto border-r-(length:--border-width) p-4 max-sm:w-full max-sm:flex-row max-sm:overflow-x-auto max-sm:border-r-0 max-sm:border-b-(length:--border-width) max-sm:p-2 max-sm:pr-16"
         >
           <div
-            class="flex flex-col gap-1.5 w-full items-stretch max-sm:flex-row max-sm:items-center max-sm:w-auto"
+            class="flex w-full flex-col items-stretch gap-1.5 max-sm:w-auto max-sm:flex-row max-sm:items-center"
           >
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-10 py-2 w-full shrink-0 justify-start gap-2.5 px-3 text-sm font-medium whitespace-nowrap"
               data-headlessui-state="hover"
               data-hover=""
               data-testid="settings-tab-general"
@@ -120,7 +120,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full shrink-0 justify-start gap-2.5 px-3 text-sm font-medium whitespace-nowrap"
               data-headlessui-state=""
               data-testid="settings-tab-shortcuts"
               type="button"
@@ -181,7 +181,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full shrink-0 justify-start gap-2.5 px-3 text-sm font-medium whitespace-nowrap"
               data-headlessui-state=""
               data-testid="settings-tab-sync"
               type="button"
@@ -217,7 +217,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full shrink-0 justify-start gap-2.5 px-3 text-sm font-medium whitespace-nowrap"
               data-headlessui-state=""
               data-testid="settings-tab-plugins"
               type="button"
@@ -257,7 +257,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full shrink-0 justify-start gap-2.5 px-3 text-sm font-medium whitespace-nowrap"
               data-headlessui-state=""
               data-testid="settings-tab-logs"
               type="button"
@@ -299,7 +299,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               </span>
             </button>
             <button
-              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full justify-start gap-2.5 whitespace-nowrap shrink-0 text-sm font-medium px-3"
+              class="inline-flex cursor-pointer items-center rounded-md transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent h-10 py-2 w-full shrink-0 justify-start gap-2.5 px-3 text-sm font-medium whitespace-nowrap"
               data-headlessui-state=""
               data-testid="settings-tab-whats-new"
               type="button"
@@ -344,7 +344,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
             </button>
           </div>
           <div
-            class="mt-auto pt-4 border-t-(length:--border-width) border-border/40 w-full max-sm:hidden"
+            class="border-border/40 mt-auto w-full border-t-(length:--border-width) pt-4 max-sm:hidden"
           >
             <div
               class="flex flex-col items-center gap-2"
@@ -378,7 +378,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               <span
                 class="cursor-text text-xs select-all"
               >
-                v1.47.1 (bb68de6)
+                v1.47.1 (600fa1b)
               </span>
             </div>
           </div>

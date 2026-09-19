@@ -66,10 +66,21 @@ export const useSettingsStore = create<State>((set, get) => ({
     if (currentValue !== undefined) {
       return currentValue;
     }
+    if (fullyQualifiedId.startsWith('core.')) {
+      const legacyId = fullyQualifiedId.replace(/^core\./, '');
+      if (values[legacyId] !== undefined) {
+        return values[legacyId];
+      }
+    }
     return definitions[fullyQualifiedId]?.default;
   },
   setValue: async (fullyQualifiedId, value) => {
     const nextValues = { ...get().values, [fullyQualifiedId]: value };
+    if (fullyQualifiedId.startsWith('core.')) {
+      const legacyId = fullyQualifiedId.replace(/^core\./, '');
+      nextValues[legacyId] = value;
+      await store.set(legacyId, value as unknown);
+    }
     set({ values: nextValues });
     await store.set(fullyQualifiedId, value as unknown);
     debouncedSave();

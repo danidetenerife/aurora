@@ -147,7 +147,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
       </header>
     </div>
     <div
-      class="bg-background-secondary relative flex flex-1 md:grid h-full min-h-0 md:grid-cols-[auto_1fr_auto] overflow-hidden"
+      class="bg-background-secondary relative flex h-full min-h-0 flex-1 overflow-hidden md:grid md:grid-cols-[auto_1fr_auto]"
     >
       <div
         animate="[object Object]"
@@ -614,7 +614,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
         />
       </div>
       <main
-        class="bg-background-secondary flex-1 min-h-0 overflow-y-auto aurora-content w-full min-w-0"
+        class="bg-background-secondary min-h-0 flex-1 overflow-y-auto aurora-content w-full min-w-0"
         data-testid="player-workspace-main"
       >
         <div
@@ -685,7 +685,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
                           The Wild Project
                         </strong>
                         <span
-                          class="text-foreground-secondary block text-xs opacity-75 break-words whitespace-normal"
+                          class="text-foreground-secondary block text-xs break-words whitespace-normal opacity-75"
                         >
                           Jordi Wild
                         </span>
@@ -760,7 +760,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
                           Terrores Criminales
                         </strong>
                         <span
-                          class="text-foreground-secondary block text-xs opacity-75 break-words whitespace-normal"
+                          class="text-foreground-secondary block text-xs break-words whitespace-normal opacity-75"
                         >
                           Terrores Nocturnos Podcast
                         </span>
@@ -927,10 +927,10 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
         </div>
       </div>
       <footer
-        class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) px-2 sm:px-4 py-1.5 h-14 sm:h-16 aurora-player"
+        class="bg-background-secondary border-border flex items-center border-t-(length:--border-width) h-14 px-2 py-1.5 sm:h-16 sm:px-4 aurora-player"
       >
         <div
-          class="flex w-full items-center justify-between sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4"
+          class="flex w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4"
         >
           <div
             class="min-w-0 flex-1 sm:flex-initial"
@@ -939,7 +939,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
               class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3"
             >
               <div
-                class="border-border bg-background-secondary size-9 sm:size-12 shrink-0 overflow-hidden rounded-md border-(length:--border-width)"
+                class="border-border bg-background-secondary size-9 shrink-0 overflow-hidden rounded-md border-(length:--border-width) sm:size-12"
               >
                 <div
                   class="text-foreground-secondary flex size-full items-center justify-center"
@@ -973,7 +973,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
                 class="min-w-0 flex-1"
               >
                 <div
-                  class="text-foreground break-words text-xs sm:text-sm font-bold leading-tight"
+                  class="text-foreground text-xs leading-tight font-bold break-words sm:text-sm"
                   data-testid="now-playing-title"
                 >
                   Sin reproducir
@@ -982,7 +982,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
             </div>
           </div>
           <div
-            class="justify-self-center shrink-0"
+            class="shrink-0 justify-self-center"
           >
             <div
               class="aurora-transport flex items-center gap-1"
@@ -1218,7 +1218,7 @@ exports[`Podcasts view > (Snapshot) renders podcasts list 1`] = `
             </div>
           </div>
           <div
-            class="hidden sm:block justify-self-end"
+            class="hidden justify-self-end sm:block"
           >
             <div
               class="flex items-center gap-2"

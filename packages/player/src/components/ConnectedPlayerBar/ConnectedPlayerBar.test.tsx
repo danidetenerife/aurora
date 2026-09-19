@@ -230,4 +230,19 @@ describe('ConnectedVolume', () => {
     ] as number;
     expect(storedVolume).toBe(0.75);
   });
+
+  it('lowering volume updates immediately and stays lowered without snapping back', async () => {
+    Wrapper.seedVolume(0.48);
+    await Wrapper.mount();
+
+    expect(Wrapper.volume.rangeInput).toHaveValue('48');
+
+    await Wrapper.volume.changeValue(15);
+    expect(Wrapper.volume.rangeInput).toHaveValue('15');
+
+    const storedVolume = useSettingsStore.getState().values[
+      'core.playback.volume'
+    ] as number;
+    expect(storedVolume).toBe(0.15);
+  });
 });

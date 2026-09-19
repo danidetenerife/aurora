@@ -1,5 +1,5 @@
 import type { KeyboardEvent, PropsWithChildren } from 'react';
-import { FC, useId, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { cn } from '../../utils';
 import { SliderProvider, useSliderContext } from './context';
@@ -41,15 +41,22 @@ const SliderRoot: FC<
   className,
   children,
 }) => {
-  const [internal, setInternal] = useState<number | undefined>(defaultValue);
   const isControlled = valueProp !== undefined;
-  const value = isControlled ? (valueProp as number) : (internal ?? min);
+  const [internalValue, setInternalValue] = useState<number>(
+    valueProp !== undefined ? valueProp : (defaultValue ?? min),
+  );
+
+  useEffect(() => {
+    if (valueProp !== undefined) {
+      setInternalValue(valueProp);
+    }
+  }, [valueProp]);
+
+  const value = isControlled ? internalValue : (internalValue ?? min);
   const clamp = (n: number) => Math.min(Math.max(n, min), max);
   const emit = (next: number) => {
     const v = clamp(next);
-    if (!isControlled) {
-      setInternal(v);
-    }
+    setInternalValue(v);
     onValueChange?.(v);
   };
 
@@ -189,6 +196,7 @@ export const SliderRangeInput: FC = () => {
       step={step}
       value={value}
       onChange={(e) => emit(Number(e.target.value))}
+      onInput={(e) => emit(Number((e.target as HTMLInputElement).value))}
       onKeyDown={onKeyDown}
       disabled={disabled}
       aria-labelledby={labelId}

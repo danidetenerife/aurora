@@ -10,7 +10,7 @@ exports[`PlayerShell > matches snapshot with complete layout 1`] = `
       data-tauri-drag-region="true"
     />
     <div
-      class="bg-background-secondary relative flex flex-1 md:grid h-full min-h-0 md:grid-cols-[auto_1fr_auto] overflow-hidden"
+      class="bg-background-secondary relative flex h-full min-h-0 flex-1 overflow-hidden md:grid md:grid-cols-[auto_1fr_auto]"
     >
       <div
         animate="[object Object]"
@@ -60,7 +60,7 @@ exports[`PlayerShell > matches snapshot with complete layout 1`] = `
         />
       </div>
       <main
-        class="bg-background-secondary flex-1 min-h-0 overflow-y-auto w-full"
+        class="bg-background-secondary min-h-0 w-full flex-1 overflow-y-auto"
         data-testid="player-workspace-main"
       />
       <div

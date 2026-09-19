@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import type { Track } from '@aurora/model';
@@ -159,5 +160,47 @@ describe('TrackTable', () => {
     );
     await findByTestId('add-all-to-queue-button');
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it('navigates to artist when clicking artist name without playing the track', async () => {
+    const onArtistClick = vi.fn();
+    const onPlayNow = vi.fn();
+    const tracks = makeTracks(1);
+
+    const { findAllByText } = render(
+      <TrackTable
+        tracks={tracks}
+        labels={labels}
+        display={{ displayArtist: false }}
+        actions={{ onArtistClick, onPlayNow }}
+      />,
+    );
+
+    const artistButtons = await findAllByText('Frank Zappa');
+    await userEvent.click(artistButtons[0]);
+
+    expect(onArtistClick).toHaveBeenCalledWith('Frank Zappa', tracks[0]);
+    expect(onPlayNow).not.toHaveBeenCalled();
+  });
+
+  it('plays track when clicking track title', async () => {
+    const onArtistClick = vi.fn();
+    const onPlayNow = vi.fn();
+    const tracks = makeTracks(1);
+
+    const { findByText } = render(
+      <TrackTable
+        tracks={tracks}
+        labels={labels}
+        display={{ displayArtist: false }}
+        actions={{ onArtistClick, onPlayNow }}
+      />,
+    );
+
+    const titleButton = await findByText('Track 1');
+    await userEvent.click(titleButton);
+
+    expect(onPlayNow).toHaveBeenCalledWith(tracks[0]);
+    expect(onArtistClick).not.toHaveBeenCalled();
   });
 });

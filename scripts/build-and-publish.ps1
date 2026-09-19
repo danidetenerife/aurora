@@ -70,7 +70,17 @@ $MetainfoPath = "$Root\packages\player\src-tauri\resources\com.auroraplayer.Auro
 if (Test-Path $MetainfoPath) {
     $rawMeta = [System.IO.File]::ReadAllText($MetainfoPath, [System.Text.Encoding]::UTF8)
     $todayStr = (Get-Date).ToString("yyyy-MM-dd")
-    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Renovación dinámica del motor de recomendaciones, corrección integral del Dashboard móvil y solución de reproducción en Android Auto / AAOS.</p>`n      </description>`n    </release>`n"
+    $metaDesc = "Release ${NextVer}: Mejoras y correcciones en Aurora."
+    $changelogPath = "$Root\packages\player\changelog.json"
+    if (Test-Path $changelogPath) {
+        try {
+            $cl = Get-Content $changelogPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($cl.Count -gt 0 -and $cl[0].description) {
+                $metaDesc = "Release ${NextVer}: " + $cl[0].description
+            }
+        } catch {}
+    }
+    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>$metaDesc</p>`n      </description>`n    </release>`n"
     $metaStr = $rawMeta -replace "<releases>", "<releases>`n$newReleaseBlock"
     [System.IO.File]::WriteAllText($MetainfoPath, $metaStr, $utf8NoBom)
 }

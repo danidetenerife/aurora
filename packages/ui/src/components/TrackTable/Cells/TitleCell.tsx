@@ -16,6 +16,7 @@ type TitleCellMeta = {
   noTruncate?: boolean;
   hideSubtitleArtist?: boolean;
   isCurrentTrack?: (track: Track) => boolean;
+  onArtistClick?: (artistName: string, track: Track) => void;
 };
 
 type AddToQueueButtonProps = {
@@ -78,6 +79,7 @@ export const TitleCell = <T extends Track>({
   const hasContextMenu = Boolean(ContextMenuWrapper);
   const hasActions = hasAddToQueue || hasContextMenu;
   const isCurrent = Boolean(meta?.isCurrentTrack?.(track));
+  const onArtistClick = actions?.onArtistClick ?? meta?.onArtistClick;
   const artistName =
     track.artists && track.artists.length > 0
       ? track.artists
@@ -89,39 +91,78 @@ export const TitleCell = <T extends Track>({
   return (
     <td className="min-w-0 px-2 py-1.5">
       <div className="flex min-w-0 items-center justify-between gap-2">
-        <button
+        <div
           className={
             noTruncate
-              ? 'flex min-w-0 flex-1 cursor-pointer flex-col justify-center text-left hover:underline'
-              : 'flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline'
+              ? 'flex min-w-0 flex-1 flex-col justify-center text-left'
+              : 'flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left'
           }
-          onClick={(e) => {
-            e.stopPropagation();
-            actions.onPlayNow?.(track);
-          }}
         >
-          <span
-            className={cn(
-              noTruncate
-                ? 'text-sm leading-snug font-semibold break-words whitespace-normal'
-                : 'line-clamp-2 text-sm leading-snug font-semibold break-words',
-              isCurrent ? 'text-accent-green font-bold' : 'text-foreground',
-            )}
+          <button
+            type="button"
+            className="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              actions.onPlayNow?.(track);
+            }}
           >
-            {getValue()}
-          </span>
-          {artistName && !hideSubtitleArtist ? (
             <span
+              className={cn(
+                noTruncate
+                  ? 'text-sm leading-snug font-semibold break-words whitespace-normal'
+                  : 'line-clamp-2 text-sm leading-snug font-semibold break-words',
+                'hover:underline',
+                isCurrent ? 'text-accent-green font-bold' : 'text-foreground',
+              )}
+            >
+              {getValue()}
+            </span>
+          </button>
+          {artistName && !hideSubtitleArtist ? (
+            <div
               className={
                 noTruncate
                   ? 'text-foreground-secondary text-xs break-words whitespace-normal'
                   : 'text-foreground-secondary line-clamp-1 text-xs break-words'
               }
             >
-              {artistName}
-            </span>
+              {track.artists && track.artists.length > 0 ? (
+                track.artists.map((artist, index) => (
+                  <span key={index}>
+                    {index > 0 && <span>, </span>}
+                    {onArtistClick && artist.name ? (
+                      <button
+                        type="button"
+                        className="hover:text-foreground cursor-pointer text-left hover:underline focus:outline-none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onArtistClick(artist.name, track);
+                        }}
+                      >
+                        {artist.name}
+                      </button>
+                    ) : (
+                      <span>{artist.name}</span>
+                    )}
+                  </span>
+                ))
+              ) : onArtistClick ? (
+                <button
+                  type="button"
+                  className="hover:text-foreground cursor-pointer text-left hover:underline focus:outline-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onArtistClick(artistName, track);
+                  }}
+                >
+                  {artistName}
+                </button>
+              ) : (
+                <span>{artistName}</span>
+              )}
+            </div>
           ) : null}
-        </button>
+        </div>
         {showControls && hasActions && (
           <div className="flex shrink-0 items-center gap-1">
             {hasAddToQueue && (

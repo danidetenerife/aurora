@@ -42,6 +42,7 @@ export const useSetting = <T extends SettingValue = SettingValue>(
       if (!host) {
         return;
       }
+      setCurrentValue(nextValue);
       void host.set<T>(id, nextValue);
     },
     [id, host],

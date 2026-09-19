@@ -111,4 +111,41 @@ describe('Slider (composed)', () => {
     await userEvent.type(input, '{arrowright}');
     expect(onChange).toHaveBeenLastCalledWith(5);
   });
+
+  it('updates controlled slider immediately on input change', () => {
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <Slider value={50} min={0} max={100} onValueChange={onChange}>
+        <Slider.Header label="Controlled" />
+        <Slider.Surface>
+          <Slider.Track />
+          <Slider.RangeInput />
+        </Slider.Surface>
+      </Slider>,
+    );
+
+    const input = screen.getByRole('slider', {
+      name: 'Controlled',
+    }) as HTMLInputElement;
+    expect(input.value).toBe('50');
+
+    act(() => {
+      input.value = '30';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    expect(onChange).toHaveBeenCalledWith(30);
+    expect(input.value).toBe('30');
+
+    rerender(
+      <Slider value={30} min={0} max={100} onValueChange={onChange}>
+        <Slider.Header label="Controlled" />
+        <Slider.Surface>
+          <Slider.Track />
+          <Slider.RangeInput />
+        </Slider.Surface>
+      </Slider>,
+    );
+    expect(input.value).toBe('30');
+  });
 });

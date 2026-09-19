@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.56" date="2026-09-19">
+      <description>
+        <p>Release 1.48.56: Navegación interactiva por artista en el Panel y corrección del control de volumen: independiza el título de la pista y el nombre del artista en las celdas de la tabla para que solo se subraye el elemento sobre el que está el cursor y permitir abrir directamente la vista del artista sin reproducir la pista por error, soluciona el rebote y bloqueo del control de volumen al reducirlo implementando estado optimista en tiempo real en el componente Slider y en el hook useSetting, y sincroniza las claves de persistencia para una respuesta instantánea y fluida.</p>
+      </description>
+    </release>
+
     <release version="1.48.55" date="2026-09-19">
       <description>
         <p>Release 1.48.55: RenovaciÃ³n dinÃ¡mica del motor de recomendaciones, correcciÃ³n integral del Dashboard mÃ³vil y soluciÃ³n de reproducciÃ³n en Android Auto / AAOS.</p>

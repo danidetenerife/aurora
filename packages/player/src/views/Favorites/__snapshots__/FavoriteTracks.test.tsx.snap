@@ -2,7 +2,7 @@
 
 exports[`FavoriteTracks view > (Snapshot) renders empty state 1`] = `
 <main
-  class="bg-background-secondary flex-1 min-h-0 overflow-y-auto aurora-content w-full min-w-0"
+  class="bg-background-secondary min-h-0 flex-1 overflow-y-auto aurora-content w-full min-w-0"
   data-testid="player-workspace-main"
 >
   <div
@@ -80,7 +80,7 @@ exports[`FavoriteTracks view > (Snapshot) renders empty state 1`] = `
 
 exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
 <main
-  class="bg-background-secondary flex-1 min-h-0 overflow-y-auto aurora-content w-full min-w-0"
+  class="bg-background-secondary min-h-0 flex-1 overflow-y-auto aurora-content w-full min-w-0"
   data-testid="player-workspace-main"
 >
   <div
@@ -401,20 +401,32 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                       <div
                         class="flex min-w-0 items-center justify-between gap-2"
                       >
-                        <button
-                          class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
+                        <div
+                          class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left"
                         >
-                          <span
-                            class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
+                          <button
+                            class="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
+                            type="button"
                           >
-                            Track track-1
-                          </span>
-                          <span
+                            <span
+                              class="line-clamp-2 text-sm leading-snug font-semibold break-words hover:underline text-foreground"
+                            >
+                              Track track-1
+                            </span>
+                          </button>
+                          <div
                             class="text-foreground-secondary line-clamp-1 text-xs break-words"
                           >
-                            Test Artist
-                          </span>
-                        </button>
+                            <span>
+                              <button
+                                class="hover:text-foreground cursor-pointer text-left hover:underline focus:outline-none"
+                                type="button"
+                              >
+                                Test Artist
+                              </button>
+                            </span>
+                          </div>
+                        </div>
                         <div
                           class="flex shrink-0 items-center gap-1"
                         >
@@ -584,20 +596,32 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                       <div
                         class="flex min-w-0 items-center justify-between gap-2"
                       >
-                        <button
-                          class="flex min-w-0 flex-1 cursor-pointer flex-col justify-center overflow-hidden text-left hover:underline"
+                        <div
+                          class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left"
                         >
-                          <span
-                            class="line-clamp-2 text-sm leading-snug font-semibold break-words text-foreground"
+                          <button
+                            class="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
+                            type="button"
                           >
-                            Track track-2
-                          </span>
-                          <span
+                            <span
+                              class="line-clamp-2 text-sm leading-snug font-semibold break-words hover:underline text-foreground"
+                            >
+                              Track track-2
+                            </span>
+                          </button>
+                          <div
                             class="text-foreground-secondary line-clamp-1 text-xs break-words"
                           >
-                            Test Artist
-                          </span>
-                        </button>
+                            <span>
+                              <button
+                                class="hover:text-foreground cursor-pointer text-left hover:underline focus:outline-none"
+                                type="button"
+                              >
+                                Test Artist
+                              </button>
+                            </span>
+                          </div>
+                        </div>
                         <div
                           class="flex shrink-0 items-center gap-1"
                         >

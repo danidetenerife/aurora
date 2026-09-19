@@ -2,7 +2,7 @@
 
 exports[`PluginStoreItem > (Snapshot) renders default state 1`] = `
 <div
-  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4"
+  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4"
   data-testid="plugin-store-item"
 >
   <div
@@ -15,7 +15,7 @@ exports[`PluginStoreItem > (Snapshot) renders default state 1`] = `
         class="flex flex-wrap items-center gap-2"
       >
         <h3
-          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base leading-tight font-bold select-none sm:text-lg"
         >
           <span
             data-testid="plugin-store-item-name"
@@ -23,7 +23,7 @@ exports[`PluginStoreItem > (Snapshot) renders default state 1`] = `
             YouTube Music
           </span>
           <span
-            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+            class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
           >
             <span
               class="mr-1 opacity-60"
@@ -57,7 +57,7 @@ exports[`PluginStoreItem > (Snapshot) renders default state 1`] = `
     </div>
   </div>
   <div
-    class="shrink-0 flex items-center justify-end sm:justify-start"
+    class="flex shrink-0 items-center justify-end sm:justify-start"
   >
     <button
       class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-9 px-3 w-28"
@@ -99,7 +99,7 @@ exports[`PluginStoreItem > (Snapshot) renders default state 1`] = `
 
 exports[`PluginStoreItem > (Snapshot) renders installed state 1`] = `
 <div
-  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4"
+  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4"
   data-testid="plugin-store-item"
 >
   <div
@@ -112,7 +112,7 @@ exports[`PluginStoreItem > (Snapshot) renders installed state 1`] = `
         class="flex flex-wrap items-center gap-2"
       >
         <h3
-          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base leading-tight font-bold select-none sm:text-lg"
         >
           <span
             data-testid="plugin-store-item-name"
@@ -120,7 +120,7 @@ exports[`PluginStoreItem > (Snapshot) renders installed state 1`] = `
             YouTube Music
           </span>
           <span
-            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+            class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
           >
             <span
               class="mr-1 opacity-60"
@@ -154,7 +154,7 @@ exports[`PluginStoreItem > (Snapshot) renders installed state 1`] = `
     </div>
   </div>
   <div
-    class="shrink-0 flex items-center justify-end sm:justify-start"
+    class="flex shrink-0 items-center justify-end sm:justify-start"
   >
     <button
       class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-9 px-3 w-28 opacity-60"
@@ -192,7 +192,7 @@ exports[`PluginStoreItem > (Snapshot) renders installed state 1`] = `
 
 exports[`PluginStoreItem > (Snapshot) renders installing state 1`] = `
 <div
-  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4"
+  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4"
   data-testid="plugin-store-item"
 >
   <div
@@ -205,7 +205,7 @@ exports[`PluginStoreItem > (Snapshot) renders installing state 1`] = `
         class="flex flex-wrap items-center gap-2"
       >
         <h3
-          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base leading-tight font-bold select-none sm:text-lg"
         >
           <span
             data-testid="plugin-store-item-name"
@@ -213,7 +213,7 @@ exports[`PluginStoreItem > (Snapshot) renders installing state 1`] = `
             YouTube Music
           </span>
           <span
-            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+            class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
           >
             <span
               class="mr-1 opacity-60"
@@ -247,7 +247,7 @@ exports[`PluginStoreItem > (Snapshot) renders installing state 1`] = `
     </div>
   </div>
   <div
-    class="shrink-0 flex items-center justify-end sm:justify-start"
+    class="flex shrink-0 items-center justify-end sm:justify-start"
   >
     <button
       class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-9 px-3 w-28"
@@ -297,7 +297,7 @@ exports[`PluginStoreItem > (Snapshot) renders installing state 1`] = `
 
 exports[`PluginStoreItem > (Snapshot) renders with custom labels 1`] = `
 <div
-  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4"
+  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4"
   data-testid="plugin-store-item"
 >
   <div
@@ -310,7 +310,7 @@ exports[`PluginStoreItem > (Snapshot) renders with custom labels 1`] = `
         class="flex flex-wrap items-center gap-2"
       >
         <h3
-          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base leading-tight font-bold select-none sm:text-lg"
         >
           <span
             data-testid="plugin-store-item-name"
@@ -318,7 +318,7 @@ exports[`PluginStoreItem > (Snapshot) renders with custom labels 1`] = `
             YouTube Music
           </span>
           <span
-            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+            class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
           >
             <span
               class="mr-1 opacity-60"
@@ -352,7 +352,7 @@ exports[`PluginStoreItem > (Snapshot) renders with custom labels 1`] = `
     </div>
   </div>
   <div
-    class="shrink-0 flex items-center justify-end sm:justify-start"
+    class="flex shrink-0 items-center justify-end sm:justify-start"
   >
     <button
       class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-9 px-3 w-28"
@@ -394,7 +394,7 @@ exports[`PluginStoreItem > (Snapshot) renders with custom labels 1`] = `
 
 exports[`PluginStoreItem > (Snapshot) renders with long description 1`] = `
 <div
-  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4"
+  class="border-border text-foreground h-full w-full rounded-md border-(length:--border-width) bg-background-secondary shadow-shadow flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4"
   data-testid="plugin-store-item"
 >
   <div
@@ -407,7 +407,7 @@ exports[`PluginStoreItem > (Snapshot) renders with long description 1`] = `
         class="flex flex-wrap items-center gap-2"
       >
         <h3
-          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none"
+          class="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base leading-tight font-bold select-none sm:text-lg"
         >
           <span
             data-testid="plugin-store-item-name"
@@ -415,7 +415,7 @@ exports[`PluginStoreItem > (Snapshot) renders with long description 1`] = `
             YouTube Music
           </span>
           <span
-            class="text-foreground-secondary text-xs sm:text-sm font-normal select-none"
+            class="text-foreground-secondary text-xs font-normal select-none sm:text-sm"
           >
             <span
               class="mr-1 opacity-60"
@@ -449,7 +449,7 @@ exports[`PluginStoreItem > (Snapshot) renders with long description 1`] = `
     </div>
   </div>
   <div
-    class="shrink-0 flex items-center justify-end sm:justify-start"
+    class="flex shrink-0 items-center justify-end sm:justify-start"
   >
     <button
       class="inline-flex cursor-pointer items-center rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-9 px-3 w-28"
