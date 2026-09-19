@@ -9,14 +9,14 @@ import { EmptyState, ScrollableArea, ViewShell } from '@aurora/ui';
 import { MobileItemPages } from '../../components/MobileItemPages';
 import { isCapacitorEnvironment } from '../../services/universalStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
+import { EditorialPlaylistsWidget } from '../Dashboard/components/EditorialPlaylistsWidget';
+import { useDashboardEditorialPlaylists } from '../Dashboard/hooks/useDashboardData';
 import { CreatePlaylistDialog } from './components/CreatePlaylistDialog';
 import { PlaylistCardGrid } from './components/PlaylistCardGrid';
 import { PlaylistsToolbar } from './components/PlaylistsToolbar';
 import { usePlaylistFilter } from './hooks/usePlaylistFilter';
 import { usePlaylistSort } from './hooks/usePlaylistSort';
 import { PlaylistsProvider } from './PlaylistsContext';
-import { EditorialPlaylistsWidget } from '../Dashboard/components/EditorialPlaylistsWidget';
-import { useDashboardEditorialPlaylists } from '../Dashboard/hooks/useDashboardData';
 
 const PlaylistsContent: FC = () => {
   const { t } = useTranslation('playlists');
@@ -64,9 +64,9 @@ const PlaylistsContent: FC = () => {
       )}
 
       {hasPlaylists && hasResults && native && (
-        <div className="flex flex-1 flex-col gap-4 min-h-0 overflow-y-auto">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
           <div className="flex flex-col gap-1">
-            <h2 className="px-1 text-xs font-bold uppercase tracking-wider text-foreground-secondary">
+            <h2 className="text-foreground-secondary px-1 text-xs font-bold tracking-wider uppercase">
               {t('myPlaylists', 'Mis listas de reproducción')}
             </h2>
             <MobileItemPages
@@ -106,7 +106,7 @@ const PlaylistsContent: FC = () => {
         <ScrollableArea className="flex-1 overflow-y-auto">
           <div className="flex flex-col gap-6 p-1">
             <div className="flex flex-col gap-2">
-              <h2 className="text-sm font-bold text-foreground">
+              <h2 className="text-foreground text-sm font-bold">
                 {t('myPlaylists', 'Mis listas de reproducción')}
               </h2>
               <PlaylistCardGrid
@@ -130,7 +130,7 @@ const PlaylistsContent: FC = () => {
       )}
 
       {!hasPlaylists && hasEditorial && native && (
-        <div className="flex flex-1 flex-col min-h-0 overflow-y-auto">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           <EditorialPlaylistsWidget
             title={t(
               'popularPlaylists',

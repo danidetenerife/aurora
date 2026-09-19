@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { Logger } from '../services/logger';
 import { isTauriEnvironment } from '../services/universalStore';
 
-export const COMMIT_HASH = typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : '';
+export const COMMIT_HASH =
+  typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : '';
 
 export const useAppVersion = () => {
   const [version, setVersion] = useState<string | null>('1.47.1');

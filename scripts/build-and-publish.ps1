@@ -70,7 +70,7 @@ $MetainfoPath = "$Root\packages\player\src-tauri\resources\com.auroraplayer.Auro
 if (Test-Path $MetainfoPath) {
     $rawMeta = [System.IO.File]::ReadAllText($MetainfoPath, [System.Text.Encoding]::UTF8)
     $todayStr = (Get-Date).ToString("yyyy-MM-dd")
-    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Transformación integral de Android Auto y AAOS: 100% carátulas HD neo-brutalistas, generador dinámico con degradados, MediaSession unificada y Now Playing completo con controles y favoritos.</p>`n      </description>`n    </release>`n"
+    $newReleaseBlock = "    <release version=`"$NextVer`" date=`"$todayStr`">`n      <description>`n        <p>Release ${NextVer}: Renovación dinámica del motor de recomendaciones, corrección integral del Dashboard móvil y solución de reproducción en Android Auto / AAOS.</p>`n      </description>`n    </release>`n"
     $metaStr = $rawMeta -replace "<releases>", "<releases>`n$newReleaseBlock"
     [System.IO.File]::WriteAllText($MetainfoPath, $metaStr, $utf8NoBom)
 }
@@ -87,12 +87,12 @@ cmd.exe /c "cd packages\player && npx cap sync android && android\build-apk.bat"
 try {
     $devices = & adb devices 2>$null | Where-Object { $_ -match '\bdevice$' }
     if ($devices) {
-        Write-Host "[ADB] Dispositivo Android detectado. Instalando APK en el móvil..." -ForegroundColor Cyan
-        & adb install -r -d "$Root\ejecutables\aurora-music-player.apk"
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "[ADB] ¡APK instalado exitosamente en el móvil!" -ForegroundColor Green
-        } else {
-            Write-Host "[ADB] Aviso: adb install finalizó con código $LASTEXITCODE" -ForegroundColor Yellow
+        foreach ($line in $devices) {
+            $serial = ($line -split '\s+')[0]
+            if ($serial) {
+                Write-Host "[ADB] Dispositivo detectado ($serial). Instalando APK..." -ForegroundColor Cyan
+                & adb -s $serial install -r -d "$Root\ejecutables\aurora-music-player.apk"
+            }
         }
     }
 } catch {

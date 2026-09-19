@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
+import {
+  resolveArtistImageUrl,
+  resolveTrackCoverUrl,
+} from '../services/coverArtResolver';
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { useQueueStore } from '../stores/queueStore';
 import { useSoundStore } from '../stores/soundStore';
-import { resolveArtistImageUrl, resolveTrackCoverUrl } from '../services/coverArtResolver';
 
 describe('Desktop Player Maximum Stress & Performance Suite', () => {
   it('handles massive queue stress of 1,000 items without memory spikes or delays', () => {
@@ -73,16 +76,22 @@ describe('Desktop Player Maximum Stress & Performance Suite', () => {
 
     expect(useFavoritesStore.getState().albums).toHaveLength(50);
     expect(
-      useFavoritesStore.getState().isAlbumFavorite({ provider: 'spotify', id: 'album-stress-25' }),
+      useFavoritesStore
+        .getState()
+        .isAlbumFavorite({ provider: 'spotify', id: 'album-stress-25' }),
     ).toBe(true);
 
     for (let index = 0; index < 20; index++) {
-      await useFavoritesStore.getState().removeAlbum({ provider: 'spotify', id: `album-stress-${index + 1}` });
+      await useFavoritesStore
+        .getState()
+        .removeAlbum({ provider: 'spotify', id: `album-stress-${index + 1}` });
     }
 
     expect(useFavoritesStore.getState().albums).toHaveLength(30);
     expect(
-      useFavoritesStore.getState().isAlbumFavorite({ provider: 'spotify', id: 'album-stress-5' }),
+      useFavoritesStore
+        .getState()
+        .isAlbumFavorite({ provider: 'spotify', id: 'album-stress-5' }),
     ).toBe(false);
 
     useFavoritesStore.getState().clearAlbums();

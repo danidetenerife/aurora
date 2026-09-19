@@ -4,10 +4,7 @@ import { registerTrackInSet } from '../../services/discoveryService';
 import { playbackManager } from '../../services/playback';
 import { streamResolution } from '../../services/streamResolution';
 import { useQueueStore } from '../../stores/queueStore';
-import {
-  replenishTvQueue,
-  resetTvSession,
-} from './tvInfiniteQueue';
+import { replenishTvQueue, resetTvSession } from './tvInfiniteQueue';
 
 const AUTO_REPLENISH_THRESHOLD = 5;
 

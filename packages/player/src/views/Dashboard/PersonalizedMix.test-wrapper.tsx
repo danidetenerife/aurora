@@ -69,6 +69,16 @@ export const PersonalizedMixWrapper = {
       'Las recomendaciones aprenden de tus escuchas, saltos y favoritos en tus dispositivos sincronizados.',
     );
   },
+  refreshButton: {
+    get element() {
+      return within(PersonalizedMixWrapper.section).getByTestId(
+        'refresh-recommendations-button',
+      );
+    },
+    async click() {
+      await userEvent.click(this.element);
+    },
+  },
   async play(artist: string) {
     await userEvent.click(await this.recommendation(artist));
   },

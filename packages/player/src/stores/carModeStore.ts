@@ -37,8 +37,10 @@ const isNativeCarEnvironment = (): boolean => {
       return false;
     }
     return (
-      (window as unknown as { AndroidCar?: unknown }).AndroidCar !== undefined ||
-      (window as unknown as { __AURORA_CAR_MODE__?: boolean }).__AURORA_CAR_MODE__ === true ||
+      (window as unknown as { AndroidCar?: unknown }).AndroidCar !==
+        undefined ||
+      (window as unknown as { __AURORA_CAR_MODE__?: boolean })
+        .__AURORA_CAR_MODE__ === true ||
       localStorage.getItem('aurora:car_mode') === 'true'
     );
   } catch {

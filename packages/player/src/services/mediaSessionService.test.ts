@@ -5,11 +5,14 @@ import { usePlaylistStore } from '../stores/playlistStore';
 import { useQueueStore } from '../stores/queueStore';
 import { createQueueItem } from '../test/fixtures/queue';
 import { initMediaSessionService } from './mediaSessionService';
+import { metadataHost } from './metadataHost';
 import { NativeMediaSessionPlugin } from './nativeMediaSession';
 import { playbackManager } from './playback';
 import * as UniversalStore from './universalStore';
 
-let actionCallback: ((data: { action: string; seekPositionMs?: number }) => void) | null = null;
+let actionCallback:
+  | ((data: { action: string; seekPositionMs?: number }) => void)
+  | null = null;
 
 vi.mock('./nativeMediaSession', () => ({
   NativeMediaSessionPlugin: {
@@ -17,10 +20,14 @@ vi.mock('./nativeMediaSession', () => ({
     updatePlaybackState: vi.fn().mockResolvedValue(undefined),
     updatePosition: vi.fn().mockResolvedValue(undefined),
     updateAutoCatalog: vi.fn().mockResolvedValue(undefined),
-    addListener: vi.fn().mockImplementation((_event: string, handler: (data: { action: string }) => void) => {
-      actionCallback = handler;
-      return Promise.resolve({ remove: vi.fn() });
-    }),
+    addListener: vi
+      .fn()
+      .mockImplementation(
+        (_event: string, handler: (data: { action: string }) => void) => {
+          actionCallback = handler;
+          return Promise.resolve({ remove: vi.fn() });
+        },
+      ),
   },
 }));
 
@@ -75,7 +82,9 @@ describe('mediaSessionService', () => {
 
   it('handles playid mediaAction by switching index and triggering playback', () => {
     vi.spyOn(UniversalStore, 'isCapacitorEnvironment').mockReturnValue(true);
-    const playSpy = vi.spyOn(playbackManager, 'play').mockImplementation(() => {});
+    const playSpy = vi
+      .spyOn(playbackManager, 'play')
+      .mockImplementation(() => {});
 
     initMediaSessionService();
 
@@ -92,7 +101,9 @@ describe('mediaSessionService', () => {
 
   it('handles personal playlist mediaAction by populating queue and playing', () => {
     vi.spyOn(UniversalStore, 'isCapacitorEnvironment').mockReturnValue(true);
-    const playSpy = vi.spyOn(playbackManager, 'play').mockImplementation(() => {});
+    const playSpy = vi
+      .spyOn(playbackManager, 'play')
+      .mockImplementation(() => {});
 
     initMediaSessionService();
 
@@ -110,8 +121,16 @@ describe('mediaSessionService', () => {
             lastModifiedIso: new Date().toISOString(),
             isReadOnly: false,
             items: [
-              { id: 'item-1', track: trackA, addedAtIso: new Date().toISOString() },
-              { id: 'item-2', track: trackB, addedAtIso: new Date().toISOString() },
+              {
+                id: 'item-1',
+                track: trackA,
+                addedAtIso: new Date().toISOString(),
+              },
+              {
+                id: 'item-2',
+                track: trackB,
+                addedAtIso: new Date().toISOString(),
+              },
             ],
           },
         ],
@@ -124,5 +143,61 @@ describe('mediaSessionService', () => {
     expect(useQueueStore.getState().items).toHaveLength(2);
     expect(useQueueStore.getState().items[0].track.title).toBe('Track A');
     expect(playSpy).toHaveBeenCalled();
+  });
+
+  it('handles search_play with 80s and 90s alias by querying retro hits and playing tracks', async () => {
+    vi.spyOn(UniversalStore, 'isCapacitorEnvironment').mockReturnValue(true);
+    const playSpy = vi
+      .spyOn(playbackManager, 'play')
+      .mockImplementation(() => {});
+    const retroTrack = createQueueItem('Billie Jean').track;
+    const searchSpy = vi.spyOn(metadataHost, 'search').mockResolvedValue({
+      tracks: [retroTrack],
+    });
+
+    initMediaSessionService();
+
+    expect(actionCallback).toBeDefined();
+    actionCallback?.({ action: 'search_play:Éxitos de los 80 y 90' });
+
+    await vi.waitFor(() => {
+      expect(searchSpy).toHaveBeenCalledWith({
+        query: '80s 90s greatest hits classic songs',
+        types: ['tracks'],
+        limit: 25,
+      });
+      expect(useQueueStore.getState().items).toHaveLength(1);
+      expect(useQueueStore.getState().items[0].track.title).toBe('Billie Jean');
+      expect(playSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('handles playlist_play:retro_80s_90s by searching retro classic hits and populating queue', async () => {
+    vi.spyOn(UniversalStore, 'isCapacitorEnvironment').mockReturnValue(true);
+    const playSpy = vi
+      .spyOn(playbackManager, 'play')
+      .mockImplementation(() => {});
+    const retroTrack = createQueueItem('Sweet Child O Mine').track;
+    const searchSpy = vi.spyOn(metadataHost, 'search').mockResolvedValue({
+      tracks: [retroTrack],
+    });
+
+    initMediaSessionService();
+
+    expect(actionCallback).toBeDefined();
+    actionCallback?.({ action: 'playlist_play:retro_80s_90s' });
+
+    await vi.waitFor(() => {
+      expect(searchSpy).toHaveBeenCalledWith({
+        query: '80s 90s greatest hits classic songs',
+        types: ['tracks'],
+        limit: 25,
+      });
+      expect(useQueueStore.getState().items).toHaveLength(1);
+      expect(useQueueStore.getState().items[0].track.title).toBe(
+        'Sweet Child O Mine',
+      );
+      expect(playSpy).toHaveBeenCalled();
+    });
   });
 });

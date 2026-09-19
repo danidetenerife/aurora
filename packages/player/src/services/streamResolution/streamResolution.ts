@@ -39,7 +39,10 @@ export class StreamResolution {
     }
     updateItemState(item.id, { status: 'loading', error: undefined });
 
-    if (item.track.source.provider !== 'podcast-audio' && !hasActiveStreamingProvider()) {
+    if (
+      item.track.source.provider !== 'podcast-audio' &&
+      !hasActiveStreamingProvider()
+    ) {
       this.failItem(item.id, 'streaming:errors.noProviderAvailable');
       return;
     }

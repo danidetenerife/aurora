@@ -130,9 +130,7 @@ const searchForFreshTracks = async (
   return discoveredTracks;
 };
 
-export const replenishTvQueue = async (
-  urgent = false,
-): Promise<Track[]> => {
+export const replenishTvQueue = async (urgent = false): Promise<Track[]> => {
   const now = Date.now();
   const timeSinceLastReplenish = now - lastReplenishTime;
   const cooldownActive = timeSinceLastReplenish < COOLDOWN_MS;
@@ -193,10 +191,7 @@ export const replenishTvQueue = async (
         const blacklistedTrackIds = new Set(blacklist.tracks);
 
         const queries = await buildPersonalizedQueries(currentTrack);
-        const searchResults = await searchForFreshTracks(
-          queries,
-          existingKeys,
-        );
+        const searchResults = await searchForFreshTracks(queries, existingKeys);
 
         const filteredSearch = searchResults.filter((track) => {
           const artistName = (track.artists?.[0]?.name ?? '')
@@ -207,10 +202,7 @@ export const replenishTvQueue = async (
           if (blacklistedArtists.has(artistName)) {
             return false;
           }
-          if (
-            trackSourceId &&
-            blacklistedTrackIds.has(trackSourceId)
-          ) {
+          if (trackSourceId && blacklistedTrackIds.has(trackSourceId)) {
             return false;
           }
           if (isTrackInSet(track, existingKeys)) {

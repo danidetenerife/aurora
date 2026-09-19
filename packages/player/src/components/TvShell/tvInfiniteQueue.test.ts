@@ -34,11 +34,11 @@ vi.mock('../../services/personalizationEngine', () => ({
     getSeedTracks: vi.fn().mockResolvedValue([]),
     getListenRecords: vi.fn().mockResolvedValue([]),
     resolveArtistMetadata: vi.fn().mockResolvedValue({ genres: [] }),
-    scoreAndRankTracks: vi.fn().mockImplementation((candidates) =>
-      candidates.map(
-        (candidate: { track: Track }) => candidate.track,
+    scoreAndRankTracks: vi
+      .fn()
+      .mockImplementation((candidates) =>
+        candidates.map((candidate: { track: Track }) => candidate.track),
       ),
-    ),
   },
 }));
 
@@ -55,7 +55,10 @@ vi.mock('../../services/discoveryService', async () => {
 const makeTrack = (title: string, artist: string, id?: string): Track => ({
   title,
   artists: [{ name: artist, roles: [] }],
-  source: { provider: 'test', id: id ?? `id-${title.toLowerCase().replace(/\s/g, '-')}` },
+  source: {
+    provider: 'test',
+    id: id ?? `id-${title.toLowerCase().replace(/\s/g, '-')}`,
+  },
 });
 
 describe('tvInfiniteQueue', () => {
@@ -74,9 +77,9 @@ describe('tvInfiniteQueue', () => {
       useQueueStore.getState().addToQueue([existingTrack]);
 
       const freshTrack = makeTrack('Song Two', 'Artist Beta', 'id-fresh');
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        freshTrack,
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([freshTrack]);
 
       const added = await replenishTvQueue();
 
@@ -92,10 +95,9 @@ describe('tvInfiniteQueue', () => {
       const duplicateTrack = makeTrack('Song One', 'Artist Alpha', 'id-1');
       const freshTrack = makeTrack('Song Two', 'Artist Alpha', 'id-2');
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        duplicateTrack,
-        freshTrack,
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([duplicateTrack, freshTrack]);
 
       const added = await replenishTvQueue();
 
@@ -104,10 +106,16 @@ describe('tvInfiniteQueue', () => {
     });
 
     it('falls back to personalized search when intelligent autoplay returns too few', async () => {
-      const existingTrack = makeTrack('Song One', 'Artist Alpha', 'id-existing');
+      const existingTrack = makeTrack(
+        'Song One',
+        'Artist Alpha',
+        'id-existing',
+      );
       useQueueStore.getState().addToQueue([existingTrack]);
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([]);
 
       vi.mocked(personalizationEngine.getTopArtists).mockResolvedValue([
         { name: 'Radiohead', score: 100 },
@@ -121,7 +129,7 @@ describe('tvInfiniteQueue', () => {
         tracks: [freshTrack],
       });
 
-      const added = await replenishTvQueue();
+      await replenishTvQueue();
 
       expect(metadataHost.search).toHaveBeenCalled();
       const searchCalls = vi.mocked(metadataHost.search).mock.calls;
@@ -135,7 +143,9 @@ describe('tvInfiniteQueue', () => {
       ];
       useQueueStore.getState().addToQueue(tracks);
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([]);
       vi.mocked(metadataHost.search).mockResolvedValue({ tracks: [] });
 
       const added = await replenishTvQueue();
@@ -149,16 +159,16 @@ describe('tvInfiniteQueue', () => {
       useQueueStore.getState().addToQueue([existingTrack]);
 
       const firstBatch = makeTrack('First Batch', 'Artist B', 'id-batch1');
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        firstBatch,
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([firstBatch]);
 
       await replenishTvQueue();
       resetCooldown();
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        firstBatch,
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([firstBatch]);
 
       const secondResult = await replenishTvQueue();
 
@@ -170,9 +180,9 @@ describe('tvInfiniteQueue', () => {
     it('respects cooldown between replenishment calls', async () => {
       useQueueStore.getState().addToQueue([makeTrack('T1', 'A1')]);
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        makeTrack('New', 'A2', 'id-new'),
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([makeTrack('New', 'A2', 'id-new')]);
 
       await replenishTvQueue();
 
@@ -184,7 +194,9 @@ describe('tvInfiniteQueue', () => {
       const existingTrack = makeTrack('Song', 'Artist');
       useQueueStore.getState().addToQueue([existingTrack]);
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([]);
       vi.mocked(personalizationEngine.getTopGenres).mockResolvedValue([
         { genre: 'indie rock', score: 95 },
         { genre: 'dream pop', score: 60 },
@@ -215,9 +227,9 @@ describe('tvInfiniteQueue', () => {
       useQueueStore.getState().addToQueue(trackList);
       useQueueStore.setState({ currentIndex: 0 });
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        makeTrack('T4', 'A1', 'id-t4'),
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([makeTrack('T4', 'A1', 'id-t4')]);
 
       checkTvQueueThreshold();
 
@@ -233,7 +245,9 @@ describe('tvInfiniteQueue', () => {
 
       checkTvQueueThreshold();
 
-      expect(discoveryService.getIntelligentAutoplayTracks).not.toHaveBeenCalled();
+      expect(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -243,9 +257,9 @@ describe('tvInfiniteQueue', () => {
       useQueueStore.getState().addToQueue([singleTrack]);
       useQueueStore.setState({ currentIndex: 0 });
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([
-        makeTrack('Bonus Song', 'Solo Artist', 'bonus-1'),
-      ]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([makeTrack('Bonus Song', 'Solo Artist', 'bonus-1')]);
 
       await playNextInInfiniteQueue();
 
@@ -253,7 +267,9 @@ describe('tvInfiniteQueue', () => {
       expect(discoveryService.getIntelligentAutoplayTracks).toHaveBeenCalled();
       const items = useQueueStore.getState().items;
       expect(items.length).toBeGreaterThanOrEqual(2);
-      expect(items.some((item) => item.track.title === 'Bonus Song')).toBe(true);
+      expect(items.some((item) => item.track.title === 'Bonus Song')).toBe(
+        true,
+      );
     });
   });
 
@@ -262,14 +278,18 @@ describe('tvInfiniteQueue', () => {
       useQueueStore.getState().addToQueue([makeTrack('T1', 'A1')]);
 
       const track = makeTrack('Fresh', 'B1', 'id-fresh');
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([track]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([track]);
 
       await replenishTvQueue();
 
       resetTvSession();
       resetCooldown();
 
-      vi.mocked(discoveryService.getIntelligentAutoplayTracks).mockResolvedValue([track]);
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([track]);
       const result = await replenishTvQueue();
 
       expect(result.length).toBeGreaterThanOrEqual(0);

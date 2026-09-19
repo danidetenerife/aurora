@@ -3,8 +3,8 @@ import { FC } from 'react';
 import { pickArtwork } from '@aurora/model';
 import { Loader } from '@aurora/ui';
 
-import { useArtistCardImage } from '../../Favorites/useArtistCardImage';
 import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
+import { useArtistCardImage } from '../../Favorites/useArtistCardImage';
 import { useArtistBio } from '../hooks/useArtistBio';
 import { ArtistErrorBanner } from './ArtistErrorBanner';
 
@@ -27,7 +27,11 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
     refetch,
   } = useArtistBio(providerId, artistId);
 
-  const avatarUrl = useArtistCardImage(artist?.name ?? '', pickArtwork(artist?.artwork, 'avatar', AVATAR_SIZE_PX)?.url, providerId);
+  const avatarUrl = useArtistCardImage(
+    artist?.name ?? '',
+    pickArtwork(artist?.artwork, 'avatar', AVATAR_SIZE_PX)?.url,
+    providerId,
+  );
 
   if (isLoading) {
     return (
@@ -51,7 +55,6 @@ export const ArtistBioHeader: FC<ArtistBioHeaderProps> = ({
   if (!artist) {
     return null;
   }
-
 
   return (
     <div className="border-border bg-primary shadow-shadow relative m-4 rounded-md border-(length:--border-width) p-6">

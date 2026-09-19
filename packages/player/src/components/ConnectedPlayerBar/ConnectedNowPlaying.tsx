@@ -19,7 +19,9 @@ export const ConnectedNowPlaying: FC<{
   const { t: tTrack } = useTranslation('track');
   const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
-  const track = useQueueStore((state) => state.items[state.currentIndex]?.track);
+  const track = useQueueStore(
+    (state) => state.items[state.currentIndex]?.track,
+  );
   const isFavorite = useFavoritesStore((state) =>
     track
       ? state.tracks.some(
@@ -103,7 +105,9 @@ export const ConnectedNowPlaying: FC<{
       </Button>
     </div>
   );
-  if (actionsOnly) return <>{actions}</>;
+  if (actionsOnly) {
+    return <>{actions}</>;
+  }
 
   return (
     <PlayerBar.NowPlaying

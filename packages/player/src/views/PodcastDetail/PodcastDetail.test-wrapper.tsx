@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { createMemoryHistory, createRouter } from '@tanstack/react-router';
-import { render, type RenderResult, screen } from '@testing-library/react';
+import { render, screen, type RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import App from '../../App';

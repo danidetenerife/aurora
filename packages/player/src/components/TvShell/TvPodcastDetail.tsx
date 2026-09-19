@@ -104,8 +104,10 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
             className="tv-podcast-back-btn"
             onClick={onBack}
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span>{t('tv:backToPodcasts', { defaultValue: 'Volver a podcasts' })}</span>
+            <ArrowLeft className="h-5 w-5" />
+            <span>
+              {t('tv:backToPodcasts', { defaultValue: 'Volver a podcasts' })}
+            </span>
           </TvButton>
         </div>
 
@@ -118,20 +120,18 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
                 onError={() => setImageError(true)}
               />
             ) : (
-              <Mic2 className="w-16 h-16 text-emerald-400 opacity-60" />
+              <Mic2 className="h-16 w-16 text-emerald-400 opacity-60" />
             )}
           </div>
 
           <div className="tv-podcast-hero-info">
             <span className="tv-podcast-badge">
-              <Radio className="w-3.5 h-3.5 inline mr-1" />
+              <Radio className="mr-1 inline h-3.5 w-3.5" />
               PODCAST
             </span>
             <h1 className="tv-podcast-title">{title}</h1>
             <p className="tv-podcast-publisher">{publisher}</p>
-            {description && (
-              <p className="tv-podcast-desc">{description}</p>
-            )}
+            {description && <p className="tv-podcast-desc">{description}</p>}
 
             <div className="tv-podcast-actions">
               {episodes.length > 0 && (
@@ -141,8 +141,10 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
                   className="tv-podcast-action-btn tv-podcast-play-btn"
                   onClick={handlePlayLatest}
                 >
-                  <Play className="w-5 h-5 fill-current" />
-                  <span>{t('tv:playLatest', { defaultValue: 'Reproducir último' })}</span>
+                  <Play className="h-5 w-5 fill-current" />
+                  <span>
+                    {t('tv:playLatest', { defaultValue: 'Reproducir último' })}
+                  </span>
                 </TvButton>
               )}
 
@@ -153,7 +155,7 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
                 onClick={handleToggleFavorite}
               >
                 <Heart
-                  className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`}
+                  className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`}
                 />
                 <span>
                   {isFavorite
@@ -163,7 +165,8 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
               </TvButton>
 
               <span className="tv-podcast-count-badge">
-                {episodes.length} {t('tv:episodesCount', { defaultValue: 'episodios' })}
+                {episodes.length}{' '}
+                {t('tv:episodesCount', { defaultValue: 'episodios' })}
               </span>
             </div>
           </div>
@@ -172,13 +175,15 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
         <div className="tv-podcast-episodes">
           <div className="tv-section-header">
             <h2 className="tv-podcast-episodes-heading">
-              {t('tv:podcastEpisodes', { defaultValue: 'Capítulos disponibles' })}
+              {t('tv:podcastEpisodes', {
+                defaultValue: 'Capítulos disponibles',
+              })}
             </h2>
           </div>
 
           {isLoading && (
             <div className="tv-podcast-state" role="status">
-              <Radio className="w-8 h-8 animate-spin text-emerald-400" />
+              <Radio className="h-8 w-8 animate-spin text-emerald-400" />
               <span>{t('tv:loading', { defaultValue: 'Cargando…' })}</span>
             </div>
           )}
@@ -195,7 +200,7 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
                 className="tv-podcast-retry-btn"
                 onClick={() => void refetch()}
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="h-4 w-4" />
                 <span>{t('tv:retry', { defaultValue: 'Reintentar' })}</span>
               </TvButton>
             </div>
@@ -221,7 +226,9 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
 
                 return (
                   <TvButton
-                    key={episode.source?.id ?? `${episode.title}-${episodeIndex}`}
+                    key={
+                      episode.source?.id ?? `${episode.title}-${episodeIndex}`
+                    }
                     focusKey={`tv-podcast-ep-${episodeIndex}`}
                     data-testid={`tv-podcast-episode-${episodeIndex}`}
                     className="tv-podcast-episode-row"
@@ -233,21 +240,19 @@ export const TvPodcastDetail: FC<TvPodcastDetailProps> = ({
 
                     <span className="tv-podcast-ep-thumb">
                       {episodeArtwork ? (
-                        <img
-                          src={episodeArtwork}
-                          alt=""
-                          loading="lazy"
-                        />
+                        <img src={episodeArtwork} alt="" loading="lazy" />
                       ) : (
-                        <Mic2 className="w-5 h-5 text-emerald-400" />
+                        <Mic2 className="h-5 w-5 text-emerald-400" />
                       )}
                       <span className="tv-podcast-ep-play-overlay">
-                        <Play className="w-4 h-4 fill-white text-white" />
+                        <Play className="h-4 w-4 fill-white text-white" />
                       </span>
                     </span>
 
                     <div className="tv-podcast-ep-info">
-                      <span className="tv-podcast-ep-title">{episode.title}</span>
+                      <span className="tv-podcast-ep-title">
+                        {episode.title}
+                      </span>
                       {durationText && (
                         <span className="tv-podcast-ep-duration">
                           {durationText}

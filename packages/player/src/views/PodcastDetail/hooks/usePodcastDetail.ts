@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { type PodcastDetail, podcastService } from '../../../services/podcastService';
+import {
+  podcastService,
+  type PodcastDetail,
+} from '../../../services/podcastService';
 
 export const usePodcastDetail = (podcastId: string) => {
   return useQuery<PodcastDetail | null>({

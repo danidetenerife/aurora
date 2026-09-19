@@ -28,8 +28,8 @@ export const ThumbnailCell = <T extends Track>({
   const track = row.original;
   const isPodcast = Boolean(
     track.isPodcast ||
-      track.album?.source?.provider?.includes('podcast') ||
-      track.source?.provider === 'podcast-audio',
+    track.album?.source?.provider?.includes('podcast') ||
+    track.source?.provider === 'podcast-audio',
   );
   const primaryArtist = track.artists?.[0]?.name;
   const title = track.title;

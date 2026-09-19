@@ -613,7 +613,9 @@ html[data-platform='tv'],
   border-radius: 1rem;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(98, 226, 189, 0.2);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(98, 226, 189, 0.2);
 }
 
 [data-platform='tv'] .tv-hero-art-card img {
@@ -993,7 +995,9 @@ html[data-platform='tv'],
   justify-content: center;
 }
 
-[data-platform='tv'] .tv-podcast-episode-row[data-focused='true'] .tv-podcast-ep-play-overlay {
+[data-platform='tv']
+  .tv-podcast-episode-row[data-focused='true']
+  .tv-podcast-ep-play-overlay {
   display: flex;
 }
 
@@ -1112,7 +1116,12 @@ html[data-platform='tv'],
   align-items: center !important;
   justify-content: space-between !important;
   padding: 2rem 3rem 4rem !important;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 60%,
+    transparent 100%
+  ) !important;
 }
 
 [data-platform='tv'] .tv-video-bottom {
@@ -1120,7 +1129,12 @@ html[data-platform='tv'],
   flex-direction: column !important;
   gap: 1rem !important;
   padding: 4rem 3rem 2rem !important;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%) !important;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 60%,
+    transparent 100%
+  ) !important;
 }
 
 [data-platform='tv'] .tv-video-title-group {
@@ -1245,6 +1259,3 @@ html[data-platform='tv'],
   font-size: 0.75rem !important;
   color: #9ca3af !important;
 }
-
-
-

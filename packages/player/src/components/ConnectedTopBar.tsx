@@ -25,7 +25,7 @@ export const ConnectedTopBar: FC = () => {
               aria-label="Aurora"
               className="h-9 w-9 shrink-0 object-contain"
             />
-            <span className="font-heading truncate text-4xl font-extrabold tracking-tight text-foreground">
+            <span className="font-heading text-foreground truncate text-4xl font-extrabold tracking-tight">
               aurora
             </span>
           </div>

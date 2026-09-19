@@ -53,7 +53,7 @@ export function SortableRow<T extends Track = Track>({
           '': !isDragging,
           'z-50': isDragging,
           'cursor-grab': isReorderable,
-          'border-l-4 border-l-accent-green bg-accent-green/10 font-bold':
+          'border-l-accent-green bg-accent-green/10 border-l-4 font-bold':
             isCurrent,
         },
       )}

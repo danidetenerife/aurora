@@ -278,7 +278,7 @@ export const SyncSettingsView: FC = () => {
   };
 
   return (
-    <div className="aurora-sync-settings mx-auto flex w-full min-w-0 max-w-2xl flex-col gap-6 p-4">
+    <div className="aurora-sync-settings mx-auto flex w-full max-w-2xl min-w-0 flex-col gap-6 p-4">
       {/* Top Status Card */}
       <div className="border-border bg-background-secondary flex flex-col gap-4 rounded-xl border-(length:--border-width) p-5 shadow-sm">
         <div className="flex items-center justify-between">
@@ -331,16 +331,19 @@ export const SyncSettingsView: FC = () => {
             size="default"
             disabled={isSyncing}
             onClick={() => void handleSyncNow()}
-            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-4 text-xs font-semibold"
+            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 px-4 text-xs font-semibold whitespace-nowrap"
           >
-            <RefreshCw size={15} className={isSyncing ? 'animate-spin shrink-0' : 'shrink-0'} />
+            <RefreshCw
+              size={15}
+              className={isSyncing ? 'shrink-0 animate-spin' : 'shrink-0'}
+            />
             <span>Sincronizar ahora</span>
           </Button>
           <Button
             variant="secondary"
             size="default"
             onClick={() => void handleShowQr()}
-            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-4 text-xs font-semibold"
+            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 px-4 text-xs font-semibold whitespace-nowrap"
             title="Compartir configuración con otro dispositivo"
           >
             <QrCode size={15} className="shrink-0" />
@@ -350,7 +353,7 @@ export const SyncSettingsView: FC = () => {
             variant="secondary"
             size="default"
             onClick={() => setIsScannerOpen(true)}
-            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap px-4 text-xs font-semibold"
+            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 px-4 text-xs font-semibold whitespace-nowrap"
             title="Escanear QR de otro dispositivo"
           >
             <Camera size={15} className="shrink-0" />
@@ -366,7 +369,7 @@ export const SyncSettingsView: FC = () => {
           onClick={() => setActiveTab('webdav')}
           className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'webdav'
-              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              ? 'bg-primary text-primary-foreground font-bold shadow-sm'
               : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
@@ -379,7 +382,7 @@ export const SyncSettingsView: FC = () => {
           onClick={() => setActiveTab('gist')}
           className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'gist'
-              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              ? 'bg-primary text-primary-foreground font-bold shadow-sm'
               : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
@@ -392,7 +395,7 @@ export const SyncSettingsView: FC = () => {
           onClick={() => setActiveTab('lan')}
           className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'lan'
-              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              ? 'bg-primary text-primary-foreground font-bold shadow-sm'
               : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
@@ -405,7 +408,7 @@ export const SyncSettingsView: FC = () => {
           onClick={() => setActiveTab('backup')}
           className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all ${
             activeTab === 'backup'
-              ? 'bg-primary text-primary-foreground shadow-sm font-bold'
+              ? 'bg-primary text-primary-foreground font-bold shadow-sm'
               : 'text-foreground-secondary hover:bg-background/50 hover:text-foreground'
           }`}
         >
@@ -601,7 +604,7 @@ export const SyncSettingsView: FC = () => {
                 variant="secondary"
                 disabled={isSearchingLan}
                 onClick={() => void handleLanDiscovery()}
-                className="h-10 flex items-center gap-1.5 px-4 font-semibold shrink-0"
+                className="flex h-10 shrink-0 items-center gap-1.5 px-4 font-semibold"
               >
                 <Search
                   size={15}

@@ -24,7 +24,8 @@ vi.mock(
 );
 
 beforeEach(() => {
-  (window as Window & { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ = {};
+  (window as Window & { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ =
+    {};
   useUpdaterStore.setState({
     isUpdateAvailable: false,
     updateInfo: null,

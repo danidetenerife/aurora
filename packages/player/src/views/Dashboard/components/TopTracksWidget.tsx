@@ -22,7 +22,7 @@ export const TopTracksWidget: FC = () => {
       data-testid="dashboard-top-tracks"
       className={
         isCapacitorEnvironment()
-          ? 'flex min-h-0 flex-1 flex-col'
+          ? 'flex h-full min-h-0 flex-1 flex-col'
           : 'flex flex-col'
       }
     >

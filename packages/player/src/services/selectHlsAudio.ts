@@ -81,7 +81,6 @@ export const selectHlsAudio = (
   const defaultTracks = languagePool.filter((track) => track.DEFAULT === 'YES');
   const pool = defaultTracks.length > 0 ? defaultTracks : languagePool;
 
-
   const selected =
     pool.find((track) => isStereo(track) && isAacLc(track)) ??
     pool.find((track) => !track.CHANNELS && isAacLc(track)) ??

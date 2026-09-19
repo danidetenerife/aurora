@@ -251,6 +251,8 @@
     }
   },
   "dashboard": {
+    "all": "Todo",
+    "refresh": "Actualizar recomendaciones",
     "personalizedMix": {
       "title": "Recomendado para ti",
       "badge": "Algoritmo adaptativo",

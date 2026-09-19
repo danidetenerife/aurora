@@ -34,7 +34,7 @@ export const SettingsPanel: FC<SettingsPanelProps> = ({
     <DialogRoot
       isOpen={isOpen}
       onClose={onClose}
-      className="aurora-settings-panel flex h-[92vh] sm:h-[80vh] max-h-[900px] w-[95vw] sm:w-[80vw] max-w-6xl min-w-0 flex-row max-sm:flex-col p-0 overflow-hidden"
+      className="aurora-settings-panel flex h-[92vh] max-h-[900px] w-[95vw] max-w-6xl min-w-0 flex-row overflow-hidden p-0 max-sm:flex-col sm:h-[80vh] sm:w-[80vw]"
     >
       <SettingsPanelNav
         tabs={tabs}

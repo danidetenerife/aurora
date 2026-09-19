@@ -42,7 +42,6 @@ export const isStreamExpired = (candidate: StreamCandidate): boolean => {
   return Date.now() - resolvedAt > expiryMs;
 };
 
-
 export const hasFreshStream = (candidate: StreamCandidate): boolean =>
   Boolean(candidate.stream) &&
   Boolean(candidate.lastResolvedAtIso) &&
@@ -108,7 +107,9 @@ export const createStreamingHost = (): StreamingHost => ({
   },
 
   resolveStreamForCandidate: async (candidate: StreamCandidate) => {
-    if (candidate.source.provider === 'podcast-audio' && candidate.stream) return candidate;
+    if (candidate.source.provider === 'podcast-audio' && candidate.stream) {
+      return candidate;
+    }
     const provider = getActiveStreamingProvider();
 
     if (!provider) {

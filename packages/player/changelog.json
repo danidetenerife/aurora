@@ -1,52 +1,95 @@
 [
   {
+    "date": "2026-09-19T16:45",
+    "description": "Renovación dinámica del motor de recomendaciones, corrección del Dashboard móvil y solución de reproducción en Android Auto / AAOS: erradica el bloqueo determinista de 24h introduciendo rotación periódica cada 2 horas y semilla dinámica en el jitter, amplía el muestreo de candidatos a 10 canciones por artista y pondera la frescura para evitar el monopolio del artista #1, incorpora botón de refresco reactivo instantáneo en Recomendado para ti con reinicio de página, desacopla el feed vertical móvil garantizando 4 canciones por página y visibilidad total para Canciones más escuchadas sin colapso a 0px, corrige el bug en el cálculo del índice de cola en MediaSession que causaba la reproducción de pistas antiguas al pulsar listas en Android Auto / AAOS, añade la lista 'Éxitos 80s y 90s' con mapeo de términos retro, y acelera el linting de 15 minutos a 4 segundos excluyendo Gradle de Android.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Recomendaciones", "color": "blue" },
+      { "label": "Móvil", "color": "green" },
+      { "label": "Android Auto", "color": "red" },
+      { "label": "Escritorio", "color": "purple" },
+      { "label": "Rendimiento", "color": "orange" }
+    ]
+  },
+  {
     "date": "2026-09-18T18:15",
     "description": "Transformación integral de Android Auto y Android Automotive OS (AAOS): experiencia automotriz superior con 100% cobertura de carátulas neo-brutalistas HD, generación dinámica de portadas con degradados y tipografía (AutoArtworkGenerator), pipeline gráfico zero-copy por memoria compartida (ArtworkContentProvider), arquitectura unificada de MediaSessionCompat entre servicios en segundo plano, y pantalla Now Playing completa con carátula a pantalla grande, fondo difuminado dinámico, barra de progreso interactiva y botón de favoritos en tiempo real.",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android Auto", "color": "green" }, { "label": "AAOS", "color": "blue" }, { "label": "Carátulas", "color": "purple" }, { "label": "Reproductor", "color": "red" }]
+    "tags": [
+      { "label": "Android Auto", "color": "green" },
+      { "label": "AAOS", "color": "blue" },
+      { "label": "Carátulas", "color": "purple" },
+      { "label": "Reproductor", "color": "red" }
+    ]
   },
   {
     "date": "2026-09-18T16:00",
     "description": "Rediseño y optimización ergonómica del menú de Sincronización en escritorio: amplía el contenedor a 672px (max-w-2xl), dota a los botones de acción de altura completa de 40px con texto sin salto de línea ni superposición de iconos, reorganiza las pestañas de proveedores en una cuadrícula moderna con pestañas horizontales e iconos nítidos, y amplía los botones de respaldo y conexión para una legibilidad y usabilidad impecable.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Escritorio", "color": "green" }, { "label": "Ajustes", "color": "purple" }, { "label": "Sincronización", "color": "blue" }]
+    "tags": [
+      { "label": "Escritorio", "color": "green" },
+      { "label": "Ajustes", "color": "purple" },
+      { "label": "Sincronización", "color": "blue" }
+    ]
   },
   {
     "date": "2026-09-18T09:00",
     "description": "Rediseño y corrección integral del panel de Ajustes en escritorio: sustituye el menú horizontal recortado por una barra lateral vertical elegante y ergonómica de 240px con alineación perfecta, solución definitiva al problema de reinicio de reproducción a los 5 segundos (streaming nativo HTTP 206 Partial Content vía proxy Tauri eliminando fallos 403 de MSE), resolución de carátulas en Historial y Listas, función 'Álbum Favorito' en toda la app y optimización de rendimiento.",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Escritorio", "color": "green" }, { "label": "Carátulas", "color": "purple" }, { "label": "Favoritos", "color": "red" }, { "label": "Rendimiento", "color": "orange" }]
+    "tags": [
+      { "label": "Escritorio", "color": "green" },
+      { "label": "Carátulas", "color": "purple" },
+      { "label": "Favoritos", "color": "red" },
+      { "label": "Rendimiento", "color": "orange" }
+    ]
   },
   {
     "date": "2026-09-17T08:50",
     "description": "Seguridad al volante manos libres y erradicación de datos hardcodeados: implementa avance automático de páginas al sonar la cola (Zero-Touch Sync), retorno automático de 8 segundos y botón rápido de sincronización tras navegación manual, gestos táctiles de deslizamiento (swipe), resaltado de alto contraste para la pista en reproducción, elimina definitivamente el catálogo hardcodeado de podcasts con carga 100% dinámica, y suprime más de 240 re-renderizados por minuto en Modo Coche para un consumo mínimo de batería.",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Modo Coche", "color": "green" }, { "label": "Móvil", "color": "blue" }, { "label": "Batería", "color": "orange" }, { "label": "Podcasts", "color": "purple" }]
+    "tags": [
+      { "label": "Modo Coche", "color": "green" },
+      { "label": "Móvil", "color": "blue" },
+      { "label": "Batería", "color": "orange" },
+      { "label": "Podcasts", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-17T06:30",
     "description": "Modernización de la experiencia móvil estilo Spotify y optimización del algoritmo de personalización: introduce chips de filtro horizontales (Todo, Mix, Canciones, Artistas) y saludo horario dinámico en el Dashboard móvil, añade afinidad por vectores de género, filtro anti-fatiga y disyuntor de saltos consecutivos al motor de aprendizaje, y reduce el consumo de batería en móviles desacoplando escrituras a disco cada 15s y evitando re-renderizados innecesarios.",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Móvil", "color": "green" }, { "label": "Algoritmo", "color": "blue" }, { "label": "Batería", "color": "orange" }]
+    "tags": [
+      { "label": "Móvil", "color": "green" },
+      { "label": "Algoritmo", "color": "blue" },
+      { "label": "Batería", "color": "orange" }
+    ]
   },
   {
     "date": "2026-09-16T22:30",
     "description": "Perfecciona la experiencia en Google TV: arregla la carga de carátulas en todas las secciones mediante política no-referrer, adopta formato 1:1 cuadrado para portadas de música, añade botón 'No me gusta' y miniatura en la barra de reproducción, y conecta el ajuste de variedad de descubrimiento al algoritmo de cola infinita.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Google TV", "color": "green" }, { "label": "Cola Infinita", "color": "blue" }, { "label": "Carátulas", "color": "purple" }]
+    "tags": [
+      { "label": "Google TV", "color": "green" },
+      { "label": "Cola Infinita", "color": "blue" },
+      { "label": "Carátulas", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-15T21:30",
     "description": "Reproducción de videoclips a pantalla completa en Google TV con cola infinita: elimina barras y marcos para ofrecer una experiencia edge-to-edge con controles HUD auto-ocultables, soporte para mando a distancia (D-Pad) y autoreposición continua de canciones relacionadas sin interrupción.",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Google TV", "color": "green" }, { "label": "Videoclips", "color": "purple" }]
+    "tags": [
+      { "label": "Google TV", "color": "green" },
+      { "label": "Videoclips", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-14T22:00",
@@ -60,134 +103,201 @@
     "description": "Mejora los controles de reproducción y la interfaz móvil: elimina el tooltip persistente de Modo Coche sobre los controles y ajusta el botón de canción anterior al estándar (1 toque para reiniciar la canción actual, 2 toques seguidos para ir a la anterior).",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Reproductor", "color": "green" }, { "label": "Modo Coche", "color": "blue" }, { "label": "Móvil", "color": "purple" }]
+    "tags": [
+      { "label": "Reproductor", "color": "green" },
+      { "label": "Modo Coche", "color": "blue" },
+      { "label": "Móvil", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-13T08:00",
     "description": "Corrige el congelamiento al abrir Canciones con favoritos de YouTube o podcasts: la actualización de carátulas ya no vuelve a guardar portadas idénticas en un bucle continuo. Conserva también los cambios realizados en favoritos mientras se buscan portadas.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Favoritos", "color": "blue" }]
+    "tags": [
+      { "label": "Android", "color": "green" },
+      { "label": "Favoritos", "color": "blue" }
+    ]
   },
   {
     "date": "2026-09-12T22:45",
     "description": "Corrige definitivamente el bloqueo y congelación de la app al inicio: se elimina la inyección de iframes en el DOM, se aísla la WebView nativa en modo invisible sin captura de eventos ni foco, y se desactiva la descarga automática intrusiva de actualizaciones en el arranque.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Rendimiento", "color": "blue" }, { "label": "Estabilidad", "color": "purple" }]
+    "tags": [
+      { "label": "Android", "color": "green" },
+      { "label": "Rendimiento", "color": "blue" },
+      { "label": "Estabilidad", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-12T22:00",
     "description": "Corrige la WebView invisible del extractor de audio en Android para que no intercepte pulsaciones ni capture el foco. Libera las extracciones y sus temporizadores al cerrar la actividad y evita retener llamadas completadas.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android", "color": "green" }, { "label": "Accesibilidad", "color": "blue" }]
+    "tags": [
+      { "label": "Android", "color": "green" },
+      { "label": "Accesibilidad", "color": "blue" }
+    ]
   },
   {
     "date": "2026-09-12T21:30",
     "description": "Resolución nativa y precisa de podcasts en español: extractor WebView con compatibilidad para pistas de audio HLS nativas y DASH, descarte estricto de doblajes en idiomas foráneos, y carga robusta de carátulas sin referer evitando iconos de imagen rota.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Streaming", "color": "green" }, { "label": "Audio", "color": "purple" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Streaming", "color": "green" },
+      { "label": "Audio", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-12T21:00",
     "description": "Aclarado y máximo contraste para los controles de cabecera de podcasts: el botón de retroceso, el botón de favoritos y la cifra de episodios en StatChip ahora utilizan tipografía e iconos en color claro de primer plano sobre fondo oscuro, garantizando una visibilidad y legibilidad perfectas.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Diseño", "color": "purple" }, { "label": "Accesibilidad", "color": "green" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Diseño", "color": "purple" },
+      { "label": "Accesibilidad", "color": "green" }
+    ]
   },
   {
     "date": "2026-09-12T20:55",
     "description": "Reorganización de pastillas y pestañas en el buscador y navegación: orden configurado exactamente como Canciones, Artistas, Álbumes, Listas y Podcast, renombrando 'Listas de reproducción' a 'Listas' y 'Podcasts' a 'Podcast'.",
     "type": "improvement",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Búsqueda", "color": "blue" }, { "label": "Interfaz", "color": "purple" }, { "label": "Navegación", "color": "green" }]
+    "tags": [
+      { "label": "Búsqueda", "color": "blue" },
+      { "label": "Interfaz", "color": "purple" },
+      { "label": "Navegación", "color": "green" }
+    ]
   },
   {
     "date": "2026-09-12T20:45",
     "description": "Filtro estricto de pistas de audio en streams de YouTube y podcasts: exclusión absoluta de pistas con doblaje automático en otros idiomas (inglés, árabe, etc.), selección prioritaria de la pista de audio original en español y configuración de localización regional es-ES para garantizar la reproducción en su idioma nativo.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Streaming", "color": "green" }, { "label": "Audio", "color": "purple" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Streaming", "color": "green" },
+      { "label": "Audio", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-12T20:20",
     "description": "Corrección integral de las 6 incidencias reportadas: solución al solapamiento del historial de búsquedas en móvil desvinculando la restricción de 32px; oscurecimiento de tipografía en la cabecera del podcast para máximo contraste; reubicación de la pastilla de Podcasts inmediatamente después de Canciones en búsqueda y barra móvil; eliminación de truncamiento en la barra de reproducción inferior; estirado horizontal del texto de episodios; y selección de la pista de audio original/por defecto en streams HLS para evitar doblajes en otros idiomas.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Diseño", "color": "purple" }, { "label": "Streaming", "color": "green" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Diseño", "color": "purple" },
+      { "label": "Streaming", "color": "green" }
+    ]
   },
   {
     "date": "2026-09-12T19:48",
     "description": "Optimización integral de la tabla de episodios de podcasts: cálculo y visualización de la duración real de episodios de YouTube Music, ampliación a ancho completo del título eliminando botones invisibles y columnas innecesarias para evitar saltos de línea excesivos, protección absoluta de miniaturas originales de episodios evitando sustituciones por canciones de iTunes, y ajuste perfecto de la columna Duración.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Interfaz", "color": "purple" }, { "label": "YouTube Music", "color": "red" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Interfaz", "color": "purple" },
+      { "label": "YouTube Music", "color": "red" }
+    ]
   },
   {
     "date": "2026-09-12T19:23",
     "description": "Integración completa de podcasts de YouTube Music en la sección de Podcasts y navegación directa a la ficha: al pulsar en cualquier podcast se abre su ficha detallada completa sin truncamiento de títulos ni autores; contraste máximo con texto negro en la cabecera verde; corrección de ancho en columna Duración; protección de carátulas reales de episodios; y reproducción atómica inmediata del audio exacto.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "YouTube Music", "color": "red" }, { "label": "Diseño", "color": "purple" }, { "label": "Streaming", "color": "green" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "YouTube Music", "color": "red" },
+      { "label": "Diseño", "color": "purple" },
+      { "label": "Streaming", "color": "green" }
+    ]
   },
   {
     "date": "2026-09-12T18:30",
     "description": "Eliminación total del truncamiento de texto en la tabla de episodios y vistas de podcasts: los títulos completos se muestran en múltiples líneas sin puntos suspensivos ni recortes, se oculta la columna redundante de artista dando el ancho completo al título, y se asegura la reproducción del audio exacto del episodio.",
     "type": "improvement",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Interfaz", "color": "purple" }, { "label": "Accesibilidad", "color": "green" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Interfaz", "color": "purple" },
+      { "label": "Accesibilidad", "color": "green" }
+    ]
   },
   {
     "date": "2026-09-12T18:10",
     "description": "Corrige la reproducción de episodios de podcasts para que reproduzcan el audio exacto del episodio en lugar de buscar canciones aleatorias, elimina todo truncamiento de textos y descripciones en la sección de podcasts, y optimiza el diseño en dispositivos móviles para mostrar los episodios inmediatamente.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "Streaming", "color": "green" }, { "label": "Corrección crítica", "color": "red" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "Streaming", "color": "green" },
+      { "label": "Corrección crítica", "color": "red" }
+    ]
   },
   {
     "date": "2026-09-12T17:40",
     "description": "Ficha completa de podcast integrada con YouTube Music: al hacer click en cualquier podcast desde el buscador o la sección de podcasts se abre la ficha con carátula, autor, descripción y el listado de episodios reproducibles directamente mediante el motor de streaming de YouTube.",
     "type": "feature",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Podcasts", "color": "blue" }, { "label": "YouTube Music", "color": "red" }, { "label": "Interfaz", "color": "purple" }]
+    "tags": [
+      { "label": "Podcasts", "color": "blue" },
+      { "label": "YouTube Music", "color": "red" },
+      { "label": "Interfaz", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-12T17:15",
     "description": "Corrige el error 'No se ha podido cargar tu selección' en Android Auto mostrando un estado de buffering inmediato, añade portadas reales a los podcasts descargando imágenes en segundo plano, y arregla las playlists populares para que se reproduzcan directamente sin mostrar una lista vacía.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android Auto", "color": "green" }, { "label": "Corrección crítica", "color": "red" }, { "label": "Podcasts", "color": "blue" }]
+    "tags": [
+      { "label": "Android Auto", "color": "green" },
+      { "label": "Corrección crítica", "color": "red" },
+      { "label": "Podcasts", "color": "blue" }
+    ]
   },
   {
     "date": "2026-09-12T15:35",
     "description": "Renovación gráfica integral de Android Auto: interfaz visual con ContentStyle en cuadrícula, carátulas en alta resolución en todas las canciones, listas y podcasts, tarjetas visuales de búsqueda para conducción y reproducción inmediata de playlists y búsquedas.",
     "type": "improvement",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Android Auto", "color": "green" }, { "label": "Búsqueda", "color": "blue" }, { "label": "Interfaz", "color": "purple" }]
+    "tags": [
+      { "label": "Android Auto", "color": "green" },
+      { "label": "Búsqueda", "color": "blue" },
+      { "label": "Interfaz", "color": "purple" }
+    ]
   },
   {
     "date": "2026-09-12T15:20",
     "description": "Corrige el aviso repetitivo de lista importada al navegar o consultar listas remotas, y llena la vista con listas populares de Spotify y YouTube Music cuando no hay listas personales creadas.",
     "type": "improvement",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Playlists", "color": "purple" }, { "label": "Android", "color": "green" }]
+    "tags": [
+      { "label": "Playlists", "color": "purple" },
+      { "label": "Android", "color": "green" }
+    ]
   },
   {
     "date": "2026-09-12T15:10",
     "description": "Añade podcasts al buscador, elimina el encabezado grande de búsqueda, prioriza las listas propias y muestra listas públicas populares de YouTube Music sin barras de desplazamiento visibles.",
     "type": "improvement",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Interfaz", "color": "purple" }, { "label": "Búsqueda", "color": "blue" }]
+    "tags": [
+      { "label": "Interfaz", "color": "purple" },
+      { "label": "Búsqueda", "color": "blue" }
+    ]
   },
   {
     "date": "2026-09-12T15:00",
     "description": "Repara la barra de controles y el modo coche, compacta los artistas favoritos y reproduce podcasts dentro de Aurora.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -199,9 +309,7 @@
     "date": "2026-09-12T13:45",
     "description": "Ajusta los botones de sincronización y QR para que compartan el ancho disponible en móvil sin desbordarse.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -217,9 +325,7 @@
     "date": "2026-09-12T13:35",
     "description": "Reordena los controles del modo coche: anterior, reproducir y siguiente arriba; favorito, aleatorio y no me gusta debajo.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Modo coche",
@@ -231,9 +337,7 @@
     "date": "2026-09-12T13:25",
     "description": "Corrige el desbordamiento de la barra de reproducción móvil que apilaba verticalmente el título y el artista.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -249,9 +353,7 @@
     "date": "2026-09-12T13:20",
     "description": "Compacta las fichas de artistas favoritos en móvil y sustituye el botón de borrado por un control discreto de icono.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Interfaz",
@@ -263,9 +365,7 @@
     "date": "2026-09-12T13:10",
     "description": "Reorganiza la barra móvil: muestra título y artista arriba y agrupa los controles de reproducción en una fila inferior más clara.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Interfaz",
@@ -281,9 +381,7 @@
     "date": "2026-09-12T13:00",
     "description": "Mejora la vista de favoritos de artistas, muestra carátulas de podcasts e iconos de plugins, y hace visibles las listas públicas de Spotify y YouTube Music al buscar listas.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Interfaz",
@@ -299,9 +397,7 @@
     "date": "2026-09-12T12:05",
     "description": "Añade la búsqueda de listas, listas favoritas con corazón y una sección de Podcasts con favoritos en las interfaces compatibles.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -317,9 +413,7 @@
     "date": "2026-09-12T11:35",
     "description": "Muestra playlists públicas de YouTube Music y Spotify en la sección Listas, con acceso directo a su importación.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -331,9 +425,7 @@
     "date": "2026-09-12T10:30",
     "description": "Usa el logotipo de Aurora en el icono de Android, Android Auto y Google TV.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -349,9 +441,7 @@
     "date": "2026-09-12T10:25",
     "description": "Añade el control No me gusta al modo coche y a Android Auto; la canción se marca para excluirla y avanza la reproducción.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android Auto",
@@ -363,9 +453,7 @@
     "date": "2026-09-12T10:20",
     "description": "Keep complete song titles visible in Android views and correct malformed Spanish text in synchronization settings.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -377,9 +465,7 @@
     "date": "2026-09-12T10:00",
     "description": "Fix Android responsive overflow in settings, playlists and artists, restore artist avatars and identifiers, and add browsable queue and search actions for Android Auto.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -395,9 +481,7 @@
     "date": "2026-09-12T09:15",
     "description": "Replace the oversized Android dashboard with compact recommendations and pages sized to the available screen height, keeping the full mix available for playback without scrolling the home screen.",
     "type": "improvement",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -409,9 +493,7 @@
     "date": "2026-09-11T22:35",
     "description": "Simplify Android settings, display the Aurora wordmark above search, improve responsive mobile layouts and enable automatic mobile APK update checks and downloads from GitHub Releases.",
     "type": "improvement",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -423,9 +505,7 @@
     "date": "2026-09-11T22:25",
     "description": "Fix Android startup logging errors by using the system console when the desktop bridge is unavailable.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -437,9 +517,7 @@
     "date": "2026-09-11T18:00",
     "description": "Resolve and enable reliable audio and video playback on Google TV and Android TV with seamless track switching and background playback.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Google TV",
@@ -455,9 +533,7 @@
     "date": "2026-09-11T16:55",
     "description": "Restore artist name display directly under song titles in track tables across all screen sizes and devices.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Interface",
@@ -469,9 +545,7 @@
     "date": "2026-09-11T16:45",
     "description": "Add dislike button to now playing bar and track context menu actions to blacklist songs and artists, instantly skipping tracks, applying score penalties, and excluding them from recommendations across synced devices.",
     "type": "feat",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Recommendations",
@@ -483,9 +557,7 @@
     "date": "2026-09-11T16:20",
     "description": "Make music discovery and queue autoplay completely automatic and seamless in the background; remove the misleading and redundant discovery button from the player controls bar.",
     "type": "feat",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -497,9 +569,7 @@
     "date": "2026-09-11T16:00",
     "description": "Add user-owned cloud synchronization via WebDAV (Nextcloud, ownCloud, NAS) and private GitHub Gists, manual library backup export/import, and instant pairing via QR code configuration between desktop and mobile devices.",
     "type": "feat",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Sync",
@@ -511,9 +581,7 @@
     "date": "2026-09-11T12:30",
     "description": "Use direct audio output, respect playback interruptions, block playback during phone calls, restore selection of resolved queue tracks and simplify car controls. Keep video controls exclusive to Google TV, avoid competing TV update downloads, and wait for desktop installation before offering a restart.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -525,9 +593,7 @@
     "date": "2026-09-11T12:00",
     "description": "Refresh mobile and desktop presentation with clearer navigation, responsive playback controls and safe-area spacing. Remove full-screen blur transitions while preserving existing actions, themes and Google TV presentation.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Interface",
@@ -539,9 +605,7 @@
     "date": "2026-09-10T07:00",
     "description": "Rebuild Google TV with a lightweight Spanish interface, fixed playback controls, deterministic remote navigation, single button activation and optional music videos. Preserve mobile and desktop behavior.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Google TV",
@@ -553,9 +617,7 @@
     "date": "2026-09-09T13:00",
     "description": "Fix Chromecast HD Google TV (Android TV 14) startup identification, fit the TV layout to the screen, initialize remote focus and avoid phone-only permissions and rendering overhead on TV.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Google TV",
@@ -567,9 +629,7 @@
     "date": "2026-09-08T20:00",
     "description": "Make history rankings interactive: play songs and open artist and album pages by clicking their names, including individual artist credits.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "History",
@@ -581,9 +641,7 @@
     "date": "2026-09-08T18:00",
     "description": "Restore Spanish recommendation text and keep the Panel list fixed while playing. Apply newly learned recommendations on the next visit instead of reshuffling the visible list.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Panel",
@@ -595,9 +653,7 @@
     "date": "2026-09-08T19:00",
     "description": "Keep listening preferences learning across mobile and desktop, including partial plays and skips. Merge offline listening without losing or duplicating plays, and refresh personalized recommendations when preferences change.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Personalization & Sync",
@@ -609,9 +665,7 @@
     "date": "2026-09-08T18:00",
     "description": "Prefer AAC-LC and stereo HLS audio renditions over the first low-quality HE-AAC track when resolving songs on Android.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android Audio",
@@ -623,9 +677,7 @@
     "date": "2026-09-03T22:00",
     "description": "Complete rebranding to Aurora. Fixed desktop audio playback by prioritizing yt-dlp on Tauri. Added audio focus handling to pause music during phone calls. Filtered YouTube Music search to exclude live streams and long videos. Removed TV/Google TV support. Updated all Android app icons to Aurora design.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Aurora Rebrand",
@@ -649,9 +701,7 @@
     "date": "2026-09-03T11:18",
     "description": "Enhanced MediaSession synchronization with decoupled web/native bridge initialization, non-blocking metadata subscriptions, and comprehensive Android AudioForegroundService diagnostics.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "MediaSession",
@@ -671,9 +721,7 @@
     "date": "2026-09-03T07:05",
     "description": "Added on-device hidden WebView YouTube stream extractor plugin with two-stage fallback (embed -> m.youtube.com), robust MIME audio filtering, leak-free lifecycle cleanup, and unified mobile User-Agent synchronization.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Native WebView Extractor",
@@ -693,9 +741,7 @@
     "date": "2026-09-03T06:40",
     "description": "Fixed infinite buffering by migrating YouTube direct audio stream resolution to VISIONOS HLS master manifest streams with sub-playlist parsing, eliminating 403 Forbidden errors and bot PoToken challenges across all songs.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Infinite Buffering Fix",
@@ -715,9 +761,7 @@
     "date": "2026-09-03T06:18",
     "description": "Restored universal HTML5 audio playback across all platforms, enabled reliable static visitor ID fallback for instant YouTube stream extraction, and bound native low-latency silent AudioTrack keep-alive to ensure uninterrupted screen-off background playback and instant lockscreen widget response on Xiaomi HyperOS 3.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Audio Restored",
@@ -737,9 +781,7 @@
     "date": "2026-09-02T23:20",
     "description": "Fixed stream extraction using official YouTube visitor_id endpoint, decoupled native Android playback from WebView sleep, and added custom CDN headers and automatic error recovery to guarantee uninterrupted screen-off playback and instant lockscreen widget interaction.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback Fix",
@@ -759,9 +801,7 @@
     "date": "2026-09-02T23:05",
     "description": "Upgraded notification channel to v5 with IMPORTANCE_HIGH and PRIORITY_HIGH, persistent non-empty titles/artists, and prioritized M4A/AAC hardware decoding for universal zero-glitch lockscreen widget rendering on Xiaomi HyperOS 3.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Xiaomi HyperOS",
@@ -781,9 +821,7 @@
     "date": "2026-09-02T22:45",
     "description": "Full Xiaomi HyperOS & MIUI lockscreen compatibility: added dedicated public playback channel with default importance, display metadata keys, restored reactive Sound synchronization, and added visitor session token caching to eliminate YouTube bot challenges.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Xiaomi HyperOS",
@@ -803,9 +841,7 @@
     "date": "2026-09-02T22:35",
     "description": "Migrated Android audio playback to a 100% native MediaPlayer engine in the Foreground Service with a valid vector notification icon (ic_stat_aurora), enabling uninterrupted background playback and instant lockscreen widget interaction.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -825,9 +861,7 @@
     "date": "2026-09-02T22:20",
     "description": "Implemented Spotify-style interactive lockscreen and notification media controls: enabled native Android seekbar by broadcasting track duration, added zero-latency optimistic playback toggling, lockscreen album artwork, and full transport controls.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -847,9 +881,7 @@
     "date": "2026-09-02T22:15",
     "description": "Fixed audio stopping when screen is turned off or exiting app on Android by re-attaching the unintended pause recovery handler and immediately resuming WebView processing and timers in MainActivity onPause and onStop.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -865,9 +897,7 @@
     "date": "2026-09-02T21:55",
     "description": "Resolved mobile playback stall by removing crossOrigin enforcement on HTML5 audio elements, eliminating slow watch-page roundtrips, and triggering audio.play() synchronously within the user gesture window.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -883,9 +913,7 @@
     "date": "2026-09-02T21:30",
     "description": "Fixed song playback across Android and Desktop by resolving mobile audio buffer deadlock in usePlaybackStatus, bypassing CORS using native httpHost for direct InnerTube audio streams, auto-healing active streaming providers, and spawning yt-dlp setup on desktop launch.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -901,9 +929,7 @@
     "date": "2026-09-02T21:12",
     "description": "Rebranded to Aurora Music Player with a new northern lights celestial visual identity, modern vector emblem, refreshed polar color palette, and complete departure from legacy branding.",
     "type": "feature",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Branding",
@@ -919,9 +945,7 @@
     "date": "2026-09-02T20:30",
     "description": "Completed surgical cleanup removing over 45 obsolete files, dead views, unused theme & remoteControl systems, and heavy unused backend crates (rmcp, schemars, discord-rich-presence) for maximum speed, lightweight footprint, and robustness.",
     "type": "improvement",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Performance",
@@ -937,9 +961,7 @@
     "date": "2026-09-02T19:43",
     "description": "Streamlined player by removing unused integrations (Aurora Jam, MCP server, MPD server, Discord RPC) and appearance customizations (custom title bar and frameless window options) for peak performance and lighter footprint.",
     "type": "improvement",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Performance",
@@ -955,9 +977,7 @@
     "date": "2026-09-02T19:35",
     "description": "Simplified theme system by locking the player to the default dark theme and removing theme selection tabs and toggles.",
     "type": "improvement",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -973,9 +993,7 @@
     "date": "2026-09-02T16:55",
     "description": "Fixed background playback and screen off audio stopping or micro-cuts on Android by preventing WebView suspension, resolving AudioFocus conflicts, and eliminating silent AudioTrack contention.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -991,9 +1009,7 @@
     "date": "2026-09-02T16:35",
     "description": "Permanently solved background playback on Android screen off/lock using direct native stream extraction and notification permissions.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -1009,9 +1025,7 @@
     "date": "2026-09-02T15:09",
     "description": "Implemented direct stream extraction for Android to bypass Chromium WebView limitations and permanently fix background playback.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -1027,9 +1041,7 @@
     "date": "2026-09-02T00:00",
     "description": "Fixed automatic update checks on Android and added signed desktop update packages.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Updates",
@@ -1041,9 +1053,7 @@
     "date": "2026-09-02T00:00",
     "description": "Fixed Android playback stopping when the screen turns off or the app is backgrounded, and made the layout adapt to the visible screen size.",
     "type": "fix",
-    "contributors": [
-      "danidetenerife"
-    ],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Android",
@@ -1055,9 +1065,7 @@
     "date": "2026-08-29T00:00",
     "description": "Fixed pressing Enter in the search box searching for a hovered recent search instead of the typed text.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1069,9 +1077,7 @@
     "date": "2026-08-29T00:00",
     "description": "Clickable artist/track title in the player bar",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1083,9 +1089,7 @@
     "date": "2026-08-16T00:00",
     "description": "Fixed various Appimage issues caused by Wayland.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Linux",
@@ -1097,9 +1101,7 @@
     "date": "2026-08-13T00:00",
     "description": "Fixed playback stopping after double clicking a track in the queue.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Queue",
@@ -1111,9 +1113,7 @@
     "date": "2026-08-13T00:00",
     "description": "Fixed duplicate entries appearing in the listening history.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1125,9 +1125,7 @@
     "date": "2026-08-13T00:00",
     "description": "Fixed the previous track briefly playing when starting a new track before its stream is ready.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1139,9 +1137,7 @@
     "date": "2026-08-10T00:00",
     "description": "Aurora starts maximized by default",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1153,9 +1149,7 @@
     "date": "2026-08-08T00:00",
     "description": "Aurora Jam remote control now supports searching for music, adding tracks to the queue, and removing tracks from the queue.",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Integrations",
@@ -1167,9 +1161,7 @@
     "date": "2026-08-05T00:00",
     "description": "Playlists can now be sorted.",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -1181,9 +1173,7 @@
     "date": "2026-08-03T00:00",
     "description": "Playlists can now be filtered.",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -1195,9 +1185,7 @@
     "date": "2026-07-30T00:00",
     "description": "History stats tab shows a selection of charts showcasing your listening habits.",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "History",
@@ -1209,9 +1197,7 @@
     "date": "2026-07-20T00:00",
     "description": "Fix bluetooth issues on Linux.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1223,9 +1209,7 @@
     "date": "2026-07-20T00:00",
     "description": "Tracks that failed to resolve their streams now retry with a fresh search when you come back to them. When no streaming provider is installed, the error message now prompts you to install one.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1237,9 +1221,7 @@
     "date": "2026-07-18T00:00",
     "description": "Fix streaming getting permanently stuck at 10s intervals.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1251,9 +1233,7 @@
     "date": "2026-07-16T00:00",
     "description": "Listening history: Aurora now keeps a history of the tracks you play. Can be disabled in the preferences.",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "History",
@@ -1265,9 +1245,7 @@
     "date": "2026-07-08T00:00",
     "description": "Fix playback stalling at 10-second fMP4 segment boundaries (0:09, 0:19, 0:29...) when streaming via yt-dlp, caused by sub-frame gaps between appended segments",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1279,9 +1257,7 @@
     "date": "2026-07-07T00:00",
     "description": "Theme loading performance improvements",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Themes",
@@ -1293,9 +1269,7 @@
     "date": "2026-07-07T00:00",
     "description": "Recent searches appear under the search box, with keyboard navigation and one-click history clearing",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1307,9 +1281,7 @@
     "date": "2026-07-06T00:00",
     "description": "Search box with clear button, search icon, Escape to clear, and URL sync",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1321,9 +1293,7 @@
     "date": "2026-07-01T00:00",
     "description": "Fix audio going silent after about a second over Bluetooth on Linux",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1335,9 +1305,7 @@
     "date": "2026-07-01T00:00",
     "description": "Fix yt-dlp playback stalling at segment boundaries (e.g. 0:09, 0:29) when buffered audio drifted past the next segment's start time",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1349,9 +1317,7 @@
     "date": "2026-07-01T00:00",
     "description": "Fix marketplace themes resetting to default on restart",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Themes",
@@ -1363,9 +1329,7 @@
     "date": "2026-06-21T00:00",
     "description": "Custom title bar for frameless window mode. Enable in Settings -> Appearance",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1377,9 +1341,7 @@
     "date": "2026-06-19T00:00",
     "description": "Fix HLS playback failing on Windows with Chromium 147+",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1391,9 +1353,7 @@
     "date": "2026-06-19T00:00",
     "description": "We're temporarily switching to nightly yt-dlp due to a regression. This will fix playlist imports.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -1405,9 +1365,7 @@
     "date": "2026-06-17T00:00",
     "description": "Navigate to playlists directly from artist pages that have them",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Artists",
@@ -1419,9 +1377,7 @@
     "date": "2026-06-14T00:00",
     "description": "Fix the queue getting stuck at the end of some tracks, where playback parked a fraction of a second before the end and never advanced to the next track",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1433,9 +1389,7 @@
     "date": "2026-06-10T00:00",
     "description": "Right-click a queue item to see its stream candidates and switch to a different source; picking a failed source retries it",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Queue",
@@ -1447,9 +1401,7 @@
     "date": "2026-06-09T00:00",
     "description": "Fix TSX plugins failing with 'React is not defined' unless they imported React manually, and fix stale plugin code being served when an imported file changed but the entry file didn't",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1461,9 +1413,7 @@
     "date": "2026-06-01T00:00",
     "description": "The window now remembers its size, position, and maximized state between restarts",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1475,9 +1425,7 @@
     "date": "2026-05-27T00:00",
     "description": "Aurora Jam lets you control playback from any device on your local network. Enable it in Settings -> Integrations, then scan the QR code with your phone.",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Integrations",
@@ -1489,9 +1437,7 @@
     "date": "2026-05-22T00:00",
     "description": "Fix HLS tracks getting stuck at 0:00 when the queue advances",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Streaming",
@@ -1503,9 +1449,7 @@
     "date": "2026-05-21T00:00",
     "description": "Fix tracks failing to play in saved playlists and in queues restored after restart by re-resolving stream URLs when they expire",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Streaming",
@@ -1517,9 +1461,7 @@
     "date": "2026-05-11T00:00",
     "description": "MPD server lets you control Aurora from MPD clients like mpc and ncmpcpp",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Integrations",
@@ -1531,9 +1473,7 @@
     "date": "2026-05-04T00:00",
     "description": "Installed plugins are automatically updated to the latest version on startup",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1545,9 +1485,7 @@
     "date": "2026-04-22T00:00",
     "description": "Fix legacy playlist import failing when track durations use mm:ss or hh:mm:ss format",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -1559,9 +1497,7 @@
     "date": "2026-04-17T00:00",
     "description": "Fix source selection being reset to the first available provider on startup",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1573,9 +1509,7 @@
     "date": "2026-04-17T00:00",
     "description": "Show an empty state in Sources when no providers of a given kind are installed",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1587,9 +1521,7 @@
     "date": "2026-04-08T00:00",
     "description": "Streaming providers can now access full track metadata when resolving streams",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1601,9 +1533,7 @@
     "date": "2026-04-08T00:00",
     "description": "Fix paired streaming provider not activating when registered after the metadata provider",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1615,9 +1545,7 @@
     "date": "2026-04-02T00:00",
     "description": "Frameless window toggle in settings",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1629,9 +1557,7 @@
     "date": "2026-04-01T00:00",
     "description": "Back and forward navigation buttons in the top bar",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1643,9 +1569,7 @@
     "date": "2026-04-01T00:00",
     "description": "Theme store for browsing and installing community themes",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Themes",
@@ -1657,9 +1581,7 @@
     "date": "2026-03-27T00:00",
     "description": "Discord rich presence integration",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Integrations",
@@ -1671,9 +1593,7 @@
     "date": "2026-03-26T00:00",
     "description": "Plugins can provide music discovery recommendations based on the current queue",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1689,9 +1609,7 @@
     "date": "2026-03-24T00:00",
     "description": "Introduce dark mode as persistent preference",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Settings",
@@ -1703,9 +1621,7 @@
     "date": "2026-03-24T00:00",
     "description": "Fix issues with tables being way too wide with longer track titles",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "UI",
@@ -1717,9 +1633,7 @@
     "date": "2026-03-21T00:00",
     "description": "Aurora is now built from source for Flatpak, with new app icons",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Linux",
@@ -1731,9 +1645,7 @@
     "date": "2026-03-20T00:00",
     "description": "Fixed album tracks being added to the queue without thumbnails",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Queue",
@@ -1745,9 +1657,7 @@
     "date": "2026-03-20T00:00",
     "description": "Dashboard, search, and plugins views now prompt to install plugins when none are active",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1759,9 +1669,7 @@
     "date": "2026-03-18T00:00",
     "description": "AUR packages are now automatically updated when a new release is published",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Linux",
@@ -1773,9 +1681,7 @@
     "date": "2026-03-16T00:00",
     "description": "Fixed a console window briefly appearing on Windows each time yt-dlp was invoked",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Windows",
@@ -1787,9 +1693,7 @@
     "date": "2026-03-16T00:00",
     "description": "Queue items are now correctly restored when restarting Aurora.",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1801,9 +1705,7 @@
     "date": "2026-03-16T00:00",
     "description": "New Sources view lets you switch the active metadata and streaming providers from the sidebar",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Sources",
@@ -1815,9 +1717,7 @@
     "date": "2026-03-14T00:00",
     "description": "yt-dlp is now downloaded and updated automatically at runtime, fixing Flatpak and AppImage compatibility",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1829,9 +1729,7 @@
     "date": "2026-03-13T00:00",
     "description": "Border width is now themable - advanced themes can set border-width to control all borders in the app",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Themes",
@@ -1843,9 +1741,7 @@
     "date": "2026-03-13T00:00",
     "description": "Improved dark mode for all basic themes with better backgrounds, toned-down primaries, and themed borders",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Themes",
@@ -1857,9 +1753,7 @@
     "date": "2026-03-12T00:00",
     "description": "Update badge shows download progress and lets you click to update or restart",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Updates",
@@ -1871,9 +1765,7 @@
     "date": "2026-03-09T00:00",
     "description": "Social links in settings sidebar (Discord, GitHub, Mastodon, Website)",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Settings",
@@ -1885,9 +1777,7 @@
     "date": "2026-03-08T00:00",
     "description": "Fixed repeat, shuffle, and volume for MSE streams",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1899,9 +1789,7 @@
     "date": "2026-03-07T00:00",
     "description": "Plugins can import YouTube playlists by URL via yt-dlp",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -1921,9 +1809,7 @@
     "date": "2026-03-06T00:00",
     "description": "YouTube tracks now play using MSE-based streaming, fixing incorrect duration display and enabling proper seeking",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -1939,9 +1825,7 @@
     "date": "2026-03-05T00:00",
     "description": "Customizable keyboard shortcuts with settings UI for rebinding",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Settings",
@@ -1957,9 +1841,7 @@
     "date": "2026-03-04T00:00",
     "description": "Plugin event bus with trackFinished and trackStarted events",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1971,9 +1853,7 @@
     "date": "2026-03-04T00:00",
     "description": "Custom settings widgets for plugins (render React components in settings UI)",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1985,9 +1865,7 @@
     "date": "2026-03-04T00:00",
     "description": "Shell API for plugins to open URLs in the system browser",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -1999,9 +1877,7 @@
     "date": "2026-03-04T00:00",
     "description": "Plugins can use Aurora UI components (Button, Toggle, etc.)",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -2013,9 +1889,7 @@
     "date": "2026-03-04T00:00",
     "description": "Fixed plugin settings using wrong storage key (core prefix instead of plugin prefix)",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Settings",
@@ -2027,9 +1901,7 @@
     "date": "2026-03-03T00:00",
     "description": "Fixed old audio stream continuing to play when switching tracks or clearing the queue",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playback",
@@ -2041,9 +1913,7 @@
     "date": "2026-03-01T00:00",
     "description": "In-app changelog in settings (What's New tab)",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Settings",
@@ -2055,17 +1925,13 @@
     "date": "2026-03-01T00:00",
     "description": "Release pipeline auto-generates GitHub release notes from changelog data",
     "type": "improvement",
-    "contributors": [
-      "nukeop"
-    ]
+    "contributors": ["nukeop"]
   },
   {
     "date": "2026-03-01T00:00",
     "description": "Support importing legacy format playlists (from legacy format)",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -2077,17 +1943,13 @@
     "date": "2026-02-28T00:00",
     "description": "Migrated repository to danidetenerife/aurora",
     "type": "chore",
-    "contributors": [
-      "nukeop"
-    ]
+    "contributors": ["nukeop"]
   },
   {
     "date": "2026-02-25T00:00",
     "description": "Playlist import from URL",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -2099,9 +1961,7 @@
     "date": "2026-02-25T00:00",
     "description": "Playlist provider adapter view with cover art",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Playlists",
@@ -2117,17 +1977,13 @@
     "date": "2026-02-25T00:00",
     "description": "Fixed loading status getting stuck on stream resolution",
     "type": "fix",
-    "contributors": [
-      "nukeop"
-    ]
+    "contributors": ["nukeop"]
   },
   {
     "date": "2026-02-20T00:00",
     "description": "MCP server for controlling Aurora from AI agents and other tools",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "MCP",
@@ -2139,9 +1995,7 @@
     "date": "2026-02-20T00:00",
     "description": "Plugin store with browsing, search, and installation",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Plugins",
@@ -2153,9 +2007,7 @@
     "date": "2026-02-20T00:00",
     "description": "Flatpak packaging",
     "type": "feature",
-    "contributors": [
-      "nukeop"
-    ],
+    "contributors": ["nukeop"],
     "tags": [
       {
         "label": "Linux",

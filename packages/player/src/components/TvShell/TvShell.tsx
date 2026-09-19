@@ -11,14 +11,13 @@ import { useTranslation } from '@aurora/i18n';
 import { pickArtwork, type PodcastRef } from '@aurora/model';
 import { cn, Toaster } from '@aurora/ui';
 
-import { playbackManager } from '../../services/playback';
 import { metadataHost } from '../../services/metadataHost';
+import { playbackManager } from '../../services/playback';
 import { podcastService } from '../../services/podcastService';
 import { initSpatialNavigation } from '../../services/spatialNavigation';
 import { streamResolution } from '../../services/streamResolution';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
-import { POPULAR_YOUTUBE_PLAYLISTS } from './tvPlaylists';
 import { usePodcastStore } from '../../stores/podcastStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { useStartupStore } from '../../stores/startupStore';
@@ -30,15 +29,16 @@ import { TvButton } from './TvButton';
 import { TvDashboard } from './TvDashboard';
 import { TvFocusableCard } from './TvFocusableCard';
 import { tvI18n } from './tvI18n';
+import { initTvInfiniteQueue } from './tvInfiniteQueue';
 import { TvNavRail } from './TvNavRail';
 import { TvNowPlayingBar } from './TvNowPlayingBar';
 import { playTvTracks } from './tvPlayback';
+import { POPULAR_YOUTUBE_PLAYLISTS } from './tvPlaylists';
 import { TvPodcastDetail } from './TvPodcastDetail';
 import { TvSearchOverlay } from './TvSearchOverlay';
 import { TvSoundProvider } from './TvSoundProvider';
 import { TvSyncSection } from './TvSyncSection';
 import { TvVideoPlayer } from './TvVideoPlayer';
-import { initTvInfiniteQueue } from './tvInfiniteQueue';
 
 const PAGE_SIZE = 24;
 
@@ -180,7 +180,9 @@ const TvMainContent: FC = () => {
         <div className="tv-grid">
           {section === 'podcasts'
             ? podcastList.map((podcast) => {
-                const isFavorite = podcastFavorites.some((item) => item.id === podcast.id);
+                const isFavorite = podcastFavorites.some(
+                  (item) => item.id === podcast.id,
+                );
                 return (
                   <TvFocusableCard
                     key={podcast.id}
@@ -201,7 +203,10 @@ const TvMainContent: FC = () => {
                       key={`user-${playlist.id}`}
                       title={playlist.name}
                       subtitle={`${playlist.itemCount ?? 0} ${t('episodesCount', { defaultValue: 'canciones' })} · Tu lista`}
-                      src={playlist.thumbnails?.[0] ?? pickArtwork(playlist.artwork, 'thumbnail', 300)?.url}
+                      src={
+                        playlist.thumbnails?.[0] ??
+                        pickArtwork(playlist.artwork, 'thumbnail', 300)?.url
+                      }
                       focusKey={`tv-user-playlist-${playlist.id}`}
                       onClick={() => {
                         void usePlaylistStore
@@ -230,7 +235,9 @@ const TvMainContent: FC = () => {
                       subtitle={`${popPlaylist.subtitle} · YouTube Music`}
                       src={popPlaylist.src}
                       focusKey={`tv-pop-playlist-${popPlaylist.id}`}
-                      onClick={() => void handlePlayPopularPlaylist(popPlaylist.query)}
+                      onClick={() =>
+                        void handlePlayPopularPlaylist(popPlaylist.query)
+                      }
                     />
                   )),
                 ].slice(0, limit)
@@ -241,7 +248,13 @@ const TvMainContent: FC = () => {
                     subtitle={track.artists
                       ?.map((artist) => artist.name)
                       .join(', ')}
-                    src={pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 300)?.url}
+                    src={
+                      pickArtwork(
+                        track.artwork ?? track.album?.artwork,
+                        'thumbnail',
+                        300,
+                      )?.url
+                    }
                     focusKey={`tv-content-track-${index}`}
                     onClick={() => {
                       if (section === 'favorites') {
@@ -375,11 +388,7 @@ const TvShellContent: FC = () => {
     >
       <TvAutoUpdater />
       <TvNavRail />
-      {showVideo ? (
-        <TvVideoPlayer track={currentTrack} />
-      ) : (
-        <TvMainContent />
-      )}
+      {showVideo ? <TvVideoPlayer track={currentTrack} /> : <TvMainContent />}
       <TvNowPlayingBar />
       <p className="tv-hint">{t('hint')}</p>
       <TvSoundProvider>{!starting && <StreamResolver />}</TvSoundProvider>

@@ -496,8 +496,9 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
 
         final String GROUP_POPULAR = "Listas Populares";
         items.add(createMediaItem("playlist_play:spotify_top", "Today's Top Hits", "Los mayores éxitos globales", ArtworkContentProvider.getPresetUri("cover_pop"), false, true, GROUP_POPULAR));
-        items.add(createMediaItem("playlist_play:spotify_latino", "Viva Latino", "Grandes éxitos de música latina", ArtworkContentProvider.getPresetUri("cover_reggaeton"), false, true, GROUP_POPULAR));
+        items.add(createMediaItem("playlist_play:retro_80s_90s", "Éxitos 80s y 90s", "Clásicos dorados del pop y rock", ArtworkContentProvider.getPresetUri("cover_retro"), false, true, GROUP_POPULAR));
         items.add(createMediaItem("playlist_play:spotify_rock", "Rock Classics", "Leyendas e himnos del rock", ArtworkContentProvider.getPresetUri("cover_rock"), false, true, GROUP_POPULAR));
+        items.add(createMediaItem("playlist_play:spotify_latino", "Viva Latino", "Grandes éxitos de música latina", ArtworkContentProvider.getPresetUri("cover_reggaeton"), false, true, GROUP_POPULAR));
         items.add(createMediaItem("playlist_play:yt_top", "Top Canciones", "Éxitos más escuchados en YouTube Music", ArtworkContentProvider.getPresetUri("cover_spain"), false, true, GROUP_POPULAR));
     }
 

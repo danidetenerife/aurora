@@ -1,4 +1,7 @@
-import { FocusContext, useFocusable } from '@noriginmedia/norigin-spatial-navigation';
+import {
+  FocusContext,
+  useFocusable,
+} from '@noriginmedia/norigin-spatial-navigation';
 import { CheckCircle2, Github, RefreshCw, XCircle } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -160,9 +163,12 @@ export const TvSyncSection: FC = () => {
             <Github className="h-7 w-7" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white">Sincronización con GitHub</h1>
+            <h1 className="text-2xl font-black text-white">
+              Sincronización con GitHub
+            </h1>
             <p className="text-sm text-zinc-400">
-              Conecta tu cuenta para sincronizar favoritos, listas de reproducción y preferencias de escucha entre tus dispositivos.
+              Conecta tu cuenta para sincronizar favoritos, listas de
+              reproducción y preferencias de escucha entre tus dispositivos.
             </p>
           </div>
         </div>
@@ -170,7 +176,9 @@ export const TvSyncSection: FC = () => {
         <div className="flex flex-col gap-4 rounded-xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-xl">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-zinc-300">Estado:</span>
+              <span className="text-sm font-semibold text-zinc-300">
+                Estado:
+              </span>
               {isConnected ? (
                 <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-0.5 text-xs font-bold text-emerald-400">
                   <CheckCircle2 className="h-3.5 w-3.5" />
@@ -191,7 +199,7 @@ export const TvSyncSection: FC = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+            <label className="text-xs font-bold tracking-wider text-zinc-400 uppercase">
               GitHub Personal Access Token (PAT)
             </label>
             <input
@@ -203,7 +211,8 @@ export const TvSyncSection: FC = () => {
               className="w-full rounded-lg border-2 border-zinc-700 bg-zinc-950 p-3 text-sm text-white placeholder-zinc-600 outline-none focus:border-emerald-400"
             />
             <span className="text-xs text-zinc-500">
-              Se requiere un token clásico con el permiso &apos;gist&apos; habilitado.
+              Se requiere un token clásico con el permiso &apos;gist&apos;
+              habilitado.
             </span>
           </div>
 
@@ -230,7 +239,10 @@ export const TvSyncSection: FC = () => {
                   destinations={{ down: 'tv-control-play' }}
                 >
                   <span className="flex items-center gap-2">
-                    <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} /> Sincronizar ahora
+                    <RefreshCw
+                      className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+                    />{' '}
+                    Sincronizar ahora
                   </span>
                 </TvButton>
 

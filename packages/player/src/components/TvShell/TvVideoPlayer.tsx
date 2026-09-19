@@ -1,7 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { pickArtwork, type Track } from '@aurora/model';
-import { cn } from '@aurora/ui';
+import { setFocus } from '@noriginmedia/norigin-spatial-navigation';
 import {
   Infinity as InfinityIcon,
   Loader2,
@@ -12,6 +9,10 @@ import {
   ThumbsDown,
   X,
 } from 'lucide-react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { pickArtwork, type Track } from '@aurora/model';
+import { cn } from '@aurora/ui';
 
 import { Logger } from '../../services/logger';
 import { musicVideoService } from '../../services/musicVideoService';
@@ -20,12 +21,7 @@ import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { useTvStore } from '../../stores/tvStore';
-import { setFocus } from '@noriginmedia/norigin-spatial-navigation';
-
-import {
-  playNextInInfiniteQueue,
-  replenishTvQueue,
-} from './tvInfiniteQueue';
+import { playNextInInfiniteQueue, replenishTvQueue } from './tvInfiniteQueue';
 import { extractYouTubeId } from './TvSoundProvider';
 
 const OVERLAY_HIDE_DELAY_MS = 3500;
@@ -56,12 +52,15 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
   const isAudioPlaying = soundStatus === 'playing';
   const activeTrackKeyRef = useRef<string>('');
 
-  const nextItem = useQueueStore((state) => state.items[state.currentIndex + 1]);
+  const nextItem = useQueueStore(
+    (state) => state.items[state.currentIndex + 1],
+  );
   const nextTrack = nextItem?.track;
 
   const artworkUrl = useMemo(
     () =>
-      pickArtwork(track?.artwork ?? track?.album?.artwork, 'thumbnail', 800)?.url ??
+      pickArtwork(track?.artwork ?? track?.album?.artwork, 'thumbnail', 800)
+        ?.url ??
       'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop',
     [track?.artwork, track?.album?.artwork],
   );
@@ -88,8 +87,16 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
       { event: 'command', func: 'unloadModule', args: ['cc'] },
       { event: 'command', func: 'setOption', args: ['captions', 'track', {}] },
       { event: 'command', func: 'setOption', args: ['cc', 'track', {}] },
-      { event: 'command', func: 'setOption', args: ['captions', 'fontSize', -1] },
-      { event: 'command', func: 'setOption', args: ['captions', 'reload', false] },
+      {
+        event: 'command',
+        func: 'setOption',
+        args: ['captions', 'fontSize', -1],
+      },
+      {
+        event: 'command',
+        func: 'setOption',
+        args: ['captions', 'reload', false],
+      },
     ];
     for (const command of commands) {
       try {
@@ -127,7 +134,9 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 
   const handleDislike = useCallback(() => {
     if (track) {
-      const trackId = track.source?.id || `${track.artists?.[0]?.name || ''}-${track.title || ''}`;
+      const trackId =
+        track.source?.id ||
+        `${track.artists?.[0]?.name || ''}-${track.title || ''}`;
       void personalizationEngine.blacklistTrack(trackId);
     }
     handleNext();
@@ -137,7 +146,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     let cancelled = false;
     const trackKey = track
       ? `${track.source?.provider || ''}:${track.source?.id || ''}:${track.title || ''}:${track.artists?.[0]?.name || ''}`
-      : (propVideoId || '');
+      : propVideoId || '';
 
     activeTrackKeyRef.current = trackKey;
     setLoading(true);
@@ -155,7 +164,8 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
           Logger.streaming.info(
             `Searching official music video for: ${track.artists?.[0]?.name || ''} - ${track.title || ''}`,
           );
-          const officialVideo = await musicVideoService.findOfficialVideo(track);
+          const officialVideo =
+            await musicVideoService.findOfficialVideo(track);
           if (cancelled || activeTrackKeyRef.current !== trackKey) {
             return;
           }
@@ -297,12 +307,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [
-    handleNext,
-    handlePrevious,
-    handleTogglePlay,
-    resetOverlayTimer,
-  ]);
+  }, [handleNext, handlePrevious, handleTogglePlay, resetOverlayTimer]);
 
   useEffect(() => {
     if (!targetVideoId) {
@@ -395,7 +400,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         <button
           onClick={handleClose}
           aria-label="Cerrar búsqueda"
-          className="absolute top-8 right-8 tv-video-btn close"
+          className="tv-video-btn close absolute top-8 right-8"
         >
           <X className="h-4 w-4" />
           <span>Cancelar (Atrás)</span>
@@ -406,16 +411,24 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 
   if (error || !targetVideoId) {
     return (
-      <div data-testid="tv-video-player" className="tv-video-container flex-col">
+      <div
+        data-testid="tv-video-player"
+        className="tv-video-container flex-col"
+      >
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-25 filter blur-3xl scale-125"
+          className="absolute inset-0 scale-125 bg-cover bg-center opacity-25 blur-3xl filter"
           style={{ backgroundImage: `url(${artworkUrl})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
 
-        <div className="relative z-10 flex flex-col items-center gap-6 max-w-2xl text-center">
+        <div className="relative z-10 flex max-w-2xl flex-col items-center gap-6 text-center">
           <div className="h-56 w-56 overflow-hidden rounded-3xl border-2 border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <img src={artworkUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+            <img
+              src={artworkUrl}
+              alt=""
+              className="h-full w-full object-cover"
+              referrerPolicy="no-referrer"
+            />
           </div>
 
           <div className="flex flex-col items-center gap-2">
@@ -423,14 +436,16 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
               <InfinityIcon className="h-4 w-4" />
               <span>Cola Infinita Activa · Reproduciendo Audio</span>
             </div>
-            <h2 className="text-2xl font-black text-white line-clamp-1">
+            <h2 className="line-clamp-1 text-2xl font-black text-white">
               {track?.title || 'Canción actual'}
             </h2>
             <p className="text-base font-semibold text-zinc-300">
-              {track?.artists?.map((artist) => artist.name).join(', ') || 'Aurora'}
+              {track?.artists?.map((artist) => artist.name).join(', ') ||
+                'Aurora'}
             </p>
             <p className="text-xs text-zinc-400">
-              Sin videoclip disponible · Pasando automáticamente al siguiente videoclip
+              Sin videoclip disponible · Pasando automáticamente al siguiente
+              videoclip
             </p>
           </div>
 
@@ -450,7 +465,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
               {isAudioPlaying ? (
                 <Pause className="h-7 w-7 fill-current" />
               ) : (
-                <Play className="h-7 w-7 fill-current ml-1" />
+                <Play className="ml-1 h-7 w-7 fill-current" />
               )}
             </button>
             <button
@@ -474,7 +489,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         <button
           onClick={handleClose}
           aria-label="Cerrar vista de vídeo"
-          className="absolute top-8 right-8 z-20 tv-video-btn close"
+          className="tv-video-btn close absolute top-8 right-8 z-20"
         >
           <X className="h-4 w-4" />
           <span>Volver al Dashboard (Atrás)</span>
@@ -515,7 +530,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         <div className="tv-video-top">
           <div className="flex items-center gap-4">
             <div className="tv-video-badge official">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
               <span>🎬 Videoclip Oficial</span>
             </div>
             <div className="tv-video-title-group">
@@ -574,7 +589,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
                 {isAudioPlaying ? (
                   <Pause className="h-6 w-6 fill-current" />
                 ) : (
-                  <Play className="h-6 w-6 fill-current ml-0.5" />
+                  <Play className="ml-0.5 h-6 w-6 fill-current" />
                 )}
               </button>
               <button
@@ -598,7 +613,8 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
           </div>
 
           <div className="tv-video-hints">
-            Usa el mando a distancia: ◀ Anterior &nbsp;|&nbsp; OK Pausa/Play &nbsp;|&nbsp; ▶ Siguiente &nbsp;|&nbsp; Atrás Salir
+            Usa el mando a distancia: ◀ Anterior &nbsp;|&nbsp; OK Pausa/Play
+            &nbsp;|&nbsp; ▶ Siguiente &nbsp;|&nbsp; Atrás Salir
           </div>
         </div>
       </div>

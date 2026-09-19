@@ -1,13 +1,20 @@
 import { act } from '@testing-library/react';
 
+import { isCapacitorEnvironment } from '../../services/universalStore';
 import { useStartupStore } from '../../stores/startupStore';
 import { DashboardProviderBuilder } from '../../test/builders/DashboardProviderBuilder';
 import { PlaylistProviderBuilder } from '../../test/builders/PlaylistProviderBuilder';
 import { TOP_TRACKS_RADIOHEAD } from '../../test/fixtures/dashboard';
 import { DashboardWrapper } from './Dashboard.test-wrapper';
 
+vi.mock('../../services/universalStore', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../services/universalStore')>()),
+  isCapacitorEnvironment: vi.fn(() => false),
+}));
+
 describe('Dashboard view', () => {
   beforeEach(() => {
+    vi.mocked(isCapacitorEnvironment).mockReturnValue(false);
     DashboardWrapper.reset();
   });
 
@@ -214,5 +221,32 @@ describe('Dashboard view', () => {
     expect(
       await DashboardWrapper.topTracks.findTrack('Idioteque'),
     ).toBeInTheDocument();
+  });
+
+  it('renders mobile greeting and filter pills on Capacitor environment', async () => {
+    vi.mocked(isCapacitorEnvironment).mockReturnValue(true);
+    DashboardWrapper.seedProvider(
+      DashboardWrapper.fixtures.topTracksProvider(),
+    );
+
+    await DashboardWrapper.mount();
+
+    expect(DashboardWrapper.mobileGreeting).toBeInTheDocument();
+    expect(DashboardWrapper.mobileFilterPills.container).toBeInTheDocument();
+    expect(
+      DashboardWrapper.mobileFilterPills.pills.length,
+    ).toBeGreaterThanOrEqual(2);
+  });
+
+  it('filters section content when a filter pill is clicked on mobile', async () => {
+    vi.mocked(isCapacitorEnvironment).mockReturnValue(true);
+    DashboardWrapper.seedProvider(
+      DashboardWrapper.fixtures.topTracksProvider(),
+    );
+
+    await DashboardWrapper.mount();
+
+    await DashboardWrapper.mobileFilterPills.select(/top tracks/i);
+    expect(DashboardWrapper.topTracks.table).toBeInTheDocument();
   });
 });

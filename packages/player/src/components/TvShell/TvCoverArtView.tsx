@@ -8,9 +8,12 @@ type TvCoverArtViewProps = {
 };
 
 export const TvCoverArtView: FC<TvCoverArtViewProps> = ({ track }) => {
-  const artwork = track ? pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 600) : null;
+  const artwork = track
+    ? pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 600)
+    : null;
   const coverUrl = artwork?.url;
-  const artistNames = track?.artists?.map((artist) => artist.name).join(', ') || '';
+  const artistNames =
+    track?.artists?.map((artist) => artist.name).join(', ') || '';
 
   return (
     <div

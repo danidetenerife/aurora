@@ -48,8 +48,10 @@ const syncAutoCatalog = (): void => {
       fullPlaylist?.items.slice(0, 25).map((item) => ({
         id: item.id,
         title: item.track.title,
-        artist: item.track.artists?.map((credit) => credit.name).join(', ') || '',
-        artworkUrl: pickArtwork(item.track.artwork, 'thumbnail', 512)?.url || '',
+        artist:
+          item.track.artists?.map((credit) => credit.name).join(', ') || '',
+        artworkUrl:
+          pickArtwork(item.track.artwork, 'thumbnail', 512)?.url || '',
       })) || [];
 
     return {
@@ -228,7 +230,8 @@ export const initMediaSessionService = (): void => {
         const track = current.track;
         const artwork = pickArtwork(track.artwork, 'thumbnail', 512);
         const artist =
-          track.artists?.map((artistCredit) => artistCredit.name).join(', ') || '';
+          track.artists?.map((artistCredit) => artistCredit.name).join(', ') ||
+          '';
         const albumTitle = track.album?.title || '';
         const artworkUrl = artwork?.url || '';
         const isFav = track.source
@@ -306,7 +309,9 @@ export const initMediaSessionService = (): void => {
       if (data.action === 'favorite_remove') {
         const currentItem = useQueueStore.getState().getCurrentItem();
         if (currentItem?.track?.source) {
-          void useFavoritesStore.getState().removeTrack(currentItem.track.source);
+          void useFavoritesStore
+            .getState()
+            .removeTrack(currentItem.track.source);
         }
         return;
       }
@@ -380,8 +385,7 @@ export const initMediaSessionService = (): void => {
         if (personalPlaylist && personalPlaylist.items.length > 0) {
           const tracks = personalPlaylist.items.map((item) => item.track);
           const queue = useQueueStore.getState();
-          queue.addToQueue(tracks);
-          queue.goToIndex(queue.items.length - tracks.length);
+          queue.playTracks(tracks, 0);
           playbackManager.play();
           return;
         }
@@ -390,6 +394,7 @@ export const initMediaSessionService = (): void => {
           spotify_top: "Today's Top Hits",
           spotify_latino: 'Viva Latino',
           spotify_rock: 'Rock Classics',
+          retro_80s_90s: '80s 90s greatest hits classic songs',
           yt_top: 'Top canciones',
           yt_exitos: 'Éxitos globales',
         };
@@ -400,11 +405,13 @@ export const initMediaSessionService = (): void => {
             const tracks = results.tracks ?? [];
             if (tracks.length) {
               const queue = useQueueStore.getState();
-              queue.addToQueue(tracks);
-              queue.goToIndex(queue.items.length - tracks.length);
+              queue.playTracks(tracks, 0);
               playbackManager.play();
             }
-          });
+          })
+          .catch((error) =>
+            console.error('[mediaSessionService] playlist error', error),
+          );
         return;
       }
 
@@ -427,8 +434,7 @@ export const initMediaSessionService = (): void => {
           .then((detail) => {
             if (detail && detail.episodes.length > 0) {
               const queue = useQueueStore.getState();
-              queue.addToQueue(detail.episodes);
-              queue.goToIndex(0);
+              queue.playTracks(detail.episodes, 0);
               playbackManager.play();
             }
           })
@@ -445,7 +451,18 @@ export const initMediaSessionService = (): void => {
         const prefix = data.action.startsWith('search_play:')
           ? 'search_play:'
           : 'search:';
-        const query = data.action.slice(prefix.length).trim();
+        const rawQuery = data.action.slice(prefix.length).trim();
+        const searchAliasMap: Record<string, string> = {
+          'Éxitos de los 80 y 90': '80s 90s greatest hits classic songs',
+          'exitos de los 80 y 90': '80s 90s greatest hits classic songs',
+          'Nostalgia 80s 90s': '80s 90s greatest hits classic songs',
+          'Rock Clásico': 'Classic Rock greatest hits legends',
+          'Chill Lo-Fi Beats': 'lofi hip hop chill beats',
+          'Pop Internacional': 'International Pop Top Hits',
+          'Electrónica Dance': 'EDM Dance Club Hits',
+          'Música para Conducir': 'driving road trip music hits',
+        };
+        const query = searchAliasMap[rawQuery] || rawQuery;
         if (query) {
           void metadataHost
             .search({ query, types: ['tracks'], limit: 25 })
@@ -453,11 +470,13 @@ export const initMediaSessionService = (): void => {
               const tracks = results.tracks ?? [];
               if (tracks.length) {
                 const queue = useQueueStore.getState();
-                queue.addToQueue(tracks);
-                queue.goToIndex(queue.items.length - tracks.length);
+                queue.playTracks(tracks, 0);
                 playbackManager.play();
               }
-            });
+            })
+            .catch((error) =>
+              console.error('[mediaSessionService] search error', error),
+            );
         }
         return;
       }

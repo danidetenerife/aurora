@@ -106,7 +106,9 @@ export const resolveArtistImageUrl = async (
   }
 
   try {
-    const cached = localStorage.getItem(`${ARTIST_STORAGE_KEY_PREFIX}${cacheKey}`);
+    const cached = localStorage.getItem(
+      `${ARTIST_STORAGE_KEY_PREFIX}${cacheKey}`,
+    );
     if (cached) {
       artistMemoryCache.set(cacheKey, cached);
       return cached;
@@ -121,7 +123,11 @@ export const resolveArtistImageUrl = async (
     );
     if (response.ok) {
       const data = (await response.json()) as {
-        data?: Array<{ picture_big?: string; picture_medium?: string; picture?: string }>;
+        data?: Array<{
+          picture_big?: string;
+          picture_medium?: string;
+          picture?: string;
+        }>;
       };
       const picture =
         data?.data?.[0]?.picture_big ||
@@ -130,7 +136,10 @@ export const resolveArtistImageUrl = async (
       if (picture) {
         artistMemoryCache.set(cacheKey, picture);
         try {
-          localStorage.setItem(`${ARTIST_STORAGE_KEY_PREFIX}${cacheKey}`, picture);
+          localStorage.setItem(
+            `${ARTIST_STORAGE_KEY_PREFIX}${cacheKey}`,
+            picture,
+          );
         } catch {
           void 0;
         }

@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import type {
-  TimeRange,
-  TopAlbum,
-} from '../../../../services/tauri/bindings';
+import type { TimeRange, TopAlbum } from '../../../../services/tauri/bindings';
 import { commands } from '../../../../services/tauri/bindings';
 import { unwrapResult } from '../../../../services/tauri/results';
 import { isTauriEnvironment } from '../../../../services/universalStore';

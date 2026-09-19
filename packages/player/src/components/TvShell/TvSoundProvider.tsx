@@ -22,7 +22,10 @@ const describePlaybackError = (error: Error, t: TFunction): string => {
   return errorMessage(error);
 };
 
-export const extractYouTubeId = (track?: Track, srcUrl?: string): string | null => {
+export const extractYouTubeId = (
+  track?: Track,
+  srcUrl?: string,
+): string | null => {
   if (srcUrl) {
     const match = srcUrl.match(
       /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,

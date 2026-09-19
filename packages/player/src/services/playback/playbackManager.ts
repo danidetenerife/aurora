@@ -1,5 +1,6 @@
 import type { AudioSource } from '@aurora/hifi';
 import type { QueueItem } from '@aurora/model';
+
 import { useQueueStore } from '../../stores/queueStore';
 import { getSetting } from '../../stores/settingsStore';
 import { useSoundStore } from '../../stores/soundStore';

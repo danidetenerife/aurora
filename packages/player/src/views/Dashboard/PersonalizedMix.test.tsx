@@ -122,4 +122,28 @@ describe('personalized recommendations', () => {
       await PersonalizedMixWrapper.recommendation('New Favorite Artist'),
     ).toBeInTheDocument();
   });
+
+  it('updates recommendations immediately when refresh button is clicked', async () => {
+    await PersonalizedMixWrapper.mount();
+    expect(
+      await PersonalizedMixWrapper.recommendation('Pop Hits'),
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      await personalizationEngine.recordPlay(
+        {
+          title: 'My refreshed favorite',
+          source: { provider: 'music', id: 'refreshed-song' },
+          artists: [{ name: 'Refreshed Artist', roles: [] }],
+          durationMs: 180_000,
+        },
+        true,
+      );
+    });
+
+    await PersonalizedMixWrapper.refreshButton.click();
+    expect(
+      await PersonalizedMixWrapper.recommendation('Refreshed Artist'),
+    ).toBeInTheDocument();
+  });
 });

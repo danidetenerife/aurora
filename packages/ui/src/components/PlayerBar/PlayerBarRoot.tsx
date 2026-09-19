@@ -15,11 +15,11 @@ export const PlayerBarRoot: FC<PlayerBarRootProps> = ({
   right,
   className = '',
 }) => (
-  <BottomBar className={cn('px-2 sm:px-4 py-1.5 h-14 sm:h-16', className)}>
-    <div className="flex w-full items-center justify-between sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4">
+  <BottomBar className={cn('h-14 px-2 py-1.5 sm:h-16 sm:px-4', className)}>
+    <div className="flex w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4">
       {left && <div className="min-w-0 flex-1 sm:flex-initial">{left}</div>}
-      {center && <div className="justify-self-center shrink-0">{center}</div>}
-      {right && <div className="hidden sm:block justify-self-end">{right}</div>}
+      {center && <div className="shrink-0 justify-self-center">{center}</div>}
+      {right && <div className="hidden justify-self-end sm:block">{right}</div>}
     </div>
   </BottomBar>
 );

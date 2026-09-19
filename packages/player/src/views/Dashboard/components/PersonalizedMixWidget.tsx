@@ -1,11 +1,11 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { SparklesIcon } from 'lucide-react';
+import { RotateCw, SparklesIcon } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import type { Track, TrackRef } from '@aurora/model';
 import type { MetadataProvider } from '@aurora/plugin-sdk';
-import { Badge, Loader } from '@aurora/ui';
+import { Badge, Button, Loader } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../../components/ConnectedTrackTable';
 import { MobileTrackPages } from '../../../components/MobileTrackPages';
@@ -52,7 +52,7 @@ const fetchTopTracksForArtists = async (
       }
 
       const topTracks = await provider.fetchArtistTopTracks(artistUri);
-      for (const trackRef of topTracks.slice(0, 5)) {
+      for (const trackRef of topTracks.slice(0, 10)) {
         candidates.push({
           track: trackRefToTrack(trackRef),
           source: 'topTracks',
@@ -88,7 +88,7 @@ const fetchRelatedArtistTracks = async (
       const relatedArtists =
         await provider.fetchArtistRelatedArtists(artistUri);
 
-      for (const relatedArtist of relatedArtists.slice(0, 3)) {
+      for (const relatedArtist of relatedArtists.slice(0, 4)) {
         const relatedUri = relatedArtist.source?.id;
         if (!relatedUri || seenArtistUris.has(relatedUri)) {
           continue;
@@ -97,7 +97,7 @@ const fetchRelatedArtistTracks = async (
 
         try {
           const topTracks = await provider.fetchArtistTopTracks(relatedUri);
-          for (const trackRef of topTracks.slice(0, 3)) {
+          for (const trackRef of topTracks.slice(0, 4)) {
             candidates.push({
               track: trackRefToTrack(trackRef),
               source: 'related',
@@ -146,11 +146,13 @@ const fetchSearchFallback = async (
   const candidates: TaggedCandidate[] = [];
   const queries: string[] =
     topArtists.length > 0
-      ? topArtists.slice(0, 3).map((artist) => artist.name)
+      ? topArtists.slice(0, 4).map((artist) => artist.name)
       : ['Pop Hits', 'Rock Classics', 'Reggaeton Mix', 'Electronic Music'];
 
   if (topGenres.length > 0) {
-    queries.push(...topGenres.slice(0, 2).map((g) => `${g.genre} mix`));
+    queries.push(
+      ...topGenres.slice(0, 3).map((genreScore) => `${genreScore.genre} mix`),
+    );
   }
 
   for (const query of queries) {
@@ -163,7 +165,7 @@ const fetchSearchFallback = async (
         types: ['tracks'],
       });
       if (results.tracks && Array.isArray(results.tracks)) {
-        for (const track of results.tracks.slice(0, 6)) {
+        for (const track of results.tracks.slice(0, 8)) {
           candidates.push({ track, source: 'search' });
         }
       }
@@ -180,6 +182,7 @@ export const PersonalizedMixWidget: FC = () => {
   const queryClient = useQueryClient();
   const [visibleTracks, setVisibleTracks] = useState<Track[]>();
   const [topGenres, setTopGenres] = useState<GenreScore[]>([]);
+  const [refreshNonce, setRefreshNonce] = useState(0);
   const metadataProviders = useProviders('metadata') as MetadataProvider[];
   const discoveryProviders = useProviders('discovery');
   const activeProviderId =
@@ -205,13 +208,15 @@ export const PersonalizedMixWidget: FC = () => {
     data: tracks,
     isLoading,
     isFetching,
+    refetch,
   } = useQuery<Track[]>({
     queryKey: [
       ...PERSONALIZED_MIX_QUERY_KEY,
       activeProviderId,
       activeDiscoveryId,
+      refreshNonce,
     ],
-    enabled: metadataProviders.length > 0 && visibleTracks === undefined,
+    enabled: metadataProviders.length > 0,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     queryFn: async () => {
@@ -257,6 +262,8 @@ export const PersonalizedMixWidget: FC = () => {
         topArtists,
         listens,
         blacklist,
+        0.5,
+        refreshNonce,
       );
     },
     staleTime: 60 * 1000,
@@ -264,9 +271,21 @@ export const PersonalizedMixWidget: FC = () => {
 
   useEffect(() => {
     if (tracks !== undefined && !isFetching) {
-      setVisibleTracks((current) => current ?? tracks);
+      setVisibleTracks(tracks);
     }
   }, [tracks, isFetching]);
+
+  useEffect(() => {
+    setVisibleTracks(undefined);
+  }, [activeProviderId, activeDiscoveryId]);
+
+  const handleRefresh = async () => {
+    setRefreshNonce((previousNonce) => previousNonce + 1);
+    const result = await refetch();
+    if (result.data) {
+      setVisibleTracks(result.data);
+    }
+  };
 
   return (
     <div
@@ -277,6 +296,20 @@ export const PersonalizedMixWidget: FC = () => {
         <div className="flex min-w-0 items-center gap-2">
           <SparklesIcon className="text-primary size-5" />
           <h2 className="text-lg font-bold">{t('personalizedMix.title')}</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            data-testid="refresh-recommendations-button"
+            className="text-foreground-secondary hover:text-foreground h-7 w-7"
+            aria-label={t('refresh')}
+            title={t('refresh')}
+            disabled={isFetching}
+            onClick={() => void handleRefresh()}
+          >
+            <RotateCw
+              className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`}
+            />
+          </Button>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {topGenres.slice(0, 3).map((genreScore) => (
@@ -302,7 +335,10 @@ export const PersonalizedMixWidget: FC = () => {
           <Loader data-testid="dashboard-personalized-loader" size="lg" />
         </div>
       ) : isCapacitorEnvironment() ? (
-        <MobileTrackPages tracks={visibleTracks ?? []} />
+        <MobileTrackPages
+          key={`mix-pages-${refreshNonce}`}
+          tracks={visibleTracks ?? []}
+        />
       ) : (
         <ConnectedTrackTable
           tracks={visibleTracks ?? []}

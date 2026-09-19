@@ -12,8 +12,8 @@ import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
 import { Loader, StatChip } from '@aurora/ui';
 
-import { useArtistCardImage } from '../../Favorites/useArtistCardImage';
 import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
+import { useArtistCardImage } from '../../Favorites/useArtistCardImage';
 import { useArtistSocialStats } from '../hooks/useArtistSocialStats';
 
 const AVATAR_SIZE_PX = 300;
@@ -47,7 +47,11 @@ export const ArtistSocialHeader: FC<ArtistSocialHeaderProps> = ({
     isError,
   } = useArtistSocialStats(providerId, artistId);
 
-  const avatarUrl = useArtistCardImage(stats?.name ?? '', pickArtwork(stats?.artwork, 'avatar', AVATAR_SIZE_PX)?.url, providerId);
+  const avatarUrl = useArtistCardImage(
+    stats?.name ?? '',
+    pickArtwork(stats?.artwork, 'avatar', AVATAR_SIZE_PX)?.url,
+    providerId,
+  );
 
   if (isLoading) {
     return (
@@ -76,7 +80,6 @@ export const ArtistSocialHeader: FC<ArtistSocialHeaderProps> = ({
   if (!stats) {
     return null;
   }
-
 
   const location = [stats.city, stats.country].filter(Boolean).join(', ');
 

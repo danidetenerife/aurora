@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.55" date="2026-09-19">
+      <description>
+        <p>Release 1.48.55: RenovaciÃ³n dinÃ¡mica del motor de recomendaciones, correcciÃ³n integral del Dashboard mÃ³vil y soluciÃ³n de reproducciÃ³n en Android Auto / AAOS.</p>
+      </description>
+    </release>
+
     <release version="1.48.54" date="2026-09-18">
       <description>
         <p>Release 1.48.54: TransformaciÃ³n integral de Android Auto y AAOS: 100% carÃ¡tulas HD neo-brutalistas, generador dinÃ¡mico con degradados, MediaSession unificada y Now Playing completo con controles y favoritos.</p>

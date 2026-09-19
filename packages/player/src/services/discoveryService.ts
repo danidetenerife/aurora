@@ -31,10 +31,7 @@ export const registerTrackInSet = (
   }
 };
 
-export const isTrackInSet = (
-  track: Track,
-  targetSet: Set<string>,
-): boolean => {
+export const isTrackInSet = (track: Track, targetSet: Set<string>): boolean => {
   if (track.source?.id && targetSet.has(track.source.id.toLowerCase().trim())) {
     return true;
   }
@@ -227,7 +224,10 @@ export const getIntelligentAutoplayTracks = async (
       return true;
     });
 
-    const variety = useSettingsStore.getState().getValue('core.playback.discoveryVariety') as number ?? 0.5;
+    const variety =
+      (useSettingsStore
+        .getState()
+        .getValue('core.playback.discoveryVariety') as number) ?? 0.5;
 
     const ranked = personalizationEngine.scoreAndRankTracks(
       filtered,

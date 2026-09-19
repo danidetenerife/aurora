@@ -45,7 +45,7 @@ describe('ytdlpHost', () => {
     });
 
     it('extracts videoId correctly from watch URL before extracting stream', async () => {
-      let requestedBody: any = null;
+      let requestedBody: Record<string, unknown> | null = null;
       vi.spyOn(httpHost, 'fetch').mockImplementation(async (url, options) => {
         if (typeof url === 'string' && url.includes('player')) {
           if (options?.body) {
@@ -86,4 +86,3 @@ describe('ytdlpHost', () => {
     });
   });
 });
-

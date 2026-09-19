@@ -50,7 +50,7 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
             onError={() => setImageError(true)}
           />
         ) : (
-          children ?? <Music />
+          (children ?? <Music />)
         )}
       </span>
       <div className="tv-card-info">

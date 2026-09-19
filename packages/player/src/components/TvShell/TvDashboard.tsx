@@ -231,13 +231,17 @@ export const TvDashboard: FC = () => {
       }
 
       const seedTracks = await personalizationEngine.getSeedTracks(3);
-      const contextTracks = seedTracks.length > 0
-        ? seedTracks
-        : topArtists.slice(0, 2).map((artist) => ({
-            title: '',
-            artists: [{ name: artist.name, roles: [] as const }],
-            source: { provider: 'seed' as const, id: artist.name },
-          } as Track));
+      const contextTracks =
+        seedTracks.length > 0
+          ? seedTracks
+          : topArtists.slice(0, 2).map(
+              (artist) =>
+                ({
+                  title: '',
+                  artists: [{ name: artist.name, roles: [] as const }],
+                  source: { provider: 'seed' as const, id: artist.name },
+                }) as Track,
+            );
 
       let results: Track[] = [];
 
@@ -265,7 +269,11 @@ export const TvDashboard: FC = () => {
           );
         }
         if (queries.length === 0) {
-          queries.push("Today's Top Hits", 'Top 50 Global', 'Billboard Hot 100');
+          queries.push(
+            "Today's Top Hits",
+            'Top 50 Global',
+            'Billboard Hot 100',
+          );
         }
 
         for (const query of queries) {
@@ -331,7 +339,8 @@ export const TvDashboard: FC = () => {
 
   const heroTrack = recommendedTracks[0] ?? DEFAULT_HERO_TRACK;
   const heroArtUrl =
-    pickArtwork(heroTrack.artwork ?? heroTrack.album?.artwork, 'thumbnail', 600)?.url ??
+    pickArtwork(heroTrack.artwork ?? heroTrack.album?.artwork, 'thumbnail', 600)
+      ?.url ??
     'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop';
   const isHeroFavorite = favorites.some(
     (item) =>
@@ -350,12 +359,15 @@ export const TvDashboard: FC = () => {
           <div className="tv-hero-overlay" />
           <div className="tv-hero-content">
             <div className="tv-hero-badges">
-              <span className="tv-hero-badge featured">✨ Destacado para ti</span>
+              <span className="tv-hero-badge featured">
+                ✨ Destacado para ti
+              </span>
               <span className="tv-hero-badge video">🎬 Modo Videoclip</span>
             </div>
             <h1 className="tv-hero-title">{heroTrack.title}</h1>
             <p className="tv-hero-artist">
-              {heroTrack.artists?.map((artist) => artist.name).join(', ') || 'Aurora Music'}
+              {heroTrack.artists?.map((artist) => artist.name).join(', ') ||
+                'Aurora Music'}
             </p>
             <div className="tv-hero-actions">
               <TvButton
@@ -397,7 +409,9 @@ export const TvDashboard: FC = () => {
                 onClick={() => {
                   if (isHeroFavorite) {
                     if (heroTrack.source) {
-                      void useFavoritesStore.getState().removeTrack(heroTrack.source);
+                      void useFavoritesStore
+                        .getState()
+                        .removeTrack(heroTrack.source);
                     }
                   } else {
                     void useFavoritesStore.getState().addTrack(heroTrack);
@@ -433,13 +447,18 @@ export const TvDashboard: FC = () => {
           >
             <div
               className="tv-stat-chip-icon"
-              style={{ background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899' }}
+              style={{
+                background: 'rgba(236, 72, 153, 0.15)',
+                color: '#ec4899',
+              }}
             >
               <Heart className="h-4 w-4 fill-current" />
             </div>
             <div>
               <div className="tv-stat-chip-title">Tus Favoritos</div>
-              <div className="tv-stat-chip-value">{favorites.length} canciones</div>
+              <div className="tv-stat-chip-value">
+                {favorites.length} canciones
+              </div>
             </div>
           </TvButton>
 
@@ -456,13 +475,18 @@ export const TvDashboard: FC = () => {
           >
             <div
               className="tv-stat-chip-icon"
-              style={{ background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8' }}
+              style={{
+                background: 'rgba(56, 189, 248, 0.15)',
+                color: '#38bdf8',
+              }}
             >
               <ListMusic className="h-4 w-4" />
             </div>
             <div>
               <div className="tv-stat-chip-title">Tus Listas</div>
-              <div className="tv-stat-chip-value">{playlists.length} guardadas</div>
+              <div className="tv-stat-chip-value">
+                {playlists.length} guardadas
+              </div>
             </div>
           </TvButton>
 
@@ -479,7 +503,10 @@ export const TvDashboard: FC = () => {
           >
             <div
               className="tv-stat-chip-icon"
-              style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#a855f7' }}
+              style={{
+                background: 'rgba(168, 85, 247, 0.15)',
+                color: '#a855f7',
+              }}
             >
               <Radio className="h-4 w-4" />
             </div>
@@ -503,7 +530,10 @@ export const TvDashboard: FC = () => {
           >
             <div
               className="tv-stat-chip-icon"
-              style={{ background: 'rgba(98, 226, 189, 0.15)', color: '#62e2bd' }}
+              style={{
+                background: 'rgba(98, 226, 189, 0.15)',
+                color: '#62e2bd',
+              }}
             >
               <Sparkles className="h-4 w-4" />
             </div>
@@ -533,7 +563,13 @@ export const TvDashboard: FC = () => {
                       subtitle={track.artists
                         ?.map((artist) => artist.name)
                         .join(', ')}
-                      src={pickArtwork(track.artwork ?? track.album?.artwork, 'thumbnail', 300)?.url}
+                      src={
+                        pickArtwork(
+                          track.artwork ?? track.album?.artwork,
+                          'thumbnail',
+                          300,
+                        )?.url
+                      }
                       focusKey={`tv-dash-rec-${index}`}
                       destinations={{
                         up: 'tv-stat-favs',
@@ -571,13 +607,15 @@ export const TvDashboard: FC = () => {
             <div className="tv-section-icon explore">
               <Compass />
             </div>
-            <h2 className="tv-section-title">Explora por Estado de Ánimo & Géneros</h2>
+            <h2 className="tv-section-title">
+              Explora por Estado de Ánimo & Géneros
+            </h2>
             <span className="tv-section-badge">7 Estilos</span>
           </header>
 
           <FocusContext.Provider value={rowMoods.focusKey}>
             <div ref={rowMoods.ref} className="tv-row-scroller">
-            {sortedMoods.map((mood, index) => {
+              {sortedMoods.map((mood, index) => {
                 const Icon = mood.icon;
                 return (
                   <TvButton

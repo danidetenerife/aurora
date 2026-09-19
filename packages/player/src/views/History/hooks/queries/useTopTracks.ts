@@ -5,10 +5,7 @@ import {
   resolveTrackCoverUrl,
 } from '../../../../services/coverArtResolver';
 import { personalizationEngine } from '../../../../services/personalizationEngine';
-import type {
-  TimeRange,
-  TopTrack,
-} from '../../../../services/tauri/bindings';
+import type { TimeRange, TopTrack } from '../../../../services/tauri/bindings';
 import { commands } from '../../../../services/tauri/bindings';
 import { unwrapResult } from '../../../../services/tauri/results';
 import { isTauriEnvironment } from '../../../../services/universalStore';
@@ -24,7 +21,9 @@ export const useTopTracks = (range: TimeRange, limit: number) =>
 
       if (isTauriEnvironment()) {
         try {
-          rawTracks = unwrapResult(await commands.historyTopTracks(range, limit));
+          rawTracks = unwrapResult(
+            await commands.historyTopTracks(range, limit),
+          );
         } catch {
           rawTracks = [];
         }
@@ -46,7 +45,9 @@ export const useTopTracks = (range: TimeRange, limit: number) =>
       if (rawTracks.length === 0) {
         const records = await personalizationEngine.getListenRecords();
         const sorted = [...records]
-          .sort((first, second) => (second.playCount || 1) - (first.playCount || 1))
+          .sort(
+            (first, second) => (second.playCount || 1) - (first.playCount || 1),
+          )
           .slice(0, limit);
 
         if (sorted.length === 0 && favoriteTracks.length > 0) {
@@ -73,7 +74,10 @@ export const useTopTracks = (range: TimeRange, limit: number) =>
 
       return Promise.all(
         rawTracks.map(async (track) => {
-          if (track.artworkUrl && !isYouTubeOrGenericArtwork(track.artworkUrl)) {
+          if (
+            track.artworkUrl &&
+            !isYouTubeOrGenericArtwork(track.artworkUrl)
+          ) {
             return track;
           }
 
@@ -99,4 +103,3 @@ export const useTopTracks = (range: TimeRange, limit: number) =>
       );
     },
   });
-

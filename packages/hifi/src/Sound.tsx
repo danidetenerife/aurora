@@ -11,7 +11,8 @@ import { SoundProps } from './types';
 import { YouTubePlayer } from './YouTubePlayer';
 
 const isYouTubeUrl = (url?: string): boolean =>
-  typeof url === 'string' && (url.includes('youtube.com') || url.includes('youtu.be'));
+  typeof url === 'string' &&
+  (url.includes('youtube.com') || url.includes('youtu.be'));
 
 /**
  * Audio player component that delegates to YouTubePlayer for YouTube URLs

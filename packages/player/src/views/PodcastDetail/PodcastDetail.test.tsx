@@ -36,10 +36,14 @@ describe('PodcastDetail view', () => {
                             {
                               musicResponsiveHeaderRenderer: {
                                 title: { runs: [{ text: 'The Wild Project' }] },
-                                straplineTextOne: { runs: [{ text: 'Jordi Wild' }] },
+                                straplineTextOne: {
+                                  runs: [{ text: 'Jordi Wild' }],
+                                },
                                 description: {
                                   musicDescriptionShelfRenderer: {
-                                    description: { runs: [{ text: 'Podcast semanal' }] },
+                                    description: {
+                                      runs: [{ text: 'Podcast semanal' }],
+                                    },
                                   },
                                 },
                               },
@@ -58,7 +62,9 @@ describe('PodcastDetail view', () => {
                           contents: [
                             {
                               musicMultiRowListItemRenderer: {
-                                title: { runs: [{ text: 'Episodio 1: Bienvenida' }] },
+                                title: {
+                                  runs: [{ text: 'Episodio 1: Bienvenida' }],
+                                },
                                 subtitle: { runs: [{ text: '1 hora' }] },
                                 onTap: {
                                   watchEndpoint: {
@@ -69,7 +75,11 @@ describe('PodcastDetail view', () => {
                             },
                             {
                               musicMultiRowListItemRenderer: {
-                                title: { runs: [{ text: 'Episodio 2: Invitado especial' }] },
+                                title: {
+                                  runs: [
+                                    { text: 'Episodio 2: Invitado especial' },
+                                  ],
+                                },
                                 subtitle: { runs: [{ text: '2 horas' }] },
                                 onTap: {
                                   watchEndpoint: {
@@ -107,7 +117,9 @@ describe('PodcastDetail view', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Episodio 1: Bienvenida')).toBeInTheDocument();
-      expect(screen.getByText('Episodio 2: Invitado especial')).toBeInTheDocument();
+      expect(
+        screen.getByText('Episodio 2: Invitado especial'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -119,7 +131,9 @@ describe('PodcastDetail view', () => {
     await PodcastDetailWrapper.favoriteButton.click();
 
     expect(usePodcastStore.getState().favorites).toHaveLength(1);
-    expect(usePodcastStore.getState().favorites[0]?.name).toBe('The Wild Project');
+    expect(usePodcastStore.getState().favorites[0]?.name).toBe(
+      'The Wild Project',
+    );
 
     await PodcastDetailWrapper.favoriteButton.click();
 

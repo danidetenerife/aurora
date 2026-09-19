@@ -19,7 +19,14 @@ export const ConnectedFavoriteButton: FC<ConnectedFavoriteButtonProps> = (
   props,
 ) => {
   const { t } = useTranslation('track');
-  const { type, source, data, size = 'default', className, 'data-testid': testId } = props;
+  const {
+    type,
+    source,
+    data,
+    size = 'default',
+    className,
+    'data-testid': testId,
+  } = props;
 
   const isFavorite = useFavoritesStore((state) =>
     type === 'album'

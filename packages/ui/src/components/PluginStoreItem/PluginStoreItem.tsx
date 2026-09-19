@@ -54,47 +54,54 @@ export const PluginStoreItem: FC<PluginStoreItemProps> = ({
       data-testid="plugin-store-item"
       variant="tertiary"
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-4',
+        'flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4',
         className,
       )}
       {...props}
     >
       <div className="flex min-w-0 flex-1 items-start gap-3">
-        {icon && <img src={icon} alt="" className="h-12 w-12 shrink-0 rounded object-contain" draggable={false} />}
+        {icon && (
+          <img
+            src={icon}
+            alt=""
+            className="h-12 w-12 shrink-0 rounded object-contain"
+            draggable={false}
+          />
+        )}
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base sm:text-lg leading-tight font-bold select-none">
-            <span data-testid="plugin-store-item-name">{name}</span>
-            <span className="text-foreground-secondary text-xs sm:text-sm font-normal select-none">
-              <span className="mr-1 opacity-60">{by}</span>
-              <span data-testid="plugin-store-item-author">{author}</span>
-            </span>
-          </h3>
-          {version && (
-            <Badge
-              data-testid="plugin-store-item-version"
-              color="inverted"
-              variant="pill"
-            >
-              v{version}
-            </Badge>
-          )}
-          {(categories ?? (category ? [category] : [])).map((cat) => (
-            <Badge key={cat} variant="pill" color="cyan">
-              {cat}
-            </Badge>
-          ))}
-        </div>
-        <p
-          data-testid="plugin-store-item-description"
-          className="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
-        >
-          {description}
-        </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-foreground inline-flex flex-wrap items-baseline gap-2 text-base leading-tight font-bold select-none sm:text-lg">
+              <span data-testid="plugin-store-item-name">{name}</span>
+              <span className="text-foreground-secondary text-xs font-normal select-none sm:text-sm">
+                <span className="mr-1 opacity-60">{by}</span>
+                <span data-testid="plugin-store-item-author">{author}</span>
+              </span>
+            </h3>
+            {version && (
+              <Badge
+                data-testid="plugin-store-item-version"
+                color="inverted"
+                variant="pill"
+              >
+                v{version}
+              </Badge>
+            )}
+            {(categories ?? (category ? [category] : [])).map((cat) => (
+              <Badge key={cat} variant="pill" color="cyan">
+                {cat}
+              </Badge>
+            ))}
+          </div>
+          <p
+            data-testid="plugin-store-item-description"
+            className="text-foreground-secondary line-clamp-2 text-xs sm:text-sm"
+          >
+            {description}
+          </p>
         </div>
       </div>
 
-      <div className="shrink-0 flex items-center justify-end sm:justify-start">
+      <div className="flex shrink-0 items-center justify-end sm:justify-start">
         {isInstalling ? (
           <Button disabled size="sm" className="w-28">
             <Loader size="sm" />

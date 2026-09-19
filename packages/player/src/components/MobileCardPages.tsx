@@ -92,10 +92,10 @@ export const MobileCardPages: FC<{
               <Music className="size-9 shrink-0" />
             )}
             <span className="min-w-0 flex-1">
-              <span className="block break-words text-sm font-semibold leading-tight">
+              <span className="block text-sm leading-tight font-semibold break-words">
                 {item.title}
               </span>
-              <span className="text-foreground-secondary block break-words text-xs leading-tight">
+              <span className="text-foreground-secondary block text-xs leading-tight break-words">
                 {item.subtitle}
               </span>
             </span>

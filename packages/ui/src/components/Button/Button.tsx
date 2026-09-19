@@ -55,7 +55,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(
       ref={ref}
       className={cn(buttonVariants({ variant, size, intent, className }))}
       type={as === 'button' ? (type ?? 'button') : undefined}
-      {...(rest as any)}
+      {...(rest as Record<string, unknown>)}
     >
       {children}
     </HeadlessButton>

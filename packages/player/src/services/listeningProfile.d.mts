@@ -21,4 +21,7 @@ export type UserListenRecord = ListenCounters & {
 };
 
 export function normalizeListen(raw: unknown): UserListenRecord | null;
-export function mergeListenRecords(local: unknown, remote: unknown): UserListenRecord[];
+export function mergeListenRecords(
+  local: unknown,
+  remote: unknown,
+): UserListenRecord[];

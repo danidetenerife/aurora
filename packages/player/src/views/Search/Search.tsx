@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Mic2 } from 'lucide-react';
-import { type FC, useState } from 'react';
-
+import { useState, type FC } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
@@ -49,7 +48,7 @@ const PodcastSearchRow: FC<{
         />
       ) : (
         <div className="bg-background border-border flex size-12 shrink-0 items-center justify-center rounded-lg border">
-          <Mic2 className="size-6 text-foreground/40" />
+          <Mic2 className="text-foreground/40 size-6" />
         </div>
       )}
       <span className="min-w-0 flex-1 text-sm font-semibold break-words">
@@ -64,7 +63,6 @@ const PodcastSearchRow: FC<{
 };
 
 const SearchContent: FC<{
-
   query: string;
   provider: MetadataProvider | undefined;
   isLoading: boolean;
@@ -214,7 +212,6 @@ const SearchContent: FC<{
       ),
     },
   ].filter(Boolean);
-
 
   return (
     <>

@@ -6,8 +6,8 @@ import { EmptyState, ViewShell } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
 import { MobileTrackPages } from '../../components/MobileTrackPages';
-import { isCapacitorEnvironment } from '../../services/universalStore';
 import { enrichFavoriteTracks } from '../../services/artworkEnricher';
+import { isCapacitorEnvironment } from '../../services/universalStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { sortByAddedAtDesc } from '../../utils/sort';
 
@@ -27,7 +27,13 @@ export const FavoriteTracks: FC = () => {
   const hasDuration = sortedTracks.some((track) => track.durationMs != null);
 
   return (
-    <ViewShell data-testid="favorite-tracks-view" title={t('tracks.title')} classes={isCapacitorEnvironment() ? { root: 'aurora-mobile-library' } : undefined}>
+    <ViewShell
+      data-testid="favorite-tracks-view"
+      title={t('tracks.title')}
+      classes={
+        isCapacitorEnvironment() ? { root: 'aurora-mobile-library' } : undefined
+      }
+    >
       {sortedTracks.length === 0 ? (
         <EmptyState
           icon={<Music size={48} />}
@@ -35,8 +41,10 @@ export const FavoriteTracks: FC = () => {
           description={t('tracks.emptyDescription')}
           className="flex-1"
         />
+      ) : isCapacitorEnvironment() ? (
+        <MobileTrackPages tracks={sortedTracks} />
       ) : (
-        isCapacitorEnvironment() ? <MobileTrackPages tracks={sortedTracks} /> : <ConnectedTrackTable
+        <ConnectedTrackTable
           tracks={sortedTracks}
           features={{
             header: true,

@@ -88,7 +88,10 @@ export const TvAutoUpdater: FC = () => {
           (data) => {
             if (!isCancelled) {
               setDownloadProgress(
-                Math.max(0, Math.min(COMPLETE_PERCENT, Math.round(data.percent))),
+                Math.max(
+                  0,
+                  Math.min(COMPLETE_PERCENT, Math.round(data.percent)),
+                ),
               );
             }
           },

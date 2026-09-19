@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { p2pSyncService } from '../../services/p2pSyncService';
+import { initSpatialNavigation } from '../../services/spatialNavigation';
 import { TvCoverArtView } from './TvCoverArtView';
 import { POPULAR_TV_PLAYLISTS, TvDashboard } from './TvDashboard';
 import { TvSyncSection } from './TvSyncSection';
@@ -33,8 +34,6 @@ vi.mock('../../services/personalizationEngine', () => ({
     subscribe: vi.fn().mockReturnValue(() => {}),
   },
 }));
-
-import { initSpatialNavigation } from '../../services/spatialNavigation';
 
 describe('Google TV Features', () => {
   beforeAll(() => {
@@ -77,7 +76,12 @@ describe('Google TV Features', () => {
         artists: [{ name: 'Radiohead', roles: [] }],
         source: { provider: 'test', id: '123' },
         artwork: {
-          items: [{ url: 'https://example.com/cover.jpg', purpose: 'thumbnail' as const }],
+          items: [
+            {
+              url: 'https://example.com/cover.jpg',
+              purpose: 'thumbnail' as const,
+            },
+          ],
         },
       };
 
@@ -109,9 +113,7 @@ describe('Google TV Features', () => {
 
       render(<TvSyncSection />);
 
-      expect(
-        screen.getByText('Sincronización con GitHub'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Sincronización con GitHub')).toBeInTheDocument();
       expect(screen.getByText('Sin conectar')).toBeInTheDocument();
 
       const input = screen.getByTestId('tv-github-token-input');

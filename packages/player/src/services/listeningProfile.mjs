@@ -1,6 +1,11 @@
 const DEFAULT_DURATION_MS = 180_000;
 const LEGACY_COMPLETION = 0.7;
-const COUNTERS = ['playCount', 'skipCount', 'immediateSkipCount', 'totalListenMs'];
+const COUNTERS = [
+  'playCount',
+  'skipCount',
+  'immediateSkipCount',
+  'totalListenMs',
+];
 const nonnegative = (value, fallback = 0) =>
   typeof value === 'number' && Number.isFinite(value) && value >= 0
     ? value

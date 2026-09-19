@@ -1,5 +1,6 @@
-import type { PodcastRef } from '@aurora/model';
 import { create } from 'zustand';
+
+import type { PodcastRef } from '@aurora/model';
 
 type TvSection =
   | 'dashboard'

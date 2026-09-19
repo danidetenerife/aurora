@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import {
   Disc,
   Heart,
@@ -9,7 +10,6 @@ import {
   UserX,
 } from 'lucide-react';
 import { FC, ReactNode } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';

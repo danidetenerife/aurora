@@ -1,7 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Heart, Mic2, Play } from 'lucide-react';
-import { type FC, useState } from 'react';
-
+import { useState, type FC } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import { Button, StatChip } from '@aurora/ui';
@@ -50,7 +49,7 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
   };
 
   return (
-    <div className="border-border bg-primary text-black shadow-shadow relative mx-3 mt-3 flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4 sm:mx-6 sm:mt-6 sm:gap-6 sm:p-6 md:flex-row">
+    <div className="border-border bg-primary shadow-shadow relative mx-3 mt-3 flex flex-col gap-4 rounded-xl border-(length:--border-width) p-4 text-black sm:mx-6 sm:mt-6 sm:gap-6 sm:p-6 md:flex-row">
       <button
         type="button"
         data-testid="podcast-back-button"
@@ -61,7 +60,7 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
             void navigate({ to: '/podcasts' });
           }
         }}
-        className="bg-background text-white border-border hover:bg-background/80 absolute top-4 left-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg border-(length:--border-width) transition-colors"
+        className="bg-background border-border hover:bg-background/80 absolute top-4 left-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg border-(length:--border-width) text-white transition-colors"
         aria-label={t('podcastBrowser:back')}
       >
         <ArrowLeft size={18} className="text-white" />
@@ -71,7 +70,7 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
         type="button"
         data-testid="podcast-favorite-button"
         onClick={handleToggleFavorite}
-        className="bg-background text-white border-border hover:bg-background/80 absolute top-4 right-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg border-(length:--border-width) transition-colors"
+        className="bg-background border-border hover:bg-background/80 absolute top-4 right-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg border-(length:--border-width) text-white transition-colors"
         aria-label={t(
           isFavorite
             ? 'podcastBrowser:removeFavorite'
@@ -80,7 +79,9 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
       >
         <Heart
           size={18}
-          className={isFavorite ? 'text-accent-red fill-accent-red' : 'text-white'}
+          className={
+            isFavorite ? 'text-accent-red fill-accent-red' : 'text-white'
+          }
         />
       </button>
 
@@ -104,19 +105,19 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
 
       <div className="flex flex-1 flex-col justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <span className="!text-black text-xs font-extrabold tracking-wider uppercase">
+          <span className="text-xs font-extrabold tracking-wider !text-black uppercase">
             {podcast.source === 'youtube-music'
               ? 'YouTube Music Podcast'
               : 'Podcast'}
           </span>
-          <h1 className="font-heading !text-black text-xl font-black tracking-tight break-words sm:text-4xl md:text-5xl">
+          <h1 className="font-heading text-xl font-black tracking-tight break-words !text-black sm:text-4xl md:text-5xl">
             {podcast.title}
           </h1>
-          <p className="!text-neutral-950 text-sm font-bold break-words sm:text-base">
+          <p className="text-sm font-bold break-words !text-neutral-950 sm:text-base">
             {podcast.publisher}
           </p>
           {podcast.description && (
-            <p className="!text-neutral-950 text-xs font-semibold leading-relaxed break-words whitespace-pre-line sm:text-sm">
+            <p className="text-xs leading-relaxed font-semibold break-words whitespace-pre-line !text-neutral-950 sm:text-sm">
               {podcast.description}
             </p>
           )}
@@ -137,8 +138,12 @@ export const PodcastDetailHeader: FC<PodcastDetailHeaderProps> = ({
           )}
 
           <StatChip
-            className="border-border bg-background text-white shadow-shadow"
-            value={<span className="text-white font-extrabold">{podcast.episodes.length}</span>}
+            className="border-border bg-background shadow-shadow text-white"
+            value={
+              <span className="font-extrabold text-white">
+                {podcast.episodes.length}
+              </span>
+            }
             label={t('common:misc.episodes', { defaultValue: 'Episodios' })}
           />
         </div>

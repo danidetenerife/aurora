@@ -182,7 +182,6 @@ export const ytdlpHost: YtdlpHost = {
       videoId = match[1];
     }
 
-
     const directInfo = await extractAudioStreamDirect(videoId);
     if (directInfo) {
       return directInfo;

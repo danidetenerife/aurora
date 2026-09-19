@@ -93,7 +93,9 @@ describe('Multi-Agent Panel: Personalization Engine Stress & Validation Suite', 
         durationMs: 180_000,
         tags: i % 3 === 0 ? ['synthwave'] : ['rock'],
       },
-      source: (i % 4 === 0 ? 'topTracks' : 'related') as 'topTracks' | 'related',
+      source: (i % 4 === 0 ? 'topTracks' : 'related') as
+        | 'topTracks'
+        | 'related',
     }));
 
     const startTime = performance.now();
@@ -194,8 +196,15 @@ describe('Multi-Agent Panel: Personalization Engine Stress & Validation Suite', 
     const topArtists: ArtistScore[] = [{ name: 'HOME', score: 100 }];
     const now = Date.now();
 
-    const recentlyPlayedTrack: Track = { ...BASE_TRACK, source: { provider: 'm', id: 'recent-1' } };
-    const olderPlayedTrack: Track = { ...BASE_TRACK, title: 'Old Memory', source: { provider: 'm', id: 'old-1' } };
+    const recentlyPlayedTrack: Track = {
+      ...BASE_TRACK,
+      source: { provider: 'm', id: 'recent-1' },
+    };
+    const olderPlayedTrack: Track = {
+      ...BASE_TRACK,
+      title: 'Old Memory',
+      source: { provider: 'm', id: 'old-1' },
+    };
 
     const listens: UserListenRecord[] = [
       {
@@ -271,7 +280,10 @@ describe('Multi-Agent Panel: Personalization Engine Stress & Validation Suite', 
       },
     ];
 
-    const ranked = engine.scoreAndRankTracks(candidates, [], [], { tracks: [], artists: [] });
+    const ranked = engine.scoreAndRankTracks(candidates, [], [], {
+      tracks: [],
+      artists: [],
+    });
     expect(ranked).toHaveLength(2);
     expect(ranked.map((t) => t.title)).toContain('Resonance');
     expect(ranked.map((t) => t.title)).toContain('Another One');
@@ -334,22 +346,82 @@ describe('Multi-Agent Panel: Personalization Engine Stress & Validation Suite', 
   it('Agent 10 (Variety): scales max tracks per artist and discovery pool proportion based on variety setting', () => {
     const topArtists: ArtistScore[] = [{ name: 'HOME', score: 100 }];
     const candidates = [
-      { track: { ...BASE_TRACK, title: 'T1', source: { provider: 'm', id: 't-1' } }, source: 'topTracks' as const },
-      { track: { ...BASE_TRACK, title: 'T2', source: { provider: 'm', id: 't-2' } }, source: 'topTracks' as const },
-      { track: { ...BASE_TRACK, title: 'T3', source: { provider: 'm', id: 't-3' } }, source: 'topTracks' as const },
-      { track: { ...BASE_TRACK, title: 'T4', source: { provider: 'm', id: 't-4' } }, source: 'topTracks' as const },
-      { track: { ...BASE_TRACK, title: 'D1', source: { provider: 'm', id: 'd-1' }, artists: [{ name: 'New 1', roles: [] }] }, source: 'search' as const },
-      { track: { ...BASE_TRACK, title: 'D2', source: { provider: 'm', id: 'd-2' }, artists: [{ name: 'New 2', roles: [] }] }, source: 'search' as const },
+      {
+        track: {
+          ...BASE_TRACK,
+          title: 'T1',
+          source: { provider: 'm', id: 't-1' },
+        },
+        source: 'topTracks' as const,
+      },
+      {
+        track: {
+          ...BASE_TRACK,
+          title: 'T2',
+          source: { provider: 'm', id: 't-2' },
+        },
+        source: 'topTracks' as const,
+      },
+      {
+        track: {
+          ...BASE_TRACK,
+          title: 'T3',
+          source: { provider: 'm', id: 't-3' },
+        },
+        source: 'topTracks' as const,
+      },
+      {
+        track: {
+          ...BASE_TRACK,
+          title: 'T4',
+          source: { provider: 'm', id: 't-4' },
+        },
+        source: 'topTracks' as const,
+      },
+      {
+        track: {
+          ...BASE_TRACK,
+          title: 'D1',
+          source: { provider: 'm', id: 'd-1' },
+          artists: [{ name: 'New 1', roles: [] }],
+        },
+        source: 'search' as const,
+      },
+      {
+        track: {
+          ...BASE_TRACK,
+          title: 'D2',
+          source: { provider: 'm', id: 'd-2' },
+          artists: [{ name: 'New 2', roles: [] }],
+        },
+        source: 'search' as const,
+      },
     ];
 
     // High variety (1.0) restricts tracks per artist to 2 and pulls more discovery
-    const highVariety = engine.scoreAndRankTracks(candidates, topArtists, [], { tracks: [], artists: [] }, 1.0);
-    const homeHighTracks = highVariety.filter((t) => t.artists[0].name === 'HOME');
+    const highVariety = engine.scoreAndRankTracks(
+      candidates,
+      topArtists,
+      [],
+      { tracks: [], artists: [] },
+      1.0,
+    );
+    const homeHighTracks = highVariety.filter(
+      (t) => t.artists[0].name === 'HOME',
+    );
     expect(homeHighTracks.length).toBeLessThanOrEqual(2);
 
     // Low variety (0.0) allows up to 4 tracks per favorite artist
-    const lowVariety = engine.scoreAndRankTracks(candidates, topArtists, [], { tracks: [], artists: [] }, 0.0);
-    const homeLowTracks = lowVariety.filter((t) => t.artists[0].name === 'HOME');
+    const lowVariety = engine.scoreAndRankTracks(
+      candidates,
+      topArtists,
+      [],
+      { tracks: [], artists: [] },
+      0.0,
+    );
+    const homeLowTracks = lowVariety.filter(
+      (t) => t.artists[0].name === 'HOME',
+    );
     expect(homeLowTracks.length).toBeGreaterThan(homeHighTracks.length);
   });
 

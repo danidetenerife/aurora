@@ -5,9 +5,9 @@ import { AlbumRef, pickArtwork } from '@aurora/model';
 import type { AttributedResult } from '@aurora/plugin-sdk';
 import type { CardsRowItem } from '@aurora/ui';
 
+import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { useDashboardTopAlbums } from '../hooks/useDashboardData';
 import { useNavigateToEntity } from '../hooks/useNavigateToEntity';
-import { ConnectedFavoriteButton } from '../../../components/ConnectedFavoriteButton';
 import { DashboardCardsWidget } from './DashboardCardsWidget';
 
 export const TopAlbumsWidget: FC = () => {

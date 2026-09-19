@@ -3,7 +3,10 @@ import { RefObject, useEffect, useRef } from 'react';
 let sharedContext: AudioContext | null = null;
 let sharedGainNode: GainNode | null = null;
 
-const getSharedAudioContext = (): { context: AudioContext; gainNode: GainNode } => {
+const getSharedAudioContext = (): {
+  context: AudioContext;
+  gainNode: GainNode;
+} => {
   if (!sharedContext || sharedContext.state === 'closed') {
     sharedContext = new AudioContext();
     sharedGainNode = sharedContext.createGain();

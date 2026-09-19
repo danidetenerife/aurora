@@ -253,6 +253,8 @@
     }
   },
   "dashboard": {
+    "all": "All",
+    "refresh": "Refresh recommendations",
     "personalizedMix": {
       "title": "Recommended for you",
       "badge": "Learning from your tastes",
@@ -543,7 +545,8 @@
     "navigation": "Pagination",
     "previous": "Previous page",
     "next": "Next page",
-    "page": "Page {{pageNumber}}"
+    "page": "Page {{pageNumber}}",
+    "goToCurrentTrack": "Back to current track"
   },
   "streaming": {
     "errors": {
@@ -658,10 +661,5 @@
     "playLatest": "Play latest episode",
     "episodesCount": "{{count}} episodes",
     "details": "Podcast Details"
-  },
-  "pagination": {
-    "previous": "Previous page",
-    "next": "Next page",
-    "goToCurrentTrack": "Back to current track"
   }
 }

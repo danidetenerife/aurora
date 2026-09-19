@@ -82,15 +82,16 @@ const loyaltyBonus = (record: UserListenRecord): number => {
   return Math.min(3.0, Math.log2(1 + days));
 };
 
-const getDeterministicJitter = (trackId: string): number => {
-  const day = Math.floor(Date.now() / MILLISECONDS_PER_DAY);
+const getDeterministicJitter = (trackId: string, seed: number = 0): number => {
+  const rotationSalt =
+    seed > 0 ? seed : Math.floor(Date.now() / (1000 * 60 * 60 * 2));
   let hash = 0;
-  const str = trackId + day;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
+  const identifier = `${trackId}:${rotationSalt}`;
+  for (let index = 0; index < identifier.length; index++) {
+    hash = (hash << 5) - hash + identifier.charCodeAt(index);
     hash |= 0;
   }
-  return 0.85 + ((Math.abs(hash) % 1000) / 1000) * 0.3; // [0.85, 1.15]
+  return 0.75 + ((Math.abs(hash) % 1000) / 1000) * 0.5;
 };
 
 export class PersonalizationEngine {
@@ -592,7 +593,15 @@ export class PersonalizationEngine {
 
     const ensureArtist = (name: string): ArtistScore => {
       if (!artistScores[name]) {
-        artistScores[name] = { name, score: 0, genres: [] };
+        const cached = this.artistResolutionCache.get(
+          name.toLowerCase().trim(),
+        );
+        artistScores[name] = {
+          name,
+          score: 0,
+          genres: cached?.genres ? [...cached.genres] : [],
+          spotifyUri: cached?.spotifyUri,
+        };
       }
       return artistScores[name];
     };
@@ -803,6 +812,7 @@ export class PersonalizationEngine {
       artists: [],
     },
     variety: number = 0.5,
+    seed: number = 0,
   ): Track[] {
     const listeningByTrack = new Map(
       listens.map((record) => [record.trackId, record]),
@@ -895,7 +905,7 @@ export class PersonalizationEngine {
       }
 
       const sourceBonus = sourceWeights[candidate.source] ?? 0.5;
-      const freshnessNoise = getDeterministicJitter(trackId);
+      const freshnessNoise = getDeterministicJitter(trackId, seed);
       const listen = listeningByTrack.get(trackId);
 
       const skipRatio =
@@ -908,7 +918,6 @@ export class PersonalizationEngine {
       const immediatePenalty =
         immediateSkips > 0 ? Math.pow(0.2, immediateSkips) : 1.0;
 
-      // Anti-fatigue / cooldown for tracks played in the last 4 hours
       let cooldownMultiplier = 1.0;
       if (listen?.lastPlayedAt) {
         const timeSincePlay = now - listen.lastPlayedAt;
@@ -920,7 +929,6 @@ export class PersonalizationEngine {
         }
       }
 
-      // Skip streak circuit breaker: if user is skipping rapidly, boost familiar and reduce discovery noise
       const streakMultiplier = hasSkipStreak
         ? candidate.source === 'topTracks'
           ? 1.3
@@ -928,7 +936,7 @@ export class PersonalizationEngine {
         : 1.0;
 
       const finalScore =
-        (affinity * 0.4 + sourceBonus * 0.25 + 0.2 + freshnessNoise * 0.15) *
+        (affinity * 0.35 + sourceBonus * 0.2 + 0.15 + freshnessNoise * 0.3) *
         skipWeight *
         immediatePenalty *
         cooldownMultiplier *
@@ -997,10 +1005,10 @@ export class PersonalizationEngine {
 
     pushFromPool(remaining, 0);
 
-    return this.interleave(merged);
+    return this.interleave(merged, seed);
   }
 
-  private interleave(tracks: Track[]): Track[] {
+  private interleave(tracks: Track[], seed: number = 0): Track[] {
     if (tracks.length <= 4) {
       return tracks;
     }
@@ -1020,7 +1028,7 @@ export class PersonalizationEngine {
       (a, b) => b.length - a.length,
     );
 
-    let queueIndex = 0;
+    let queueIndex = seed > 0 ? seed % Math.max(1, queues.length) : 0;
     while (result.length < tracks.length) {
       let added = false;
       const startIndex = queueIndex;

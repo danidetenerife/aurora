@@ -31,7 +31,9 @@ export const useListeningHistory = (page: PageRequest) =>
           const art = ft.ref.artists?.[0]?.name || '';
           const key = `${art}-${ft.ref.title}`.toLowerCase();
           const artUrl = ft.ref.artwork?.items?.[0]?.url;
-          if (artUrl) favMap.set(key, artUrl);
+          if (artUrl) {
+            favMap.set(key, artUrl);
+          }
         }
       }
 

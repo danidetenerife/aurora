@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { I18nextProvider } from 'react-i18next';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PodcastRef } from '@aurora/model';
@@ -8,6 +9,7 @@ import type { PodcastRef } from '@aurora/model';
 import { podcastService } from '../../services/podcastService';
 import { initSpatialNavigation } from '../../services/spatialNavigation';
 import { usePodcastStore } from '../../stores/podcastStore';
+import { tvI18n } from './tvI18n';
 import { playTvTracks } from './tvPlayback';
 import { TvPodcastDetail } from './TvPodcastDetail';
 
@@ -54,9 +56,6 @@ const mockDetail = {
     },
   ],
 };
-
-import { I18nextProvider } from 'react-i18next';
-import { tvI18n } from './tvI18n';
 
 const renderWithClient = (uiComponent: React.ReactElement) => {
   const queryClient = new QueryClient({

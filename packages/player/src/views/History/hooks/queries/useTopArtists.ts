@@ -5,10 +5,7 @@ import {
   resolveArtistImageUrl,
 } from '../../../../services/coverArtResolver';
 import { personalizationEngine } from '../../../../services/personalizationEngine';
-import type {
-  TimeRange,
-  TopArtist,
-} from '../../../../services/tauri/bindings';
+import type { TimeRange, TopArtist } from '../../../../services/tauri/bindings';
 import { commands } from '../../../../services/tauri/bindings';
 import { unwrapResult } from '../../../../services/tauri/results';
 import { isTauriEnvironment } from '../../../../services/universalStore';
@@ -24,7 +21,9 @@ export const useTopArtists = (range: TimeRange, limit: number) =>
 
       if (isTauriEnvironment()) {
         try {
-          rawArtists = unwrapResult(await commands.historyTopArtists(range, limit));
+          rawArtists = unwrapResult(
+            await commands.historyTopArtists(range, limit),
+          );
         } catch {
           rawArtists = [];
         }
@@ -52,12 +51,14 @@ export const useTopArtists = (range: TimeRange, limit: number) =>
         }
 
         if (artistPlays.size === 0 && favoriteArtists.length > 0) {
-          rawArtists = favoriteArtists.slice(0, limit).map((favorite, index) => ({
-            name: favorite.ref?.name || 'Artista',
-            artworkUrl: favorite.ref?.artwork?.items?.[0]?.url || null,
-            msPlayed: (limit - index) * FALLBACK_MS_PER_PLAY,
-            plays: limit - index,
-          }));
+          rawArtists = favoriteArtists
+            .slice(0, limit)
+            .map((favorite, index) => ({
+              name: favorite.ref?.name || 'Artista',
+              artworkUrl: favorite.ref?.artwork?.items?.[0]?.url || null,
+              msPlayed: (limit - index) * FALLBACK_MS_PER_PLAY,
+              plays: limit - index,
+            }));
         } else {
           const sorted = Array.from(artistPlays.entries())
             .sort((first, second) => second[1] - first[1])
@@ -74,7 +75,10 @@ export const useTopArtists = (range: TimeRange, limit: number) =>
 
       return Promise.all(
         rawArtists.map(async (artist) => {
-          if (artist.artworkUrl && !isYouTubeOrGenericArtwork(artist.artworkUrl)) {
+          if (
+            artist.artworkUrl &&
+            !isYouTubeOrGenericArtwork(artist.artworkUrl)
+          ) {
             return artist;
           }
 
@@ -95,4 +99,3 @@ export const useTopArtists = (range: TimeRange, limit: number) =>
       );
     },
   });
-

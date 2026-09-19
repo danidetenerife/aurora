@@ -2,13 +2,18 @@ import { LazyStore } from '@tauri-apps/plugin-store';
 
 export const isTauriEnvironment = (): boolean =>
   typeof window !== 'undefined' &&
-  Boolean((window as Window & { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__);
+  Boolean(
+    (window as Window & { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__,
+  );
 
 export const isCapacitorEnvironment = (): boolean =>
   typeof window !== 'undefined' &&
   !isTauriEnvironment() &&
-  Boolean((window as Window & { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.());
-
+  Boolean(
+    (
+      window as Window & { Capacitor?: { isNativePlatform?: () => boolean } }
+    ).Capacitor?.isNativePlatform?.(),
+  );
 
 export interface UniversalStore {
   entries<T = unknown>(): Promise<[string, T][]>;

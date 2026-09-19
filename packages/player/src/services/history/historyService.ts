@@ -5,16 +5,15 @@ import { useHistoryStore } from '../../stores/historyStore';
 import { getSetting } from '../../stores/settingsStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { secondsToMs } from '../../utils/time';
+import {
+  isYouTubeOrGenericArtwork,
+  resolveTrackCoverUrl,
+} from '../coverArtResolver';
 import { eventBus } from '../eventBus';
 import { Logger } from '../logger';
 import type { PlayEventKind, TrackSnapshot } from '../tauri/bindings';
 import { commands } from '../tauri/bindings';
 import { isTauriEnvironment } from '../universalStore';
-
-import {
-  isYouTubeOrGenericArtwork,
-  resolveTrackCoverUrl,
-} from '../coverArtResolver';
 
 const HISTORY_ENABLED_SETTING = 'core.history.enabled';
 const ARTWORK_TARGET_PX = 256;

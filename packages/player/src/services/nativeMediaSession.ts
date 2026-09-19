@@ -25,19 +25,12 @@ type NativeMediaSessionPluginInterface = {
     isPlaying: boolean;
     positionMs: number;
   }): Promise<void>;
-  updatePosition(options: {
-    positionMs: number;
-  }): Promise<void>;
-  playStream(options: {
-    url: string;
-    positionMs?: number;
-  }): Promise<void>;
+  updatePosition(options: { positionMs: number }): Promise<void>;
+  playStream(options: { url: string; positionMs?: number }): Promise<void>;
   pauseStream(): Promise<void>;
   resumeStream(): Promise<void>;
   updateAutoCatalog(options: { json: string }): Promise<void>;
-  seekStream(options: {
-    positionMs: number;
-  }): Promise<void>;
+  seekStream(options: { positionMs: number }): Promise<void>;
   getPlaybackStatus(): Promise<PlaybackStatusData>;
   isBluetoothConnected(): Promise<BluetoothStateData>;
   addListener(
@@ -71,4 +64,8 @@ const NativeMediaSessionPlugin =
     },
   );
 
-export { NativeMediaSessionPlugin, type BluetoothStateData, type PlaybackStatusData };
+export {
+  NativeMediaSessionPlugin,
+  type BluetoothStateData,
+  type PlaybackStatusData,
+};

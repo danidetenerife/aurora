@@ -22,8 +22,10 @@ export const PlayerBarNowPlaying: FC<PlayerBarNowPlayingProps> = ({
   onTitleClick,
   onArtistClick,
 }) => (
-  <div className={cn('flex min-w-0 flex-1 items-center gap-2 sm:gap-3', className)}>
-    <div className="border-border bg-background-secondary size-9 sm:size-12 shrink-0 overflow-hidden rounded-md border-(length:--border-width)">
+  <div
+    className={cn('flex min-w-0 flex-1 items-center gap-2 sm:gap-3', className)}
+  >
+    <div className="border-border bg-background-secondary size-9 shrink-0 overflow-hidden rounded-md border-(length:--border-width) sm:size-12">
       {coverUrl ? (
         <img
           src={coverUrl}
@@ -42,9 +44,12 @@ export const PlayerBarNowPlaying: FC<PlayerBarNowPlayingProps> = ({
     </div>
     <div className="min-w-0 flex-1">
       <div
-        className={cn('text-foreground break-words text-xs sm:text-sm font-bold leading-tight', {
-          'cursor-pointer hover:underline': onTitleClick,
-        })}
+        className={cn(
+          'text-foreground text-xs leading-tight font-bold break-words sm:text-sm',
+          {
+            'cursor-pointer hover:underline': onTitleClick,
+          },
+        )}
         data-testid="now-playing-title"
         onClick={onTitleClick}
       >
@@ -52,9 +57,12 @@ export const PlayerBarNowPlaying: FC<PlayerBarNowPlayingProps> = ({
       </div>
       {artist ? (
         <div
-          className={cn('text-foreground-secondary truncate text-[11px] sm:text-xs', {
-            'cursor-pointer hover:underline': onArtistClick,
-          })}
+          className={cn(
+            'text-foreground-secondary truncate text-[11px] sm:text-xs',
+            {
+              'cursor-pointer hover:underline': onArtistClick,
+            },
+          )}
           data-testid="player-now-playing-artist"
           onClick={onArtistClick}
         >

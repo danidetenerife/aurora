@@ -30,7 +30,11 @@ export const TvNowPlayingBar: FC = () => {
   const setShowVideo = useTvStore((state) => state.setShowVideo);
   const playing = status === 'playing';
   const artworkUrl = current
-    ? pickArtwork(current.track.artwork ?? current.track.album?.artwork, 'thumbnail', 100)?.url
+    ? pickArtwork(
+        current.track.artwork ?? current.track.album?.artwork,
+        'thumbnail',
+        100,
+      )?.url
     : undefined;
   const controls = [
     {
@@ -76,7 +80,8 @@ export const TvNowPlayingBar: FC = () => {
       action: () => {
         const track = current?.track;
         if (track) {
-          const trackId = track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
+          const trackId =
+            track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
           void personalizationEngine.blacklistTrack(trackId);
           void playNextInInfiniteQueue();
         }
@@ -87,7 +92,12 @@ export const TvNowPlayingBar: FC = () => {
     <footer data-testid="tv-now-playing-bar" className="tv-player">
       <div className="tv-track-info">
         {artworkUrl ? (
-          <img src={artworkUrl} alt="" className="tv-player-art" referrerPolicy="no-referrer" />
+          <img
+            src={artworkUrl}
+            alt=""
+            className="tv-player-art"
+            referrerPolicy="no-referrer"
+          />
         ) : (
           <Music className="tv-player-art" />
         )}

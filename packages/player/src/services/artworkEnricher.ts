@@ -21,9 +21,9 @@ export const resolveArtworkForTrack = async (
 ): Promise<ArtworkSet | null> => {
   const isPodcast = Boolean(
     track.isPodcast ||
-      track.source.provider === 'podcast-audio' ||
-      track.album?.source.provider === 'itunes-podcast' ||
-      track.album?.source.provider?.includes('podcast'),
+    track.source.provider === 'podcast-audio' ||
+    track.album?.source.provider === 'itunes-podcast' ||
+    track.album?.source.provider?.includes('podcast'),
   );
 
   if (isPodcast) {

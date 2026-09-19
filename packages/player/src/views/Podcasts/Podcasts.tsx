@@ -103,7 +103,7 @@ export const Podcasts: FC = () => {
             <strong className="text-foreground block text-sm font-bold break-words whitespace-normal">
               {podcast.name}
             </strong>
-            <span className="text-foreground-secondary block text-xs opacity-75 break-words whitespace-normal">
+            <span className="text-foreground-secondary block text-xs break-words whitespace-normal opacity-75">
               {podcast.publisher}
             </span>
           </span>
@@ -166,4 +166,3 @@ export const Podcasts: FC = () => {
     </ViewShell>
   );
 };
-

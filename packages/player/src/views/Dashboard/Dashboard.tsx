@@ -49,7 +49,7 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
 
   if (isCapacitorEnvironment()) {
     const filterPills = [
-      { id: 'all', title: 'Todo' },
+      { id: 'all', title: t('all', 'Todo') },
       ...(metadataProviders.length
         ? [
             {
@@ -80,9 +80,9 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
         {/* Dynamic Spotify Greeting */}
         <div
           data-testid="mobile-dashboard-greeting"
-          className="flex items-center justify-between px-1 pt-2 shrink-0"
+          className="flex shrink-0 items-center justify-between px-1 pt-2"
         >
-          <h1 className="text-2xl font-black tracking-tight text-foreground">
+          <h1 className="text-foreground text-2xl font-black tracking-tight">
             {getTimeOfDayGreeting()}
           </h1>
         </div>
@@ -90,7 +90,7 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
         {/* Spotify-style Horizontal Filter Pills */}
         <div
           data-testid="mobile-filter-pills"
-          className="flex items-center gap-2 overflow-x-auto pb-1 shrink-0 no-scrollbar select-none"
+          className="no-scrollbar flex shrink-0 items-center gap-2 overflow-x-auto pb-1 select-none"
         >
           {filterPills.map((pill) => {
             const isActive =
@@ -102,10 +102,10 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => setSelectedSection(pill.id)}
-                className={`flex-none rounded-full px-4 py-1.5 text-xs font-bold transition-all active:scale-95 cursor-pointer ${
+                className={`flex-none cursor-pointer rounded-full px-4 py-1.5 text-xs font-bold transition-all active:scale-95 ${
                   isActive
                     ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'bg-background-secondary text-foreground-secondary border border-border/70 hover:text-foreground'
+                    : 'bg-background-secondary text-foreground-secondary border-border/70 hover:text-foreground border'
                 }`}
               >
                 {pill.title}
@@ -114,8 +114,13 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
           })}
         </div>
 
-        {/* Feed Content: Single Section or Unified Feed */}
-        <div className="flex flex-col gap-6 pb-24 overflow-y-auto">
+        <div
+          className={
+            selectedSection === 'all'
+              ? 'aurora-mobile-dashboard-feed flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pb-32'
+              : 'aurora-mobile-dashboard-single flex min-h-0 flex-1 flex-col overflow-hidden pb-4'
+          }
+        >
           {selectedSection === 'all' ? (
             <>
               {metadataProviders.length > 0 && <PersonalizedMixWidget />}
@@ -125,7 +130,9 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
               })}
             </>
           ) : (
-            currentSection?.content
+            <div className="flex h-full min-h-0 flex-1 flex-col">
+              {currentSection?.content}
+            </div>
           )}
         </div>
       </div>

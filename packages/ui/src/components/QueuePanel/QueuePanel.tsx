@@ -115,7 +115,8 @@ export const QueuePanel: FC<QueuePanelProps> = ({
     shouldVirtualize && virtualItems.length > 0 ? virtualItems[0].start : 0;
   const paddingBottom =
     shouldVirtualize && virtualItems.length > 0
-      ? rowVirtualizer.getTotalSize() - virtualItems[virtualItems.length - 1].end
+      ? rowVirtualizer.getTotalSize() -
+        virtualItems[virtualItems.length - 1].end
       : 0;
 
   const visibleItems =

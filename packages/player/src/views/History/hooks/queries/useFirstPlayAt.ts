@@ -17,7 +17,9 @@ export const useFirstPlayAt = () =>
         }
       }
       const listens = await personalizationEngine.getListenRecords();
-      if (listens.length === 0) return null;
+      if (listens.length === 0) {
+        return null;
+      }
       const oldest = listens.reduce(
         (min, item) => (item.lastPlayedAt < min ? item.lastPlayedAt : min),
         listens[0].lastPlayedAt || Date.now(),

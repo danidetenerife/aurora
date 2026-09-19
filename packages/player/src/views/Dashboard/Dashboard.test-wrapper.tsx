@@ -106,6 +106,27 @@ export const DashboardWrapper = {
     return screen.findByRole('heading', { name: 'Plugins' });
   },
 
+  get mobileGreeting() {
+    return screen.queryByTestId('mobile-dashboard-greeting');
+  },
+
+  mobileFilterPills: {
+    get container() {
+      return screen.queryByTestId('mobile-filter-pills');
+    },
+    get pills() {
+      const container = screen.queryByTestId('mobile-filter-pills');
+      return container ? within(container).getAllByRole('button') : [];
+    },
+    async select(name: string | RegExp) {
+      const pill = within(screen.getByTestId('mobile-filter-pills')).getByRole(
+        'button',
+        { name },
+      );
+      await userEvent.click(pill);
+    },
+  },
+
   topTracks: {
     get heading() {
       return screen.queryByRole('heading', { name: /top tracks/i });

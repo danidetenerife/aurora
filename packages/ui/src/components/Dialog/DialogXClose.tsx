@@ -17,7 +17,10 @@ export const DialogXClose: FC<DialogXCloseProps> = ({ className }) => {
       variant="secondary"
       size="icon-sm"
       onClick={onClose}
-      className={cn('absolute top-2.5 right-2.5 z-30 shadow-sm border border-border/40', className)}
+      className={cn(
+        'border-border/40 absolute top-2.5 right-2.5 z-30 border shadow-sm',
+        className,
+      )}
       aria-label="Close"
       data-testid="dialog-x-close"
     >
