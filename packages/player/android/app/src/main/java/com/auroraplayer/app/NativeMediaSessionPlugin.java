@@ -167,9 +167,18 @@ public class NativeMediaSessionPlugin extends Plugin {
         String artworkUrl = call.getString("artworkUrl", "");
         Double durationDouble = call.getDouble("durationMs");
         long durationMs = durationDouble != null ? durationDouble.longValue() : 0;
+        boolean isFavorite = Boolean.TRUE.equals(call.getBoolean("isFavorite", false));
+        boolean isPodcast = Boolean.TRUE.equals(call.getBoolean("isPodcast", false));
 
         Log.i(TAG, "updateMetadata called: title='" + title + "' artist='" + artist
             + "' album='" + album + "' durationMs=" + durationMs);
+
+        AudioForegroundService service = AudioForegroundService.getInstance();
+        if (service != null) {
+            service.updateMetadataDirect(title, artist, album, artworkUrl, durationMs, isFavorite, isPodcast);
+            call.resolve();
+            return;
+        }
 
         Intent intent = new Intent(getContext(), AudioForegroundService.class);
         intent.setAction(AudioForegroundService.ACTION_UPDATE_METADATA);
@@ -178,8 +187,8 @@ public class NativeMediaSessionPlugin extends Plugin {
         intent.putExtra("album", album);
         intent.putExtra("artworkUrl", artworkUrl);
         intent.putExtra("durationMs", durationMs);
-        intent.putExtra("isFavorite", call.getBoolean("isFavorite", false));
-        intent.putExtra("isPodcast", call.getBoolean("isPodcast", false));
+        intent.putExtra("isFavorite", isFavorite);
+        intent.putExtra("isPodcast", isPodcast);
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -201,6 +210,13 @@ public class NativeMediaSessionPlugin extends Plugin {
         Double positionDouble = call.getDouble("positionMs");
         if (positionDouble != null) {
             positionMs = positionDouble.longValue();
+        }
+
+        AudioForegroundService service = AudioForegroundService.getInstance();
+        if (service != null) {
+            service.updatePlaybackStateDirect(isPlaying, positionMs);
+            call.resolve();
+            return;
         }
 
         Intent intent = new Intent(getContext(), AudioForegroundService.class);
@@ -227,6 +243,13 @@ public class NativeMediaSessionPlugin extends Plugin {
         Double positionDouble = call.getDouble("positionMs");
         if (positionDouble != null) {
             positionMs = positionDouble.longValue();
+        }
+
+        AudioForegroundService service = AudioForegroundService.getInstance();
+        if (service != null) {
+            service.updatePositionDirect(positionMs);
+            call.resolve();
+            return;
         }
 
         Intent intent = new Intent(getContext(), AudioForegroundService.class);

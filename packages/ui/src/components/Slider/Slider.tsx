@@ -137,6 +137,12 @@ export const SliderHeader: FC<{ label?: string; showValue?: boolean }> = ({
   showValue = true,
 }) => {
   const { inputId, labelId, unit, value } = useSliderContext();
+  const formattedValue =
+    typeof value === 'number'
+      ? Number.isInteger(value)
+        ? value
+        : Number(value.toFixed(2))
+      : value;
   return (
     <div className="flex w-full items-center justify-between text-sm">
       <label
@@ -148,7 +154,7 @@ export const SliderHeader: FC<{ label?: string; showValue?: boolean }> = ({
       </label>
       {showValue && (
         <span className="text-foreground-secondary">
-          {value}
+          {formattedValue}
           {unit ? ` ${unit}` : ''}
         </span>
       )}

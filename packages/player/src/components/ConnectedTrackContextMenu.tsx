@@ -9,7 +9,13 @@ import {
   ThumbsDown,
   UserX,
 } from 'lucide-react';
-import { FC, ReactNode } from 'react';
+import {
+  cloneElement,
+  FC,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+} from 'react';
 import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
@@ -19,7 +25,9 @@ import { Input, TrackContextMenu } from '@aurora/ui';
 import { usePlaylistSubmenu } from '../hooks/usePlaylistSubmenu';
 import { useTrackActions } from '../hooks/useTrackActions';
 import { personalizationEngine } from '../services/personalizationEngine';
+import { isCapacitorEnvironment } from '../services/universalStore';
 import { useFavoritesStore } from '../stores/favoritesStore';
+import { useMobilePlayerStore } from '../stores/mobilePlayerStore';
 
 type ConnectedTrackContextMenuProps = {
   track: Track;
@@ -83,6 +91,40 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
     });
   };
 
+  if (isCapacitorEnvironment()) {
+    if (isValidElement(children)) {
+      return cloneElement(
+        children as ReactElement<{ onClick?: (e: React.MouseEvent) => void }>,
+        {
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation();
+            useMobilePlayerStore.getState().openContextMenu(track);
+          },
+        },
+      );
+    }
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClickCapture={(e) => {
+          e.stopPropagation();
+          useMobilePlayerStore.getState().openContextMenu(track);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+            useMobilePlayerStore.getState().openContextMenu(track);
+          }
+        }}
+        className="inline-flex cursor-pointer"
+        data-testid="mobile-context-menu-trigger"
+      >
+        {children}
+      </div>
+    );
+  }
+
   return (
     <TrackContextMenu>
       <TrackContextMenu.Trigger>{children}</TrackContextMenu.Trigger>
@@ -92,24 +134,29 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
           subtitle={artistNames}
           coverUrl={thumbnail}
         />
-        <TrackContextMenu.Action
-          icon={<Play size={16} />}
-          onClick={() => trackActions.playNow(track)}
-        >
-          {t('actions.playNow')}
-        </TrackContextMenu.Action>
-        <TrackContextMenu.Action
-          icon={<ListStart size={16} />}
-          onClick={() => trackActions.addNext(track)}
-        >
-          {t('actions.playNext')}
-        </TrackContextMenu.Action>
-        <TrackContextMenu.Action
-          icon={<ListEnd size={16} />}
-          onClick={() => trackActions.addToQueue(track)}
-        >
-          {t('actions.addToQueue')}
-        </TrackContextMenu.Action>
+        <TrackContextMenu.HeroGrid>
+          <TrackContextMenu.HeroItem
+            icon={<Play size={18} />}
+            onClick={() => trackActions.playNow(track)}
+            data-testid="track-hero-play-now"
+          >
+            {t('actions.playNow')}
+          </TrackContextMenu.HeroItem>
+          <TrackContextMenu.HeroItem
+            icon={<ListStart size={18} />}
+            onClick={() => trackActions.addNext(track)}
+            data-testid="track-hero-play-next"
+          >
+            {t('actions.playNext')}
+          </TrackContextMenu.HeroItem>
+          <TrackContextMenu.HeroItem
+            icon={<ListEnd size={18} />}
+            onClick={() => trackActions.addToQueue(track)}
+            data-testid="track-hero-add-queue"
+          >
+            {t('actions.addToQueue')}
+          </TrackContextMenu.HeroItem>
+        </TrackContextMenu.HeroGrid>
         <TrackContextMenu.Action
           icon={<Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />}
           onClick={() => trackActions.toggleFavorite(track)}

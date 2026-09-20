@@ -259,6 +259,7 @@ export const initMediaSessionService = (): void => {
   let lastStatus = '';
   let lastReportedSeek = 0;
   let lastReportedTime = 0;
+  let lastReportedDurationMs = 0;
 
   useSoundStore.subscribe((state) => {
     const isPlaying = state.status === 'playing';
@@ -292,6 +293,35 @@ export const initMediaSessionService = (): void => {
         NativeMediaSessionPlugin.updatePosition({
           positionMs: secondsToMs(state.seek),
         }).catch(() => {});
+      }
+
+      const currentDurationMs =
+        state.duration > 0 ? secondsToMs(state.duration) : 0;
+      if (
+        currentDurationMs > 0 &&
+        Math.abs(currentDurationMs - lastReportedDurationMs) > 1000
+      ) {
+        lastReportedDurationMs = currentDurationMs;
+        const currentTrack = useQueueStore.getState().getCurrentItem()?.track;
+        if (currentTrack) {
+          const artwork = pickArtwork(currentTrack.artwork, 'thumbnail', 512);
+          const artist =
+            currentTrack.artists?.map((credit) => credit.name).join(', ') || '';
+          const albumTitle = currentTrack.album?.title || '';
+          const artworkUrl = artwork?.url || '';
+          const isFav = currentTrack.source
+            ? useFavoritesStore.getState().isTrackFavorite(currentTrack.source)
+            : false;
+          NativeMediaSessionPlugin.updateMetadata({
+            title: currentTrack.title,
+            artist,
+            album: albumTitle,
+            artworkUrl,
+            durationMs: currentDurationMs,
+            isFavorite: isFav,
+            isPodcast: currentTrack.source?.provider === 'podcast',
+          }).catch(() => {});
+        }
       }
     }
   });

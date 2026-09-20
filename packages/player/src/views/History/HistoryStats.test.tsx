@@ -88,10 +88,10 @@ describe('History stats view', () => {
     expect(Wrapper.stats.topTracks.element).not.toBeInTheDocument();
   });
 
-  it('shows the calendar heatmap of daily listening', async () => {
+  it('does not show the calendar heatmap of daily listening', async () => {
     await Wrapper.mount();
 
-    expect(await Wrapper.stats.heatmap.find()).toBeInTheDocument();
+    expect(Wrapper.stats.heatmap.element).not.toBeInTheDocument();
   });
 
   it('shows the top artists ranked by listening time', async () => {
@@ -220,16 +220,5 @@ describe('History stats view', () => {
       range,
       10,
     );
-  });
-
-  it('requests the last 12 months of daily listening for the heatmap', async () => {
-    await Wrapper.mount();
-
-    expect(
-      commandMocks.command('historyDailyListeningTime'),
-    ).toHaveBeenCalledWith({
-      from: Date.parse('2025-07-11T12:00:00Z'),
-      to: Date.parse('2026-07-11T12:00:00Z'),
-    });
   });
 });

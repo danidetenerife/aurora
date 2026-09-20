@@ -170,6 +170,10 @@ export const QueuePanel: FC<QueuePanelProps> = ({
                 }}
               />
             ))}
+            <div
+              className="pointer-events-none h-28 shrink-0 select-none md:h-2"
+              aria-hidden="true"
+            />
           </div>
         </QueueReorderLayer>
       </ScrollableArea>

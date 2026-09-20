@@ -249,7 +249,7 @@ export const usePluginStore = create<PluginStore>((set, get) => ({
     // Plugin will be removed regardless of unload errors
     set((state) => {
       // _removed is intentionally unused
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       const { [id]: _removed, ...rest } = state.plugins;
       return { plugins: rest };
     });

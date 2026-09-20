@@ -31,7 +31,7 @@ export const useLayoutStore = create<LayoutState>()(
         width: 200,
       },
       rightSidebar: {
-        isCollapsed: false,
+        isCollapsed: isMobileDevice,
         width: 200,
       },
       toggleLeftSidebar: () =>

@@ -4,15 +4,12 @@ import { FC } from 'react';
 import { useTranslation } from '@aurora/i18n';
 import {
   Box,
-  CalendarHeatmap,
   DayOfWeekChart,
   ListeningClock,
   ScrollableArea,
   Select,
 } from '@aurora/ui';
 
-import { useCoreSetting } from '../../../hooks/useCoreSetting';
-import { useDailyListeningTime } from '../hooks/queries/useDailyListeningTime';
 import { useFirstPlayAt } from '../hooks/queries/useFirstPlayAt';
 import { useHistoryStats } from '../hooks/useHistoryStats';
 import { formatHour, formatListeningDuration } from '../utils/format';
@@ -35,9 +32,6 @@ const HistoryStatsBody: FC<HistoryStatsBodyProps> = ({ firstPlayAt }) => {
     dayOfWeekValues,
     hasListening,
   } = useHistoryStats(firstPlayAt);
-  const { data: dailyDays } = useDailyListeningTime();
-  const [isDark] = useCoreSetting<boolean>('theme.dark');
-  const colorScheme = isDark ? 'dark' : 'light';
 
   const rangeDates = Interval.fromDateTimes(
     DateTime.fromMillis(range.from),
@@ -104,26 +98,6 @@ const HistoryStatsBody: FC<HistoryStatsBodyProps> = ({ firstPlayAt }) => {
         ) : (
           <HistoryStatsEmptyState />
         ))}
-      {dailyDays && (
-        <Box variant="tertiary" className="min-w-fit flex-col gap-3">
-          <h3 className="font-heading text-xl">{t('stats.calendar')}</h3>
-          <CalendarHeatmap
-            className="mx-auto"
-            days={dailyDays}
-            labels={{
-              months: Info.months('short'),
-              weekdays: Info.weekdays('short'),
-              legendLess: t('stats.legendLess'),
-              legendMore: t('stats.legendMore'),
-            }}
-            colorScheme={colorScheme}
-            formatValue={formatListeningDuration}
-            formatDate={(date) =>
-              DateTime.fromISO(date).toLocaleString(DateTime.DATE_FULL)
-            }
-          />
-        </Box>
-      )}
     </>
   );
 };

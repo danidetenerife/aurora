@@ -27,6 +27,7 @@ export const commands = {
 	historyTopArtists: (range: TimeRange, limit: number) => typedError<TopArtist[], string>(__TAURI_INVOKE("history_top_artists", { range, limit })),
 	historyTopAlbums: (range: TimeRange, limit: number) => typedError<TopAlbum[], string>(__TAURI_INVOKE("history_top_albums", { range, limit })),
 	historyTopTracks: (range: TimeRange, limit: number) => typedError<TopTrack[], string>(__TAURI_INVOKE("history_top_tracks", { range, limit })),
+	syncServerInfo: () => __TAURI_INVOKE<SyncServerInfo>("sync_server_info"),
 };
 
 /* Types */
@@ -98,6 +99,11 @@ export type StartupLogEntry = {
 	timestamp: string,
 	level: string,
 	message: string,
+};
+
+export type SyncServerInfo = {
+	ip: string,
+	port: number,
 };
 
 export type TimeRange = {

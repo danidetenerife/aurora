@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   createHashHistory,
   createRouter,
+  Navigate,
   RouterProvider,
 } from '@tanstack/react-router';
 import { FC } from 'react';
@@ -19,6 +20,7 @@ const router = createRouter({
   routeTree,
   history,
   defaultPreload: 'intent',
+  defaultNotFoundComponent: () => <Navigate to="/dashboard" />,
 });
 export const defaultQueryClient = new QueryClient();
 

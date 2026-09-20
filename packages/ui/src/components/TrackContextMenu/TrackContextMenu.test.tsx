@@ -122,5 +122,23 @@ describe('TrackContextMenu', () => {
       expect(onClickA).toHaveBeenCalledTimes(1);
       expect(onClickB).not.toHaveBeenCalled();
     });
+
+    it('renders hero action grid and handles hero item clicks', async () => {
+      const onHeroClick = vi.fn();
+      Wrapper.mount({
+        title: 'Comfortably Numb',
+        subtitle: 'Pink Floyd',
+        heroActions: [
+          { label: 'Play Next', onClick: onHeroClick },
+          { label: 'Add to Playlist', onClick: vi.fn() },
+        ],
+      });
+
+      await Wrapper.open();
+      await screen.findByText('Play Next');
+      await Wrapper.action('Play Next').click();
+
+      expect(onHeroClick).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -26,17 +26,19 @@ export const useTrackActions = () => {
 
   const toggleFavorite = useCallback(
     (track: Track) => {
-      if (isTrackFavorite(track.source)) {
-        removeTrack(track.source);
+      const artist = track.artists?.[0]?.name;
+      if (isTrackFavorite(track.source, track.title, artist)) {
+        void removeTrack(track.source, track.title, artist);
       } else {
-        addTrack(track);
+        void addTrack(track);
       }
     },
     [isTrackFavorite, addTrack, removeTrack],
   );
 
   const isFavorite = useCallback(
-    (track: Track) => isTrackFavorite(track.source),
+    (track: Track) =>
+      isTrackFavorite(track.source, track.title, track.artists?.[0]?.name),
     [isTrackFavorite],
   );
 

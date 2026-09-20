@@ -17,6 +17,16 @@ type HistoryBodyProps = {
   entries: HistoryEntry[];
 };
 
+const formatTrackDuration = (totalMillis?: number | null) => {
+  if (!totalMillis || totalMillis <= 0) {
+    return '';
+  }
+  const totalSeconds = Math.floor(totalMillis / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
 export const HistoryBody: FC<HistoryBodyProps> = ({ isPending, entries }) => {
   const { t } = useTranslation('history');
   const markerFor = useDayMarker();
@@ -25,6 +35,8 @@ export const HistoryBody: FC<HistoryBodyProps> = ({ isPending, entries }) => {
     favorite: t('row.favorite'),
     unfavorite: t('row.unfavorite'),
     addToQueue: t('row.addToQueue'),
+    duration: t('row.duration', 'Duración'),
+    playedAt: t('row.playedAt', 'Hora'),
   };
 
   if (isPending) {
@@ -49,6 +61,11 @@ export const HistoryBody: FC<HistoryBodyProps> = ({ isPending, entries }) => {
               artist={entry.artists.join(', ')}
               artistContent={<HistoryArtistLinks artists={entry.artists} />}
               time={formatTimeOfDay(entry.startedAt)}
+              duration={
+                entry.durationMs
+                  ? `${formatTrackDuration(entry.durationMs)} min`
+                  : undefined
+              }
               artworkUrl={entry.artworkUrl}
               labels={rowLabels}
               {...(actionsFor(entry) ?? {})}

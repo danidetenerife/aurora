@@ -188,6 +188,10 @@ exports[`QueuePanel > (Snapshot) renders collapsed state 1`] = `
             </div>
           </div>
         </div>
+        <div
+          aria-hidden="true"
+          class="h-28 shrink-0 md:h-2 select-none pointer-events-none"
+        />
       </div>
       <div
         id="DndDescribedBy-1"
@@ -265,13 +269,13 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     class="min-w-0 flex-1"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-words leading-tight"
                       data-testid="queue-item-title"
                     >
                       Bohemian Rhapsody
                     </div>
                     <div
-                      class="text-foreground truncate text-xs"
+                      class="text-foreground text-xs break-words leading-tight mt-0.5"
                       data-testid="queue-item-artist"
                     >
                       Queen
@@ -359,13 +363,13 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     class="min-w-0 flex-1"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-words leading-tight"
                       data-testid="queue-item-title"
                     >
                       Stairway to Heaven
                     </div>
                     <div
-                      class="text-foreground truncate text-xs"
+                      class="text-foreground text-xs break-words leading-tight mt-0.5"
                       data-testid="queue-item-artist"
                     >
                       Led Zeppelin
@@ -453,13 +457,13 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     class="min-w-0 flex-1"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-words leading-tight"
                       data-testid="queue-item-title"
                     >
                       Hotel California
                     </div>
                     <div
-                      class="text-foreground truncate text-xs"
+                      class="text-foreground text-xs break-words leading-tight mt-0.5"
                       data-testid="queue-item-artist"
                     >
                       Eagles
@@ -511,6 +515,10 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
             </div>
           </div>
         </div>
+        <div
+          aria-hidden="true"
+          class="h-28 shrink-0 md:h-2 select-none pointer-events-none"
+        />
       </div>
       <div
         id="DndDescribedBy-0"

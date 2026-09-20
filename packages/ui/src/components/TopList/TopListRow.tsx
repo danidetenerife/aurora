@@ -18,12 +18,12 @@ export const TopListRow: FC<TopListRowProps> = ({
 }) => (
   <div
     data-testid="top-list-row"
-    className="border-border grid grid-cols-[auto_auto_1fr_1fr] items-center gap-3 border-b-(length:--border-width) py-1.5 last:border-b-0"
+    className="border-border grid grid-cols-[auto_auto_1fr_auto] items-center gap-3 border-b-(length:--border-width) py-2 last:border-b-0"
   >
-    <span className="text-foreground-secondary w-5 text-right text-sm tabular-nums">
+    <span className="text-foreground-secondary w-5 shrink-0 text-right text-sm tabular-nums">
       {rank}
     </span>
-    <div className="flex h-10 w-10 items-center justify-center overflow-hidden">
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded">
       {entry.imageUrl ? (
         <img
           src={entry.imageUrl}
@@ -38,14 +38,17 @@ export const TopListRow: FC<TopListRowProps> = ({
         />
       )}
     </div>
-    <div className="min-w-0">
-      <div data-testid="top-list-label" className="truncate font-medium">
+    <div className="flex min-w-0 flex-1 flex-col justify-center">
+      <div
+        data-testid="top-list-label"
+        className="leading-snug font-medium break-words"
+      >
         {entry.labelContent ?? entry.label}
       </div>
       {entry.sublabel && (
         <div
           data-testid="top-list-sublabel"
-          className="text-foreground-secondary truncate text-sm"
+          className="text-foreground-secondary mt-0.5 text-sm leading-snug break-words"
         >
           {entry.sublabelContent ?? entry.sublabel}
         </div>
@@ -53,8 +56,8 @@ export const TopListRow: FC<TopListRowProps> = ({
     </div>
     <div
       data-testid="top-list-value"
-      className="bg-primary/50 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums"
-      style={{ width: `${fillRatio * 100}%` }}
+      className="bg-primary/50 min-w-fit shrink-0 px-2 py-1 text-right text-xs whitespace-nowrap tabular-nums"
+      style={{ width: `${Math.max(fillRatio * 100, 20)}%` }}
     >
       {formatValue(entry.value)}
     </div>

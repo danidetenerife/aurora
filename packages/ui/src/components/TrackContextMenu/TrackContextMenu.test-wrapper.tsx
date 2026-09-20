@@ -14,6 +14,11 @@ type MountOptions = {
   title: string;
   subtitle?: string;
   coverUrl?: string;
+  heroActions?: {
+    label: string;
+    icon?: React.ReactNode;
+    onClick: () => void;
+  }[];
   actions?: { label: string; onClick: () => void }[];
   submenu?: {
     label: string;
@@ -33,6 +38,7 @@ export const TrackContextMenuWrapper = {
       title,
       subtitle,
       coverUrl,
+      heroActions,
       actions = defaultActions,
       submenu,
       onParentClick,
@@ -49,6 +55,19 @@ export const TrackContextMenuWrapper = {
             subtitle={subtitle}
             coverUrl={coverUrl}
           />
+          {heroActions && heroActions.length > 0 && (
+            <TrackContextMenu.HeroGrid>
+              {heroActions.map(({ label, icon, onClick }) => (
+                <TrackContextMenu.HeroItem
+                  key={label}
+                  icon={icon ?? <span>★</span>}
+                  onClick={onClick}
+                >
+                  {label}
+                </TrackContextMenu.HeroItem>
+              ))}
+            </TrackContextMenu.HeroGrid>
+          )}
           {actions.map(({ label, onClick }) => (
             <TrackContextMenu.Action
               key={label}

@@ -1,10 +1,18 @@
 import { useNavigate } from '@tanstack/react-router';
 import isEmpty from 'lodash-es/isEmpty';
-import { ListMusic, SearchX } from 'lucide-react';
-import { type FC } from 'react';
+import { ListMusic, SearchX, Trash2 } from 'lucide-react';
+import { useState, type FC } from 'react';
+import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
-import { EmptyState, ScrollableArea, ViewShell } from '@aurora/ui';
+import type { PlaylistIndexEntry } from '@aurora/model';
+import {
+  Button,
+  Dialog,
+  EmptyState,
+  ScrollableArea,
+  ViewShell,
+} from '@aurora/ui';
 
 import { MobileItemPages } from '../../components/MobileItemPages';
 import { isCapacitorEnvironment } from '../../services/universalStore';
@@ -23,6 +31,9 @@ const PlaylistsContent: FC = () => {
   const navigate = useNavigate();
   const index = usePlaylistStore((state) => state.index);
   const { data: editorialResults } = useDashboardEditorialPlaylists();
+  const deletePlaylist = usePlaylistStore((state) => state.deletePlaylist);
+  const [playlistToDelete, setPlaylistToDelete] =
+    useState<PlaylistIndexEntry | null>(null);
   const { filter, setFilter, filteredPlaylists, hasFilter } =
     usePlaylistFilter(index);
   const {
@@ -71,33 +82,48 @@ const PlaylistsContent: FC = () => {
             </h2>
             <MobileItemPages
               items={sortedPlaylists.map((playlist) => (
-                <button
+                <div
                   key={playlist.id}
-                  type="button"
-                  className="aurora-mobile-library-row"
-                  onClick={() =>
-                    void navigate({
-                      to: '/playlists/$playlistId',
-                      params: { playlistId: playlist.id },
-                    })
-                  }
+                  className="aurora-mobile-library-row flex items-center justify-between gap-2"
                 >
-                  <ListMusic size={28} />
-                  <span className="min-w-0">
-                    <strong className="block truncate">{playlist.name}</strong>
-                    <span className="block text-xs">
-                      {t('trackCount', { count: playlist.itemCount })}
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden py-1 text-left"
+                    onClick={() =>
+                      void navigate({
+                        to: '/playlists/$playlistId',
+                        params: { playlistId: playlist.id },
+                      })
+                    }
+                  >
+                    <ListMusic size={28} className="text-foreground shrink-0" />
+                    <span className="min-w-0 flex-1">
+                      <strong className="block break-words">
+                        {playlist.name}
+                      </strong>
+                      <span className="text-foreground-secondary block text-xs">
+                        {t('trackCount', { count: playlist.itemCount })}
+                      </span>
                     </span>
-                  </span>
-                </button>
+                  </button>
+                  <button
+                    type="button"
+                    data-testid={`delete-playlist-${playlist.id}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPlaylistToDelete(playlist);
+                    }}
+                    className="text-foreground-secondary hover:text-accent-red hover:bg-card shrink-0 cursor-pointer rounded-lg p-2 transition-all active:scale-95"
+                    aria-label={`Eliminar lista ${playlist.name}`}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               ))}
             />
           </div>
           <EditorialPlaylistsWidget
-            title={t(
-              'popularPlaylists',
-              'Listas populares de Spotify y YouTube Music',
-            )}
+            title={t('popularPlaylists', 'Listas destacadas')}
           />
         </div>
       )}
@@ -120,10 +146,7 @@ const PlaylistsContent: FC = () => {
               />
             </div>
             <EditorialPlaylistsWidget
-              title={t(
-                'popularPlaylists',
-                'Listas populares de Spotify y YouTube Music',
-              )}
+              title={t('popularPlaylists', 'Listas destacadas')}
             />
           </div>
         </ScrollableArea>
@@ -132,10 +155,7 @@ const PlaylistsContent: FC = () => {
       {!hasPlaylists && hasEditorial && native && (
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           <EditorialPlaylistsWidget
-            title={t(
-              'popularPlaylists',
-              'Listas populares de Spotify y YouTube Music',
-            )}
+            title={t('popularPlaylists', 'Listas destacadas')}
           />
         </div>
       )}
@@ -144,10 +164,7 @@ const PlaylistsContent: FC = () => {
         <ScrollableArea className="flex-1 overflow-y-auto">
           <div className="flex flex-col gap-4 p-1">
             <EditorialPlaylistsWidget
-              title={t(
-                'popularPlaylists',
-                'Listas populares de Spotify y YouTube Music',
-              )}
+              title={t('popularPlaylists', 'Listas destacadas')}
             />
           </div>
         </ScrollableArea>
@@ -163,6 +180,37 @@ const PlaylistsContent: FC = () => {
       )}
 
       <CreatePlaylistDialog />
+
+      <Dialog.Root
+        isOpen={playlistToDelete != null}
+        onClose={() => setPlaylistToDelete(null)}
+      >
+        <Dialog.Title>{t('delete', 'Eliminar lista')}</Dialog.Title>
+        <Dialog.Description>
+          {t(
+            'deleteConfirm',
+            `¿Seguro que quieres eliminar la lista "${playlistToDelete?.name ?? ''}"?`,
+          )}
+        </Dialog.Description>
+        <Dialog.Actions>
+          <Dialog.Close>{t('common:actions.cancel', 'Cancelar')}</Dialog.Close>
+          <Button
+            intent="danger"
+            onClick={async () => {
+              if (playlistToDelete) {
+                const name = playlistToDelete.name;
+                await deletePlaylist(playlistToDelete.id);
+                toast.success(
+                  t('playlistDeleted', `Lista "${name}" eliminada`),
+                );
+                setPlaylistToDelete(null);
+              }
+            }}
+          >
+            {t('common:actions.delete', 'Eliminar')}
+          </Button>
+        </Dialog.Actions>
+      </Dialog.Root>
     </ViewShell>
   );
 };

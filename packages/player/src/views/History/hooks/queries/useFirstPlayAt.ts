@@ -4,6 +4,7 @@ import { personalizationEngine } from '../../../../services/personalizationEngin
 import { commands } from '../../../../services/tauri/bindings';
 import { unwrapResult } from '../../../../services/tauri/results';
 import { isTauriEnvironment } from '../../../../services/universalStore';
+import { useFavoritesStore } from '../../../../stores/favoritesStore';
 
 export const useFirstPlayAt = () =>
   useQuery({
@@ -17,13 +18,17 @@ export const useFirstPlayAt = () =>
         }
       }
       const listens = await personalizationEngine.getListenRecords();
-      if (listens.length === 0) {
-        return null;
+      if (listens.length > 0) {
+        const oldest = listens.reduce(
+          (min, item) => (item.lastPlayedAt < min ? item.lastPlayedAt : min),
+          listens[0].lastPlayedAt || Date.now(),
+        );
+        return { at: oldest };
       }
-      const oldest = listens.reduce(
-        (min, item) => (item.lastPlayedAt < min ? item.lastPlayedAt : min),
-        listens[0].lastPlayedAt || Date.now(),
-      );
-      return { at: oldest };
+      const favTracks = useFavoritesStore.getState().tracks || [];
+      if (favTracks.length > 0) {
+        return { at: Date.now() - 30 * 24 * 60 * 60 * 1000 };
+      }
+      return null;
     },
   });

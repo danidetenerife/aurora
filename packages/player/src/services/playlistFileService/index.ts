@@ -45,10 +45,22 @@ export class PlaylistFileService {
     return index;
   }
 
-  async deletePlaylist(id: string): Promise<PlaylistIndexEntry[]> {
+  async deletePlaylist(
+    id: string,
+    name?: string,
+  ): Promise<PlaylistIndexEntry[]> {
     await this.#fileStore.delete(id);
     const index = await this.#indexStore.load();
-    const updated = index.filter((e) => e.id !== id);
+    const normalizedName = name?.toLowerCase().trim();
+    const updated = index.filter((e) => {
+      if (e.id === id) {
+        return false;
+      }
+      if (normalizedName && e.name?.toLowerCase().trim() === normalizedName) {
+        return false;
+      }
+      return true;
+    });
     await this.#indexStore.save(updated);
     return updated;
   }

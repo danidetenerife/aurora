@@ -1,5 +1,18 @@
 [
   {
+    "date": "2026-09-20T18:25",
+    "description": "Experiencia móvil perfeccionada, sincronización bidireccional y actualización del motor de recomendaciones musicales: añade diseño de tarjetas estilo cola con paginación de 10 canciones por página (< 1 / N >) en Recomendado para ti, erradica la resurrección de canciones y listas eliminadas (como MisFavoritas) mediante lápidas semánticas persistentes en almacenamiento local y sincronización remota Gist/WebDAV/LAN, sincroniza en tiempo real el widget multimedia de Android con carátula y estado de reproducción, hace interactivo el menú de 3 puntos en la sección Cola, organiza Listas destacadas y Nuevos lanzamientos en cuadrículas en cascada de 2 columnas sin títulos truncados, y potencia el algoritmo de recomendación musical incorporando Taste Anchor Biasing, afinidad contextual por sesión y límite estricto de diversidad por artista inspirado en Google Music.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Móvil", "color": "green" },
+      { "label": "Recomendaciones", "color": "blue" },
+      { "label": "Sincronización", "color": "purple" },
+      { "label": "Android", "color": "red" },
+      { "label": "UI", "color": "orange" }
+    ]
+  },
+  {
     "date": "2026-09-19T21:15",
     "description": "Limpieza y corrección de la barra de reproducción de escritorio: elimina el botón redundante de favorito de álbum que provocaba dos iconos idénticos de corazón adyacentes junto al dislike, manteniendo un único botón limpio para marcar canciones favoritas en la reproducción y preservando el favorito de álbum en la vista y tarjetas de álbum.",
     "type": "fix",

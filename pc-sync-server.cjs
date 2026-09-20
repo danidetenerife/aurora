@@ -8,9 +8,11 @@ let mergeListenRecords;
 const PORT = Number(process.env.AURORA_SYNC_PORT || 4122);
 const APP_DATA =
   process.env.AURORA_SYNC_APP_DATA ||
-  (fs.existsSync(path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player'))
-    ? path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player')
-    : path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer'));
+  (fs.existsSync(path.join(os.homedir(), 'AppData', 'Roaming', 'com.auroraplayer'))
+    ? path.join(os.homedir(), 'AppData', 'Roaming', 'com.auroraplayer')
+    : fs.existsSync(path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player'))
+      ? path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player')
+      : path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer'));
 
 // Connected SSE clients
 const sseClients = new Set();
@@ -280,6 +282,70 @@ const server = http.createServer((req, res) => {
               entries: indexEntries,
             });
           }
+        }
+
+        // 3b. Remove Deleted Playlists pushed from mobile
+        if (pushData.deletedPlaylists && typeof pushData.deletedPlaylists === 'object') {
+          const playlistsDir = path.join(APP_DATA, 'playlists');
+          const deletedKeys = Object.keys(pushData.deletedPlaylists).map((k) =>
+            k.toLowerCase().trim(),
+          );
+          if (fs.existsSync(playlistsDir)) {
+            try {
+              const files = fs.readdirSync(playlistsDir);
+              for (const file of files) {
+                if (file.endsWith('.json') && file !== 'index.json') {
+                  const id = file.replace(/\.json$/, '').toLowerCase().trim();
+                  let shouldDelete = deletedKeys.includes(id);
+                  if (!shouldDelete) {
+                    try {
+                      const content = JSON.parse(
+                        fs.readFileSync(path.join(playlistsDir, file), 'utf8'),
+                      );
+                      const plName = (content.playlist?.name || content.name || '')
+                        .toLowerCase()
+                        .trim();
+                      if (
+                        plName &&
+                        (deletedKeys.includes(plName) ||
+                          deletedKeys.includes(`synced-${plName}`))
+                      ) {
+                        shouldDelete = true;
+                      }
+                    } catch {
+                      // ignore parse error
+                    }
+                  }
+                  if (shouldDelete) {
+                    try {
+                      fs.unlinkSync(path.join(playlistsDir, file));
+                    } catch {
+                      // ignore unlink error
+                    }
+                  }
+                }
+              }
+            } catch {
+              // ignore dir read error
+            }
+          }
+
+          const currentIndex = readJsonFile(path.join('playlists', 'index.json'), {
+            entries: [],
+          });
+          if (Array.isArray(currentIndex.entries)) {
+            currentIndex.entries = currentIndex.entries.filter((entry) => {
+              const eId = (entry.id || '').toLowerCase().trim();
+              const eName = (entry.name || '').toLowerCase().trim();
+              return (
+                !deletedKeys.includes(eId) &&
+                !deletedKeys.includes(eName) &&
+                !deletedKeys.includes(`synced-${eName}`)
+              );
+            });
+            writeJsonFile(path.join('playlists', 'index.json'), currentIndex);
+          }
+          broadcastUpdate();
         }
 
         if (Array.isArray(pushData.user_profile)) {

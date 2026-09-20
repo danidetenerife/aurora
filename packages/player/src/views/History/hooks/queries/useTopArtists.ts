@@ -30,6 +30,7 @@ export const useTopArtists = (range: TimeRange, limit: number) =>
       }
 
       const favoriteArtists = useFavoritesStore.getState().artists || [];
+      const favoriteTracks = useFavoritesStore.getState().tracks || [];
       const artworkMap = new Map<string, string>();
       for (const favorite of favoriteArtists) {
         if (favorite.ref?.name) {
@@ -50,15 +51,54 @@ export const useTopArtists = (range: TimeRange, limit: number) =>
           }
         }
 
-        if (artistPlays.size === 0 && favoriteArtists.length > 0) {
-          rawArtists = favoriteArtists
-            .slice(0, limit)
-            .map((favorite, index) => ({
-              name: favorite.ref?.name || 'Artista',
-              artworkUrl: favorite.ref?.artwork?.items?.[0]?.url || null,
+        if (artistPlays.size === 0) {
+          if (favoriteArtists.length > 0) {
+            rawArtists = favoriteArtists
+              .slice(0, limit)
+              .map((favorite, index) => ({
+                name: favorite.ref?.name || 'Artista',
+                artworkUrl: favorite.ref?.artwork?.items?.[0]?.url || null,
+                msPlayed: (limit - index) * FALLBACK_MS_PER_PLAY,
+                plays: limit - index,
+              }));
+          } else {
+            const artistMap = new Map<
+              string,
+              { name: string; artworkUrl: string | null; count: number }
+            >();
+            for (const track of favoriteTracks) {
+              const artistName = track.ref?.artists?.[0]?.name;
+              if (artistName) {
+                const existing = artistMap.get(artistName.toLowerCase());
+                const img =
+                  track.ref?.artwork?.items?.[0]?.url ||
+                  artworkMap.get(artistName.toLowerCase()) ||
+                  null;
+                if (existing) {
+                  existing.count += 1;
+                  if (!existing.artworkUrl && img) {
+                    existing.artworkUrl = img;
+                  }
+                } else {
+                  artistMap.set(artistName.toLowerCase(), {
+                    name: artistName,
+                    artworkUrl: img,
+                    count: 1,
+                  });
+                }
+              }
+            }
+            const sortedArtists = Array.from(artistMap.values())
+              .sort((a, b) => b.count - a.count)
+              .slice(0, limit);
+
+            rawArtists = sortedArtists.map((a, index) => ({
+              name: a.name,
+              artworkUrl: a.artworkUrl,
               msPlayed: (limit - index) * FALLBACK_MS_PER_PLAY,
               plays: limit - index,
             }));
+          }
         } else {
           const sorted = Array.from(artistPlays.entries())
             .sort((first, second) => second[1] - first[1])

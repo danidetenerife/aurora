@@ -68,6 +68,7 @@ public class AudioForegroundService extends Service {
     private final ExecutorService artworkExecutor = Executors.newSingleThreadExecutor();
 
     private boolean currentlyPlaying = false;
+    private boolean isForegroundRunning = false;
     private android.telephony.TelephonyManager telephonyManager;
     private android.telephony.PhoneStateListener phoneStateListener;
     private boolean phoneCallListenerRegistered = false;
@@ -299,17 +300,21 @@ public class AudioForegroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Notification notification = buildNotification("Aurora", "", false);
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-            } else {
-                startForeground(NOTIFICATION_ID, notification);
-            }
-        } catch (Throwable firstError) {
+        if (!isForegroundRunning) {
+            Notification notification = buildNotification(currentTitle, currentArtist, currentlyPlaying);
             try {
-                startForeground(NOTIFICATION_ID, notification);
-            } catch (Throwable ignored) {}
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                } else {
+                    startForeground(NOTIFICATION_ID, notification);
+                }
+                isForegroundRunning = true;
+            } catch (Throwable firstError) {
+                try {
+                    startForeground(NOTIFICATION_ID, notification);
+                    isForegroundRunning = true;
+                } catch (Throwable ignored) {}
+            }
         }
 
         if (intent != null) {
@@ -355,9 +360,13 @@ public class AudioForegroundService extends Service {
         String album = intent.getStringExtra("album");
         String artworkUrl = intent.getStringExtra("artworkUrl");
         long durationMs = intent.getLongExtra("durationMs", 0);
-
         boolean isFavorite = intent.getBooleanExtra("isFavorite", false);
         boolean isPodcast = intent.getBooleanExtra("isPodcast", false);
+
+        updateMetadataDirect(title, artist, album, artworkUrl, durationMs, isFavorite, isPodcast);
+    }
+
+    public synchronized void updateMetadataDirect(String title, String artist, String album, String artworkUrl, long durationMs, boolean isFavorite, boolean isPodcast) {
         currentIsFavorite = isFavorite;
         currentIsPodcast = isPodcast;
 
@@ -570,11 +579,12 @@ public class AudioForegroundService extends Service {
     private void handlePlaybackStateUpdate(Intent intent) {
         boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
         long positionMs = intent.getLongExtra("positionMs", 0);
+        updatePlaybackStateDirect(isPlaying, positionMs);
+    }
 
+    public synchronized void updatePlaybackStateDirect(boolean isPlaying, long positionMs) {
         boolean stateChanged = isPlaying != currentlyPlaying;
-        if (stateChanged) {
-            currentlyPlaying = isPlaying;
-        }
+        currentlyPlaying = isPlaying;
 
         int state = isPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
 
@@ -582,32 +592,30 @@ public class AudioForegroundService extends Service {
             .setState(state, positionMs, isPlaying ? 1.0f : 0f)
             .build();
 
-        mediaSession.setPlaybackState(playbackState);
+        if (mediaSession != null) {
+            mediaSession.setPlaybackState(playbackState);
+        }
 
         if (stateChanged) {
-            MediaMetadataCompat metadata = mediaSession.getController().getMetadata();
-            String title = "";
-            String artist = "";
-            if (metadata != null) {
-                CharSequence titleCs = metadata.getText(MediaMetadataCompat.METADATA_KEY_TITLE);
-                CharSequence artistCs = metadata.getText(MediaMetadataCompat.METADATA_KEY_ARTIST);
-                if (titleCs != null) title = titleCs.toString();
-                if (artistCs != null) artist = artistCs.toString();
-            }
-            updateNotification(title, artist);
+            updateNotification(currentTitle, currentArtist);
         }
     }
 
     private void handlePositionUpdate(Intent intent) {
         long positionMs = intent.getLongExtra("positionMs", 0);
+        updatePositionDirect(positionMs);
+    }
 
+    public synchronized void updatePositionDirect(long positionMs) {
         int state = currentlyPlaying ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED;
 
         PlaybackStateCompat playbackState = newPlaybackStateBuilder()
             .setState(state, positionMs, currentlyPlaying ? 1.0f : 0f)
             .build();
 
-        mediaSession.setPlaybackState(playbackState);
+        if (mediaSession != null) {
+            mediaSession.setPlaybackState(playbackState);
+        }
     }
 
     public void setOptimisticPlaybackState(boolean isPlaying) {

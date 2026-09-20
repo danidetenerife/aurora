@@ -8,6 +8,7 @@ import type { CardsRowItem } from '@aurora/ui';
 import { CardsRow } from '@aurora/ui';
 
 import { useNavigateToPlaylist } from '../../../hooks/useNavigateToPlaylist';
+import { isCapacitorEnvironment } from '../../../services/universalStore';
 import { useFavoritesStore } from '../../../stores/favoritesStore';
 import { useDashboardEditorialPlaylists } from '../hooks/useDashboardData';
 import { DashboardCardsWidget } from './DashboardCardsWidget';
@@ -87,25 +88,74 @@ export const EditorialPlaylistsWidget: FC<EditorialPlaylistsWidgetProps> = ({
         }}
         mapItem={mapPlaylist}
       />
-      {favoritePlaylists.length > 0 && (
-        <CardsRow
-          title="Listas favoritas"
-          items={favoritePlaylists.map((entry) => ({
-            id: entry.ref.source.id,
-            title: entry.ref.name,
-            imageUrl:
-              pickArtwork(entry.ref.artwork, 'cover', 300)?.url ??
-              entry.ref.artwork?.items?.[0]?.url,
-            onClick: entry.ref.source.url
-              ? () => navigateToPlaylist(entry.ref.source.url!)
-              : undefined,
-          }))}
-          labels={{
-            filterPlaceholder: t('filter-playlists'),
-            nothingFound: t('nothing-found'),
-          }}
-        />
-      )}
+      {favoritePlaylists.length > 0 &&
+        (isCapacitorEnvironment() ? (
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-xl font-bold tracking-tight text-white select-none">
+                Listas favoritas
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-3.5 px-1 pb-4 select-none">
+              {favoritePlaylists.map((entry) => {
+                const img =
+                  pickArtwork(entry.ref.artwork, 'cover', 300)?.url ??
+                  entry.ref.artwork?.items?.[0]?.url;
+                return (
+                  <button
+                    type="button"
+                    key={entry.ref.source.id}
+                    data-testid="card"
+                    onClick={
+                      entry.ref.source.url
+                        ? () => navigateToPlaylist(entry.ref.source.url!)
+                        : undefined
+                    }
+                    className="group flex w-full cursor-pointer flex-col text-left transition-transform select-none focus:outline-none active:scale-95"
+                  >
+                    <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-zinc-900 shadow-md ring-1 shadow-black/60 ring-white/10">
+                      <img
+                        src={img}
+                        alt={entry.ref.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="mt-2 w-full">
+                      <div
+                        data-testid="card-title"
+                        className="text-sm leading-tight font-bold break-words text-white"
+                      >
+                        {entry.ref.name}
+                      </div>
+                      <div className="mt-0.5 text-xs break-words text-zinc-400">
+                        Lista
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <CardsRow
+            title="Listas favoritas"
+            items={favoritePlaylists.map((entry) => ({
+              id: entry.ref.source.id,
+              title: entry.ref.name,
+              imageUrl:
+                pickArtwork(entry.ref.artwork, 'cover', 300)?.url ??
+                entry.ref.artwork?.items?.[0]?.url,
+              onClick: entry.ref.source.url
+                ? () => navigateToPlaylist(entry.ref.source.url!)
+                : undefined,
+            }))}
+            labels={{
+              filterPlaceholder: t('filter-playlists'),
+              nothingFound: t('nothing-found'),
+            }}
+          />
+        ))}
     </>
   );
 };

@@ -82,7 +82,7 @@ export const HistoryLink: FC<HistoryLinkProps> = ({
   return (
     <button
       type="button"
-      className="max-w-full cursor-pointer truncate text-left hover:underline focus-visible:underline disabled:opacity-50"
+      className="max-w-full cursor-pointer text-left break-words hover:underline focus-visible:underline disabled:opacity-50"
       disabled={pending}
       aria-busy={pending}
       onClick={() => void open()}
@@ -93,7 +93,7 @@ export const HistoryLink: FC<HistoryLinkProps> = ({
 };
 
 export const HistoryArtistLinks: FC<{ artists: string[] }> = ({ artists }) => (
-  <span className="inline-flex max-w-full gap-1">
+  <span className="inline-flex max-w-full flex-wrap gap-1">
     {artists.map((artist, index) => (
       <Fragment key={`${artist}-${index}`}>
         {index > 0 && ', '}

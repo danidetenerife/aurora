@@ -26,7 +26,15 @@ export const TopTracksWidget: FC = () => {
           : 'flex flex-col'
       }
     >
-      <h2 className="mb-2 text-lg font-semibold">{t('top-tracks')}</h2>
+      {isCapacitorEnvironment() ? (
+        <div className="mb-2 flex items-center justify-between px-1">
+          <h2 className="text-xl font-bold tracking-tight text-white select-none">
+            {t('top-tracks')}
+          </h2>
+        </div>
+      ) : (
+        <h2 className="mb-2 text-lg font-semibold">{t('top-tracks')}</h2>
+      )}
       {isLoading ? (
         <div className="flex items-center justify-center p-4">
           <Loader data-testid="dashboard-top-tracks-loader" />

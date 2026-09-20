@@ -3,6 +3,8 @@ import { FC, ReactNode } from 'react';
 import { TrackContextMenuAction } from './TrackContextMenuAction';
 import { TrackContextMenuContent } from './TrackContextMenuContent';
 import { TrackContextMenuHeader } from './TrackContextMenuHeader';
+import { TrackContextMenuHeroGrid } from './TrackContextMenuHeroGrid';
+import { TrackContextMenuHeroItem } from './TrackContextMenuHeroItem';
 import { TrackContextMenuRoot } from './TrackContextMenuRoot';
 import {
   TrackContextMenuSubmenu,
@@ -25,6 +27,8 @@ type TrackContextMenuComponent = FC<TrackContextMenuProps> & {
   Content: typeof TrackContextMenuContent;
   Header: typeof TrackContextMenuHeader;
   Action: typeof TrackContextMenuAction;
+  HeroGrid: typeof TrackContextMenuHeroGrid;
+  HeroItem: typeof TrackContextMenuHeroItem;
   Submenu: SubmenuComponent;
 };
 
@@ -38,6 +42,8 @@ TrackContextMenu.Trigger = TrackContextMenuTrigger;
 TrackContextMenu.Content = TrackContextMenuContent;
 TrackContextMenu.Header = TrackContextMenuHeader;
 TrackContextMenu.Action = TrackContextMenuAction;
+TrackContextMenu.HeroGrid = TrackContextMenuHeroGrid;
+TrackContextMenu.HeroItem = TrackContextMenuHeroItem;
 TrackContextMenu.Submenu = TrackContextMenuSubmenu as SubmenuComponent;
 TrackContextMenu.Submenu.Trigger = TrackContextMenuSubmenuTrigger;
 TrackContextMenu.Submenu.Content = TrackContextMenuSubmenuContent;

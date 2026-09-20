@@ -64,6 +64,25 @@ function isEntryDeleted(
   if (nameDeletedTime && nameDeletedTime >= addedTime) {
     return true;
   }
+  const title = (entry.ref?.title as string)?.trim()?.toLowerCase();
+  if (
+    title &&
+    deletedKeys[`track::${title}`] &&
+    deletedKeys[`track::${title}`] >= addedTime
+  ) {
+    return true;
+  }
+  const artist = (entry.ref?.artists as Array<{ name: string }>)?.[0]?.name
+    ?.trim()
+    ?.toLowerCase();
+  if (
+    title &&
+    artist &&
+    deletedKeys[`track::${artist}::${title}`] &&
+    deletedKeys[`track::${artist}::${title}`] >= addedTime
+  ) {
+    return true;
+  }
   return false;
 }
 
@@ -592,6 +611,19 @@ export class P2PSyncService {
           rawPlaylist;
         if (playlist && (playlist.name || playlist.id)) {
           const playlistId = playlist.id || `synced-${playlist.name}`;
+          const playlistName = playlist.name;
+          const normName = playlistName?.toLowerCase().trim();
+          const deletedPlaylists = playlistStore.deletedPlaylists || {};
+          if (
+            deletedPlaylists[playlistId] ||
+            (playlistName && deletedPlaylists[playlistName]) ||
+            (normName && deletedPlaylists[normName]) ||
+            (playlistName && deletedPlaylists[`synced-${playlistName}`]) ||
+            (normName && deletedPlaylists[`synced-${normName}`])
+          ) {
+            needsPushBack = true;
+            continue;
+          }
           const playlistObj = {
             id: playlistId,
             name: playlist.name || 'Playlist',
@@ -907,12 +939,25 @@ export class P2PSyncService {
           Array.isArray(syncData.playlists) &&
           syncData.playlists.length > 0
         ) {
+          const deletedPlaylists =
+            usePlaylistStore.getState().deletedPlaylists || {};
           for (const rawPlaylist of syncData.playlists) {
             const playlist =
               (rawPlaylist as { playlist?: SyncPlaylistItem }).playlist ||
               (rawPlaylist as SyncPlaylistItem);
             if (playlist && (playlist.name || playlist.id)) {
               const playlistId = playlist.id || `synced-${playlist.name}`;
+              const playlistName = playlist.name;
+              const normName = playlistName?.toLowerCase().trim();
+              if (
+                deletedPlaylists[playlistId] ||
+                (playlistName && deletedPlaylists[playlistName]) ||
+                (normName && deletedPlaylists[normName]) ||
+                (playlistName && deletedPlaylists[`synced-${playlistName}`]) ||
+                (normName && deletedPlaylists[`synced-${normName}`])
+              ) {
+                continue;
+              }
               const playlistObj = {
                 id: playlistId,
                 name: playlist.name || 'Playlist',
@@ -1187,6 +1232,7 @@ export class P2PSyncService {
         },
         settings: settingsStoreState.values,
         playlists: allPlaylists,
+        deletedPlaylists: playlistStoreState.deletedPlaylists,
         user_profile: userProfileListens,
         blacklist,
         activeProviders: useProvidersStore.getState().active,

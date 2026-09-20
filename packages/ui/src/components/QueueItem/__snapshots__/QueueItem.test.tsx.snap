@@ -62,13 +62,13 @@ exports[`QueueItem > (Snapshot) renders current state 1`] = `
     class="min-w-0 flex-1"
   >
     <div
-      class="text-foreground truncate text-sm font-bold"
+      class="text-foreground text-sm font-bold break-words leading-tight"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground truncate text-xs"
+      class="text-foreground text-xs break-words leading-tight mt-0.5"
       data-testid="queue-item-artist"
     >
       Queen
@@ -136,13 +136,13 @@ exports[`QueueItem > (Snapshot) renders default state 1`] = `
     class="min-w-0 flex-1"
   >
     <div
-      class="text-foreground truncate text-sm font-bold"
+      class="text-foreground text-sm font-bold break-words leading-tight"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground truncate text-xs"
+      class="text-foreground text-xs break-words leading-tight mt-0.5"
       data-testid="queue-item-artist"
     >
       Queen
@@ -213,13 +213,13 @@ exports[`QueueItem > (Snapshot) renders error state 1`] = `
     class="min-w-0 flex-1"
   >
     <div
-      class="text-foreground truncate text-sm font-bold"
+      class="text-foreground text-sm font-bold break-words leading-tight"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground truncate text-xs"
+      class="text-foreground text-xs break-words leading-tight mt-0.5"
       data-testid="queue-item-artist"
     >
       Queen
@@ -328,13 +328,13 @@ exports[`QueueItem > (Snapshot) renders loading state 1`] = `
     class="min-w-0 flex-1"
   >
     <div
-      class="text-foreground truncate text-sm font-bold"
+      class="text-foreground text-sm font-bold break-words leading-tight"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground truncate text-xs"
+      class="text-foreground text-xs break-words leading-tight mt-0.5"
       data-testid="queue-item-artist"
     >
       Queen
@@ -404,13 +404,13 @@ exports[`QueueItem > renders without callbacks 1`] = `
     class="min-w-0 flex-1"
   >
     <div
-      class="text-foreground truncate text-sm font-bold"
+      class="text-foreground text-sm font-bold break-words leading-tight"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground truncate text-xs"
+      class="text-foreground text-xs break-words leading-tight mt-0.5"
       data-testid="queue-item-artist"
     >
       Queen

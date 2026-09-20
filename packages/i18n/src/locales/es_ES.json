@@ -55,7 +55,9 @@
     "row": {
       "favorite": "Añadir a favoritos",
       "unfavorite": "Eliminar de favoritos",
-      "addToQueue": "Añadir a la cola"
+      "addToQueue": "Añadir a la cola",
+      "duration": "Duración",
+      "playedAt": "Hora"
     },
     "stats": {
       "busiestHour": "Hora de mayor actividad",
@@ -133,8 +135,8 @@
     "saveLocally": "Guardar localmente",
     "readOnlyBadge": "{{source}}",
     "readOnlyTooltip": "Esta lista de reproducción proviene de {{source}} y es de solo lectura. Guarda una copia local para editarla.",
-    "trackCount": "{{count}} Música",
-    "trackCount_other": "{{count}} Músicas",
+    "trackCount": "{{count}} canción",
+    "trackCount_other": "{{count}} canciones",
     "addToPlaylist": "Añadir a la lista de reproducción",
     "filterPlaylists": "Filtrar lista de reproducción...",
     "sortBy": {
@@ -161,7 +163,9 @@
     "importUrlPlaceholder": "Pegar URL de la lista de reproducción...",
     "importUrlNoProvider": "No se encontró plug-in que pueda soportar esta URL. Instala el plug-in necesario para este servicio.",
     "importUrlImporting": "Importando...",
-    "descriptionPlaceholder": "Añade una descripción..."
+    "descriptionPlaceholder": "Añade una descripción...",
+    "myPlaylists": "Mis listas",
+    "popularPlaylists": "Listas destacadas"
   },
   "search": {
     "title": "Buscar",
@@ -352,7 +356,10 @@
       "title": "Registros"
     },
     "whats-new": {
-      "title": "Qué hay de nuevo"
+      "title": "Novedades"
+    },
+    "sync": {
+      "title": "Sincronización"
     },
     "shortcuts": {
       "title": "Atajos de teclado",
@@ -361,15 +368,15 @@
         "general": "General"
       },
       "commands": {
-        "playback.toggle": "Reproducir / Detener",
-        "playback.next": "Siguiente música",
-        "playback.previous": "Música anterior",
-        "playback.seekForward": "Adelantar",
-        "playback.seekBackward": "Atrasar",
+        "playback.toggle": "Reproducir / Pausar",
+        "playback.next": "Siguiente canción",
+        "playback.previous": "Canción anterior",
+        "playback.seekForward": "Avanzar",
+        "playback.seekBackward": "Retroceder",
         "playback.volumeUp": "Subir volumen",
         "playback.volumeDown": "Bajar volumen",
-        "playback.mute": "Silenciar",
-        "general.toggleSettings": "Abrir configuración"
+        "playback.mute": "Silenciar / Activar sonido",
+        "general.toggleSettings": "Abrir ajustes"
       },
       "recording": "Presiona la combinación de teclas...",
       "resetAll": "Restauración inicial",
@@ -414,6 +421,10 @@
         "description": "Cuánto se alejan las recomendaciones de lo que estás escuchando. Cuanto más bajo, más cercano.",
         "startLabel": "Menos alocado",
         "endLabel": "Más alocado"
+      },
+      "showVideo": {
+        "title": "Vídeo musical",
+        "description": "Muestra el vídeo musical si está disponible"
       }
     },
     "history": {
@@ -498,6 +509,11 @@
     "candidates": {
       "empty": "Sin candidatos de stream",
       "failed": "fallido"
+    },
+    "filters": {
+      "all": "Todo",
+      "upcoming": "A continuación",
+      "favorites": "Favoritos"
     }
   },
   "track": {
@@ -512,7 +528,11 @@
       "trackBlacklisted": "Canción añadida a la lista negra",
       "artistBlacklisted": "Artista añadido a la lista negra",
       "trackUnblacklisted": "Canción eliminada de la lista negra",
-      "artistUnblacklisted": "Artista eliminado de la lista negra"
+      "artistUnblacklisted": "Artista eliminado de la lista negra",
+      "addAlbumToFavorites": "Añadir álbum a favoritos",
+      "removeAlbumFromFavorites": "Eliminar álbum de favoritos",
+      "goToAlbum": "Ir al álbum",
+      "playAlbum": "Reproducir álbum"
     }
   },
   "trackTable": {
@@ -535,7 +555,8 @@
     "navigation": "Paginación",
     "previous": "Página anterior",
     "next": "Página siguiente",
-    "page": "Página {{pageNumber}}"
+    "page": "Página {{pageNumber}}",
+    "goToCurrentTrack": "Volver a la canción actual"
   },
   "streaming": {
     "errors": {
@@ -638,6 +659,17 @@
     "addFavorite": "Guardar favorito",
     "removeFavorite": "Quitar de favoritos",
     "playEpisode": "Reproducir episodio",
-    "playLatest": "Reproducir último episodio"
+    "playLatest": "Reproducir último episodio",
+    "episodesCount": "{{count}} episodios",
+    "details": "Detalles del podcast"
+  },
+  "tv": {
+    "closeSearch": "Cerrar búsqueda",
+    "nowPlaying": "Reproduciendo ahora",
+    "nothingPlaying": "Nada en reproducción",
+    "openSearch": "Buscar",
+    "queue": "Cola",
+    "exitTvMode": "Salir del modo TV",
+    "emptyDashboard": "Explora música para ver tus favoritos aquí"
   }
 }

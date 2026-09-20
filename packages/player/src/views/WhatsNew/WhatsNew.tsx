@@ -4,6 +4,7 @@ import { useTranslation } from '@aurora/i18n';
 import { ViewShell } from '@aurora/ui';
 
 import changelog from '../../../changelog.json';
+import { isCapacitorEnvironment } from '../../services/universalStore';
 import type { ChangelogEntry } from '../../types/changelog';
 import { TimelineEntry } from './TimelineEntry';
 
@@ -17,6 +18,29 @@ export const WhatsNew = () => {
 
   const visibleEntries = showAll ? entries : entries.slice(0, INITIAL_COUNT);
   const hiddenCount = entries.length - INITIAL_COUNT;
+
+  if (isCapacitorEnvironment()) {
+    return (
+      <div className="flex w-full flex-col pr-4 pl-2">
+        {visibleEntries.map((entry, index) => (
+          <TimelineEntry
+            key={index}
+            entry={entry}
+            isFirst={index === 0}
+            isLast={index === visibleEntries.length - 1}
+          />
+        ))}
+        {!showAll && hiddenCount > 0 && (
+          <button
+            className="hover:text-foreground cursor-pointer py-4 text-center text-sm font-semibold text-emerald-400 transition-colors"
+            onClick={() => setShowAll(true)}
+          >
+            {t('seeMore', { count: hiddenCount })}
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <ViewShell title={t('title')}>

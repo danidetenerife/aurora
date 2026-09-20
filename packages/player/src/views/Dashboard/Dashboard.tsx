@@ -11,17 +11,6 @@ import { DashboardEmptyState } from './components/DashboardEmptyState';
 import { PersonalizedMixWidget } from './components/PersonalizedMixWidget';
 import { DASHBOARD_WIDGETS } from './dashboardWidgets';
 
-const getTimeOfDayGreeting = (): string => {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) {
-    return 'Buenos días';
-  }
-  if (hour >= 12 && hour < 20) {
-    return 'Buenas tardes';
-  }
-  return 'Buenas noches';
-};
-
 const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
   const { t } = useTranslation('dashboard');
   const [selectedSection, setSelectedSection] = useState('all');
@@ -43,8 +32,11 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
   const activeCapabilities = new Set(
     dashboardProviders.flatMap((provider) => provider.capabilities ?? []),
   );
-  const activeWidgets = DASHBOARD_WIDGETS.filter((widget) =>
-    activeCapabilities.has(widget.capability),
+  const activeWidgets = DASHBOARD_WIDGETS.filter(
+    (widget) =>
+      (!isCapacitorEnvironment() ||
+        widget.capability !== 'editorialPlaylists') &&
+      activeCapabilities.has(widget.capability),
   );
 
   if (isCapacitorEnvironment()) {
@@ -76,18 +68,9 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
       filterPills[0];
 
     return (
-      <div className="aurora-mobile-dashboard-content flex flex-col gap-4">
-        {/* Dynamic Spotify Greeting */}
-        <div
-          data-testid="mobile-dashboard-greeting"
-          className="flex shrink-0 items-center justify-between px-1 pt-2"
-        >
-          <h1 className="text-foreground text-2xl font-black tracking-tight">
-            {getTimeOfDayGreeting()}
-          </h1>
-        </div>
-
-        {/* Spotify-style Horizontal Filter Pills */}
+      <div className="aurora-mobile-dashboard-content flex flex-col gap-5 pt-1">
+        <div data-testid="mobile-dashboard-greeting" className="hidden" />
+        {/* YouTube Music Horizontal Filter Chips */}
         <div
           data-testid="mobile-filter-pills"
           className="no-scrollbar flex shrink-0 items-center gap-2 overflow-x-auto pb-1 select-none"
@@ -102,10 +85,10 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => setSelectedSection(pill.id)}
-                className={`flex-none cursor-pointer rounded-full px-4 py-1.5 text-xs font-bold transition-all active:scale-95 ${
+                className={`flex-none cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all active:scale-95 ${
                   isActive
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'bg-background-secondary text-foreground-secondary border-border/70 hover:text-foreground border'
+                    ? 'border border-white bg-white font-bold text-zinc-950 shadow-xs'
+                    : 'border border-white/10 bg-white/[0.08] text-white/90 hover:bg-white/[0.14]'
                 }`}
               >
                 {pill.title}
@@ -117,8 +100,8 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
         <div
           className={
             selectedSection === 'all'
-              ? 'aurora-mobile-dashboard-feed flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pb-32'
-              : 'aurora-mobile-dashboard-single flex min-h-0 flex-1 flex-col overflow-hidden pb-4'
+              ? 'aurora-mobile-dashboard-feed flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-0.5 pb-36'
+              : 'aurora-mobile-dashboard-single flex min-h-0 flex-1 flex-col overflow-y-auto px-0.5 pb-36'
           }
         >
           {selectedSection === 'all' ? (
@@ -130,7 +113,7 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
               })}
             </>
           ) : (
-            <div className="flex h-full min-h-0 flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col">
               {currentSection?.content}
             </div>
           )}

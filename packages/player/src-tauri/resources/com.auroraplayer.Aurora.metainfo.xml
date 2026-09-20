@@ -84,6 +84,18 @@
   </requires>
 
   <releases>
+    <release version="1.48.58" date="2026-09-20">
+      <description>
+        <p>Release 1.48.58: Experiencia móvil perfeccionada, sincronización bidireccional y actualización del motor de recomendaciones musicales: añade diseño de tarjetas estilo cola con paginación de 10 canciones por página (< 1 / N >) en Recomendado para ti, erradica la resurrección de canciones y listas eliminadas (como MisFavoritas) mediante lápidas semánticas persistentes en almacenamiento local y sincronización remota Gist/WebDAV/LAN, sincroniza en tiempo real el widget multimedia de Android con carátula y estado de reproducción, hace interactivo el menú de 3 puntos en la sección Cola, organiza Listas destacadas y Nuevos lanzamientos en cuadrículas en cascada de 2 columnas sin títulos truncados, y potencia el algoritmo de recomendación musical incorporando Taste Anchor Biasing, afinidad contextual por sesión y límite estricto de diversidad por artista inspirado en Google Music.</p>
+      </description>
+    </release>
+
+    <release version="1.48.58" date="2026-09-20">
+      <description>
+        <p>Release 1.48.58: Experiencia móvil perfeccionada, sincronización bidireccional y actualización del motor de recomendaciones musicales: añade diseño de tarjetas estilo cola con paginación de 10 canciones por página (< 1 / N >) en Recomendado para ti, erradica la resurrección de canciones y listas eliminadas (como MisFavoritas) mediante lápidas semánticas persistentes en almacenamiento local y sincronización remota Gist/WebDAV/LAN, sincroniza en tiempo real el widget multimedia de Android con carátula y estado de reproducción, hace interactivo el menú de 3 puntos en la sección Cola, organiza Listas destacadas y Nuevos lanzamientos en cuadrículas en cascada de 2 columnas sin títulos truncados, y potencia el algoritmo de recomendación musical incorporando Taste Anchor Biasing, afinidad contextual por sesión y límite estricto de diversidad por artista inspirado en Google Music.</p>
+      </description>
+    </release>
+
     <release version="1.48.57" date="2026-09-19">
       <description>
         <p>Release 1.48.57: Limpieza y corrección de la barra de reproducción de escritorio: elimina el botón redundante de favorito de álbum que provocaba dos iconos idénticos de corazón adyacentes junto al dislike, manteniendo un único botón limpio para marcar canciones favoritas en la reproducción y preservando el favorito de álbum en la vista y tarjetas de álbum.</p>

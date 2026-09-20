@@ -290,17 +290,21 @@ export const PersonalizedMixWidget: FC = () => {
   return (
     <div
       data-testid="dashboard-personalized-mix"
-      className="flex flex-col gap-2"
+      className="flex flex-col gap-2.5"
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <SparklesIcon className="text-primary size-5" />
-          <h2 className="text-lg font-bold">{t('personalizedMix.title')}</h2>
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-2">
+          {!isCapacitorEnvironment() && (
+            <SparklesIcon className="text-primary size-5" />
+          )}
+          <h2 className="text-2xl font-black tracking-tight text-white select-none">
+            {t('personalizedMix.title', 'Recomendado para ti')}
+          </h2>
           <Button
             variant="ghost"
             size="icon"
             data-testid="refresh-recommendations-button"
-            className="text-foreground-secondary hover:text-foreground h-7 w-7"
+            className="h-7 w-7 rounded-full text-zinc-400 transition-transform hover:text-white active:scale-90"
             aria-label={t('refresh')}
             title={t('refresh')}
             disabled={isFetching}
@@ -311,7 +315,8 @@ export const PersonalizedMixWidget: FC = () => {
             />
           </Button>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+
+        <div className="hidden flex-wrap items-center gap-2 sm:flex">
           {topGenres.slice(0, 3).map((genreScore) => (
             <Badge
               key={genreScore.genre}
@@ -326,9 +331,12 @@ export const PersonalizedMixWidget: FC = () => {
           </Badge>
         </div>
       </div>
-      <p className="text-foreground-secondary text-xs">
-        {t('personalizedMix.description')}
-      </p>
+
+      {!isCapacitorEnvironment() && (
+        <p className="text-foreground-secondary text-xs">
+          {t('personalizedMix.description')}
+        </p>
+      )}
 
       {visibleTracks === undefined && (isLoading || isFetching) ? (
         <div className="flex items-center justify-center p-8">
@@ -336,8 +344,9 @@ export const PersonalizedMixWidget: FC = () => {
         </div>
       ) : isCapacitorEnvironment() ? (
         <MobileTrackPages
-          key={`mix-pages-${refreshNonce}`}
           tracks={visibleTracks ?? []}
+          pageSize={10}
+          variant="queue"
         />
       ) : (
         <ConnectedTrackTable

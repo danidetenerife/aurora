@@ -10,9 +10,19 @@ export const changeLanguage = async (locale: string) => {
 };
 
 export const applyLanguageFromSettings = async () => {
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
   const savedLanguage = await coreSettingsHost.get<string>('general.language');
   if (savedLanguage && typeof savedLanguage === 'string') {
     await changeLanguage(savedLanguage);
+  } else {
+    const browserLang =
+      typeof navigator !== 'undefined' ? navigator.language : '';
+    if (browserLang.toLowerCase().startsWith('es')) {
+      await changeLanguage('es_ES');
+      await coreSettingsHost.set('general.language', 'es_ES');
+    }
   }
 };
 

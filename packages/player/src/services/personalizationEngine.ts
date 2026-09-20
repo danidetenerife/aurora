@@ -862,6 +862,15 @@ export class PersonalizationEngine {
     const now = Date.now();
     const hasSkipStreak = this.consecutiveSkips >= 3;
 
+    const favTracks = useFavoritesStore.getState().tracks;
+    const favArtists = useFavoritesStore.getState().artists;
+    const currentPlayingTrack = useQueueStore
+      .getState()
+      .getCurrentItem()?.track;
+    const currentTags = new Set(
+      (currentPlayingTrack?.tags ?? []).map((t) => t.toLowerCase().trim()),
+    );
+
     for (const candidate of candidates) {
       const trackId =
         candidate.track.source?.id ||
@@ -935,12 +944,36 @@ export class PersonalizationEngine {
           : 0.7
         : 1.0;
 
+      const isFavTrack = favTracks.some(
+        (entry) =>
+          (entry.ref.source?.id && entry.ref.source.id === trackId) ||
+          (entry.ref.title.toLowerCase().trim() ===
+            candidate.track.title.toLowerCase().trim() &&
+            entry.ref.artists?.[0]?.name?.toLowerCase().trim() === artistName),
+      );
+      const isFavArtist = favArtists.some(
+        (entry) => entry.ref.name.toLowerCase().trim() === artistName,
+      );
+      const libraryMultiplier = isFavTrack ? 1.6 : isFavArtist ? 1.25 : 1.0;
+
+      let sessionTransitionMultiplier = 1.0;
+      if (currentTags.size > 0 && candidate.track.tags) {
+        const candidateTags = candidate.track.tags.map((t) =>
+          t.toLowerCase().trim(),
+        );
+        if (candidateTags.some((tag) => currentTags.has(tag))) {
+          sessionTransitionMultiplier = 1.25;
+        }
+      }
+
       const finalScore =
         (affinity * 0.35 + sourceBonus * 0.2 + 0.15 + freshnessNoise * 0.3) *
         skipWeight *
         immediatePenalty *
         cooldownMultiplier *
-        streakMultiplier;
+        streakMultiplier *
+        libraryMultiplier *
+        sessionTransitionMultiplier;
 
       const item = { track: candidate.track, score: finalScore };
 
@@ -1046,7 +1079,23 @@ export class PersonalizationEngine {
       }
     }
 
-    return result;
+    // Google benchmark: enforce max 2 tracks per artist in the top 10 recommendations
+    const top10ArtistCounts = new Map<string, number>();
+    const top10: Track[] = [];
+    const overflow: Track[] = [];
+
+    for (const track of result) {
+      const artist = (track.artists?.[0]?.name || 'unknown').toLowerCase();
+      const count = top10ArtistCounts.get(artist) ?? 0;
+      if (top10.length < 10 && count < 2) {
+        top10ArtistCounts.set(artist, count + 1);
+        top10.push(track);
+      } else {
+        overflow.push(track);
+      }
+    }
+
+    return [...top10, ...overflow];
   }
 }
 

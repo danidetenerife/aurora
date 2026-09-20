@@ -10,11 +10,15 @@ import type {
 import { stripResolutionState } from '@aurora/model';
 
 import { playlistFileService } from '../services/playlistFileService';
+import { createUniversalStore } from '../services/universalStore';
 import { useQueueStore } from './queueStore';
+
+const playlistMetaStore = createUniversalStore('playlists_meta.json');
 
 type PlaylistStore = {
   index: PlaylistIndexEntry[];
   playlists: Map<string, Playlist>;
+  deletedPlaylists: Record<string, number>;
   loaded: boolean;
 
   loadIndex: () => Promise<void>;
@@ -41,11 +45,27 @@ type PlaylistStore = {
 export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
   index: [],
   playlists: new Map(),
+  deletedPlaylists: {},
   loaded: false,
 
   loadIndex: async () => {
-    const index = await playlistFileService.loadIndex();
-    set({ index, loaded: true });
+    const rawIndex = await playlistFileService.loadIndex();
+    const deletedPlaylists =
+      (await playlistMetaStore.get<Record<string, number>>(
+        'deletedPlaylists',
+      )) ?? {};
+    const isDeleted = (id: string, name?: string) => {
+      const normName = name?.toLowerCase().trim();
+      return Boolean(
+        deletedPlaylists[id] ||
+        (name && deletedPlaylists[name]) ||
+        (normName && deletedPlaylists[normName]) ||
+        (name && deletedPlaylists[`synced-${name}`]) ||
+        (normName && deletedPlaylists[`synced-${normName}`]),
+      );
+    };
+    const index = rawIndex.filter((entry) => !isDeleted(entry.id, entry.name));
+    set({ index, deletedPlaylists, loaded: true });
   },
 
   loadPlaylist: async (id: string) => {
@@ -228,13 +248,40 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
   },
 
   deletePlaylist: async (id: string) => {
-    const index = await playlistFileService.deletePlaylist(id);
+    const entry = get().index.find((e) => e.id === id);
+    const playlist = get().playlists.get(id);
+    const playlistName = entry?.name ?? playlist?.name;
+    const index = await playlistFileService.deletePlaylist(id, playlistName);
+
+    const now = Date.now();
+    const existingDeleted = get().deletedPlaylists;
+    const deletedPlaylists = {
+      ...existingDeleted,
+      [id]: now,
+      ...(playlistName
+        ? {
+            [`synced-${playlistName}`]: now,
+            [playlistName]: now,
+            [playlistName.toLowerCase().trim()]: now,
+          }
+        : {}),
+    };
+    await playlistMetaStore.set('deletedPlaylists', deletedPlaylists);
+    await playlistMetaStore.save();
 
     set((state) => {
       const playlists = new Map(state.playlists);
       playlists.delete(id);
-      return { playlists, index };
+      return { playlists, index, deletedPlaylists };
     });
+
+    try {
+      const { p2pSyncService } = await import('../services/p2pSyncService');
+      void p2pSyncService.pushLocalChangesToPc();
+      void p2pSyncService.syncNow();
+    } catch {
+      // ignore
+    }
   },
 }));
 

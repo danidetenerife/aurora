@@ -12,16 +12,16 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
     </h3>
     <div>
       <div
-        class="border-border grid grid-cols-[auto_auto_1fr_1fr] items-center gap-3 border-b-(length:--border-width) py-1.5 last:border-b-0"
+        class="border-border grid grid-cols-[auto_auto_1fr_auto] items-center gap-3 border-b-(length:--border-width) py-2 last:border-b-0"
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums"
+          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
         >
           1
         </span>
         <div
-          class="flex h-10 w-10 items-center justify-center overflow-hidden"
+          class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded"
         >
           <img
             alt="Before Today"
@@ -30,23 +30,23 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
           />
         </div>
         <div
-          class="min-w-0"
+          class="min-w-0 flex-1 flex flex-col justify-center"
         >
           <div
-            class="truncate font-medium"
+            class="break-words font-medium leading-snug"
             data-testid="top-list-label"
           >
             Before Today
           </div>
           <div
-            class="text-foreground-secondary truncate text-sm"
+            class="text-foreground-secondary break-words text-sm leading-snug mt-0.5"
             data-testid="top-list-sublabel"
           >
             Ariel Pink
           </div>
         </div>
         <div
-          class="bg-primary/50 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums"
+          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
           data-testid="top-list-value"
           style="width: 100%;"
         >
@@ -54,16 +54,16 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
         </div>
       </div>
       <div
-        class="border-border grid grid-cols-[auto_auto_1fr_1fr] items-center gap-3 border-b-(length:--border-width) py-1.5 last:border-b-0"
+        class="border-border grid grid-cols-[auto_auto_1fr_auto] items-center gap-3 border-b-(length:--border-width) py-2 last:border-b-0"
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums"
+          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
         >
           2
         </span>
         <div
-          class="flex h-10 w-10 items-center justify-center overflow-hidden"
+          class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded"
         >
           <svg
             aria-hidden="true"
@@ -104,23 +104,23 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
           </svg>
         </div>
         <div
-          class="min-w-0"
+          class="min-w-0 flex-1 flex flex-col justify-center"
         >
           <div
-            class="truncate font-medium"
+            class="break-words font-medium leading-snug"
             data-testid="top-list-label"
           >
             Hot Rats
           </div>
           <div
-            class="text-foreground-secondary truncate text-sm"
+            class="text-foreground-secondary break-words text-sm leading-snug mt-0.5"
             data-testid="top-list-sublabel"
           >
             Frank Zappa
           </div>
         </div>
         <div
-          class="bg-primary/50 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums"
+          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
           data-testid="top-list-value"
           style="width: 50%;"
         >
@@ -144,16 +144,16 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
     </h3>
     <div>
       <div
-        class="border-border grid grid-cols-[auto_auto_1fr_1fr] items-center gap-3 border-b-(length:--border-width) py-1.5 last:border-b-0"
+        class="border-border grid grid-cols-[auto_auto_1fr_auto] items-center gap-3 border-b-(length:--border-width) py-2 last:border-b-0"
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums"
+          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
         >
           1
         </span>
         <div
-          class="flex h-10 w-10 items-center justify-center overflow-hidden"
+          class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded"
         >
           <img
             alt="John Maus"
@@ -162,17 +162,17 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
           />
         </div>
         <div
-          class="min-w-0"
+          class="min-w-0 flex-1 flex flex-col justify-center"
         >
           <div
-            class="truncate font-medium"
+            class="break-words font-medium leading-snug"
             data-testid="top-list-label"
           >
             John Maus
           </div>
         </div>
         <div
-          class="bg-primary/50 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums"
+          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
           data-testid="top-list-value"
           style="width: 100%;"
         >
@@ -180,16 +180,16 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
         </div>
       </div>
       <div
-        class="border-border grid grid-cols-[auto_auto_1fr_1fr] items-center gap-3 border-b-(length:--border-width) py-1.5 last:border-b-0"
+        class="border-border grid grid-cols-[auto_auto_1fr_auto] items-center gap-3 border-b-(length:--border-width) py-2 last:border-b-0"
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums"
+          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
         >
           2
         </span>
         <div
-          class="flex h-10 w-10 items-center justify-center overflow-hidden"
+          class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded"
         >
           <svg
             aria-hidden="true"
@@ -230,17 +230,17 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
           </svg>
         </div>
         <div
-          class="min-w-0"
+          class="min-w-0 flex-1 flex flex-col justify-center"
         >
           <div
-            class="truncate font-medium"
+            class="break-words font-medium leading-snug"
             data-testid="top-list-label"
           >
             Ariel Pink
           </div>
         </div>
         <div
-          class="bg-primary/50 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums"
+          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
           data-testid="top-list-value"
           style="width: 50%;"
         >
@@ -248,16 +248,16 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
         </div>
       </div>
       <div
-        class="border-border grid grid-cols-[auto_auto_1fr_1fr] items-center gap-3 border-b-(length:--border-width) py-1.5 last:border-b-0"
+        class="border-border grid grid-cols-[auto_auto_1fr_auto] items-center gap-3 border-b-(length:--border-width) py-2 last:border-b-0"
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums"
+          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
         >
           3
         </span>
         <div
-          class="flex h-10 w-10 items-center justify-center overflow-hidden"
+          class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded"
         >
           <img
             alt="Swans"
@@ -266,17 +266,17 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
           />
         </div>
         <div
-          class="min-w-0"
+          class="min-w-0 flex-1 flex flex-col justify-center"
         >
           <div
-            class="truncate font-medium"
+            class="break-words font-medium leading-snug"
             data-testid="top-list-label"
           >
             Swans
           </div>
         </div>
         <div
-          class="bg-primary/50 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums"
+          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
           data-testid="top-list-value"
           style="width: 25%;"
         >

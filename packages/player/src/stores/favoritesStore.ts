@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, type StoreApi, type UseBoundStore } from 'zustand';
 
 import type {
   AlbumRef,
@@ -25,8 +25,16 @@ type FavoritesState = FavoritesData & {
   loadFromDisk: () => Promise<void>;
 
   addTrack: (track: Track) => Promise<void>;
-  removeTrack: (source: ProviderRef) => Promise<void>;
-  isTrackFavorite: (source: ProviderRef) => boolean;
+  removeTrack: (
+    source: ProviderRef,
+    title?: string,
+    artist?: string,
+  ) => Promise<void>;
+  isTrackFavorite: (
+    source: ProviderRef,
+    title?: string,
+    artist?: string,
+  ) => boolean;
 
   addAlbum: (ref: AlbumRef) => Promise<void>;
   removeAlbum: (source: ProviderRef) => Promise<void>;
@@ -48,6 +56,32 @@ const matchesSource = (a?: ProviderRef, b?: ProviderRef): boolean =>
 
 export const normalizeKey = (val?: string): string =>
   (val || '').trim().toLowerCase();
+
+export const matchesTrack = (
+  entry: FavoriteEntry<Track>,
+  source?: ProviderRef,
+  title?: string,
+  artist?: string,
+): boolean => {
+  if (source && matchesSource(entry.ref.source, source)) {
+    return true;
+  }
+  const entryTitle = normalizeKey(entry.ref.title);
+  const searchTitle = normalizeKey(title);
+  if (entryTitle && searchTitle && entryTitle === searchTitle) {
+    const entryArtist = normalizeKey(entry.ref.artists?.[0]?.name);
+    const searchArtist = normalizeKey(artist);
+    if (!entryArtist || !searchArtist || entryArtist === searchArtist) {
+      return true;
+    }
+  }
+  const sourceId = normalizeKey(source?.id);
+  const entrySourceId = normalizeKey(entry.ref.source?.id);
+  if (sourceId && entrySourceId && sourceId === entrySourceId) {
+    return true;
+  }
+  return false;
+};
 
 export const matchesArtist = (
   entry: FavoriteEntry<ArtistRef>,
@@ -88,11 +122,13 @@ const saveToDisk = async (): Promise<void> => {
 
 type FavoritesKey = 'tracks' | 'albums' | 'artists' | 'playlists';
 
-const getList = <T extends RefWithSource>(key: FavoritesKey) =>
-  useFavoritesStore.getState()[key] as unknown as FavoriteEntry<T>[];
+const getList = <T extends RefWithSource>(
+  key: FavoritesKey,
+): FavoriteEntry<T>[] =>
+  (useFavoritesStore.getState()[key] as unknown as FavoriteEntry<T>[]) || [];
 
 const createAddFavorite =
-  <T extends RefWithSource>(key: FavoritesKey) =>
+  <T extends RefWithSource>(key: FavoritesKey): ((ref: T) => Promise<void>) =>
   async (ref: T): Promise<void> => {
     const list = getList<T>(key);
     if (list.some((entry) => matchesSource(entry.ref.source, ref.source))) {
@@ -111,7 +147,9 @@ const createAddFavorite =
   };
 
 const createRemoveFavorite =
-  <T extends RefWithSource>(key: FavoritesKey) =>
+  <T extends RefWithSource>(
+    key: FavoritesKey,
+  ): ((source: ProviderRef) => Promise<void>) =>
   async (source: ProviderRef): Promise<void> => {
     const list = getList<T>(key);
     const deletedKey = `${source.provider}::${source.id}`;
@@ -127,130 +165,178 @@ const createRemoveFavorite =
   };
 
 const createIsFavorite =
-  <T extends RefWithSource>(key: FavoritesKey) =>
+  <T extends RefWithSource>(
+    key: FavoritesKey,
+  ): ((source: ProviderRef) => boolean) =>
   (source: ProviderRef): boolean =>
     getList<T>(key).some((entry) => matchesSource(entry.ref.source, source));
 
-export const useFavoritesStore = create<FavoritesState>(() => ({
-  tracks: [],
-  albums: [],
-  artists: [],
-  playlists: [],
-  deletedKeys: {},
-  loaded: false,
+export const useFavoritesStore: UseBoundStore<StoreApi<FavoritesState>> =
+  create<FavoritesState>()(() => ({
+    tracks: [],
+    albums: [],
+    artists: [],
+    playlists: [],
+    deletedKeys: {},
+    loaded: false,
 
-  loadFromDisk: async () => {
-    const tracks =
-      (await store.get<FavoriteEntry<Track>[]>('favorites.tracks')) ?? [];
-    const albums =
-      (await store.get<FavoriteEntry<AlbumRef>[]>('favorites.albums')) ?? [];
-    const artists =
-      (await store.get<FavoriteEntry<ArtistRef>[]>('favorites.artists')) ?? [];
-    const playlists =
-      (await store.get<FavoriteEntry<PlaylistRef>[]>('favorites.playlists')) ??
-      [];
-    const deletedKeys =
-      (await store.get<Record<string, number>>('favorites.deletedKeys')) ?? {};
+    loadFromDisk: async () => {
+      const tracks =
+        (await store.get<FavoriteEntry<Track>[]>('favorites.tracks')) ?? [];
+      const albums =
+        (await store.get<FavoriteEntry<AlbumRef>[]>('favorites.albums')) ?? [];
+      const artists =
+        (await store.get<FavoriteEntry<ArtistRef>[]>('favorites.artists')) ??
+        [];
+      const playlists =
+        (await store.get<FavoriteEntry<PlaylistRef>[]>(
+          'favorites.playlists',
+        )) ?? [];
+      const deletedKeys =
+        (await store.get<Record<string, number>>('favorites.deletedKeys')) ??
+        {};
 
-    useFavoritesStore.setState({
-      tracks,
-      albums,
-      artists,
-      playlists,
-      deletedKeys,
-      loaded: true,
-    });
-  },
+      useFavoritesStore.setState({
+        tracks,
+        albums,
+        artists,
+        playlists,
+        deletedKeys,
+        loaded: true,
+      });
+    },
 
-  addTrack: createAddFavorite<Track>('tracks'),
-  removeTrack: createRemoveFavorite<Track>('tracks'),
-  isTrackFavorite: createIsFavorite<Track>('tracks'),
-
-  addAlbum: createAddFavorite<AlbumRef>('albums'),
-  removeAlbum: createRemoveFavorite<AlbumRef>('albums'),
-  clearAlbums: async () => {
-    const state = useFavoritesStore.getState();
-    const now = Date.now();
-    const deletedKeys = { ...state.deletedKeys };
-    for (const entry of state.albums) {
-      deletedKeys[`${entry.ref.source.provider}::${entry.ref.source.id}`] = now;
-    }
-    useFavoritesStore.setState({ albums: [], deletedKeys });
-    await saveToDisk();
-  },
-  isAlbumFavorite: createIsFavorite<AlbumRef>('albums'),
-
-  addArtist: async (ref: ArtistRef) => {
-    const state = useFavoritesStore.getState();
-    const existing = state.artists.filter(
-      (entry) => !matchesArtist(entry, ref.source, ref.name),
-    );
-    const entry: FavoriteEntry<ArtistRef> = {
-      ref,
-      addedAtIso: new Date().toISOString(),
-    };
-    const deletedKeys = { ...state.deletedKeys };
-    delete deletedKeys[`${ref.source.provider}::${ref.source.id}`];
-    delete deletedKeys[`artist::${normalizeKey(ref.name)}`];
-
-    useFavoritesStore.setState({
-      artists: [...existing, entry],
-      deletedKeys,
-    });
-    await saveToDisk();
-  },
-
-  removeArtist: async (source: ProviderRef, name?: string) => {
-    const state = useFavoritesStore.getState();
-    const now = Date.now();
-    const deletedKeys = { ...state.deletedKeys };
-    deletedKeys[`${source.provider}::${source.id}`] = now;
-    if (name) {
-      deletedKeys[`artist::${normalizeKey(name)}`] = now;
-    }
-    const remaining = state.artists.filter(
-      (entry) => !matchesArtist(entry, source, name),
-    );
-    useFavoritesStore.setState({ artists: remaining, deletedKeys });
-    await saveToDisk();
-  },
-
-  removeArtistByName: async (name: string) => {
-    const state = useFavoritesStore.getState();
-    const now = Date.now();
-    const deletedKeys = {
-      ...state.deletedKeys,
-      [`artist::${normalizeKey(name)}`]: now,
-    };
-    const remaining = state.artists.filter(
-      (entry) => normalizeKey(entry.ref.name) !== normalizeKey(name),
-    );
-    useFavoritesStore.setState({ artists: remaining, deletedKeys });
-    await saveToDisk();
-  },
-
-  clearArtists: async () => {
-    const state = useFavoritesStore.getState();
-    const now = Date.now();
-    const deletedKeys = { ...state.deletedKeys };
-    for (const entry of state.artists) {
-      deletedKeys[`${entry.ref.source.provider}::${entry.ref.source.id}`] = now;
-      if (entry.ref.name) {
-        deletedKeys[`artist::${normalizeKey(entry.ref.name)}`] = now;
+    addTrack: createAddFavorite<Track>('tracks'),
+    removeTrack: async (
+      source: ProviderRef,
+      title?: string,
+      artist?: string,
+    ) => {
+      const list = getList<Track>('tracks');
+      const now = Date.now();
+      const deletedKeys = {
+        ...useFavoritesStore.getState().deletedKeys,
+        ...(source?.provider && source?.id
+          ? { [`${source.provider}::${source.id}`]: now }
+          : {}),
+        ...(title ? { [`track::${title.trim().toLowerCase()}`]: now } : {}),
+        ...(title && artist
+          ? {
+              [`track::${artist.trim().toLowerCase()}::${title.trim().toLowerCase()}`]:
+                now,
+            }
+          : {}),
+      };
+      useFavoritesStore.setState({
+        tracks: list.filter(
+          (entry) => !matchesTrack(entry, source, title, artist),
+        ),
+        deletedKeys,
+      });
+      await saveToDisk();
+      try {
+        const { p2pSyncService } = await import('../services/p2pSyncService');
+        void p2pSyncService.pushLocalChangesToPc();
+      } catch {
+        // ignore
       }
-    }
-    useFavoritesStore.setState({ artists: [], deletedKeys });
-    await saveToDisk();
-  },
+    },
+    isTrackFavorite: (
+      source: ProviderRef,
+      title?: string,
+      artist?: string,
+    ): boolean =>
+      getList<Track>('tracks').some((entry) =>
+        matchesTrack(entry, source, title, artist),
+      ),
 
-  isArtistFavorite: (source: ProviderRef, name?: string): boolean => {
-    const list = useFavoritesStore.getState().artists;
-    return list.some((entry) => matchesArtist(entry, source, name));
-  },
-  addPlaylist: createAddFavorite<PlaylistRef>('playlists'),
-  removePlaylist: createRemoveFavorite<PlaylistRef>('playlists'),
-  isPlaylistFavorite: createIsFavorite<PlaylistRef>('playlists'),
-}));
+    addAlbum: createAddFavorite<AlbumRef>('albums'),
+    removeAlbum: createRemoveFavorite<AlbumRef>('albums'),
+    clearAlbums: async () => {
+      const state = useFavoritesStore.getState();
+      const now = Date.now();
+      const deletedKeys = { ...state.deletedKeys };
+      for (const entry of state.albums) {
+        deletedKeys[`${entry.ref.source.provider}::${entry.ref.source.id}`] =
+          now;
+      }
+      useFavoritesStore.setState({ albums: [], deletedKeys });
+      await saveToDisk();
+    },
+    isAlbumFavorite: createIsFavorite<AlbumRef>('albums'),
+
+    addArtist: async (ref: ArtistRef) => {
+      const state = useFavoritesStore.getState();
+      const existing = state.artists.filter(
+        (entry) => !matchesArtist(entry, ref.source, ref.name),
+      );
+      const entry: FavoriteEntry<ArtistRef> = {
+        ref,
+        addedAtIso: new Date().toISOString(),
+      };
+      const deletedKeys = { ...state.deletedKeys };
+      delete deletedKeys[`${ref.source.provider}::${ref.source.id}`];
+      delete deletedKeys[`artist::${normalizeKey(ref.name)}`];
+
+      useFavoritesStore.setState({
+        artists: [...existing, entry],
+        deletedKeys,
+      });
+      await saveToDisk();
+    },
+
+    removeArtist: async (source: ProviderRef, name?: string) => {
+      const state = useFavoritesStore.getState();
+      const now = Date.now();
+      const deletedKeys = { ...state.deletedKeys };
+      deletedKeys[`${source.provider}::${source.id}`] = now;
+      if (name) {
+        deletedKeys[`artist::${normalizeKey(name)}`] = now;
+      }
+      const remaining = state.artists.filter(
+        (entry) => !matchesArtist(entry, source, name),
+      );
+      useFavoritesStore.setState({ artists: remaining, deletedKeys });
+      await saveToDisk();
+    },
+
+    removeArtistByName: async (name: string) => {
+      const state = useFavoritesStore.getState();
+      const now = Date.now();
+      const deletedKeys = {
+        ...state.deletedKeys,
+        [`artist::${normalizeKey(name)}`]: now,
+      };
+      const remaining = state.artists.filter(
+        (entry) => normalizeKey(entry.ref.name) !== normalizeKey(name),
+      );
+      useFavoritesStore.setState({ artists: remaining, deletedKeys });
+      await saveToDisk();
+    },
+
+    clearArtists: async () => {
+      const state = useFavoritesStore.getState();
+      const now = Date.now();
+      const deletedKeys = { ...state.deletedKeys };
+      for (const entry of state.artists) {
+        deletedKeys[`${entry.ref.source.provider}::${entry.ref.source.id}`] =
+          now;
+        if (entry.ref.name) {
+          deletedKeys[`artist::${normalizeKey(entry.ref.name)}`] = now;
+        }
+      }
+      useFavoritesStore.setState({ artists: [], deletedKeys });
+      await saveToDisk();
+    },
+
+    isArtistFavorite: (source: ProviderRef, name?: string): boolean => {
+      const list = useFavoritesStore.getState().artists;
+      return list.some((entry) => matchesArtist(entry, source, name));
+    },
+    addPlaylist: createAddFavorite<PlaylistRef>('playlists'),
+    removePlaylist: createRemoveFavorite<PlaylistRef>('playlists'),
+    isPlaylistFavorite: createIsFavorite<PlaylistRef>('playlists'),
+  }));
 
 export const initializeFavoritesStore = async (): Promise<void> => {
   await useFavoritesStore.getState().loadFromDisk();

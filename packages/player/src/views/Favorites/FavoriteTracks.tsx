@@ -5,7 +5,7 @@ import { useTranslation } from '@aurora/i18n';
 import { EmptyState, ViewShell } from '@aurora/ui';
 
 import { ConnectedTrackTable } from '../../components/ConnectedTrackTable';
-import { MobileTrackPages } from '../../components/MobileTrackPages';
+import { MobileQueueStyleTrackList } from '../../components/MobileQueueStyleTrackList';
 import { enrichFavoriteTracks } from '../../services/artworkEnricher';
 import { isCapacitorEnvironment } from '../../services/universalStore';
 import { useFavoritesStore } from '../../stores/favoritesStore';
@@ -42,7 +42,7 @@ export const FavoriteTracks: FC = () => {
           className="flex-1"
         />
       ) : isCapacitorEnvironment() ? (
-        <MobileTrackPages tracks={sortedTracks} />
+        <MobileQueueStyleTrackList tracks={sortedTracks} />
       ) : (
         <ConnectedTrackTable
           tracks={sortedTracks}

@@ -213,7 +213,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               <span
                 class="truncate"
               >
-                Sincronización
+                Sync
               </span>
             </button>
             <button
@@ -378,7 +378,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               <span
                 class="cursor-text text-xs select-all"
               >
-                v1.47.1 (600fa1b)
+                v1.48.57 (ef20fba)
               </span>
             </div>
           </div>

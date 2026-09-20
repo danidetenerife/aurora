@@ -89,8 +89,12 @@ class LocalStorageStore implements UniversalStore {
       return false;
     }
     const itemKey = `${this.prefix}${key}`;
-    const existed = localStorage.getItem(itemKey) !== null;
+    const legacyItemKey = `${this.legacyPrefix}${key}`;
+    const existed =
+      localStorage.getItem(itemKey) !== null ||
+      localStorage.getItem(legacyItemKey) !== null;
     localStorage.removeItem(itemKey);
+    localStorage.removeItem(legacyItemKey);
     return existed;
   }
 
@@ -105,7 +109,10 @@ class LocalStorageStore implements UniversalStore {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith(this.prefix)) {
+      if (
+        key &&
+        (key.startsWith(this.prefix) || key.startsWith(this.legacyPrefix))
+      ) {
         keysToRemove.push(key);
       }
     }

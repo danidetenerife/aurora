@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import {
   CableIcon,
+  ChevronDown,
   DiscIcon,
   GaugeIcon,
   HistoryIcon,
@@ -9,6 +10,7 @@ import {
   MusicIcon,
   SettingsIcon,
   UserIcon,
+  X,
 } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -24,6 +26,7 @@ import {
 import { CarModeOverlay } from '../components/CarMode/CarModeOverlay';
 import { ConnectedMobileNav } from '../components/ConnectedMobileNav';
 import { ConnectedPlayerBar } from '../components/ConnectedPlayerBar';
+import { MobileExpandedPlayer } from '../components/ConnectedPlayerBar/MobileExpandedPlayer';
 import {
   ConnectedQueuePanel,
   QueueHeaderActions,
@@ -32,6 +35,9 @@ import { ConnectedSettingsModal } from '../components/ConnectedSettingsModal';
 import { ConnectedTitleBar } from '../components/ConnectedTitleBar';
 import { ConnectedTopBar } from '../components/ConnectedTopBar';
 import { FlatpakWarningBanner } from '../components/FlatpakWarningBanner';
+import { MobileAccountSheet } from '../components/MobileAccountSheet';
+import { MobileNotificationsSheet } from '../components/MobileNotificationsSheet';
+import { MobileTrackContextMenuSheet } from '../components/MobileTrackContextMenuSheet';
 import { SoundProvider } from '../components/SoundProvider';
 import { StreamResolver } from '../components/StreamResolver';
 import { TvShell } from '../components/TvShell';
@@ -172,7 +178,9 @@ const DesktopMobileRootComponent = () => {
             onToggle={toggleRightSidebar}
             headerActions={<QueueHeaderActions />}
           >
-            <ConnectedQueuePanel isCollapsed={rightSidebar.isCollapsed} />
+            {!isCapacitorEnvironment() && (
+              <ConnectedQueuePanel isCollapsed={rightSidebar.isCollapsed} />
+            )}
           </PlayerWorkspace.RightSidebar>
         </PlayerWorkspace>
       </SoundProvider>
@@ -181,12 +189,51 @@ const DesktopMobileRootComponent = () => {
         <ConnectedPlayerBar />
         <ConnectedMobileNav />
       </div>
+      {isCapacitorEnvironment() && !rightSidebar.isCollapsed && (
+        <div className="bg-background fixed inset-0 z-50 flex flex-col pt-[max(2.25rem,env(safe-area-inset-top,0px))] pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] md:hidden">
+          <div className="border-border flex items-center justify-between border-b px-4 py-2">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="border-border text-foreground hover:bg-background-secondary cursor-pointer rounded-xl border p-2 transition-all active:scale-95"
+                onClick={toggleRightSidebar}
+                data-testid="mobile-queue-chevron-close"
+                aria-label="Cerrar cola"
+              >
+                <ChevronDown className="size-5" />
+              </button>
+              <h2 className="text-lg font-bold">
+                {t('queue', { defaultValue: 'Cola' })}
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <QueueHeaderActions />
+              <button
+                type="button"
+                className="border-border text-foreground hover:bg-background-secondary cursor-pointer rounded-xl border p-2 transition-all active:scale-95"
+                onClick={toggleRightSidebar}
+                data-testid="mobile-queue-close"
+                aria-label="Cerrar cola"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+          </div>
+          <div className="min-h-0 flex-1">
+            <ConnectedQueuePanel />
+          </div>
+        </div>
+      )}
       <Toaster
         position={isTauri ? 'bottom-right' : 'top-center'}
         mobileOffset={{ top: '64px', bottom: '120px' }}
       />
       <ConnectedSettingsModal />
+      <MobileNotificationsSheet />
+      <MobileAccountSheet />
       <CarModeOverlay />
+      <MobileExpandedPlayer />
+      <MobileTrackContextMenuSheet />
     </PlayerShell>
   );
 };

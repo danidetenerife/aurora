@@ -80,7 +80,7 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
         <div
           data-testid="queue-item-title"
           className={cn(
-            'text-foreground truncate text-sm font-bold',
+            'text-foreground text-sm leading-tight font-bold break-words',
             classes?.title,
           )}
         >
@@ -88,7 +88,10 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
         </div>
         <div
           data-testid="queue-item-artist"
-          className={cn('text-foreground truncate text-xs', classes?.artist)}
+          className={cn(
+            'text-foreground mt-0.5 text-xs leading-tight break-words',
+            classes?.artist,
+          )}
         >
           {primaryArtist}
         </div>

@@ -325,13 +325,13 @@ export const SyncSettingsView: FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 pt-1 sm:flex-nowrap">
+        <div className="grid grid-cols-1 gap-2.5 pt-1 sm:grid-cols-3">
           <Button
             variant="default"
             size="default"
             disabled={isSyncing}
             onClick={() => void handleSyncNow()}
-            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 px-4 text-xs font-semibold whitespace-nowrap"
+            className="h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-xs font-bold shadow-sm sm:col-span-1"
           >
             <RefreshCw
               size={15}
@@ -339,26 +339,28 @@ export const SyncSettingsView: FC = () => {
             />
             <span>Sincronizar ahora</span>
           </Button>
-          <Button
-            variant="secondary"
-            size="default"
-            onClick={() => void handleShowQr()}
-            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 px-4 text-xs font-semibold whitespace-nowrap"
-            title="Compartir configuración con otro dispositivo"
-          >
-            <QrCode size={15} className="shrink-0" />
-            <span>Compartir QR</span>
-          </Button>
-          <Button
-            variant="secondary"
-            size="default"
-            onClick={() => setIsScannerOpen(true)}
-            className="h-10 min-w-0 flex-1 items-center justify-center gap-2 px-4 text-xs font-semibold whitespace-nowrap"
-            title="Escanear QR de otro dispositivo"
-          >
-            <Camera size={15} className="shrink-0" />
-            <span>Escanear QR</span>
-          </Button>
+          <div className="grid grid-cols-2 gap-2.5 sm:contents">
+            <Button
+              variant="secondary"
+              size="default"
+              onClick={() => void handleShowQr()}
+              className="h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-semibold transition-all hover:bg-white/10 active:scale-98"
+              title="Compartir configuración con otro dispositivo"
+            >
+              <QrCode size={15} className="shrink-0" />
+              <span>Compartir QR</span>
+            </Button>
+            <Button
+              variant="secondary"
+              size="default"
+              onClick={() => setIsScannerOpen(true)}
+              className="h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-semibold transition-all hover:bg-white/10 active:scale-98"
+              title="Escanear QR de otro dispositivo"
+            >
+              <Camera size={15} className="shrink-0" />
+              <span>Escanear QR</span>
+            </Button>
+          </div>
         </div>
       </div>
 

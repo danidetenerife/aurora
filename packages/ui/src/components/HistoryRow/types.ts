@@ -4,6 +4,8 @@ export type HistoryRowLabels = {
   favorite: string;
   unfavorite: string;
   addToQueue: string;
+  duration?: string;
+  playedAt?: string;
 };
 
 export type HistoryRowClasses = {
@@ -12,6 +14,7 @@ export type HistoryRowClasses = {
   title?: string;
   artist?: string;
   time?: string;
+  duration?: string;
 };
 
 export type HistoryRowProps = ComponentProps<'div'> & {
@@ -19,6 +22,7 @@ export type HistoryRowProps = ComponentProps<'div'> & {
   artist: string;
   artistContent?: ReactNode;
   time: string;
+  duration?: string;
   artworkUrl?: string | null;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;

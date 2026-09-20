@@ -2,19 +2,23 @@ import { Link, useRouterState } from '@tanstack/react-router';
 import {
   GaugeIcon,
   ListMusicIcon,
-  Mic2Icon,
+  ListOrdered,
   MusicIcon,
   SettingsIcon,
-  UserIcon,
 } from 'lucide-react';
 import { FC } from 'react';
 
 import { cn } from '@aurora/ui';
 
+import { useLayoutStore } from '../stores/layoutStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 
 export const ConnectedMobileNav: FC = () => {
   const openSettings = useSettingsModalStore((state) => state.open);
+  const rightSidebar = useLayoutStore((state) => state.rightSidebar);
+  const toggleRightSidebar = useLayoutStore(
+    (state) => state.toggleRightSidebar,
+  );
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
@@ -32,22 +36,10 @@ export const ConnectedMobileNav: FC = () => {
       isActive: currentPath === '/favorites/tracks',
     },
     {
-      to: '/favorites/artists',
-      icon: <UserIcon className="size-6" />,
-      label: 'Artistas',
-      isActive: currentPath === '/favorites/artists',
-    },
-    {
       to: '/playlists',
       icon: <ListMusicIcon className="size-6" />,
       label: 'Listas',
       isActive: currentPath.startsWith('/playlists'),
-    },
-    {
-      to: '/podcasts',
-      icon: <Mic2Icon className="size-6" />,
-      label: 'Podcast',
-      isActive: currentPath.startsWith('/podcasts'),
     },
   ];
 
@@ -71,6 +63,21 @@ export const ConnectedMobileNav: FC = () => {
           </span>
         </Link>
       ))}
+
+      <button
+        onClick={toggleRightSidebar}
+        className={cn(
+          'flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl py-1 font-medium transition-all active:scale-95',
+          !rightSidebar.isCollapsed
+            ? 'text-primary scale-105 font-bold'
+            : 'text-foreground-secondary hover:text-foreground',
+        )}
+      >
+        <ListOrdered className="size-6" />
+        <span className="text-center text-[11px] leading-tight whitespace-nowrap sm:text-xs">
+          Cola
+        </span>
+      </button>
 
       <button
         onClick={() => openSettings()}

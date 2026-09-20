@@ -1,6 +1,6 @@
 import { CellContext } from '@tanstack/react-table';
 import { EllipsisVertical, Plus } from 'lucide-react';
-import { FC, forwardRef } from 'react';
+import { ComponentProps, FC, forwardRef } from 'react';
 
 import { Track } from '@aurora/model';
 
@@ -40,12 +40,12 @@ const AddToQueueButton: FC<AddToQueueButtonProps> = ({ label, onClick }) => (
   </Button>
 );
 
-type ContextMenuButtonProps = {
+type ContextMenuButtonProps = ComponentProps<'button'> & {
   label: string;
 };
 
-const ContextMenuButton = forwardRef<HTMLElement, ContextMenuButtonProps>(
-  function ContextMenuButton({ label, ...props }, ref) {
+const ContextMenuButton = forwardRef<HTMLButtonElement, ContextMenuButtonProps>(
+  function ContextMenuButton({ label, onClick, ...props }, ref) {
     return (
       <Button
         {...props}
@@ -53,11 +53,14 @@ const ContextMenuButton = forwardRef<HTMLElement, ContextMenuButtonProps>(
         data-testid="track-context-menu-button"
         size="icon-sm"
         variant="text"
-        className="opacity-0 transition-none group-hover:opacity-100"
-        onClick={(e) => e.stopPropagation()}
+        className="flex min-h-8 min-w-8 cursor-pointer items-center justify-center p-2 opacity-100 transition-none md:opacity-0 md:group-hover:opacity-100"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick?.(e);
+        }}
         aria-label={label}
       >
-        <EllipsisVertical size={16} />
+        <EllipsisVertical size={18} />
       </Button>
     );
   },

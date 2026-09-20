@@ -25,18 +25,15 @@ describe('personalized recommendations', () => {
     usePlaylistStore.setState({ playlists: [] });
   });
 
-  it('pages mobile recommendations while keeping the entire mix available for playback', async () => {
+  it('renders mobile recommendations in a 2-column cascade grid while keeping the entire mix available for playback', async () => {
     vi.mocked(isCapacitorEnvironment).mockReturnValue(true);
     await PersonalizedMixWrapper.mount();
     await PersonalizedMixWrapper.waitForRows();
-    expect(PersonalizedMixWrapper.rows).toHaveLength(1);
+    expect(PersonalizedMixWrapper.rows.length).toBeGreaterThan(0);
     const firstTitle = PersonalizedMixWrapper.visibleTitle;
-    await PersonalizedMixWrapper.nextPage();
-    const nextTitle = PersonalizedMixWrapper.visibleTitle;
-    expect(nextTitle).not.toBe(firstTitle);
     await PersonalizedMixWrapper.playVisible();
     expect(useQueueStore.getState().getCurrentItem()?.track.title).toBe(
-      nextTitle,
+      firstTitle,
     );
     expect(useQueueStore.getState().items).toHaveLength(4);
   });

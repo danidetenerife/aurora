@@ -1,11 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
-import { ThumbsDown } from 'lucide-react';
 import { FC } from 'react';
 import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
-import { Button, FavoriteButton, PlayerBar } from '@aurora/ui';
+import { PillRatingGroup, PlayerBar } from '@aurora/ui';
 
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { useFavoritesStore } from '../../stores/favoritesStore';
@@ -68,28 +67,19 @@ export const ConnectedNowPlaying: FC<{
   };
 
   const actions = track && (
-    <div className="flex items-center gap-0.5 sm:gap-1">
-      <FavoriteButton
-        size="sm"
-        isFavorite={isFavorite}
-        onToggle={handleToggleFavorite}
-        ariaLabelAdd={tTrack('actions.addToFavorites')}
-        ariaLabelRemove={tTrack('actions.removeFromFavorites')}
-      />
-      <Button
-        size="icon-sm"
-        variant="text"
-        onClick={handleDislike}
-        aria-label={tTrack('actions.dislike')}
-        title={tTrack('actions.dislike')}
-        data-testid="now-playing-dislike-button"
-      >
-        <ThumbsDown
-          size={16}
-          className="text-foreground-secondary hover:text-accent-red transition-colors"
-        />
-      </Button>
-    </div>
+    <PillRatingGroup
+      size="sm"
+      isFavorite={isFavorite}
+      onToggleFavorite={handleToggleFavorite}
+      onDislike={handleDislike}
+      labels={{
+        favoriteAdd: tTrack('actions.addToFavorites'),
+        favoriteRemove: tTrack('actions.removeFromFavorites'),
+        dislike: tTrack('actions.dislike'),
+      }}
+      dislikeTestId="now-playing-dislike-button"
+      data-testid="now-playing-pill-rating"
+    />
   );
   if (actionsOnly) {
     return <>{actions}</>;

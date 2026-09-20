@@ -212,7 +212,7 @@ exports[`Plugins view > (Snapshot) renders the plugins view 1`] = `
               <span
                 class="truncate"
               >
-                Sincronización
+                Sync
               </span>
             </button>
             <button

@@ -57,6 +57,22 @@ $code = [int]$partsVer[0]*10000 + [int]$partsVer[1]*100 + [int]$partsVer[2]
 $gradleStr = $rawGradle -replace 'versionName ".*?"', "versionName `"$NextVer`"" -replace 'versionCode \d+', "versionCode $code"
 [System.IO.File]::WriteAllText($BuildGradlePath, $gradleStr, $utf8NoBom)
 
+# 4a1. Update packages/player/src/hooks/useAppVersion.ts
+$AppVersionPath = "$Root\packages\player\src\hooks\useAppVersion.ts"
+if (Test-Path $AppVersionPath) {
+    $rawAppVer = [System.IO.File]::ReadAllText($AppVersionPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
+    $appVerStr = $rawAppVer -replace "useState<string \| null>\('.*?'\)", "useState<string | null>('$NextVer')"
+    [System.IO.File]::WriteAllText($AppVersionPath, $appVerStr, $utf8NoBom)
+}
+
+# 4a2. Update packages/player/src/services/apkUpdater.ts
+$ApkUpdaterPath = "$Root\packages\player\src\services\apkUpdater.ts"
+if (Test-Path $ApkUpdaterPath) {
+    $rawApkUpdater = [System.IO.File]::ReadAllText($ApkUpdaterPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
+    $apkUpdaterStr = $rawApkUpdater -replace "version: '.*?'", "version: '$NextVer'" -replace "versionCode: \d+", "versionCode: $code"
+    [System.IO.File]::WriteAllText($ApkUpdaterPath, $apkUpdaterStr, $utf8NoBom)
+}
+
 # 4b. Update packages/website/src/data/version.ts
 $WebsiteVersionPath = "$Root\packages\website\src\data\version.ts"
 if (Test-Path $WebsiteVersionPath) {
