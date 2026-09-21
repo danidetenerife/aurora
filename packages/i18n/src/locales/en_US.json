@@ -651,7 +651,14 @@
     "openSearch": "Search",
     "queue": "Queue",
     "exitTvMode": "Exit TV mode",
-    "emptyDashboard": "Start exploring music to see your favorites here"
+    "emptyDashboard": "Start exploring music to see your favorites here",
+    "updateAvailableTitle": "New update available",
+    "updateDownloadedDesc": "Aurora {{version}} was downloaded automatically. Do you want to update now?",
+    "updateDownloading": "Downloading update {{version}} ({{percent}}%)...",
+    "updateNow": "Update now",
+    "updateLater": "Later",
+    "updateOpeningInstaller": "Opening installer...",
+    "updateFailed": "Failed to download update"
   },
   "podcastBrowser": {
     "available": "Available podcasts",

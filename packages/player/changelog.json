@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-09-21T08:35",
+    "description": "Actualización automática y diálogo de 1 clic en Google TV: detección automática de nuevas releases de GitHub con búsqueda universal de APKs (aurora-music-player.apk), descarga en segundo plano con píldora de progreso en vivo, y presentación de un diálogo modal cinemático de 10 pies con botón primario auto-enfocado ('Actualizar ahora') para ejecutar la instalación con una sola pulsación del mando a distancia (OK/Enter), opción de posponer ('Más tarde') y separación desacoplada de la descarga y la instalación nativa en el plugin ApkUpdater.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Google TV", "color": "red" },
+      { "label": "Actualizaciones", "color": "purple" },
+      { "label": "Android", "color": "green" },
+      { "label": "UI", "color": "blue" }
+    ]
+  },
+  {
     "date": "2026-09-21T08:15",
     "description": "Nueva interfaz de Google TV inspirada en YouTube Music 10-foot: barra de navegación lateral izquierda colapsable (Navigation Rail con transiciones suaves entre modo compacto y expandido), selector de filtros de actividad y estado de ánimo (Mood/Activity chips: Todos, Energía, Para relajarse, Entrenamiento, Concentración, Fiesta, Romance) con reorganización reactiva del contenido, banner cinematográfico Hero Spotlight con acceso directo a reproducción, carriles horizontales de exploración (swimlanes) con escalado fluido al 106% y botón de reproducción circular en foco, resplandor ambiental dinámico de fondo (ambient glow) y navegación espacial D-Pad de alta precisión auditada bajo pruebas extremas de estrés.",
     "type": "feature",

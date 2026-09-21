@@ -57,6 +57,55 @@ public class ApkUpdaterPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void downloadUpdate(PluginCall call) {
+        String downloadUrl = call.getString("url");
+        if (downloadUrl == null || downloadUrl.isEmpty()) {
+            call.reject("URL cannot be empty");
+            return;
+        }
+
+        call.setKeepAlive(true);
+
+        executor.execute(() -> {
+            try {
+                File apkFile = downloadApkFile(downloadUrl);
+                JSObject result = new JSObject();
+                result.put("success", true);
+                result.put("path", apkFile.getAbsolutePath());
+                call.resolve(result);
+            } catch (Exception e) {
+                Log.e(TAG, "Error downloading update APK", e);
+                call.reject("Download failed: " + e.getMessage());
+            }
+        });
+    }
+
+    @PluginMethod
+    public void installUpdate(PluginCall call) {
+        executor.execute(() -> {
+            try {
+                Context context = getContext();
+                File cacheDir = context.getExternalCacheDir() != null ? context.getExternalCacheDir() : context.getCacheDir();
+                File apkFile = new File(cacheDir, "aurora-update.apk");
+
+                if (!apkFile.exists() || apkFile.length() == 0) {
+                    call.reject("Downloaded update APK not found");
+                    return;
+                }
+
+                executeInstall(context, apkFile);
+
+                JSObject result = new JSObject();
+                result.put("success", true);
+                call.resolve(result);
+            } catch (Exception e) {
+                Log.e(TAG, "Error installing update APK", e);
+                call.reject("Install failed: " + e.getMessage());
+            }
+        });
+    }
+
+    @PluginMethod
     public void downloadAndInstall(PluginCall call) {
         String downloadUrl = call.getString("url");
         if (downloadUrl == null || downloadUrl.isEmpty()) {
@@ -67,120 +116,126 @@ public class ApkUpdaterPlugin extends Plugin {
         call.setKeepAlive(true);
 
         executor.execute(() -> {
-            InputStream input = null;
-            FileOutputStream output = null;
-            HttpURLConnection connection = null;
-
             try {
                 Context context = getContext();
-                File cacheDir = context.getExternalCacheDir() != null ? context.getExternalCacheDir() : context.getCacheDir();
-                File apkFile = new File(cacheDir, "aurora-update.apk");
-
-                if (apkFile.exists()) {
-                    apkFile.delete();
-                }
-
-                URL url = new URL(downloadUrl);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setInstanceFollowRedirects(true);
-                connection.setRequestProperty("User-Agent", "Aurora-Music-Player-Android");
-                connection.connect();
-
-                // Handle HTTP redirects (GitHub releases redirect to AWS S3)
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == 307 || responseCode == 308) {
-                    String redirectUrl = connection.getHeaderField("Location");
-                    connection.disconnect();
-                    url = new URL(redirectUrl);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-                }
-
-                int fileLength = connection.getContentLength();
-                input = connection.getInputStream();
-                output = new FileOutputStream(apkFile);
-
-                byte[] buffer = new byte[8192];
-                long total = 0;
-                int count;
-                long lastProgressTime = 0;
-
-                while ((count = input.read(buffer)) != -1) {
-                    total += count;
-                    output.write(buffer, 0, count);
-
-                    long now = System.currentTimeMillis();
-                    if (fileLength > 0 && now - lastProgressTime > 200) {
-                        lastProgressTime = now;
-                        int percent = (int) (total * 100 / fileLength);
-                        JSObject progress = new JSObject();
-                        progress.put("percent", percent);
-                        progress.put("downloadedBytes", total);
-                        progress.put("totalBytes", fileLength);
-                        notifyListeners("downloadProgress", progress);
-                    }
-                }
-
-                output.flush();
-
-                JSObject finishProgress = new JSObject();
-                finishProgress.put("percent", 100);
-                finishProgress.put("downloadedBytes", total);
-                finishProgress.put("totalBytes", total);
-                notifyListeners("downloadProgress", finishProgress);
-
-                // Check permission to install unknown apps (Android 8+)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (!context.getPackageManager().canRequestPackageInstalls()) {
-                        Log.w(TAG, "canRequestPackageInstalls is false, opening permission settings");
-                        try {
-                            Intent settingsIntent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-                            settingsIntent.setData(Uri.parse("package:" + context.getPackageName()));
-                            settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(settingsIntent);
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Failed to launch unknown sources settings", ex);
-                        }
-                    }
-                }
-
-                // 1. Try silent root install if su exists
-                boolean installedSilently = false;
-                if (tryRootInstall(apkFile)) {
-                    Log.i(TAG, "Silent root install succeeded");
-                    installedSilently = true;
-                    try {
-                        Intent launch = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-                        if (launch != null) {
-                            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            context.startActivity(launch);
-                        }
-                    } catch (Exception ignored) {}
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    // 2. Android 12+ PackageInstaller with USER_ACTION_NOT_REQUIRED (Unattended install)
-                    installedSilently = installViaPackageInstaller(context, apkFile);
-                }
-
-                // 3. Fallback to Intent.ACTION_VIEW if unattended install was not possible
-                if (!installedSilently) {
-                    fallbackIntentInstall(context, apkFile);
-                }
+                File apkFile = downloadApkFile(downloadUrl);
+                executeInstall(context, apkFile);
 
                 JSObject result = new JSObject();
                 result.put("success", true);
                 call.resolve(result);
-
             } catch (Exception e) {
                 Log.e(TAG, "Error downloading or installing APK", e);
                 call.reject("Download/Install failed: " + e.getMessage());
-            } finally {
-                try {
-                    if (output != null) output.close();
-                    if (input != null) input.close();
-                    if (connection != null) connection.disconnect();
-                } catch (Exception ignored) {}
             }
         });
+    }
+
+    private File downloadApkFile(String downloadUrl) throws Exception {
+        InputStream input = null;
+        FileOutputStream output = null;
+        HttpURLConnection connection = null;
+
+        try {
+            Context context = getContext();
+            File cacheDir = context.getExternalCacheDir() != null ? context.getExternalCacheDir() : context.getCacheDir();
+            File apkFile = new File(cacheDir, "aurora-update.apk");
+
+            if (apkFile.exists()) {
+                apkFile.delete();
+            }
+
+            URL url = new URL(downloadUrl);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestProperty("User-Agent", "Aurora-Music-Player-Android");
+            connection.connect();
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == 307 || responseCode == 308) {
+                String redirectUrl = connection.getHeaderField("Location");
+                connection.disconnect();
+                url = new URL(redirectUrl);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+            }
+
+            int fileLength = connection.getContentLength();
+            input = connection.getInputStream();
+            output = new FileOutputStream(apkFile);
+
+            byte[] buffer = new byte[8192];
+            long total = 0;
+            int count;
+            long lastProgressTime = 0;
+
+            while ((count = input.read(buffer)) != -1) {
+                total += count;
+                output.write(buffer, 0, count);
+
+                long now = System.currentTimeMillis();
+                if (fileLength > 0 && now - lastProgressTime > 200) {
+                    lastProgressTime = now;
+                    int percent = (int) (total * 100 / fileLength);
+                    JSObject progress = new JSObject();
+                    progress.put("percent", percent);
+                    progress.put("downloadedBytes", total);
+                    progress.put("totalBytes", fileLength);
+                    notifyListeners("downloadProgress", progress);
+                }
+            }
+
+            output.flush();
+
+            JSObject finishProgress = new JSObject();
+            finishProgress.put("percent", 100);
+            finishProgress.put("downloadedBytes", total);
+            finishProgress.put("totalBytes", total);
+            notifyListeners("downloadProgress", finishProgress);
+
+            return apkFile;
+        } finally {
+            try {
+                if (output != null) output.close();
+                if (input != null) input.close();
+                if (connection != null) connection.disconnect();
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private void executeInstall(Context context, File apkFile) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!context.getPackageManager().canRequestPackageInstalls()) {
+                Log.w(TAG, "canRequestPackageInstalls is false, opening permission settings");
+                try {
+                    Intent settingsIntent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                    settingsIntent.setData(Uri.parse("package:" + context.getPackageName()));
+                    settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(settingsIntent);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Failed to launch unknown sources settings", ex);
+                }
+            }
+        }
+
+        boolean installedSilently = false;
+        if (tryRootInstall(apkFile)) {
+            Log.i(TAG, "Silent root install succeeded");
+            installedSilently = true;
+            try {
+                Intent launch = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+                if (launch != null) {
+                    launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(launch);
+                }
+            } catch (Exception ignored) {}
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            installedSilently = installViaPackageInstaller(context, apkFile);
+        }
+
+        if (!installedSilently) {
+            fallbackIntentInstall(context, apkFile);
+        }
     }
 
     private boolean tryRootInstall(File apkFile) {
