@@ -58,16 +58,16 @@ final class TvWebView {
         }
         WebSettings settings = webView.getSettings();
         settings.setUserAgentString(TV_USER_AGENT);
-        settings.setUseWideViewPort(false);
-        settings.setLoadWithOverviewMode(false);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         settings.setTextZoom(100);
         settings.setSupportZoom(false);
         settings.setOffscreenPreRaster(false);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        webView.setBackgroundColor(0xFF0F0F12);
+        webView.setLayerType(View.LAYER_TYPE_NONE, null);
+        webView.setBackgroundColor(0xFF090A0D);
         try {
             webView.addJavascriptInterface(new Object() {
                 @android.webkit.JavascriptInterface

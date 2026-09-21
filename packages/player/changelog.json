@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-09-21T19:30",
+    "description": "Optimización de rendimiento y ajuste a pantalla para Google TV / Chromecast HD: implementación de márgenes de zona segura (TV overscan safe margins) para evitar recortes de bisel en la barra de navegación, chips y barra de reproducción en televisores físicos; eliminación completa de backdrop-filter y desenfoques pesados de GPU en favor de fondos oscuros sólidos optimizados para procesadores y GPUs de bajo consumo (Amlogic / Mali-G31); promoción de elementos enfocables a capas aceleradas por hardware (translateZ); y configuración de WebView nativo con viewport responsive y aceleración por hardware directa.",
+    "type": "improvement",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Google TV", "color": "red" },
+      { "label": "Rendimiento", "color": "green" },
+      { "label": "Android", "color": "purple" },
+      { "label": "UI", "color": "blue" }
+    ]
+  },
+  {
     "date": "2026-09-21T08:35",
     "description": "Actualización automática y diálogo de 1 clic en Google TV: detección automática de nuevas releases de GitHub con búsqueda universal de APKs (aurora-music-player.apk), descarga en segundo plano con píldora de progreso en vivo, y presentación de un diálogo modal cinemático de 10 pies con botón primario auto-enfocado ('Actualizar ahora') para ejecutar la instalación con una sola pulsación del mando a distancia (OK/Enter), opción de posponer ('Más tarde') y separación desacoplada de la descarga y la instalación nativa en el plugin ApkUpdater.",
     "type": "feature",

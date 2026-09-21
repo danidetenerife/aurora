@@ -28,7 +28,7 @@ export const TvCoverArtView: FC<TvCoverArtViewProps> = ({ track }) => {
     >
       {coverUrl && (
         <div
-          className="absolute inset-0 scale-110 opacity-25 blur-2xl filter"
+          className="absolute inset-0 scale-105 opacity-20 blur-md filter transform-gpu"
           style={{
             backgroundImage: `url(${coverUrl})`,
             backgroundPosition: 'center',
@@ -60,7 +60,7 @@ export const TvCoverArtView: FC<TvCoverArtViewProps> = ({ track }) => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/70 px-3 py-1 text-xs font-semibold text-emerald-300 backdrop-blur-md">
+        <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/90 px-3 py-1 text-xs font-semibold text-emerald-300">
           <VideoOff className="h-3.5 w-3.5" />
           <span>Sin videoclip disponible · Mostrando carátula</span>
         </div>

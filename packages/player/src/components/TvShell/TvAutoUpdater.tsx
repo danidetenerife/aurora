@@ -63,7 +63,7 @@ const TvUpdateModal: FC<TvUpdateModalProps> = ({
   return (
     <div
       data-testid="tv-update-modal-backdrop"
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-xl animate-fade-in p-6"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 animate-fade-in p-6"
     >
       <FocusContext.Provider value={modalFocusKey}>
         <div
@@ -348,7 +348,7 @@ export const TvAutoUpdater: FC = () => {
         <div
           role="status"
           data-testid="tv-update-downloading-pill"
-          className="fixed top-6 right-8 z-[9999] flex items-center gap-3 px-4 py-2.5 rounded-full bg-zinc-950/90 border border-emerald-500/50 backdrop-blur-xl shadow-2xl text-zinc-100 animate-pulse pointer-events-none"
+          className="fixed top-[3.5vh] right-[4.5vw] z-[9999] flex items-center gap-3 px-4 py-2.5 rounded-full bg-zinc-900 border border-emerald-500/60 shadow-xl text-zinc-100 animate-pulse pointer-events-none"
         >
           <Download className="w-4 h-4 text-emerald-400 animate-bounce" />
           <div className="flex flex-col text-left">
