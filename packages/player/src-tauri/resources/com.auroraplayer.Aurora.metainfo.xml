@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.62" date="2026-09-21">
+      <description>
+        <p>Release 1.48.62: Optimización de rendimiento y ajuste a pantalla para Google TV / Chromecast HD: implementación de márgenes de zona segura (TV overscan safe margins) para evitar recortes de bisel en la barra de navegación, chips y barra de reproducción en televisores físicos; eliminación completa de backdrop-filter y desenfoques pesados de GPU en favor de fondos oscuros sólidos optimizados para procesadores y GPUs de bajo consumo (Amlogic / Mali-G31); promoción de elementos enfocables a capas aceleradas por hardware (translateZ); y configuración de WebView nativo con viewport responsive y aceleración por hardware directa.</p>
+      </description>
+    </release>
+
     <release version="1.48.61" date="2026-09-21">
       <description>
         <p>Release 1.48.61: Optimización de rendimiento y ajuste a pantalla para Google TV / Chromecast HD: implementación de márgenes de zona segura (TV overscan safe margins) para evitar recortes de bisel en la barra de navegación, chips y barra de reproducción en televisores físicos; eliminación completa de backdrop-filter y desenfoques pesados de GPU en favor de fondos oscuros sólidos optimizados para procesadores y GPUs de bajo consumo (Amlogic / Mali-G31); promoción de elementos enfocables a capas aceleradas por hardware (translateZ); y configuración de WebView nativo con viewport responsive y aceleración por hardware directa.</p>

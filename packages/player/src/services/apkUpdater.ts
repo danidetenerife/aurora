@@ -27,7 +27,7 @@ export const ApkUpdaterPlugin = registerPlugin<ApkUpdaterPluginInterface>(
   {
     web: {
       getAppVersion: () =>
-        Promise.resolve({ version: '1.48.61', versionCode: 14861 }),
+        Promise.resolve({ version: '1.48.62', versionCode: 14862 }),
       downloadUpdate: () => Promise.resolve({ success: true, path: '/tmp/aurora-update.apk' }),
       installUpdate: () => Promise.resolve({ success: true }),
       downloadAndInstall: () => Promise.resolve({ success: true }),
