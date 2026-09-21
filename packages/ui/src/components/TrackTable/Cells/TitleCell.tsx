@@ -75,7 +75,8 @@ export const TitleCell = <T extends Track>({
   const { actions, labels } = useTrackTableContext<T>();
   const showControls = meta?.displayQueueControls;
   const ContextMenuWrapper = meta?.ContextMenuWrapper;
-  const noTruncate = Boolean(meta?.noTruncate);
+  const noTruncate =
+    meta?.noTruncate !== undefined ? Boolean(meta.noTruncate) : true;
   const hideSubtitleArtist = Boolean(meta?.hideSubtitleArtist);
   const track = row.original;
   const hasAddToQueue = Boolean(meta?.onAddToQueue);

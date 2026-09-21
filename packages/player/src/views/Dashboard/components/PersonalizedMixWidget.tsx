@@ -1,6 +1,11 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { RotateCw, SparklesIcon } from 'lucide-react';
-import { FC, useEffect, useState } from 'react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  RotateCw,
+  SparklesIcon,
+} from 'lucide-react';
+import { FC, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import type { Track, TrackRef } from '@aurora/model';
@@ -139,34 +144,46 @@ const fetchRadioRecommendations = async (
 };
 
 const fetchSearchFallback = async (
-  provider: MetadataProvider,
+  provider: MetadataProvider | undefined,
   topArtists: ArtistScore[],
   topGenres: GenreScore[],
 ): Promise<TaggedCandidate[]> => {
-  const candidates: TaggedCandidate[] = [];
-  const queries: string[] =
-    topArtists.length > 0
-      ? topArtists.slice(0, 4).map((artist) => artist.name)
-      : ['Pop Hits', 'Rock Classics', 'Reggaeton Mix', 'Electronic Music'];
-
-  if (topGenres.length > 0) {
-    queries.push(
-      ...topGenres.slice(0, 3).map((genreScore) => `${genreScore.genre} mix`),
-    );
+  if (!provider) {
+    return [];
   }
+  const candidates: TaggedCandidate[] = [];
+  const defaultSeeds = [
+    'Pop Hits',
+    'Rock Classics',
+    'Reggaeton Mix',
+    'Electronic Music',
+    'Top Exitos',
+    'Indie Espanol',
+  ];
+  const queries: string[] = [
+    ...topArtists.slice(0, 4).map((artist) => artist.name),
+    ...topGenres.slice(0, 3).map((genreScore) => `${genreScore.genre} mix`),
+    ...defaultSeeds,
+  ].slice(0, 6);
 
   for (const query of queries) {
     try {
-      if (!provider.search) {
-        continue;
-      }
-      const results = await provider.search({
-        query,
-        types: ['tracks'],
-      });
-      if (results.tracks && Array.isArray(results.tracks)) {
-        for (const track of results.tracks.slice(0, 8)) {
-          candidates.push({ track, source: 'search' });
+      if (provider.search) {
+        const results = await provider.search({
+          query,
+          types: ['tracks'],
+        });
+        if (results.tracks && Array.isArray(results.tracks)) {
+          for (const track of results.tracks.slice(0, 10)) {
+            candidates.push({ track, source: 'search' });
+          }
+        }
+      } else if (provider.searchTracks) {
+        const tracks = await provider.searchTracks({ query, limit: 10 });
+        if (Array.isArray(tracks)) {
+          for (const track of tracks.slice(0, 10)) {
+            candidates.push({ track, source: 'search' });
+          }
         }
       }
     } catch {
@@ -233,7 +250,7 @@ export const PersonalizedMixWidget: FC = () => {
 
       const artistsWithUris = topArtists.filter((artist) => artist.spotifyUri);
 
-      const candidateSources = await Promise.allSettled([
+      let candidateSources = await Promise.allSettled([
         hasSpotifyCapabilities && artistsWithUris.length > 0
           ? fetchTopTracksForArtists(metadataProvider, artistsWithUris, 6)
           : Promise.resolve([]),
@@ -249,9 +266,25 @@ export const PersonalizedMixWidget: FC = () => {
         fetchSearchFallback(metadataProvider, topArtists, fetchedGenres),
       ]);
 
-      const allCandidates: TaggedCandidate[] = candidateSources.flatMap(
+      let allCandidates: TaggedCandidate[] = candidateSources.flatMap(
         (result) => (result.status === 'fulfilled' ? result.value : []),
       );
+
+      if (allCandidates.length === 0) {
+        for (const altProvider of metadataProviders) {
+          if (altProvider.id !== metadataProvider?.id) {
+            const fallbackResults = await fetchSearchFallback(
+              altProvider,
+              topArtists,
+              fetchedGenres,
+            );
+            if (fallbackResults.length > 0) {
+              allCandidates = fallbackResults;
+              break;
+            }
+          }
+        }
+      }
 
       if (allCandidates.length === 0) {
         return [];
@@ -269,6 +302,20 @@ export const PersonalizedMixWidget: FC = () => {
     staleTime: 60 * 1000,
   });
 
+  const [page, setPage] = useState(0);
+  const pageSize = 10;
+  const totalPages = Math.max(
+    1,
+    Math.ceil((visibleTracks?.length ?? 0) / pageSize),
+  );
+
+  const paginatedTracks = useMemo(() => {
+    if (!visibleTracks) {
+      return [];
+    }
+    return visibleTracks.slice(page * pageSize, (page + 1) * pageSize);
+  }, [visibleTracks, page]);
+
   useEffect(() => {
     if (tracks !== undefined && !isFetching) {
       setVisibleTracks(tracks);
@@ -277,9 +324,11 @@ export const PersonalizedMixWidget: FC = () => {
 
   useEffect(() => {
     setVisibleTracks(undefined);
+    setPage(0);
   }, [activeProviderId, activeDiscoveryId]);
 
   const handleRefresh = async () => {
+    setPage(0);
     setRefreshNonce((previousNonce) => previousNonce + 1);
     const result = await refetch();
     if (result.data) {
@@ -287,13 +336,22 @@ export const PersonalizedMixWidget: FC = () => {
     }
   };
 
+  if (
+    visibleTracks !== undefined &&
+    visibleTracks.length === 0 &&
+    !isLoading &&
+    !isFetching
+  ) {
+    return null;
+  }
+
   return (
     <div
       data-testid="dashboard-personalized-mix"
       className="flex flex-col gap-2.5"
     >
       <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {!isCapacitorEnvironment() && (
             <SparklesIcon className="text-primary size-5" />
           )}
@@ -314,9 +372,43 @@ export const PersonalizedMixWidget: FC = () => {
               className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`}
             />
           </Button>
+
+          {!isCapacitorEnvironment() && totalPages >= 1 && (
+            <div className="border-border/40 bg-background-secondary/60 text-foreground-secondary ml-2 flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold backdrop-blur-md">
+              <Button
+                variant="ghost"
+                size="icon"
+                data-testid="recommendations-prev-page"
+                className="h-5 w-5 rounded-full text-zinc-400 hover:text-white disabled:opacity-30"
+                disabled={page === 0}
+                onClick={() =>
+                  setPage((previousPage) => Math.max(0, previousPage - 1))
+                }
+              >
+                <ChevronLeft className="size-3.5" />
+              </Button>
+              <span className="text-foreground min-w-[3rem] text-center text-xs">
+                {page + 1} / {totalPages}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                data-testid="recommendations-next-page"
+                className="h-5 w-5 rounded-full text-zinc-400 hover:text-white disabled:opacity-30"
+                disabled={page >= totalPages - 1}
+                onClick={() =>
+                  setPage((previousPage) =>
+                    Math.min(totalPages - 1, previousPage + 1),
+                  )
+                }
+              >
+                <ChevronRight className="size-3.5" />
+              </Button>
+            </div>
+          )}
         </div>
 
-        <div className="hidden flex-wrap items-center gap-2 sm:flex">
+        <div className="flex flex-wrap items-center gap-3">
           {topGenres.slice(0, 3).map((genreScore) => (
             <Badge
               key={genreScore.genre}
@@ -350,7 +442,8 @@ export const PersonalizedMixWidget: FC = () => {
         />
       ) : (
         <ConnectedTrackTable
-          tracks={visibleTracks ?? []}
+          tracks={paginatedTracks}
+          playbackTracks={visibleTracks ?? []}
           features={{ filterable: false, playAll: true, addAllToQueue: true }}
           display={{ displayDuration: false }}
         />

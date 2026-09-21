@@ -25,7 +25,7 @@ export const ApkUpdaterPlugin = registerPlugin<ApkUpdaterPluginInterface>(
   {
     web: {
       getAppVersion: () =>
-        Promise.resolve({ version: '1.48.58', versionCode: 14858 }),
+        Promise.resolve({ version: '1.48.59', versionCode: 14859 }),
       downloadAndInstall: () => Promise.resolve({ success: true }),
       addListener: () => Promise.resolve({ remove: () => {} }),
     },

@@ -144,14 +144,14 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
             </button>
           </div>
           <div
-            class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
+            class="grid grid-cols-[repeat(auto-fill,11rem)] justify-start gap-4 pr-2 pb-4"
             role="grid"
           >
             <div
               class="group relative w-42"
             >
               <button
-                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex flex-col items-stretch gap-2 p-2 text-left border-border/60 bg-background-secondary hover:bg-background-tertiary w-full"
+                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left border-border/60 bg-background-secondary hover:bg-background-tertiary w-full"
                 data-headlessui-state=""
                 data-testid="card"
                 type="button"
@@ -209,7 +209,7 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
                   class="min-w-0"
                 >
                   <div
-                    class="text-foreground truncate text-sm font-bold"
+                    class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                     data-testid="card-title"
                   >
                     Artist artist-1
@@ -257,7 +257,7 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
               class="group relative w-42"
             >
               <button
-                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex flex-col items-stretch gap-2 p-2 text-left border-border/60 bg-background-secondary hover:bg-background-tertiary w-full"
+                class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left border-border/60 bg-background-secondary hover:bg-background-tertiary w-full"
                 data-headlessui-state=""
                 data-testid="card"
                 type="button"
@@ -315,7 +315,7 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
                   class="min-w-0"
                 >
                   <div
-                    class="text-foreground truncate text-sm font-bold"
+                    class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                     data-testid="card-title"
                   >
                     Artist artist-2

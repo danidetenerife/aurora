@@ -82,6 +82,7 @@ export const ConnectedTrackTable: FC<ConnectedTrackTableProps> = (props) => {
       meta={{
         isTrackFavorite: trackActions.isFavorite,
         ContextMenuWrapper: ConnectedTrackContextMenu,
+        noTruncate: true,
         ...restProps.meta,
       }}
     />

@@ -27,11 +27,11 @@ export const TrackContextMenuHeader: FC<TrackContextMenuHeaderProps> = ({
           'pl-3': !coverUrl,
         })}
       >
-        <div className="text-foreground truncate text-sm font-bold">
+        <div className="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug">
           {title}
         </div>
         {subtitle && (
-          <div className="text-foreground-secondary truncate text-xs">
+          <div className="text-foreground-secondary text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5">
             {subtitle}
           </div>
         )}

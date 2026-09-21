@@ -1,4 +1,4 @@
-import { Music } from 'lucide-react';
+import { Music, Play } from 'lucide-react';
 import { FC, ReactNode, useEffect, useState } from 'react';
 
 import { TvButton } from './TvButton';
@@ -8,6 +8,8 @@ type TvFocusableCardProps = {
   subtitle?: string;
   src?: string;
   square?: boolean;
+  variant?: 'square' | 'circle' | 'wide';
+  badge?: string;
   onClick?: () => void;
   className?: string;
   focusKey?: string;
@@ -20,6 +22,8 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
   subtitle,
   src,
   square = true,
+  variant,
+  badge,
   onClick,
   className,
   focusKey,
@@ -32,15 +36,17 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
     setImageError(false);
   }, [src]);
 
+  const effectiveVariant = variant ?? (square ? 'square' : 'wide');
+
   return (
     <TvButton
       focusKey={focusKey ?? title}
-      className={`tv-card ${className ?? ''}`}
+      className={`tv-card tv-card-${effectiveVariant} ${className ?? ''}`.trim()}
       data-testid="tv-focusable-card"
       onClick={onClick}
       destinations={destinations}
     >
-      <span className={`tv-card-art ${!square ? 'wide' : ''}`.trim()}>
+      <span className={`tv-card-art ${effectiveVariant}`.trim()}>
         {src && !imageError ? (
           <img
             decoding="async"
@@ -52,6 +58,12 @@ export const TvFocusableCard: FC<TvFocusableCardProps> = ({
         ) : (
           (children ?? <Music />)
         )}
+        <span className="tv-card-play-overlay">
+          <span className="tv-card-play-icon">
+            <Play fill="currentColor" />
+          </span>
+        </span>
+        {badge && <span className="tv-card-badge">{badge}</span>}
       </span>
       <div className="tv-card-info">
         <span className="tv-card-title">{title}</span>

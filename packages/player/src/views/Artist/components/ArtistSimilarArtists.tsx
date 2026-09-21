@@ -64,7 +64,9 @@ export const ArtistSimilarArtists: FC<ArtistSimilarArtistsProps> = ({
                   ) : (
                     <div className="h-10 w-10" />
                   )}
-                  <span className="truncate">{a.name}</span>
+                  <span className="break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug">
+                    {a.name}
+                  </span>
                 </Link>
               </li>
             );

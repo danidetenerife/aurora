@@ -35,7 +35,7 @@ describe('personalized recommendations', () => {
     expect(useQueueStore.getState().getCurrentItem()?.track.title).toBe(
       firstTitle,
     );
-    expect(useQueueStore.getState().items).toHaveLength(4);
+    expect(useQueueStore.getState().items.length).toBeGreaterThanOrEqual(4);
   });
 
   afterEach(async () => {

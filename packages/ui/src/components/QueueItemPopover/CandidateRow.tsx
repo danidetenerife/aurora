@@ -51,7 +51,10 @@ export const CandidateRow: FC<CandidateRowProps> = ({
       </div>
     )}
     <div className="min-w-0 flex-1 py-2 pr-2">
-      <div data-testid="candidate-row-title" className="truncate text-xs">
+      <div
+        data-testid="candidate-row-title"
+        className="break-normal whitespace-normal [overflow-wrap:anywhere] text-xs leading-snug"
+      >
         {candidate.title}
       </div>
       <div className="text-foreground/50 text-xs">

@@ -3,11 +3,11 @@
 exports[`HistoryRow > (Snapshot) renders a placeholder when artwork is missing 1`] = `
 <div>
   <div
-    class="border-border bg-background-secondary group flex items-center justify-between gap-3 p-2.5 border-b-(length:--border-width) select-none last:border-b-0"
+    class="border-border bg-background-secondary group flex items-center justify-between gap-3 border-b-(length:--border-width) p-2.5 select-none last:border-b-0"
     data-testid="history-row"
   >
     <div
-      class="flex items-center gap-2.5 min-w-0 flex-1"
+      class="flex min-w-0 flex-1 items-center gap-2.5"
     >
       <div
         class="flex w-8 shrink-0 justify-center"
@@ -45,16 +45,16 @@ exports[`HistoryRow > (Snapshot) renders a placeholder when artwork is missing 1
         </svg>
       </div>
       <div
-        class="flex flex-col min-w-0 flex-1 justify-center"
+        class="flex min-w-0 flex-1 flex-col justify-center"
       >
         <button
-          class="break-words font-medium text-left hover:underline leading-snug cursor-pointer"
+          class="cursor-pointer text-left leading-snug font-medium break-words hover:underline"
           data-testid="history-row-title"
         >
           Paranoid Android
         </button>
         <div
-          class="text-foreground-secondary break-words text-xs mt-0.5"
+          class="text-foreground-secondary mt-0.5 text-xs break-words"
           data-testid="history-row-artist"
         >
           Radiohead
@@ -62,13 +62,13 @@ exports[`HistoryRow > (Snapshot) renders a placeholder when artwork is missing 1
       </div>
     </div>
     <div
-      class="flex items-center gap-2 shrink-0"
+      class="flex shrink-0 items-center gap-2"
     >
       <div
         class="flex flex-col items-end text-right text-xs tabular-nums"
       >
         <div
-          class="flex items-center gap-1 justify-end"
+          class="flex items-center justify-end gap-1"
         >
           <span
             class="text-foreground-secondary text-xs"
@@ -86,11 +86,11 @@ exports[`HistoryRow > (Snapshot) renders a placeholder when artwork is missing 1
 exports[`HistoryRow > (Snapshot) renders with artwork and all actions 1`] = `
 <div>
   <div
-    class="border-border bg-background-secondary group flex items-center justify-between gap-3 p-2.5 border-b-(length:--border-width) select-none last:border-b-0"
+    class="border-border bg-background-secondary group flex items-center justify-between gap-3 border-b-(length:--border-width) p-2.5 select-none last:border-b-0"
     data-testid="history-row"
   >
     <div
-      class="flex items-center gap-2.5 min-w-0 flex-1"
+      class="flex min-w-0 flex-1 items-center gap-2.5"
     >
       <div
         class="flex w-8 shrink-0 justify-center"
@@ -132,16 +132,16 @@ exports[`HistoryRow > (Snapshot) renders with artwork and all actions 1`] = `
         />
       </div>
       <div
-        class="flex flex-col min-w-0 flex-1 justify-center"
+        class="flex min-w-0 flex-1 flex-col justify-center"
       >
         <button
-          class="break-words font-medium text-left hover:underline leading-snug cursor-pointer"
+          class="cursor-pointer text-left leading-snug font-medium break-words hover:underline"
           data-testid="history-row-title"
         >
           Paranoid Android
         </button>
         <div
-          class="text-foreground-secondary break-words text-xs mt-0.5"
+          class="text-foreground-secondary mt-0.5 text-xs break-words"
           data-testid="history-row-artist"
         >
           Radiohead
@@ -149,13 +149,13 @@ exports[`HistoryRow > (Snapshot) renders with artwork and all actions 1`] = `
       </div>
     </div>
     <div
-      class="flex items-center gap-2 shrink-0"
+      class="flex shrink-0 items-center gap-2"
     >
       <div
         class="flex flex-col items-end text-right text-xs tabular-nums"
       >
         <div
-          class="flex items-center gap-1 justify-end"
+          class="flex items-center justify-end gap-1"
         >
           <span
             class="text-foreground-secondary text-xs"

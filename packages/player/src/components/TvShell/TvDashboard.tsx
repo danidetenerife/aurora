@@ -145,10 +145,21 @@ const DEFAULT_HERO_TRACK: Track = {
   },
 };
 
+export const TV_YTM_CHIPS = [
+  'Todos',
+  'Energía',
+  'Para relajarse',
+  'Entrenamiento',
+  'Concentración',
+  'Fiesta',
+  'Romance',
+];
+
 export const TvDashboard: FC = () => {
   const [recommendedTracks, setRecommendedTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortedMoods, setSortedMoods] = useState(TV_MOOD_CAPSULES);
+  const [selectedChip, setSelectedChip] = useState('Todos');
 
   const favorites = useFavoritesStore((state) => state.tracks);
   const playlists = usePlaylistStore((state) => state.index);
@@ -163,6 +174,12 @@ export const TvDashboard: FC = () => {
 
   const { ref, focusKey } = useFocusable({
     focusKey: 'TV_DASHBOARD',
+    trackChildren: true,
+    saveLastFocusedChild: true,
+  });
+
+  const rowChips = useFocusable({
+    focusKey: 'TV_ROW_CHIPS',
     trackChildren: true,
     saveLastFocusedChild: true,
   });
@@ -337,6 +354,28 @@ export const TvDashboard: FC = () => {
     }
   };
 
+  const handleChipClick = (chip: string) => {
+    setSelectedChip(chip);
+    if (chip === 'Todos') {
+      setSortedMoods(TV_MOOD_CAPSULES);
+      return;
+    }
+    const filtered = [...TV_MOOD_CAPSULES].sort((itemA, itemB) => {
+      const matchA =
+        itemA.title.toLowerCase().includes(chip.toLowerCase()) ||
+        itemA.desc.toLowerCase().includes(chip.toLowerCase())
+          ? 1
+          : 0;
+      const matchB =
+        itemB.title.toLowerCase().includes(chip.toLowerCase()) ||
+        itemB.desc.toLowerCase().includes(chip.toLowerCase())
+          ? 1
+          : 0;
+      return matchB - matchA;
+    });
+    setSortedMoods(filtered);
+  };
+
   const heroTrack = recommendedTracks[0] ?? DEFAULT_HERO_TRACK;
   const heroArtUrl =
     pickArtwork(heroTrack.artwork ?? heroTrack.album?.artwork, 'thumbnail', 600)
@@ -351,6 +390,34 @@ export const TvDashboard: FC = () => {
   return (
     <FocusContext.Provider value={focusKey}>
       <div ref={ref} data-testid="tv-dashboard" className="tv-dashboard">
+        <FocusContext.Provider value={rowChips.focusKey}>
+          <div ref={rowChips.ref} className="tv-mood-chips" role="toolbar">
+            {TV_YTM_CHIPS.map((chip, index) => (
+              <TvButton
+                key={chip}
+                focusKey={`tv-chip-${index}`}
+                className="tv-chip"
+                data-active={selectedChip === chip ? 'true' : undefined}
+                destinations={{
+                  left:
+                    index === 0
+                      ? 'tv-nav-dashboard'
+                      : `tv-chip-${index - 1}`,
+                  right:
+                    index < TV_YTM_CHIPS.length - 1
+                      ? `tv-chip-${index + 1}`
+                      : undefined,
+                  up: 'tv-nav-dashboard',
+                  down: 'tv-hero-play',
+                }}
+                onClick={() => handleChipClick(chip)}
+              >
+                {chip}
+              </TvButton>
+            ))}
+          </div>
+        </FocusContext.Provider>
+
         <div className="tv-hero">
           <div
             className="tv-hero-backdrop"
@@ -374,7 +441,8 @@ export const TvDashboard: FC = () => {
                 focusKey="tv-hero-play"
                 className="primary"
                 destinations={{
-                  up: 'tv-nav-dashboard',
+                  left: 'tv-nav-dashboard',
+                  up: 'tv-chip-0',
                   down: 'tv-stat-favs',
                   right: 'tv-hero-video',
                 }}
@@ -387,7 +455,7 @@ export const TvDashboard: FC = () => {
                 focusKey="tv-hero-video"
                 destinations={{
                   left: 'tv-hero-play',
-                  up: 'tv-nav-dashboard',
+                  up: 'tv-chip-1',
                   down: 'tv-stat-favs',
                   right: 'tv-hero-fav',
                 }}
@@ -403,7 +471,7 @@ export const TvDashboard: FC = () => {
                 focusKey="tv-hero-fav"
                 destinations={{
                   left: 'tv-hero-video',
-                  up: 'tv-nav-dashboard',
+                  up: 'tv-chip-2',
                   down: 'tv-stat-favs',
                 }}
                 onClick={() => {
@@ -439,6 +507,7 @@ export const TvDashboard: FC = () => {
             focusKey="tv-stat-favs"
             className="tv-stat-chip"
             destinations={{
+              left: 'tv-nav-dashboard',
               up: 'tv-hero-play',
               down: 'TV_ROW_RECOMMENDED',
               right: 'tv-stat-playlists',
@@ -572,6 +641,7 @@ export const TvDashboard: FC = () => {
                       }
                       focusKey={`tv-dash-rec-${index}`}
                       destinations={{
+                        left: index === 0 ? 'tv-nav-dashboard' : undefined,
                         up: 'tv-stat-favs',
                         down: 'TV_ROW_MOODS',
                       }}
@@ -624,6 +694,7 @@ export const TvDashboard: FC = () => {
                     className="tv-mood-card"
                     style={{ background: mood.gradient }}
                     destinations={{
+                      left: index === 0 ? 'tv-nav-dashboard' : undefined,
                       up: 'TV_ROW_RECOMMENDED',
                       down: 'TV_ROW_POPULAR',
                     }}
@@ -666,6 +737,7 @@ export const TvDashboard: FC = () => {
                   src={playlist.src}
                   focusKey={`tv-dash-popular-${index}`}
                   destinations={{
+                    left: index === 0 ? 'tv-nav-dashboard' : undefined,
                     up: 'TV_ROW_MOODS',
                     down: 'TV_ROW_EXPLORE',
                   }}

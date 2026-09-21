@@ -32,7 +32,7 @@ export const useLayoutStore = create<LayoutState>()(
       },
       rightSidebar: {
         isCollapsed: isMobileDevice,
-        width: 200,
+        width: 320,
       },
       toggleLeftSidebar: () =>
         set((state) => ({
@@ -65,6 +65,19 @@ export const useLayoutStore = create<LayoutState>()(
     }),
     {
       name: 'aurora-layout-store',
+      version: 1,
+      migrate: (persistedState: unknown) => {
+        const state = persistedState as Partial<LayoutState> | undefined;
+        if (state?.rightSidebar && state.rightSidebar.width < 320) {
+          state.rightSidebar.width = 320;
+        }
+        return state as LayoutState;
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state?.rightSidebar && state.rightSidebar.width < 320) {
+          state.setRightSidebarWidth(320);
+        }
+      },
     },
   ),
 );

@@ -49,7 +49,7 @@ exports[`QueueItem > (Snapshot) renders current state 1`] = `
   role="button"
 >
   <div
-    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
     data-testid="queue-item-thumbnail"
   >
     <img
@@ -59,16 +59,16 @@ exports[`QueueItem > (Snapshot) renders current state 1`] = `
     />
   </div>
   <div
-    class="min-w-0 flex-1"
+    class="min-w-0 flex-1 py-0.5"
   >
     <div
-      class="text-foreground text-sm font-bold break-words leading-tight"
+      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground text-xs break-words leading-tight mt-0.5"
+      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
       data-testid="queue-item-artist"
     >
       Queen
@@ -123,7 +123,7 @@ exports[`QueueItem > (Snapshot) renders default state 1`] = `
   role="button"
 >
   <div
-    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
     data-testid="queue-item-thumbnail"
   >
     <img
@@ -133,16 +133,16 @@ exports[`QueueItem > (Snapshot) renders default state 1`] = `
     />
   </div>
   <div
-    class="min-w-0 flex-1"
+    class="min-w-0 flex-1 py-0.5"
   >
     <div
-      class="text-foreground text-sm font-bold break-words leading-tight"
+      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground text-xs break-words leading-tight mt-0.5"
+      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
       data-testid="queue-item-artist"
     >
       Queen
@@ -200,7 +200,7 @@ exports[`QueueItem > (Snapshot) renders error state 1`] = `
     class="bg-accent-red absolute top-0 right-0 bottom-0 left-0 w-2 border-0"
   />
   <div
-    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
     data-testid="queue-item-thumbnail"
   >
     <img
@@ -210,16 +210,16 @@ exports[`QueueItem > (Snapshot) renders error state 1`] = `
     />
   </div>
   <div
-    class="min-w-0 flex-1"
+    class="min-w-0 flex-1 py-0.5"
   >
     <div
-      class="text-foreground text-sm font-bold break-words leading-tight"
+      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground text-xs break-words leading-tight mt-0.5"
+      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
       data-testid="queue-item-artist"
     >
       Queen
@@ -315,7 +315,7 @@ exports[`QueueItem > (Snapshot) renders loading state 1`] = `
   role="button"
 >
   <div
-    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
     data-testid="queue-item-thumbnail"
   >
     <img
@@ -325,16 +325,16 @@ exports[`QueueItem > (Snapshot) renders loading state 1`] = `
     />
   </div>
   <div
-    class="min-w-0 flex-1"
+    class="min-w-0 flex-1 py-0.5"
   >
     <div
-      class="text-foreground text-sm font-bold break-words leading-tight"
+      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground text-xs break-words leading-tight mt-0.5"
+      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
       data-testid="queue-item-artist"
     >
       Queen
@@ -391,7 +391,7 @@ exports[`QueueItem > renders without callbacks 1`] = `
   data-testid="queue-item"
 >
   <div
-    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
     data-testid="queue-item-thumbnail"
   >
     <img
@@ -401,16 +401,16 @@ exports[`QueueItem > renders without callbacks 1`] = `
     />
   </div>
   <div
-    class="min-w-0 flex-1"
+    class="min-w-0 flex-1 py-0.5"
   >
     <div
-      class="text-foreground text-sm font-bold break-words leading-tight"
+      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
       data-testid="queue-item-title"
     >
       Bohemian Rhapsody
     </div>
     <div
-      class="text-foreground text-xs break-words leading-tight mt-0.5"
+      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
       data-testid="queue-item-artist"
     >
       Queen

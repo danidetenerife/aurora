@@ -3,12 +3,12 @@
 exports[`PillRatingGroup > (Snapshot) renders default unfavorited and undisliked state 1`] = `
 <div>
   <div
-    class="inline-flex items-center rounded-full border-(length:--border-width) border-border bg-card transition-colors h-8"
+    class="border-border bg-card inline-flex items-center rounded-full border-(length:--border-width) transition-colors h-8"
     data-testid="pill-rating-group"
   >
     <button
       aria-label="Add to favorites"
-      class="flex items-center justify-center rounded-l-full cursor-pointer transition-colors px-3 h-full hover:bg-foreground/5 active:bg-foreground/10"
+      class="flex cursor-pointer items-center justify-center rounded-l-full transition-colors h-full px-3 hover:bg-foreground/5 active:bg-foreground/10"
       data-testid="pill-favorite-button"
       title="Add to favorites"
       type="button"
@@ -32,11 +32,11 @@ exports[`PillRatingGroup > (Snapshot) renders default unfavorited and undisliked
       </svg>
     </button>
     <div
-      class="h-3.5 w-px bg-border shrink-0"
+      class="bg-border h-3.5 w-px shrink-0"
     />
     <button
       aria-label="Dislike track"
-      class="flex items-center justify-center rounded-r-full cursor-pointer transition-colors px-3 h-full hover:bg-foreground/5 active:bg-foreground/10"
+      class="flex cursor-pointer items-center justify-center rounded-r-full transition-colors h-full px-3 hover:bg-foreground/5 active:bg-foreground/10"
       data-testid="pill-dislike-button"
       title="Dislike track"
       type="button"
@@ -69,12 +69,12 @@ exports[`PillRatingGroup > (Snapshot) renders default unfavorited and undisliked
 exports[`PillRatingGroup > (Snapshot) renders favorited state 1`] = `
 <div>
   <div
-    class="inline-flex items-center rounded-full border-(length:--border-width) border-border bg-card transition-colors h-7"
+    class="border-border bg-card inline-flex items-center rounded-full border-(length:--border-width) transition-colors h-7"
     data-testid="pill-rating-group"
   >
     <button
       aria-label="Remove from favorites"
-      class="flex items-center justify-center rounded-l-full cursor-pointer transition-colors px-2.5 h-full hover:bg-foreground/5 active:bg-foreground/10"
+      class="flex cursor-pointer items-center justify-center rounded-l-full transition-colors h-full px-2.5 hover:bg-foreground/5 active:bg-foreground/10"
       data-testid="pill-favorite-button"
       title="Remove from favorites"
       type="button"
@@ -98,11 +98,11 @@ exports[`PillRatingGroup > (Snapshot) renders favorited state 1`] = `
       </svg>
     </button>
     <div
-      class="h-3.5 w-px bg-border shrink-0"
+      class="bg-border h-3.5 w-px shrink-0"
     />
     <button
       aria-label="Dislike track"
-      class="flex items-center justify-center rounded-r-full cursor-pointer transition-colors px-2.5 h-full hover:bg-foreground/5 active:bg-foreground/10"
+      class="flex cursor-pointer items-center justify-center rounded-r-full transition-colors h-full px-2.5 hover:bg-foreground/5 active:bg-foreground/10"
       data-testid="pill-dislike-button"
       title="Dislike track"
       type="button"

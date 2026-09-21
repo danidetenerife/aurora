@@ -386,10 +386,10 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                       </div>
                     </td>
                     <td
-                      class="truncate px-2 hidden sm:table-cell cursor-pointer"
+                      class="px-2 hidden sm:table-cell cursor-pointer"
                     >
                       <button
-                        class="w-full truncate text-left hover:underline focus:outline-none"
+                        class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
                         type="button"
                       >
                         Test Artist
@@ -402,20 +402,20 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                         class="flex min-w-0 items-center justify-between gap-2"
                       >
                         <div
-                          class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left"
+                          class="flex min-w-0 flex-1 flex-col justify-center text-left"
                         >
                           <button
                             class="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
                             type="button"
                           >
                             <span
-                              class="line-clamp-2 text-sm leading-snug font-semibold break-words hover:underline text-foreground"
+                              class="text-sm leading-snug font-semibold break-words whitespace-normal hover:underline text-foreground"
                             >
                               Track track-1
                             </span>
                           </button>
                           <div
-                            class="text-foreground-secondary line-clamp-1 text-xs break-words"
+                            class="text-foreground-secondary text-xs break-words whitespace-normal"
                           >
                             <span>
                               <button
@@ -462,7 +462,7 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                             aria-expanded="false"
                             aria-haspopup="menu"
                             aria-label="Track options"
-                            class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 opacity-100 md:opacity-0 transition-none md:group-hover:opacity-100 p-2 min-w-8 min-h-8 flex items-center justify-center cursor-pointer"
+                            class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 flex min-h-8 min-w-8 cursor-pointer items-center justify-center p-2 opacity-100 transition-none md:opacity-0 md:group-hover:opacity-100"
                             data-headlessui-state=""
                             data-state="closed"
                             data-testid="track-context-menu-button"
@@ -581,10 +581,10 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                       </div>
                     </td>
                     <td
-                      class="truncate px-2 hidden sm:table-cell cursor-pointer"
+                      class="px-2 hidden sm:table-cell cursor-pointer"
                     >
                       <button
-                        class="w-full truncate text-left hover:underline focus:outline-none"
+                        class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
                         type="button"
                       >
                         Test Artist
@@ -597,20 +597,20 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                         class="flex min-w-0 items-center justify-between gap-2"
                       >
                         <div
-                          class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left"
+                          class="flex min-w-0 flex-1 flex-col justify-center text-left"
                         >
                           <button
                             class="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
                             type="button"
                           >
                             <span
-                              class="line-clamp-2 text-sm leading-snug font-semibold break-words hover:underline text-foreground"
+                              class="text-sm leading-snug font-semibold break-words whitespace-normal hover:underline text-foreground"
                             >
                               Track track-2
                             </span>
                           </button>
                           <div
-                            class="text-foreground-secondary line-clamp-1 text-xs break-words"
+                            class="text-foreground-secondary text-xs break-words whitespace-normal"
                           >
                             <span>
                               <button
@@ -657,7 +657,7 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                             aria-expanded="false"
                             aria-haspopup="menu"
                             aria-label="Track options"
-                            class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 opacity-100 md:opacity-0 transition-none md:group-hover:opacity-100 p-2 min-w-8 min-h-8 flex items-center justify-center cursor-pointer"
+                            class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 flex min-h-8 min-w-8 cursor-pointer items-center justify-center p-2 opacity-100 transition-none md:opacity-0 md:group-hover:opacity-100"
                             data-headlessui-state=""
                             data-state="closed"
                             data-testid="track-context-menu-button"

@@ -16,7 +16,7 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
+          class="text-foreground-secondary w-5 shrink-0 text-right text-sm tabular-nums"
         >
           1
         </span>
@@ -30,23 +30,23 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
           />
         </div>
         <div
-          class="min-w-0 flex-1 flex flex-col justify-center"
+          class="flex min-w-0 flex-1 flex-col justify-center"
         >
           <div
-            class="break-words font-medium leading-snug"
+            class="leading-snug font-medium break-words"
             data-testid="top-list-label"
           >
             Before Today
           </div>
           <div
-            class="text-foreground-secondary break-words text-sm leading-snug mt-0.5"
+            class="text-foreground-secondary mt-0.5 text-sm leading-snug break-words"
             data-testid="top-list-sublabel"
           >
             Ariel Pink
           </div>
         </div>
         <div
-          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
+          class="bg-primary/50 min-w-fit shrink-0 px-2 py-1 text-right text-xs whitespace-nowrap tabular-nums"
           data-testid="top-list-value"
           style="width: 100%;"
         >
@@ -58,7 +58,7 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
+          class="text-foreground-secondary w-5 shrink-0 text-right text-sm tabular-nums"
         >
           2
         </span>
@@ -104,23 +104,23 @@ exports[`TopList > (Snapshot) renders a list of albums with their artists 1`] = 
           </svg>
         </div>
         <div
-          class="min-w-0 flex-1 flex flex-col justify-center"
+          class="flex min-w-0 flex-1 flex-col justify-center"
         >
           <div
-            class="break-words font-medium leading-snug"
+            class="leading-snug font-medium break-words"
             data-testid="top-list-label"
           >
             Hot Rats
           </div>
           <div
-            class="text-foreground-secondary break-words text-sm leading-snug mt-0.5"
+            class="text-foreground-secondary mt-0.5 text-sm leading-snug break-words"
             data-testid="top-list-sublabel"
           >
             Frank Zappa
           </div>
         </div>
         <div
-          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
+          class="bg-primary/50 min-w-fit shrink-0 px-2 py-1 text-right text-xs whitespace-nowrap tabular-nums"
           data-testid="top-list-value"
           style="width: 50%;"
         >
@@ -148,7 +148,7 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
+          class="text-foreground-secondary w-5 shrink-0 text-right text-sm tabular-nums"
         >
           1
         </span>
@@ -162,17 +162,17 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
           />
         </div>
         <div
-          class="min-w-0 flex-1 flex flex-col justify-center"
+          class="flex min-w-0 flex-1 flex-col justify-center"
         >
           <div
-            class="break-words font-medium leading-snug"
+            class="leading-snug font-medium break-words"
             data-testid="top-list-label"
           >
             John Maus
           </div>
         </div>
         <div
-          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
+          class="bg-primary/50 min-w-fit shrink-0 px-2 py-1 text-right text-xs whitespace-nowrap tabular-nums"
           data-testid="top-list-value"
           style="width: 100%;"
         >
@@ -184,7 +184,7 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
+          class="text-foreground-secondary w-5 shrink-0 text-right text-sm tabular-nums"
         >
           2
         </span>
@@ -230,17 +230,17 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
           </svg>
         </div>
         <div
-          class="min-w-0 flex-1 flex flex-col justify-center"
+          class="flex min-w-0 flex-1 flex-col justify-center"
         >
           <div
-            class="break-words font-medium leading-snug"
+            class="leading-snug font-medium break-words"
             data-testid="top-list-label"
           >
             Ariel Pink
           </div>
         </div>
         <div
-          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
+          class="bg-primary/50 min-w-fit shrink-0 px-2 py-1 text-right text-xs whitespace-nowrap tabular-nums"
           data-testid="top-list-value"
           style="width: 50%;"
         >
@@ -252,7 +252,7 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
         data-testid="top-list-row"
       >
         <span
-          class="text-foreground-secondary w-5 text-right text-sm tabular-nums shrink-0"
+          class="text-foreground-secondary w-5 shrink-0 text-right text-sm tabular-nums"
         >
           3
         </span>
@@ -266,17 +266,17 @@ exports[`TopList > (Snapshot) renders a list of artists 1`] = `
           />
         </div>
         <div
-          class="min-w-0 flex-1 flex flex-col justify-center"
+          class="flex min-w-0 flex-1 flex-col justify-center"
         >
           <div
-            class="break-words font-medium leading-snug"
+            class="leading-snug font-medium break-words"
             data-testid="top-list-label"
           >
             Swans
           </div>
         </div>
         <div
-          class="bg-primary/50 shrink-0 min-w-fit px-2 py-1 whitespace-nowrap tabular-nums text-xs text-right"
+          class="bg-primary/50 min-w-fit shrink-0 px-2 py-1 text-right text-xs whitespace-nowrap tabular-nums"
           data-testid="top-list-value"
           style="width: 25%;"
         >

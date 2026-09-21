@@ -171,7 +171,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
         >
           <button
             aria-label="Notificaciones"
-            class="relative flex h-8 w-8 items-center justify-center rounded-full text-zinc-300 hover:text-white active:scale-95 transition-colors cursor-pointer"
+            class="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-white active:scale-95"
             data-testid="desktop-notifications-button"
             type="button"
           >
@@ -196,12 +196,12 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
               />
             </svg>
             <span
-              class="absolute top-1 right-1 flex h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-background"
+              class="ring-background absolute top-1 right-1 flex h-2 w-2 rounded-full bg-emerald-500 ring-2"
             />
           </button>
           <button
             aria-label="Cuenta y perfil"
-            class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-orange-600 to-rose-600 text-xs font-black text-white ring-2 ring-white/20 shadow-md shadow-orange-500/20 active:scale-95 transition-transform cursor-pointer"
+            class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-orange-600 to-rose-600 text-xs font-black text-white shadow-md ring-2 shadow-orange-500/20 ring-white/20 transition-transform active:scale-95"
             data-testid="desktop-account-button"
             type="button"
           >
@@ -955,10 +955,10 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                             </button>
                           </td>
                           <td
-                            class="truncate px-2 hidden sm:table-cell cursor-pointer"
+                            class="px-2 hidden sm:table-cell cursor-pointer"
                           >
                             <button
-                              class="w-full truncate text-left hover:underline focus:outline-none"
+                              class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
                               type="button"
                             >
                               John Butler
@@ -971,20 +971,20 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                               class="flex min-w-0 items-center justify-between gap-2"
                             >
                               <div
-                                class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left"
+                                class="flex min-w-0 flex-1 flex-col justify-center text-left"
                               >
                                 <button
                                   class="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
                                   type="button"
                                 >
                                   <span
-                                    class="line-clamp-2 text-sm leading-snug font-semibold break-words hover:underline text-foreground"
+                                    class="text-sm leading-snug font-semibold break-words whitespace-normal hover:underline text-foreground"
                                   >
                                     Going Solo
                                   </span>
                                 </button>
                                 <div
-                                  class="text-foreground-secondary line-clamp-1 text-xs break-words"
+                                  class="text-foreground-secondary text-xs break-words whitespace-normal"
                                 >
                                   <span>
                                     <button
@@ -1031,7 +1031,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                                   aria-expanded="false"
                                   aria-haspopup="menu"
                                   aria-label="Track options"
-                                  class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 opacity-100 md:opacity-0 transition-none md:group-hover:opacity-100 p-2 min-w-8 min-h-8 flex items-center justify-center cursor-pointer"
+                                  class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 flex min-h-8 min-w-8 cursor-pointer items-center justify-center p-2 opacity-100 transition-none md:opacity-0 md:group-hover:opacity-100"
                                   data-headlessui-state=""
                                   data-state="closed"
                                   data-testid="track-context-menu-button"
@@ -1111,10 +1111,10 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                             </button>
                           </td>
                           <td
-                            class="truncate px-2 hidden sm:table-cell cursor-pointer"
+                            class="px-2 hidden sm:table-cell cursor-pointer"
                           >
                             <button
-                              class="w-full truncate text-left hover:underline focus:outline-none"
+                              class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
                               type="button"
                             >
                               John Butler
@@ -1127,20 +1127,20 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                               class="flex min-w-0 items-center justify-between gap-2"
                             >
                               <div
-                                class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden text-left"
+                                class="flex min-w-0 flex-1 flex-col justify-center text-left"
                               >
                                 <button
                                   class="flex min-w-0 cursor-pointer items-center text-left focus:outline-none"
                                   type="button"
                                 >
                                   <span
-                                    class="line-clamp-2 text-sm leading-snug font-semibold break-words hover:underline text-foreground"
+                                    class="text-sm leading-snug font-semibold break-words whitespace-normal hover:underline text-foreground"
                                   >
                                     King of California
                                   </span>
                                 </button>
                                 <div
-                                  class="text-foreground-secondary line-clamp-1 text-xs break-words"
+                                  class="text-foreground-secondary text-xs break-words whitespace-normal"
                                 >
                                   <span>
                                     <button
@@ -1187,7 +1187,7 @@ exports[`Album view > (Snapshot) renders the album view 1`] = `
                                   aria-expanded="false"
                                   aria-haspopup="menu"
                                   aria-label="Track options"
-                                  class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 opacity-100 md:opacity-0 transition-none md:group-hover:opacity-100 p-2 min-w-8 min-h-8 flex items-center justify-center cursor-pointer"
+                                  class="rounded-md whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-transparent size-8 flex min-h-8 min-w-8 cursor-pointer items-center justify-center p-2 opacity-100 transition-none md:opacity-0 md:group-hover:opacity-100"
                                   data-headlessui-state=""
                                   data-state="closed"
                                   data-testid="track-context-menu-button"

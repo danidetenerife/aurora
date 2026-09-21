@@ -34,8 +34,7 @@ const DashboardContent: FC<{ isStartingUp: boolean }> = ({ isStartingUp }) => {
   );
   const activeWidgets = DASHBOARD_WIDGETS.filter(
     (widget) =>
-      (!isCapacitorEnvironment() ||
-        widget.capability !== 'editorialPlaylists') &&
+      widget.capability !== 'editorialPlaylists' &&
       activeCapabilities.has(widget.capability),
   );
 

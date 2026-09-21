@@ -29,7 +29,8 @@ export const TextCell = <T extends Track>(
         ? () => meta.onAlbumClick!(String(value), track as unknown as Track)
         : undefined;
 
-  const isNoTruncate = Boolean(meta?.noTruncate);
+  const isNoTruncate =
+    meta?.noTruncate !== undefined ? Boolean(meta.noTruncate) : true;
 
   return (
     <td
@@ -44,9 +45,8 @@ export const TextCell = <T extends Track>(
         <button
           type="button"
           className={cn(
-            'w-full',
+            'w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]',
             !isNoTruncate && 'truncate',
-            'text-left hover:underline focus:outline-none',
           )}
           onClick={(event) => {
             event.stopPropagation();
@@ -56,7 +56,15 @@ export const TextCell = <T extends Track>(
           {value}
         </button>
       ) : (
-        <div className={isNoTruncate ? '' : 'truncate'}>{value}</div>
+        <div
+          className={
+            isNoTruncate
+              ? 'break-normal whitespace-normal [overflow-wrap:anywhere]'
+              : 'truncate'
+          }
+        >
+          {value}
+        </div>
       )}
     </td>
   );

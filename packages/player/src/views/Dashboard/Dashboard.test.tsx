@@ -90,7 +90,7 @@ describe('Dashboard view', () => {
     expect(DashboardWrapper.topAlbums.heading).toBeInTheDocument();
   });
 
-  it('renders playlist cards when a provider supplies editorial playlists', async () => {
+  it('does not render editorial playlists on dashboard (shown in playlists view)', async () => {
     DashboardWrapper.seedProvider(
       DashboardWrapper.fixtures.editorialPlaylistsProvider(),
     );
@@ -98,11 +98,8 @@ describe('Dashboard view', () => {
     await DashboardWrapper.mount();
 
     expect(
-      await DashboardWrapper.editorialPlaylists
-        .playlist('Art Rock Essentials')
-        .find(),
-    ).toBeInTheDocument();
-    expect(DashboardWrapper.editorialPlaylists.heading).toBeInTheDocument();
+      DashboardWrapper.editorialPlaylists.heading,
+    ).not.toBeInTheDocument();
   });
 
   it('renders release cards when a provider supplies new releases', async () => {
@@ -159,41 +156,7 @@ describe('Dashboard view', () => {
     ).toBeInTheDocument();
   });
 
-  it('navigates to playlist import when clicking a playlist card with a matching provider', async () => {
-    DashboardWrapper.seedProvider(
-      DashboardWrapper.fixtures.editorialPlaylistsWithUrlProvider(),
-    );
-    DashboardWrapper.seedPlaylistProvider(
-      new PlaylistProviderBuilder().thatMatchesUrl('music.example.com'),
-    );
 
-    const { router } = await DashboardWrapper.mount();
-
-    await DashboardWrapper.editorialPlaylists
-      .playlist('Art Rock Essentials')
-      .click();
-
-    expect(router.state.location.pathname).toBe(
-      '/playlists/import/test-playlist-provider',
-    );
-    expect(router.state.location.search).toEqual({
-      url: encodeURIComponent('https://music.example.com/playlist/12345'),
-    });
-  });
-
-  it('stays on dashboard when clicking a playlist card with no matching provider', async () => {
-    DashboardWrapper.seedProvider(
-      DashboardWrapper.fixtures.editorialPlaylistsWithUrlProvider(),
-    );
-
-    const { router } = await DashboardWrapper.mount();
-
-    await DashboardWrapper.editorialPlaylists
-      .playlist('Art Rock Essentials')
-      .click();
-
-    expect(router.state.location.pathname).toBe('/dashboard');
-  });
 
   it('shows tracks from multiple providers', async () => {
     DashboardWrapper.seedProvider(

@@ -73,11 +73,11 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
               class="text-foreground"
             >
               <div
-                class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4 pr-2 pb-4"
+                class="grid grid-cols-[repeat(auto-fill,11rem)] justify-start gap-4 pr-2 pb-4"
                 role="grid"
               >
                 <button
-                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-full max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left"
                   data-headlessui-state=""
                   data-testid="card"
                   type="button"
@@ -142,7 +142,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                     class="min-w-0"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="card-title"
                     >
                       Frank Zappa
@@ -150,7 +150,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                   </div>
                 </button>
                 <button
-                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-full max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left"
                   data-headlessui-state=""
                   data-testid="card"
                   type="button"
@@ -215,7 +215,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                     class="min-w-0"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="card-title"
                     >
                       Ozzy Osbourne
@@ -223,7 +223,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                   </div>
                 </button>
                 <button
-                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-full max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left"
                   data-headlessui-state=""
                   data-testid="card"
                   type="button"
@@ -288,7 +288,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                     class="min-w-0"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="card-title"
                     >
                       David Bowie
@@ -296,7 +296,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                   </div>
                 </button>
                 <button
-                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-full max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left"
                   data-headlessui-state=""
                   data-testid="card"
                   type="button"
@@ -361,7 +361,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                     class="min-w-0"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="card-title"
                     >
                       Kurt Cobain
@@ -369,7 +369,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                   </div>
                 </button>
                 <button
-                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-42 flex-col items-stretch gap-2 p-2 text-left"
+                  class="cursor-pointer rounded-md whitespace-nowrap transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 text-foreground bg-primary border-border shadow-shadow hover:translate-x-shadow-x hover:translate-y-shadow-y border-(length:--border-width) hover:shadow-none h-auto flex w-full max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left"
                   data-headlessui-state=""
                   data-testid="card"
                   type="button"
@@ -434,7 +434,7 @@ exports[`Tabs > (Snapshot) renders correctly 1`] = `
                     class="min-w-0"
                   >
                     <div
-                      class="text-foreground truncate text-sm font-bold"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="card-title"
                     >
                       John Lennon

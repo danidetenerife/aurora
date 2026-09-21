@@ -56,7 +56,7 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
       <div
         data-testid="queue-item-thumbnail"
         className={cn(
-          'bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm',
+          'bg-background flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-sm',
           classes?.thumbnail,
         )}
       >
@@ -69,18 +69,18 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
           />
         ) : (
           <CassetteTape
-            size={48}
+            size={36}
             absoluteStrokeWidth
             className="text-foreground opacity-20"
           />
         )}
       </div>
 
-      <div className={cn('min-w-0 flex-1', classes?.content)}>
+      <div className={cn('min-w-0 flex-1 py-0.5', classes?.content)}>
         <div
           data-testid="queue-item-title"
           className={cn(
-            'text-foreground text-sm leading-tight font-bold break-words',
+            'text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:break-word] leading-snug',
             classes?.title,
           )}
         >
@@ -89,7 +89,7 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
         <div
           data-testid="queue-item-artist"
           className={cn(
-            'text-foreground mt-0.5 text-xs leading-tight break-words',
+            'text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:break-word] leading-tight',
             classes?.artist,
           )}
         >

@@ -103,12 +103,12 @@
   },
   "favorites": {
     "albums": {
-      "title": "Título de álbumes Favoritos",
+      "title": "Álbumes favoritos",
       "empty": "No tienes álbumes favoritos aún",
       "emptyDescription": "Los Álbumes que marques como favoritos aparecerán aquí"
     },
     "tracks": {
-      "title": "Música favorita",
+      "title": "Canciones favoritas",
       "empty": "No tienes música favorita aún",
       "emptyDescription": "La música que marques como favorita aparecerá aquí"
     },
@@ -119,7 +119,7 @@
     }
   },
   "playlists": {
-    "title": "Título de la lista de reproducción",
+    "title": "Listas de reproducción",
     "empty": "Sin listas de reproducción",
     "emptyDescription": "Crea una lista de reproducción o importa una para comenzar",
     "emptyTracks": "Sin música en esta lista de reproducción",

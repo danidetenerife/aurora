@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-09-21T08:15",
+    "description": "Nueva interfaz de Google TV inspirada en YouTube Music 10-foot: barra de navegación lateral izquierda colapsable (Navigation Rail con transiciones suaves entre modo compacto y expandido), selector de filtros de actividad y estado de ánimo (Mood/Activity chips: Todos, Energía, Para relajarse, Entrenamiento, Concentración, Fiesta, Romance) con reorganización reactiva del contenido, banner cinematográfico Hero Spotlight con acceso directo a reproducción, carriles horizontales de exploración (swimlanes) con escalado fluido al 106% y botón de reproducción circular en foco, resplandor ambiental dinámico de fondo (ambient glow) y navegación espacial D-Pad de alta precisión auditada bajo pruebas extremas de estrés.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Google TV", "color": "red" },
+      { "label": "Android", "color": "green" },
+      { "label": "UI", "color": "blue" },
+      { "label": "YouTube Music", "color": "orange" }
+    ]
+  },
+  {
     "date": "2026-09-20T18:25",
     "description": "Experiencia móvil perfeccionada, sincronización bidireccional y actualización del motor de recomendaciones musicales: añade diseño de tarjetas estilo cola con paginación de 10 canciones por página (< 1 / N >) en Recomendado para ti, erradica la resurrección de canciones y listas eliminadas (como MisFavoritas) mediante lápidas semánticas persistentes en almacenamiento local y sincronización remota Gist/WebDAV/LAN, sincroniza en tiempo real el widget multimedia de Android con carátula y estado de reproducción, hace interactivo el menú de 3 puntos en la sección Cola, organiza Listas destacadas y Nuevos lanzamientos en cuadrículas en cascada de 2 columnas sin títulos truncados, y potencia el algoritmo de recomendación musical incorporando Taste Anchor Biasing, afinidad contextual por sesión y límite estricto de diversidad por artista inspirado en Google Music.",
     "type": "feature",

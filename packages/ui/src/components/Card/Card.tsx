@@ -32,7 +32,7 @@ export const Card: FC<CardProps> = ({
     data-testid="card"
     size="flexible"
     className={cn(
-      'flex w-42 flex-col items-stretch gap-2 p-2 text-left',
+      'flex w-full max-w-[11.5rem] flex-col items-stretch gap-2 p-2 text-left',
       className,
     )}
     onClick={onClick}
@@ -74,13 +74,13 @@ export const Card: FC<CardProps> = ({
         {title && (
           <div
             data-testid="card-title"
-            className="text-foreground truncate text-sm font-bold"
+            className="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
           >
             {title}
           </div>
         )}
         {subtitle && (
-          <div className="text-foreground truncate text-xs opacity-60">
+          <div className="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5">
             {subtitle}
           </div>
         )}

@@ -190,7 +190,7 @@ exports[`QueuePanel > (Snapshot) renders collapsed state 1`] = `
         </div>
         <div
           aria-hidden="true"
-          class="h-28 shrink-0 md:h-2 select-none pointer-events-none"
+          class="pointer-events-none h-28 shrink-0 select-none md:h-2"
         />
       </div>
       <div
@@ -256,7 +256,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                   role="button"
                 >
                   <div
-                    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+                    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
                     data-testid="queue-item-thumbnail"
                   >
                     <img
@@ -266,16 +266,16 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     />
                   </div>
                   <div
-                    class="min-w-0 flex-1"
+                    class="min-w-0 flex-1 py-0.5"
                   >
                     <div
-                      class="text-foreground text-sm font-bold break-words leading-tight"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="queue-item-title"
                     >
                       Bohemian Rhapsody
                     </div>
                     <div
-                      class="text-foreground text-xs break-words leading-tight mt-0.5"
+                      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
                       data-testid="queue-item-artist"
                     >
                       Queen
@@ -350,7 +350,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                   role="button"
                 >
                   <div
-                    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+                    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
                     data-testid="queue-item-thumbnail"
                   >
                     <img
@@ -360,16 +360,16 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     />
                   </div>
                   <div
-                    class="min-w-0 flex-1"
+                    class="min-w-0 flex-1 py-0.5"
                   >
                     <div
-                      class="text-foreground text-sm font-bold break-words leading-tight"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="queue-item-title"
                     >
                       Stairway to Heaven
                     </div>
                     <div
-                      class="text-foreground text-xs break-words leading-tight mt-0.5"
+                      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
                       data-testid="queue-item-artist"
                     >
                       Led Zeppelin
@@ -444,7 +444,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                   role="button"
                 >
                   <div
-                    class="bg-background flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+                    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
                     data-testid="queue-item-thumbnail"
                   >
                     <img
@@ -454,16 +454,16 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     />
                   </div>
                   <div
-                    class="min-w-0 flex-1"
+                    class="min-w-0 flex-1 py-0.5"
                   >
                     <div
-                      class="text-foreground text-sm font-bold break-words leading-tight"
+                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
                       data-testid="queue-item-title"
                     >
                       Hotel California
                     </div>
                     <div
-                      class="text-foreground text-xs break-words leading-tight mt-0.5"
+                      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
                       data-testid="queue-item-artist"
                     >
                       Eagles
@@ -517,7 +517,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
         </div>
         <div
           aria-hidden="true"
-          class="h-28 shrink-0 md:h-2 select-none pointer-events-none"
+          class="pointer-events-none h-28 shrink-0 select-none md:h-2"
         />
       </div>
       <div

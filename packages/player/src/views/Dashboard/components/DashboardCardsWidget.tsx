@@ -1,9 +1,16 @@
 import isEmpty from 'lodash-es/isEmpty';
-import { ChevronRight, Play } from 'lucide-react';
-import { useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import type { AttributedResult } from '@aurora/plugin-sdk';
-import { CardsRow, CardsRowItem, CardsRowLabels, Loader } from '@aurora/ui';
+import {
+  Badge,
+  Button,
+  CardsRow,
+  CardsRowItem,
+  CardsRowLabels,
+  Loader,
+} from '@aurora/ui';
 
 import { isCapacitorEnvironment } from '../../../services/universalStore';
 
@@ -166,6 +173,27 @@ export const DashboardCardsWidget = <T,>({
     );
   }
 
+  const isNewReleases =
+    testId?.includes('new-releases') ||
+    testId?.includes('release') ||
+    title.toLowerCase().includes('lanzamiento') ||
+    title.toLowerCase().includes('releases');
+
+  if (isNewReleases) {
+    return (
+      <div data-testid={testId} className="flex flex-col gap-4">
+        {results?.map((result) => (
+          <DashboardCardsDesktopNewReleases
+            key={result.providerId}
+            result={result}
+            title={title}
+            mapItem={mapItem}
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div data-testid={testId} className="flex flex-col gap-4">
       {results?.map((result) => (
@@ -177,6 +205,135 @@ export const DashboardCardsWidget = <T,>({
           mapItem={mapItem}
         />
       ))}
+    </div>
+  );
+};
+
+type DashboardCardsDesktopNewReleasesProps<T> = {
+  result: AttributedResult<T>;
+  title: string;
+  mapItem: (item: T, result: AttributedResult<T>) => CardsRowItem;
+};
+
+const DashboardCardsDesktopNewReleases = <T,>({
+  result,
+  title,
+  mapItem,
+}: DashboardCardsDesktopNewReleasesProps<T>) => {
+  const [page, setPage] = useState(0);
+  const items: CardsRowItem[] = useMemo(
+    () => result.items.map((item) => mapItem(item, result)),
+    [result, mapItem],
+  );
+
+  const pageSize = 10;
+  const totalPages = Math.ceil(items.length / pageSize);
+  const paginatedItems = useMemo(
+    () => items.slice(page * pageSize, (page + 1) * pageSize),
+    [items, page, pageSize],
+  );
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-foreground text-lg font-bold">{title}</h2>
+          {result.providerName && (
+            <Badge data-testid="cards-row-badge" variant="pill" color="purple">
+              {result.providerName}
+            </Badge>
+          )}
+          {totalPages > 1 && (
+            <div className="border-border/40 bg-background-secondary/60 text-foreground-secondary ml-2 flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold backdrop-blur-md">
+              <Button
+                variant="ghost"
+                size="icon"
+                data-testid="new-releases-prev-page"
+                className="h-5 w-5 rounded-full text-zinc-400 hover:text-white disabled:opacity-30"
+                disabled={page === 0}
+                onClick={() =>
+                  setPage((previousPage) => Math.max(0, previousPage - 1))
+                }
+              >
+                <ChevronLeft className="size-3.5" />
+              </Button>
+              <span className="text-foreground min-w-[3rem] text-center text-xs">
+                {page + 1} / {totalPages}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                data-testid="new-releases-next-page"
+                className="h-5 w-5 rounded-full text-zinc-400 hover:text-white disabled:opacity-30"
+                disabled={page >= totalPages - 1}
+                onClick={() =>
+                  setPage((previousPage) =>
+                    Math.min(totalPages - 1, previousPage + 1),
+                  )
+                }
+              >
+                <ChevronRight className="size-3.5" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        {paginatedItems.map((item) => (
+          <div
+            key={item.id}
+            data-testid="card"
+            role="button"
+            tabIndex={0}
+            onClick={item.onClick}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                item.onClick?.();
+              }
+            }}
+            className="group bg-background-secondary/40 hover:bg-background-secondary/80 border-border/40 hover:border-border flex cursor-pointer items-center justify-between gap-3.5 rounded-xl border p-2.5 transition-all select-none focus:outline-none focus:ring-1 focus:ring-white/20"
+          >
+            <div className="flex min-w-0 flex-1 items-center gap-3.5">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-zinc-900 shadow-md">
+                {item.imageUrl ? (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : null}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Play className="h-5 w-5 fill-white text-white" />
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div
+                  data-testid="card-title"
+                  className="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug group-hover:underline"
+                >
+                  {item.title}
+                </div>
+                {item.subtitle && (
+                  <div className="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight">
+                    {item.subtitle}
+                  </div>
+                )}
+              </div>
+            </div>
+            {item.action && (
+              <div
+                className="shrink-0"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {item.action}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

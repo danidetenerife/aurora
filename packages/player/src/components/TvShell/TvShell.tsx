@@ -386,10 +386,13 @@ const TvShellContent: FC = () => {
       lang="es"
       onContextMenu={(event) => event.preventDefault()}
     >
+      <div className="tv-ambient-backdrop" />
       <TvAutoUpdater />
       <TvNavRail />
-      {showVideo ? <TvVideoPlayer track={currentTrack} /> : <TvMainContent />}
-      <TvNowPlayingBar />
+      <div className="tv-main-wrapper">
+        {showVideo ? <TvVideoPlayer track={currentTrack} /> : <TvMainContent />}
+        <TvNowPlayingBar />
+      </div>
       <p className="tv-hint">{t('hint')}</p>
       <TvSoundProvider>{!starting && <StreamResolver />}</TvSoundProvider>
       {searchOpen && <TvSearchOverlay />}

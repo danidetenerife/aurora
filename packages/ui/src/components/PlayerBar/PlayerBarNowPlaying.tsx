@@ -58,7 +58,7 @@ export const PlayerBarNowPlaying: FC<PlayerBarNowPlayingProps> = ({
       {artist ? (
         <div
           className={cn(
-            'text-foreground-secondary truncate text-[11px] sm:text-xs',
+            'text-foreground-secondary text-[11px] sm:text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5',
             {
               'cursor-pointer hover:underline': onArtistClick,
             },

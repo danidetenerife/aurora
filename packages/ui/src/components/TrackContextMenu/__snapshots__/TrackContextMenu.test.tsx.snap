@@ -54,12 +54,12 @@ exports[`TrackContextMenu > (Snapshot) renders header without cover image 1`] = 
           class="min-w-0 flex-1 py-3 pr-3 pl-3"
         >
           <div
-            class="text-foreground truncate text-sm font-bold"
+            class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
           >
             Paranoid Android
           </div>
           <div
-            class="text-foreground-secondary truncate text-xs"
+            class="text-foreground-secondary text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
           >
             Radiohead
           </div>
@@ -154,7 +154,7 @@ exports[`TrackContextMenu > (Snapshot) renders header without subtitle 1`] = `
           class="min-w-0 flex-1 py-3 pr-3"
         >
           <div
-            class="text-foreground truncate text-sm font-bold"
+            class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
           >
             Bohemian Rhapsody
           </div>
@@ -249,12 +249,12 @@ exports[`TrackContextMenu > (Snapshot) renders with header and actions 1`] = `
           class="min-w-0 flex-1 py-3 pr-3"
         >
           <div
-            class="text-foreground truncate text-sm font-bold"
+            class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
           >
             Echoes
           </div>
           <div
-            class="text-foreground-secondary truncate text-xs"
+            class="text-foreground-secondary text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
           >
             Pink Floyd
           </div>
