@@ -30,6 +30,31 @@ import { createUniversalStore, isTauriEnvironment } from './universalStore';
 const SYNC_STORE_FILE = 'p2p_sync.json';
 const syncStore = createUniversalStore(SYNC_STORE_FILE);
 
+export const isDeviceSpecificSettingKey = (key: string): boolean => {
+  const normalized = key.replace(/^core\./, '');
+  return (
+    normalized.startsWith('theme') ||
+    normalized === 'dark' ||
+    normalized === 'themeId' ||
+    normalized.startsWith('layout.') ||
+    normalized.startsWith('updates.') ||
+    normalized === 'playback.volume' ||
+    normalized === 'playback.muted'
+  );
+};
+
+export const filterSyncableSettings = <T extends Record<string, unknown>>(
+  settings: T,
+): Record<string, unknown> => {
+  const filtered: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(settings)) {
+    if (!isDeviceSpecificSettingKey(key)) {
+      filtered[key] = value;
+    }
+  }
+  return filtered;
+};
+
 function entrySourceKey(entry: FavEntry): string {
   const source = entry.ref?.source as Record<string, string> | undefined;
   if (source?.provider && source?.id) {
@@ -182,11 +207,22 @@ export class P2PSyncService {
       this.schedulePushToActiveProvider();
     });
 
-    useSettingsStore.subscribe(() => {
+    let previousSettings = { ...useSettingsStore.getState().values };
+    useSettingsStore.subscribe((state) => {
       if (this.isApplyingRemote) {
+        previousSettings = { ...state.values };
         return;
       }
-      this.schedulePushToActiveProvider();
+      const hasSyncableChange = Object.keys(state.values).some((key) => {
+        if (isDeviceSpecificSettingKey(key)) {
+          return false;
+        }
+        return state.values[key] !== previousSettings[key];
+      });
+      previousSettings = { ...state.values };
+      if (hasSyncableChange) {
+        this.schedulePushToActiveProvider();
+      }
     });
 
     usePlaylistStore.subscribe(() => {
@@ -470,7 +506,7 @@ export class P2PSyncService {
         albums: favStoreState.albums as unknown as FavEntry[],
         deletedKeys: favStoreState.deletedKeys,
       },
-      settings: settingsStoreState.values,
+      settings: filterSyncableSettings(settingsStoreState.values),
       playlists: allPlaylists,
       user_profile: userProfileListens,
       blacklist,
@@ -647,11 +683,8 @@ export class P2PSyncService {
       const currentValues = { ...useSettingsStore.getState().values };
       const settingsDiskStore = createUniversalStore('settings.json');
 
-      const isThemeKey = (key: string) =>
-        key.includes('theme') || key === 'dark' || key === 'themeId';
-
       for (const [key, value] of Object.entries(settings)) {
-        if (isThemeKey(key)) {
+        if (isDeviceSpecificSettingKey(key)) {
           continue;
         }
         const rawKey = key.replace(/^core\./, '');
@@ -980,11 +1013,8 @@ export class P2PSyncService {
           const currentValues = { ...useSettingsStore.getState().values };
           const settingsDiskStore = createUniversalStore('settings.json');
 
-          const isThemeKey = (key: string) =>
-            key.includes('theme') || key === 'dark' || key === 'themeId';
-
           for (const [key, value] of Object.entries(settings)) {
-            if (isThemeKey(key)) {
+            if (isDeviceSpecificSettingKey(key)) {
               continue;
             }
             const rawKey = key.replace(/^core\./, '');
@@ -1230,7 +1260,7 @@ export class P2PSyncService {
           albums: favStoreState.albums,
           deletedKeys: favStoreState.deletedKeys,
         },
-        settings: settingsStoreState.values,
+        settings: filterSyncableSettings(settingsStoreState.values),
         playlists: allPlaylists,
         deletedPlaylists: playlistStoreState.deletedPlaylists,
         user_profile: userProfileListens,

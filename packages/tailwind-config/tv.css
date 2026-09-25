@@ -52,7 +52,9 @@ html[data-platform='tv'],
   border-radius: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+  transition:
+    width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s;
   overflow: hidden;
   white-space: nowrap;
   transform: translateZ(0);
@@ -80,7 +82,9 @@ html[data-platform='tv'],
 [data-platform='tv'] .tv-brand-title {
   opacity: 0;
   transform: translateX(-6px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 [data-platform='tv'] .tv-navigation:focus-within .tv-brand-title,
 [data-platform='tv'] .tv-navigation[data-expanded='true'] .tv-brand-title,
@@ -118,10 +122,15 @@ html[data-platform='tv'],
   font-weight: 600;
   opacity: 0;
   transform: translateX(-6px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 [data-platform='tv'] .tv-navigation:focus-within .tv-nav-btn .tv-nav-label,
-[data-platform='tv'] .tv-navigation[data-expanded='true'] .tv-nav-btn .tv-nav-label,
+[data-platform='tv']
+  .tv-navigation[data-expanded='true']
+  .tv-nav-btn
+  .tv-nav-label,
 [data-platform='tv'] .tv-navigation:hover .tv-nav-btn .tv-nav-label {
   opacity: 1;
   transform: translateX(0);
@@ -376,7 +385,11 @@ html[data-platform='tv'],
   cursor: pointer;
   transform: translateZ(0);
   will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 [data-platform='tv'] .tv-shell .tv-card[data-focused='true'],
@@ -436,7 +449,10 @@ html[data-platform='tv'],
   transition: opacity 0.2s ease;
 }
 
-[data-platform='tv'] .tv-shell .tv-card[data-focused='true'] .tv-card-play-overlay {
+[data-platform='tv']
+  .tv-shell
+  .tv-card[data-focused='true']
+  .tv-card-play-overlay {
   opacity: 1;
 }
 
@@ -454,7 +470,10 @@ html[data-platform='tv'],
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-[data-platform='tv'] .tv-shell .tv-card[data-focused='true'] .tv-card-play-icon {
+[data-platform='tv']
+  .tv-shell
+  .tv-card[data-focused='true']
+  .tv-card-play-icon {
   transform: scale(1);
 }
 

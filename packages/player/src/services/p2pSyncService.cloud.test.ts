@@ -82,4 +82,52 @@ describe('Cloud synchronization and Backup', () => {
     expect(config.username).toBe('userA');
     expect(config.password).toBe('secretPassword');
   });
+
+  it('excludes device-specific settings like volume from export payload', async () => {
+    const { useSettingsStore } = await import('../stores/settingsStore');
+    useSettingsStore.setState({
+      values: {
+        'core.playback.volume': 0.45,
+        'core.playback.muted': true,
+        'core.playback.shuffle': true,
+        'core.general.language': 'es_ES',
+      },
+    });
+
+    const jsonString = await p2pSyncService.exportLibraryBackup();
+    const parsed = JSON.parse(jsonString);
+
+    expect(parsed.settings).toBeDefined();
+    expect(parsed.settings['core.playback.shuffle']).toBe(true);
+    expect(parsed.settings['core.general.language']).toBe('es_ES');
+    expect(parsed.settings['core.playback.volume']).toBeUndefined();
+    expect(parsed.settings['playback.volume']).toBeUndefined();
+    expect(parsed.settings['core.playback.muted']).toBeUndefined();
+  });
+
+  it('does not overwrite local volume when applying remote sync payload containing volume', async () => {
+    const { useSettingsStore } = await import('../stores/settingsStore');
+    useSettingsStore.setState({
+      values: {
+        'core.playback.volume': 0.75,
+        'core.playback.shuffle': false,
+      },
+    });
+
+    const remoteBackup = {
+      version: 1,
+      timestamp: Date.now(),
+      settings: {
+        'core.playback.volume': 0.48,
+        'playback.volume': 0.48,
+        'core.playback.shuffle': true,
+      },
+    };
+
+    await p2pSyncService.importLibraryBackup(JSON.stringify(remoteBackup));
+
+    const values = useSettingsStore.getState().values;
+    expect(values['core.playback.volume']).toBe(0.75);
+    expect(values['core.playback.shuffle']).toBe(true);
+  });
 });

@@ -74,13 +74,13 @@ export const Card: FC<CardProps> = ({
         {title && (
           <div
             data-testid="card-title"
-            className="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+            className="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           >
             {title}
           </div>
         )}
         {subtitle && (
-          <div className="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5">
+          <div className="text-foreground mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal opacity-60">
             {subtitle}
           </div>
         )}

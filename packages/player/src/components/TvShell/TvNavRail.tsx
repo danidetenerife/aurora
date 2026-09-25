@@ -1,4 +1,3 @@
-import { FC, useState } from 'react';
 import {
   FolderHeart,
   Github,
@@ -8,6 +7,7 @@ import {
   Radio,
   Search,
 } from 'lucide-react';
+import { FC, useState } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import { TopBarLogo } from '@aurora/ui';
@@ -46,7 +46,12 @@ export const TvNavRail: FC = () => {
       icon: Radio,
       action: () => setActiveSection('podcasts'),
     },
-    { id: 'queue', label: t('queue'), icon: ListMusic, action: () => setActiveSection('queue') },
+    {
+      id: 'queue',
+      label: t('queue'),
+      icon: ListMusic,
+      action: () => setActiveSection('queue'),
+    },
     {
       id: 'settings',
       label: 'GitHub',

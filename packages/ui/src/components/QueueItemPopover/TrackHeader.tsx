@@ -16,14 +16,14 @@ export const TrackHeader: FC<TrackHeaderProps> = ({ track }) => {
     >
       <div
         data-testid="track-header-title"
-        className="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+        className="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
       >
         {track.title}
       </div>
       {primaryArtist && (
         <div
           data-testid="track-header-artist"
-          className="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
+          className="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal"
         >
           {primaryArtist}
         </div>

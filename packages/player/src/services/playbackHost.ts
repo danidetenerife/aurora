@@ -37,7 +37,10 @@ export const createPlaybackHost = (): PlaybackHost => ({
     ),
 
   getVolume: async () => (getSetting('core.playback.volume') as number) ?? 1,
-  setVolume: async (volume) => setSetting('core.playback.volume', volume),
+  setVolume: async (volume) => {
+    const clamped = Math.max(0, Math.min(1, volume));
+    await setSetting('core.playback.volume', clamped);
+  },
   isMuted: async () => (getSetting('core.playback.muted') as boolean) ?? false,
   setMuted: async (muted) => setSetting('core.playback.muted', muted),
   isShuffleEnabled: async () =>

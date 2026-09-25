@@ -3,7 +3,6 @@ import { act } from '@testing-library/react';
 import { isCapacitorEnvironment } from '../../services/universalStore';
 import { useStartupStore } from '../../stores/startupStore';
 import { DashboardProviderBuilder } from '../../test/builders/DashboardProviderBuilder';
-import { PlaylistProviderBuilder } from '../../test/builders/PlaylistProviderBuilder';
 import { TOP_TRACKS_RADIOHEAD } from '../../test/fixtures/dashboard';
 import { DashboardWrapper } from './Dashboard.test-wrapper';
 
@@ -97,9 +96,7 @@ describe('Dashboard view', () => {
 
     await DashboardWrapper.mount();
 
-    expect(
-      DashboardWrapper.editorialPlaylists.heading,
-    ).not.toBeInTheDocument();
+    expect(DashboardWrapper.editorialPlaylists.heading).not.toBeInTheDocument();
   });
 
   it('renders release cards when a provider supplies new releases', async () => {
@@ -155,8 +152,6 @@ describe('Dashboard view', () => {
       ),
     ).toBeInTheDocument();
   });
-
-
 
   it('shows tracks from multiple providers', async () => {
     DashboardWrapper.seedProvider(

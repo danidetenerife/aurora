@@ -76,14 +76,25 @@ export const useSettingsStore = create<State>((set, get) => ({
   },
   setValue: async (fullyQualifiedId, value) => {
     const nextValues = { ...get().values, [fullyQualifiedId]: value };
-    if (fullyQualifiedId.startsWith('core.')) {
-      const legacyId = fullyQualifiedId.replace(/^core\./, '');
+    const legacyId = fullyQualifiedId.startsWith('core.')
+      ? fullyQualifiedId.replace(/^core\./, '')
+      : undefined;
+
+    if (legacyId !== undefined) {
       nextValues[legacyId] = value;
-      await store.set(legacyId, value as unknown);
     }
+
     set({ values: nextValues });
-    await store.set(fullyQualifiedId, value as unknown);
-    debouncedSave();
+
+    try {
+      if (legacyId !== undefined) {
+        await store.set(legacyId, value as unknown);
+      }
+      await store.set(fullyQualifiedId, value as unknown);
+      debouncedSave();
+    } catch {
+      // Ignored if storage full or backend unavailable
+    }
   },
 }));
 

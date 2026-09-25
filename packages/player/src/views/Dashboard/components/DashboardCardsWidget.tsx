@@ -279,7 +279,7 @@ const DashboardCardsDesktopNewReleases = <T,>({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
         {paginatedItems.map((item) => (
           <div
             key={item.id}
@@ -293,7 +293,7 @@ const DashboardCardsDesktopNewReleases = <T,>({
                 item.onClick?.();
               }
             }}
-            className="group bg-background-secondary/40 hover:bg-background-secondary/80 border-border/40 hover:border-border flex cursor-pointer items-center justify-between gap-3.5 rounded-xl border p-2.5 transition-all select-none focus:outline-none focus:ring-1 focus:ring-white/20"
+            className="group bg-background-secondary/40 hover:bg-background-secondary/80 border-border/40 hover:border-border flex cursor-pointer items-center justify-between gap-3.5 rounded-xl border p-2.5 transition-all select-none focus:ring-1 focus:ring-white/20 focus:outline-none"
           >
             <div className="flex min-w-0 flex-1 items-center gap-3.5">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-zinc-900 shadow-md">
@@ -312,12 +312,12 @@ const DashboardCardsDesktopNewReleases = <T,>({
               <div className="min-w-0 flex-1">
                 <div
                   data-testid="card-title"
-                  className="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug group-hover:underline"
+                  className="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal group-hover:underline"
                 >
                   {item.title}
                 </div>
                 {item.subtitle && (
-                  <div className="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight">
+                  <div className="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal">
                     {item.subtitle}
                   </div>
                 )}

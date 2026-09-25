@@ -13,7 +13,9 @@ export type AppVersionData = {
 
 export type ApkUpdaterPluginInterface = {
   getAppVersion(): Promise<AppVersionData>;
-  downloadUpdate(options: { url: string }): Promise<{ success: boolean; path?: string }>;
+  downloadUpdate(options: {
+    url: string;
+  }): Promise<{ success: boolean; path?: string }>;
   installUpdate(): Promise<{ success: boolean }>;
   downloadAndInstall(options: { url: string }): Promise<{ success: boolean }>;
   addListener(
@@ -27,8 +29,9 @@ export const ApkUpdaterPlugin = registerPlugin<ApkUpdaterPluginInterface>(
   {
     web: {
       getAppVersion: () =>
-        Promise.resolve({ version: '1.48.62', versionCode: 14862 }),
-      downloadUpdate: () => Promise.resolve({ success: true, path: '/tmp/aurora-update.apk' }),
+        Promise.resolve({ version: '1.48.63', versionCode: 14863 }),
+      downloadUpdate: () =>
+        Promise.resolve({ success: true, path: '/tmp/aurora-update.apk' }),
       installUpdate: () => Promise.resolve({ success: true }),
       downloadAndInstall: () => Promise.resolve({ success: true }),
       addListener: () => Promise.resolve({ remove: () => {} }),

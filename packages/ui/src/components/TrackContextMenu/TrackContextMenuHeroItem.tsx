@@ -28,7 +28,7 @@ export const TrackContextMenuHeroItem: FC<TrackContextMenuHeroItemProps> = ({
       data-testid={testId}
     >
       <span className="shrink-0">{icon}</span>
-      <span className="w-full break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight">
+      <span className="w-full leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal">
         {children}
       </span>
     </DropdownMenu.Item>

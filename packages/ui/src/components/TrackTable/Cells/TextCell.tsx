@@ -45,7 +45,7 @@ export const TextCell = <T extends Track>(
         <button
           type="button"
           className={cn(
-            'w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]',
+            'w-full text-left break-normal [overflow-wrap:anywhere] whitespace-normal hover:underline focus:outline-none',
             !isNoTruncate && 'truncate',
           )}
           onClick={(event) => {
@@ -59,7 +59,7 @@ export const TextCell = <T extends Track>(
         <div
           className={
             isNoTruncate
-              ? 'break-normal whitespace-normal [overflow-wrap:anywhere]'
+              ? 'break-normal [overflow-wrap:anywhere] whitespace-normal'
               : 'truncate'
           }
         >

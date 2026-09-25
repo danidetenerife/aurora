@@ -28,7 +28,7 @@ export const TvCoverArtView: FC<TvCoverArtViewProps> = ({ track }) => {
     >
       {coverUrl && (
         <div
-          className="absolute inset-0 scale-105 opacity-20 blur-md filter transform-gpu"
+          className="absolute inset-0 scale-105 transform-gpu opacity-20 blur-md filter"
           style={{
             backgroundImage: `url(${coverUrl})`,
             backgroundPosition: 'center',

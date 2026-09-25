@@ -35,13 +35,19 @@ export const GlobalShortcuts: FC = () => {
   });
 
   useShortcut('playback.volumeUp', () => {
-    const volume = getSetting('core.playback.volume') as number;
-    void setSetting('core.playback.volume', Math.min(1, volume + 0.05));
+    const volume = (getSetting('core.playback.volume') as number) ?? 1;
+    void setSetting(
+      'core.playback.volume',
+      Math.min(1, Math.round((volume + 0.05) * 100) / 100),
+    );
   });
 
   useShortcut('playback.volumeDown', () => {
-    const volume = getSetting('core.playback.volume') as number;
-    void setSetting('core.playback.volume', Math.max(0, volume - 0.05));
+    const volume = (getSetting('core.playback.volume') as number) ?? 1;
+    void setSetting(
+      'core.playback.volume',
+      Math.max(0, Math.round((volume - 0.05) * 100) / 100),
+    );
   });
 
   useShortcut('playback.mute', () => {

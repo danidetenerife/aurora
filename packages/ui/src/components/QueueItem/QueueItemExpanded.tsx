@@ -80,7 +80,7 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
         <div
           data-testid="queue-item-title"
           className={cn(
-            'text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:break-word] leading-snug',
+            'text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:break-word] whitespace-normal',
             classes?.title,
           )}
         >
@@ -89,7 +89,7 @@ export const QueueItemExpanded: FC<QueueItemProps> = ({
         <div
           data-testid="queue-item-artist"
           className={cn(
-            'text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:break-word] leading-tight',
+            'text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:break-word] whitespace-normal',
             classes?.artist,
           )}
         >

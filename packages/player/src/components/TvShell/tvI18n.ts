@@ -44,7 +44,8 @@ tvI18n.addResourceBundle(
     noEpisodes: 'No hay episodios disponibles.',
     episodesCount: 'episodios',
     updateAvailableTitle: 'Nueva versión disponible',
-    updateDownloadedDesc: 'Aurora {{version}} se ha descargado automáticamente. ¿Deseas actualizar ahora?',
+    updateDownloadedDesc:
+      'Aurora {{version}} se ha descargado automáticamente. ¿Deseas actualizar ahora?',
     updateDownloading: 'Descargando actualización {{version}} ({{percent}}%)…',
     updateNow: 'Actualizar ahora',
     updateLater: 'Más tarde',

@@ -400,9 +400,7 @@ export const TvDashboard: FC = () => {
                 data-active={selectedChip === chip ? 'true' : undefined}
                 destinations={{
                   left:
-                    index === 0
-                      ? 'tv-nav-dashboard'
-                      : `tv-chip-${index - 1}`,
+                    index === 0 ? 'tv-nav-dashboard' : `tv-chip-${index - 1}`,
                   right:
                     index < TV_YTM_CHIPS.length - 1
                       ? `tv-chip-${index + 1}`

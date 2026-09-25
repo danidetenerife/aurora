@@ -53,7 +53,7 @@ export const CandidateRow: FC<CandidateRowProps> = ({
     <div className="min-w-0 flex-1 py-2 pr-2">
       <div
         data-testid="candidate-row-title"
-        className="break-normal whitespace-normal [overflow-wrap:anywhere] text-xs leading-snug"
+        className="text-xs leading-snug break-normal [overflow-wrap:anywhere] whitespace-normal"
       >
         {candidate.title}
       </div>

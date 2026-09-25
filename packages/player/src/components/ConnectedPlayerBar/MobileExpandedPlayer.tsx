@@ -146,7 +146,7 @@ export const MobileExpandedPlayer: FC = () => {
             Reproduciendo ahora
           </span>
           {track.album?.title && (
-            <span className="text-foreground-secondary max-w-[280px] break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight text-xs">
+            <span className="text-foreground-secondary max-w-[280px] text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal">
               {track.album.title}
             </span>
           )}

@@ -250,7 +250,7 @@ export const PersonalizedMixWidget: FC = () => {
 
       const artistsWithUris = topArtists.filter((artist) => artist.spotifyUri);
 
-      let candidateSources = await Promise.allSettled([
+      const candidateSources = await Promise.allSettled([
         hasSpotifyCapabilities && artistsWithUris.length > 0
           ? fetchTopTracksForArtists(metadataProvider, artistsWithUris, 6)
           : Promise.resolve([]),

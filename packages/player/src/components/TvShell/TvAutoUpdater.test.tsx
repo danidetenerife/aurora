@@ -1,4 +1,10 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 
 import { ApkUpdaterPlugin } from '../../services/apkUpdater';
 import { initSpatialNavigation } from '../../services/spatialNavigation';
@@ -8,7 +14,9 @@ vi.mock('../../services/apkUpdater', () => ({
   ApkUpdaterPlugin: {
     getAppVersion: vi.fn().mockResolvedValue({ version: '1.48.4' }),
     addListener: vi.fn().mockResolvedValue({ remove: vi.fn() }),
-    downloadUpdate: vi.fn().mockResolvedValue({ success: true, path: '/cache/aurora-update.apk' }),
+    downloadUpdate: vi
+      .fn()
+      .mockResolvedValue({ success: true, path: '/cache/aurora-update.apk' }),
     installUpdate: vi.fn().mockResolvedValue({ success: true }),
     downloadAndInstall: vi.fn().mockResolvedValue({ success: true }),
   },
@@ -80,7 +88,8 @@ describe('Google TV background updates', () => {
             },
             {
               name: 'aurora-music-player.apk',
-              browser_download_url: 'https://example.com/aurora-music-player.apk',
+              browser_download_url:
+                'https://example.com/aurora-music-player.apk',
             },
           ],
         }),

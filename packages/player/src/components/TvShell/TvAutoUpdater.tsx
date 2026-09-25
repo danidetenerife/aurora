@@ -63,7 +63,7 @@ const TvUpdateModal: FC<TvUpdateModalProps> = ({
   return (
     <div
       data-testid="tv-update-modal-backdrop"
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 animate-fade-in p-6"
+      className="animate-fade-in fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 p-6"
     >
       <FocusContext.Provider value={modalFocusKey}>
         <div
@@ -71,25 +71,25 @@ const TvUpdateModal: FC<TvUpdateModalProps> = ({
           data-testid="tv-update-dialog"
           role="dialog"
           aria-modal="true"
-          className="relative w-full max-w-xl rounded-3xl bg-zinc-900/95 border-2 border-emerald-500/60 p-8 shadow-[0_0_50px_rgba(16,185,129,0.25)] flex flex-col items-center text-center gap-6 text-zinc-100"
+          className="relative flex w-full max-w-xl flex-col items-center gap-6 rounded-3xl border-2 border-emerald-500/60 bg-zinc-900/95 p-8 text-center text-zinc-100 shadow-[0_0_50px_rgba(16,185,129,0.25)]"
         >
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-inner">
-            <Sparkles className="w-8 h-8" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-400 shadow-inner">
+            <Sparkles className="h-8 w-8" />
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-400">
+            <span className="text-xs font-extrabold tracking-widest text-emerald-400 uppercase">
               {t('updateAvailableTitle')}
             </span>
             <h2 className="text-2xl font-black tracking-tight text-white">
               Aurora {targetVersion}
             </h2>
-            <p className="text-zinc-300 text-sm leading-relaxed max-w-md mt-1">
+            <p className="mt-1 max-w-md text-sm leading-relaxed text-zinc-300">
               {t('updateDownloadedDesc', { version: targetVersion })}
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-4 w-full mt-2">
+          <div className="mt-2 flex w-full items-center justify-center gap-4">
             <button
               ref={acceptRef}
               type="button"
@@ -99,17 +99,15 @@ const TvUpdateModal: FC<TvUpdateModalProps> = ({
               onClick={onAccept}
               disabled={isInstalling}
               className={cn(
-                'flex-1 max-w-[14rem] px-6 py-4 rounded-xl font-bold text-sm tracking-wide flex items-center justify-center gap-2 transition-all duration-200',
+                'flex max-w-[14rem] flex-1 items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-bold tracking-wide transition-all duration-200',
                 acceptFocused
-                  ? 'bg-emerald-400 text-zinc-950 scale-105 ring-4 ring-emerald-300 shadow-[0_0_30px_rgba(52,211,153,0.8)]'
+                  ? 'scale-105 bg-emerald-400 text-zinc-950 shadow-[0_0_30px_rgba(52,211,153,0.8)] ring-4 ring-emerald-300'
                   : 'bg-emerald-600 text-white hover:bg-emerald-500',
               )}
             >
-              <CheckCircle2 className="w-5 h-5" />
+              <CheckCircle2 className="h-5 w-5" />
               <span>
-                {isInstalling
-                  ? t('updateOpeningInstaller')
-                  : t('updateNow')}
+                {isInstalling ? t('updateOpeningInstaller') : t('updateNow')}
               </span>
             </button>
 
@@ -121,17 +119,17 @@ const TvUpdateModal: FC<TvUpdateModalProps> = ({
               data-tv-focus="tv-update-later"
               onClick={onLater}
               className={cn(
-                'px-6 py-4 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200',
+                'rounded-xl px-6 py-4 text-sm font-semibold tracking-wide transition-all duration-200',
                 laterFocused
-                  ? 'bg-zinc-700 text-white scale-105 ring-2 ring-zinc-400'
-                  : 'bg-zinc-800/80 text-zinc-400 hover:text-zinc-200 border border-zinc-700',
+                  ? 'scale-105 bg-zinc-700 text-white ring-2 ring-zinc-400'
+                  : 'border border-zinc-700 bg-zinc-800/80 text-zinc-400 hover:text-zinc-200',
               )}
             >
               <span>{t('updateLater')}</span>
             </button>
           </div>
 
-          <span className="text-xs text-zinc-400 tracking-wide">
+          <span className="text-xs tracking-wide text-zinc-400">
             ↓ / ↑ para navegar · OK para confirmar
           </span>
         </div>
@@ -348,9 +346,9 @@ export const TvAutoUpdater: FC = () => {
         <div
           role="status"
           data-testid="tv-update-downloading-pill"
-          className="fixed top-[3.5vh] right-[4.5vw] z-[9999] flex items-center gap-3 px-4 py-2.5 rounded-full bg-zinc-900 border border-emerald-500/60 shadow-xl text-zinc-100 animate-pulse pointer-events-none"
+          className="pointer-events-none fixed top-[3.5vh] right-[4.5vw] z-[9999] flex animate-pulse items-center gap-3 rounded-full border border-emerald-500/60 bg-zinc-900 px-4 py-2.5 text-zinc-100 shadow-xl"
         >
-          <Download className="w-4 h-4 text-emerald-400 animate-bounce" />
+          <Download className="h-4 w-4 animate-bounce text-emerald-400" />
           <div className="flex flex-col text-left">
             <span className="text-xs font-bold tracking-wider text-emerald-400 uppercase">
               {t('updateAvailableTitle')}

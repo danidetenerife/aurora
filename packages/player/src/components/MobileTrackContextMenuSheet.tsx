@@ -490,7 +490,7 @@ export const MobileTrackContextMenuSheet: FC = () => {
                       <ListMusic className="text-primary size-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <span className="text-foreground block break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug text-sm font-semibold">
+                      <span className="text-foreground block text-sm leading-snug font-semibold break-normal [overflow-wrap:anywhere] whitespace-normal">
                         {pl.name}
                       </span>
                       <span className="text-foreground-secondary block text-xs">
