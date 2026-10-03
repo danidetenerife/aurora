@@ -200,8 +200,9 @@ powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\publish-release.ps1"
 
 try {
     git tag -a "player@$NextVer" -m "player@$NextVer" -f
-    git push origin "player@$NextVer"
-    git push origin "$Tag"
+    git tag -a "$Tag" -m "$Tag" -f
+    git push origin "player@$NextVer" -f
+    git push origin "$Tag" -f
 } catch {
     Write-Host "[Git Tags] Aviso al pushear tags: $_" -ForegroundColor Yellow
 }

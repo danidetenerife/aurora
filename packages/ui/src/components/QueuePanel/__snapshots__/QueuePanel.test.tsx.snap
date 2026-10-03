@@ -256,7 +256,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                   role="button"
                 >
                   <div
-                    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+                    class="bg-background flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-sm"
                     data-testid="queue-item-thumbnail"
                   >
                     <img
@@ -269,13 +269,13 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     class="min-w-0 flex-1 py-0.5"
                   >
                     <div
-                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+                      class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:break-word] whitespace-normal"
                       data-testid="queue-item-title"
                     >
                       Bohemian Rhapsody
                     </div>
                     <div
-                      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
+                      class="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:break-word] whitespace-normal"
                       data-testid="queue-item-artist"
                     >
                       Queen
@@ -350,7 +350,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                   role="button"
                 >
                   <div
-                    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+                    class="bg-background flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-sm"
                     data-testid="queue-item-thumbnail"
                   >
                     <img
@@ -363,13 +363,13 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     class="min-w-0 flex-1 py-0.5"
                   >
                     <div
-                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+                      class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:break-word] whitespace-normal"
                       data-testid="queue-item-title"
                     >
                       Stairway to Heaven
                     </div>
                     <div
-                      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
+                      class="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:break-word] whitespace-normal"
                       data-testid="queue-item-artist"
                     >
                       Led Zeppelin
@@ -444,7 +444,7 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                   role="button"
                 >
                   <div
-                    class="bg-background flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm"
+                    class="bg-background flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-sm"
                     data-testid="queue-item-thumbnail"
                   >
                     <img
@@ -457,13 +457,13 @@ exports[`QueuePanel > (Snapshot) renders default state 1`] = `
                     class="min-w-0 flex-1 py-0.5"
                   >
                     <div
-                      class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+                      class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:break-word] whitespace-normal"
                       data-testid="queue-item-title"
                     >
                       Hotel California
                     </div>
                     <div
-                      class="text-foreground-secondary mt-0.5 text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight"
+                      class="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:break-word] whitespace-normal"
                       data-testid="queue-item-artist"
                     >
                       Eagles

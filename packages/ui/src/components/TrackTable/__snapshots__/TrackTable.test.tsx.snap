@@ -230,7 +230,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -270,7 +270,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -279,7 +279,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:30
                 </div>
@@ -319,7 +319,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -359,7 +359,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -368,7 +368,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:31
                 </div>
@@ -408,7 +408,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -448,7 +448,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -457,7 +457,7 @@ exports[`TrackTable > (Snapshot) Basic 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:32
                 </div>
@@ -701,7 +701,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -741,7 +741,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -750,7 +750,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:30
                 </div>
@@ -790,7 +790,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -830,7 +830,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -839,7 +839,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:31
                 </div>
@@ -879,7 +879,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -919,7 +919,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -928,7 +928,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:32
                 </div>
@@ -968,7 +968,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1008,7 +1008,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1017,7 +1017,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:33
                 </div>
@@ -1057,7 +1057,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1097,7 +1097,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1106,7 +1106,7 @@ exports[`TrackTable > (Snapshot) DragAndDrop 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:34
                 </div>
@@ -1367,7 +1367,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1407,7 +1407,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1416,7 +1416,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:30
                 </div>
@@ -1456,7 +1456,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1496,7 +1496,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1505,7 +1505,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:31
                 </div>
@@ -1545,7 +1545,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1585,7 +1585,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1594,7 +1594,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:32
                 </div>
@@ -1634,7 +1634,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1674,7 +1674,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1683,7 +1683,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:33
                 </div>
@@ -1723,7 +1723,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -1763,7 +1763,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -1772,7 +1772,7 @@ exports[`TrackTable > (Snapshot) Filtering 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:34
                 </div>
@@ -2019,7 +2019,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2059,7 +2059,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2068,7 +2068,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:30
                   </div>
@@ -2108,7 +2108,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2148,7 +2148,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2157,7 +2157,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:31
                   </div>
@@ -2197,7 +2197,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2237,7 +2237,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2246,7 +2246,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:32
                   </div>
@@ -2286,7 +2286,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2326,7 +2326,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2335,7 +2335,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:33
                   </div>
@@ -2375,7 +2375,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2415,7 +2415,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2424,7 +2424,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:34
                   </div>
@@ -2464,7 +2464,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2504,7 +2504,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2513,7 +2513,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:35
                   </div>
@@ -2553,7 +2553,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2593,7 +2593,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2602,7 +2602,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:36
                   </div>
@@ -2642,7 +2642,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2682,7 +2682,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2691,7 +2691,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:37
                   </div>
@@ -2731,7 +2731,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2771,7 +2771,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2780,7 +2780,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:38
                   </div>
@@ -2820,7 +2820,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2860,7 +2860,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2869,7 +2869,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:39
                   </div>
@@ -2909,7 +2909,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -2949,7 +2949,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -2958,7 +2958,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:40
                   </div>
@@ -2998,7 +2998,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3038,7 +3038,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3047,7 +3047,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:41
                   </div>
@@ -3087,7 +3087,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3127,7 +3127,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3136,7 +3136,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:42
                   </div>
@@ -3176,7 +3176,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3216,7 +3216,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3225,7 +3225,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:43
                   </div>
@@ -3265,7 +3265,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3305,7 +3305,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3314,7 +3314,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:44
                   </div>
@@ -3354,7 +3354,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3394,7 +3394,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3403,7 +3403,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:45
                   </div>
@@ -3443,7 +3443,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3483,7 +3483,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3492,7 +3492,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:46
                   </div>
@@ -3532,7 +3532,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3572,7 +3572,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3581,7 +3581,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:47
                   </div>
@@ -3621,7 +3621,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3661,7 +3661,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3670,7 +3670,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:48
                   </div>
@@ -3710,7 +3710,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 hidden sm:table-cell cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Frank Zappa
                   </div>
@@ -3750,7 +3750,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     Album
                   </div>
@@ -3759,7 +3759,7 @@ exports[`TrackTable > (Snapshot) LargeDataset 1`] = `
                   class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                 >
                   <div
-                    class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                    class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                   >
                     0:49
                   </div>
@@ -4067,7 +4067,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -4107,7 +4107,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -4116,7 +4116,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:30
                 </div>
@@ -4156,7 +4156,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -4196,7 +4196,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -4205,7 +4205,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:31
                 </div>
@@ -4245,7 +4245,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 hidden sm:table-cell cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Frank Zappa
                 </div>
@@ -4285,7 +4285,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   Album
                 </div>
@@ -4294,7 +4294,7 @@ exports[`TrackTable > (Snapshot) Toolbar 1`] = `
                 class="px-2 w-20 text-right whitespace-nowrap cursor-default"
               >
                 <div
-                  class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                  class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                 >
                   0:32
                 </div>

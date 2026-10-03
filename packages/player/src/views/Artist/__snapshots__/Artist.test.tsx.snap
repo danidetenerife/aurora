@@ -970,7 +970,7 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                             class="px-2 hidden sm:table-cell cursor-pointer"
                           >
                             <button
-                              class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
+                              class="w-full text-left break-normal [overflow-wrap:anywhere] whitespace-normal hover:underline focus:outline-none"
                               type="button"
                             >
                               Test Artist
@@ -1087,7 +1087,7 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                             class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                           >
                             <div
-                              class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                              class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                             />
                           </td>
                         </tr>
@@ -1195,13 +1195,13 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                   class="min-w-0"
                 >
                   <div
-                    class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+                    class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
                     data-testid="card-title"
                   >
                     Hello World LP
                   </div>
                   <div
-                    class="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+                    class="text-foreground mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal opacity-60"
                   >
                     Test Artist
                   </div>
@@ -1230,7 +1230,7 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                       src="https://img/similar1.jpg"
                     />
                     <span
-                      class="break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+                      class="leading-snug break-normal [overflow-wrap:anywhere] whitespace-normal"
                     >
                       John Lennon
                     </span>
@@ -1247,7 +1247,7 @@ exports[`Artist view > with bio provider > (Snapshot) renders the artist view 1`
                       src="https://img/similar2.jpg"
                     />
                     <span
-                      class="break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+                      class="leading-snug break-normal [overflow-wrap:anywhere] whitespace-normal"
                     >
                       Kurt Cobain
                     </span>

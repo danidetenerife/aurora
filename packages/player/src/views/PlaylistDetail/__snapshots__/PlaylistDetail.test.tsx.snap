@@ -465,7 +465,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       class="px-2 hidden sm:table-cell cursor-pointer"
                     >
                       <button
-                        class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
+                        class="w-full text-left break-normal [overflow-wrap:anywhere] whitespace-normal hover:underline focus:outline-none"
                         type="button"
                       >
                         Test Artist
@@ -582,7 +582,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                     >
                       <div
-                        class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                        class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                       >
                         3:00
                       </div>
@@ -709,7 +709,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       class="px-2 hidden sm:table-cell cursor-pointer"
                     >
                       <button
-                        class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
+                        class="w-full text-left break-normal [overflow-wrap:anywhere] whitespace-normal hover:underline focus:outline-none"
                         type="button"
                       >
                         Test Artist
@@ -826,7 +826,7 @@ exports[`PlaylistDetail view > (Snapshot) renders playlist detail with tracks 1`
                       class="px-2 w-20 text-right whitespace-nowrap cursor-default"
                     >
                       <div
-                        class="break-normal whitespace-normal [overflow-wrap:anywhere]"
+                        class="break-normal [overflow-wrap:anywhere] whitespace-normal"
                       >
                         3:00
                       </div>

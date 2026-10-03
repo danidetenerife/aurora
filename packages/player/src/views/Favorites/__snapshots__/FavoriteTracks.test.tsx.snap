@@ -389,7 +389,7 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                       class="px-2 hidden sm:table-cell cursor-pointer"
                     >
                       <button
-                        class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
+                        class="w-full text-left break-normal [overflow-wrap:anywhere] whitespace-normal hover:underline focus:outline-none"
                         type="button"
                       >
                         Test Artist
@@ -584,7 +584,7 @@ exports[`FavoriteTracks view > (Snapshot) renders with tracks 1`] = `
                       class="px-2 hidden sm:table-cell cursor-pointer"
                     >
                       <button
-                        class="w-full text-left hover:underline focus:outline-none break-normal whitespace-normal [overflow-wrap:anywhere]"
+                        class="w-full text-left break-normal [overflow-wrap:anywhere] whitespace-normal hover:underline focus:outline-none"
                         type="button"
                       >
                         Test Artist

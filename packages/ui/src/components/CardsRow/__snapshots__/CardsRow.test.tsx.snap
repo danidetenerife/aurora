@@ -188,13 +188,13 @@ exports[`CardsRow > (Snapshot) renders correctly with items 1`] = `
         class="min-w-0"
       >
         <div
-          class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+          class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           data-testid="card-title"
         >
           Midnight Drive
         </div>
         <div
-          class="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+          class="text-foreground mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal opacity-60"
         >
           Neon City
         </div>
@@ -266,13 +266,13 @@ exports[`CardsRow > (Snapshot) renders correctly with items 1`] = `
         class="min-w-0"
       >
         <div
-          class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+          class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           data-testid="card-title"
         >
           Northern Lights
         </div>
         <div
-          class="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+          class="text-foreground mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal opacity-60"
         >
           Aurora
         </div>
@@ -344,13 +344,13 @@ exports[`CardsRow > (Snapshot) renders correctly with items 1`] = `
         class="min-w-0"
       >
         <div
-          class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+          class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           data-testid="card-title"
         >
           Echoes of Silence
         </div>
         <div
-          class="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+          class="text-foreground mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal opacity-60"
         >
           The Wanderers
         </div>

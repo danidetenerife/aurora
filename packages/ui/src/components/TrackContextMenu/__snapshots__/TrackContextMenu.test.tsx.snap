@@ -54,12 +54,12 @@ exports[`TrackContextMenu > (Snapshot) renders header without cover image 1`] = 
           class="min-w-0 flex-1 py-3 pr-3 pl-3"
         >
           <div
-            class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+            class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           >
             Paranoid Android
           </div>
           <div
-            class="text-foreground-secondary text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+            class="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal"
           >
             Radiohead
           </div>
@@ -154,7 +154,7 @@ exports[`TrackContextMenu > (Snapshot) renders header without subtitle 1`] = `
           class="min-w-0 flex-1 py-3 pr-3"
         >
           <div
-            class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+            class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           >
             Bohemian Rhapsody
           </div>
@@ -249,12 +249,12 @@ exports[`TrackContextMenu > (Snapshot) renders with header and actions 1`] = `
           class="min-w-0 flex-1 py-3 pr-3"
         >
           <div
-            class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+            class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
           >
             Echoes
           </div>
           <div
-            class="text-foreground-secondary text-xs break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+            class="text-foreground-secondary mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal"
           >
             Pink Floyd
           </div>

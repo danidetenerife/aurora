@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.64" date="2026-10-03">
+      <description>
+        <p>Release 1.48.64: Corrección definitiva del control de volumen en la versión de escritorio y sincronización P2P: independiza el volumen y silencio como configuraciones estrictamente locales por dispositivo para que la sincronización en segundo plano con Gist, WebDAV o LAN nunca sobrescriba el nivel de audio ni lo revierta a posiciones fijas anteriores; optimiza la actualización inmediata del estado en useSettingsStore sin bloquear la interfaz ante escrituras asíncronas en disco o IPC; y protege los atajos globales con cálculo seguro y redondeo de precisión.</p>
+      </description>
+    </release>
+
     <release version="1.48.63" date="2026-09-25">
       <description>
         <p>Release 1.48.63: Corrección definitiva del control de volumen en la versión de escritorio y sincronización P2P: independiza el volumen y silencio como configuraciones estrictamente locales por dispositivo para que la sincronización en segundo plano con Gist, WebDAV o LAN nunca sobrescriba el nivel de audio ni lo revierta a posiciones fijas anteriores; optimiza la actualización inmediata del estado en useSettingsStore sin bloquear la interfaz ante escrituras asíncronas en disco o IPC; y protege los atajos globales con cálculo seguro y redondeo de precisión.</p>

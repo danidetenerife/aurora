@@ -68,13 +68,13 @@ exports[`Card > (Snapshot) renders correctly 1`] = `
       class="min-w-0"
     >
       <div
-        class="text-foreground text-sm font-bold break-normal whitespace-normal [overflow-wrap:anywhere] leading-snug"
+        class="text-foreground text-sm leading-snug font-bold break-normal [overflow-wrap:anywhere] whitespace-normal"
         data-testid="card-title"
       >
         Test album
       </div>
       <div
-        class="text-foreground text-xs opacity-60 break-normal whitespace-normal [overflow-wrap:anywhere] leading-tight mt-0.5"
+        class="text-foreground mt-0.5 text-xs leading-tight break-normal [overflow-wrap:anywhere] whitespace-normal opacity-60"
       >
         Test artist
       </div>

@@ -377,7 +377,7 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
               <span
                 class="cursor-text text-xs select-all"
               >
-                v1.48.60 (277572f)
+                v1.48.63 (d239455)
               </span>
             </div>
           </div>
