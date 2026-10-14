@@ -27,6 +27,12 @@ export const SettingField: FC<SettingFieldProps> = ({
   value,
   setValue,
 }) => {
+  const {
+    title: label,
+    description,
+    translateField,
+  } = useSettingTranslation(definition);
+
   if (definition.kind === 'custom') {
     return (
       <CustomWidgetField
@@ -37,11 +43,6 @@ export const SettingField: FC<SettingFieldProps> = ({
     );
   }
 
-  const {
-    title: label,
-    description,
-    translateField,
-  } = useSettingTranslation(definition);
   const widgetType = definition.widget?.type;
 
   const renderers: Record<string, () => JSX.Element> = {
@@ -50,7 +51,7 @@ export const SettingField: FC<SettingFieldProps> = ({
         label={label}
         description={description}
         value={Boolean(value)}
-        setValue={(v) => setValue(v)}
+        setValue={(nextValue) => setValue(nextValue)}
       />
     ),
     'number-input': () => (
@@ -58,7 +59,7 @@ export const SettingField: FC<SettingFieldProps> = ({
         label={label}
         description={description}
         value={value as number | string | undefined}
-        setValue={(v) => setValue(v)}
+        setValue={(nextValue) => setValue(nextValue)}
       />
     ),
     slider: () => {
@@ -78,7 +79,7 @@ export const SettingField: FC<SettingFieldProps> = ({
           label={label}
           description={description}
           value={Number(value ?? 0)}
-          setValue={(v) => setValue(v)}
+          setValue={(nextValue) => setValue(nextValue)}
           min={min}
           max={max}
           step={step}
@@ -93,10 +94,13 @@ export const SettingField: FC<SettingFieldProps> = ({
         label={label}
         description={description}
         value={String(value ?? '')}
-        setValue={(v) => setValue(v)}
+        setValue={(nextValue) => setValue(nextValue)}
         options={
           isEnumDefinition(definition)
-            ? definition.options.map((o) => ({ id: o.value, label: o.label }))
+            ? definition.options.map((option) => ({
+                id: option.value,
+                label: translateField(option.label) ?? option.label,
+              }))
             : []
         }
       />
@@ -106,10 +110,13 @@ export const SettingField: FC<SettingFieldProps> = ({
         label={label}
         description={description}
         value={String(value ?? '')}
-        setValue={(v) => setValue(v)}
+        setValue={(nextValue) => setValue(nextValue)}
         options={
           isEnumDefinition(definition)
-            ? definition.options.map((o) => ({ id: o.value, label: o.label }))
+            ? definition.options.map((option) => ({
+                id: option.value,
+                label: translateField(option.label) ?? option.label,
+              }))
             : []
         }
       />

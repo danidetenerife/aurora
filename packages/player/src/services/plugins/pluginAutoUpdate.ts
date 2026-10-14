@@ -5,7 +5,7 @@ import { usePluginStore } from '../../stores/pluginStore';
 import { getSetting } from '../../stores/settingsStore';
 import { errorMessage } from '../../utils/errorMessage';
 import { Logger } from '../logger';
-import { downloadAndExtractPlugin } from './pluginDownloader';
+import { cleanupDownload, downloadAndExtractPlugin } from './pluginDownloader';
 import { listRegistryEntries } from './pluginRegistry';
 
 export const checkAndUpdatePlugins = async (): Promise<void> => {
@@ -60,6 +60,12 @@ export const checkAndUpdatePlugins = async (): Promise<void> => {
       Logger.plugins.warn(
         `Failed to auto-update plugin ${entry.id}: ${errorMessage(error)}`,
       );
+    } finally {
+      try {
+        await cleanupDownload(entry.id);
+      } catch {
+        /* ignore */
+      }
     }
   }
 };

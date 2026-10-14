@@ -93,79 +93,6 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         ensureAudioServiceRunning();
     }
 
-    private void handleVoicePlaySearch(String query, Bundle extras) {
-        String cleanQuery = (query == null) ? "" : query.trim();
-        if (cleanQuery.isEmpty()) {
-            forwardActionToAudioService("com.auroraplayer.ACTION_PLAY_PAUSE", true);
-            return;
-        }
-
-        String lower = cleanQuery.toLowerCase();
-        if (lower.startsWith("reproduce ") || lower.startsWith("pon ") || lower.startsWith("escuchar ")) {
-            cleanQuery = cleanQuery.substring(cleanQuery.indexOf(' ') + 1).trim();
-        }
-
-        setBufferingState("search_play:" + cleanQuery);
-        NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "search_play:" + cleanQuery, -1);
-    }
-
-    private void setBufferingState(String mediaId) {
-        MediaSessionCompat session = getActiveSession();
-        if (session == null) return;
-
-        String loadingTitle = "Cargando...";
-        String loadingSubtitle = "Aurora Player";
-
-        if (mediaId != null) {
-            if (mediaId.startsWith("search_play:")) {
-                loadingTitle = "Buscando...";
-                loadingSubtitle = mediaId.substring("search_play:".length());
-            } else if (mediaId.startsWith("podcast:")) {
-                loadingTitle = "Cargando podcast...";
-            } else if (mediaId.startsWith("playlist_play:") || mediaId.startsWith("playlist:")) {
-                loadingTitle = "Cargando lista...";
-            }
-        }
-
-        Uri artUri = ArtworkContentProvider.getGeneratedUri(loadingTitle, loadingSubtitle, "AURORA");
-        Bitmap instantArt = AutoArtworkGenerator.generateCover(loadingTitle, loadingSubtitle, "AURORA");
-
-        MediaMetadataCompat.Builder bufferingMeta = new MediaMetadataCompat.Builder()
-            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, loadingTitle)
-            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, loadingTitle)
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, loadingSubtitle)
-            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, loadingSubtitle)
-            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri.toString())
-            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, artUri.toString());
-
-        if (instantArt != null) {
-            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, instantArt);
-            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, instantArt);
-            bufferingMeta.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, instantArt);
-        }
-
-        session.setMetadata(bufferingMeta.build());
-
-        PlaybackStateCompat bufferingState = new PlaybackStateCompat.Builder()
-            .setActions(
-                PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
-                PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
-                PlaybackStateCompat.ACTION_STOP
-            )
-            .setState(PlaybackStateCompat.STATE_BUFFERING, 0, 1.0f)
-            .build();
-        session.setPlaybackState(bufferingState);
-    }
-
-    private MediaSessionCompat getActiveSession() {
-        return AuroraMediaSessionHolder.getOrCreateSession(this);
-    }
-
     private void ensureAudioServiceRunning() {
         if (AudioForegroundService.getInstance() == null) {
             try {
@@ -178,34 +105,6 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             } catch (Throwable error) {
                 Log.w(TAG, "AudioForegroundService startup error", error);
             }
-        }
-    }
-
-    private void forwardActionToAudioService(String action, Boolean targetPlay) {
-        AudioForegroundService afs = AudioForegroundService.getInstance();
-        if (afs != null && "com.auroraplayer.ACTION_PLAY_PAUSE".equals(action) && targetPlay != null) {
-            if (targetPlay) afs.resumeStream();
-            else afs.pauseStream();
-        }
-
-        if ("com.auroraplayer.ACTION_NEXT".equals(action)) {
-            NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "nexttrack", -1);
-        } else if ("com.auroraplayer.ACTION_PREVIOUS".equals(action)) {
-            NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "previoustrack", -1);
-        } else if ("com.auroraplayer.ACTION_PLAY_PAUSE".equals(action)) {
-            NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, targetPlay == null || targetPlay ? "play" : "pause", -1);
-        }
-
-        try {
-            Intent intent = new Intent(this, AudioForegroundService.class);
-            intent.setAction(action);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
-        } catch (Throwable error) {
-            Log.w(TAG, "Failed forwarding intent", error);
         }
     }
 
@@ -334,7 +233,7 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
             populateExploreCategory(items);
         } else if (CATEGORY_PLAYLISTS.equals(parentMediaId)) {
             populatePlaylistsCategory(items);
-        } else if (parentMediaId.startsWith("playlist:")) {
+        } else if (parentMediaId != null && parentMediaId.startsWith("playlist:")) {
             populatePlaylistTracks(parentMediaId.substring("playlist:".length()), items);
         } else if (CATEGORY_FAVORITES.equals(parentMediaId)) {
             populateFavoritesCategory(items);
@@ -655,10 +554,8 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
         if (sInstance == this) {
             sInstance = null;
         }
-        MediaSessionCompat session = AuroraMediaSessionHolder.getSession();
-        if (session != null && AudioForegroundService.getInstance() == null) {
-            session.setActive(false);
-            session.release();
+        if (AudioForegroundService.getInstance() == null) {
+            AuroraMediaSessionHolder.releaseSession();
         }
         asyncExecutor.shutdownNow();
         super.onDestroy();

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { Playlist } from '@aurora/model';
 
@@ -12,7 +12,17 @@ export const usePlaylistDetailHeader = (playlist: Playlist) => {
     playlist.description ?? '',
   );
 
-  const startEditing = () => setIsEditing(true);
+  useEffect(() => {
+    setEditName(playlist.name);
+    setEditDescription(playlist.description ?? '');
+    setIsEditing(false);
+  }, [playlist.id, playlist.name, playlist.description]);
+
+  const startEditing = () => {
+    setEditName(playlist.name);
+    setEditDescription(playlist.description ?? '');
+    setIsEditing(true);
+  };
 
   const save = () => {
     const trimmedName = editName.trim();

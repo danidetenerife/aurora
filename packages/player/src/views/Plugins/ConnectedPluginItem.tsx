@@ -44,7 +44,7 @@ export const ConnectedPluginItem: FC<ConnectedPluginItemProps> = ({
       warning={plugin.warning}
       warningText={plugin.warnings.length > 0 ? plugin.warnings[0] : undefined}
       isLoading={plugin.isLoading}
-      onReload={handleReload}
+      onReload={plugin.installationMethod === 'dev' ? handleReload : undefined}
       onRemove={handleRemove}
       rightAccessory={
         <Toggle

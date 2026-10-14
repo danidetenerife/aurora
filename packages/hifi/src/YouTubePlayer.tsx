@@ -154,6 +154,9 @@ export const YouTubePlayer: FC<SoundProps> = ({
 
   useEffect(() => {
     if (!videoId) {
+      if (src.url) {
+        onSourceInvalidRef.current?.();
+      }
       return;
     }
 
@@ -257,6 +260,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
                 return;
               }
               if (event.data === window.YT?.PlayerState.PLAYING) {
+                hasEndedRef.current = false;
                 onCanPlayRef.current?.();
                 if (statusRef.current !== 'playing') {
                   try {
@@ -365,6 +369,11 @@ export const YouTubePlayer: FC<SoundProps> = ({
         clearInterval(pollInterval);
         pollInterval = null;
       }
+    };
+  }, [videoId, src.url]);
+
+  useEffect(() => {
+    return () => {
       if (playerRef.current) {
         try {
           playerRef.current.destroy();
@@ -374,7 +383,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
         playerRef.current = null;
       }
     };
-  }, [videoId]);
+  }, []);
 
   useEffect(() => {
     const player = playerRef.current;
@@ -425,6 +434,7 @@ export const YouTubePlayer: FC<SoundProps> = ({
       const seekDelta = Math.abs(seek - currentTime);
 
       if (lastSeekRef.current !== seek && seekDelta > 2) {
+        hasEndedRef.current = false;
         player.seekTo(seek, true);
       }
       lastSeekRef.current = seek;
@@ -486,6 +496,14 @@ export const YouTubePlayer: FC<SoundProps> = ({
     hideTimerRef.current = window.setTimeout(() => {
       setShowControls(false);
     }, 3500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) {
+        window.clearTimeout(hideTimerRef.current);
+      }
+    };
   }, []);
 
   return (

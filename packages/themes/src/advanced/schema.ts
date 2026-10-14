@@ -6,9 +6,19 @@ export const ThemeVersion = z.literal(1);
 // Example: background, primary, radius, font-family, etc.
 export const ThemeVars = z
   .record(z.string(), z.string())
-  .refine((obj) => Object.keys(obj).every((k) => !!k && !k.startsWith('--')), {
-    message: 'Keys must be CSS var names without leading --',
-  });
+  .refine(
+    (obj) =>
+      Object.entries(obj).every(
+        ([key, val]) =>
+          /^[a-zA-Z0-9-]+$/.test(key) &&
+          !key.startsWith('--') &&
+          !/[{};<>]/.test(val),
+      ),
+    {
+      message:
+        'Keys must be valid CSS var names without leading -- and values must not contain rule-breaking characters',
+    },
+  );
 
 export const AdvancedThemeSchema = z.object({
   version: ThemeVersion,

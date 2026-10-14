@@ -10,6 +10,10 @@ export const useMseSource = (
   onSourceInvalid?: () => void,
 ) => {
   const controllerRef = useRef<MseController | null>(null);
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
+  const onSourceInvalidRef = useRef(onSourceInvalid);
+  onSourceInvalidRef.current = onSourceInvalid;
 
   useEffect(() => {
     if (controllerRef.current) {
@@ -26,8 +30,8 @@ export const useMseSource = (
     controllerRef.current = controller;
     controller.init(audio, src.url, {
       codec: src.codec,
-      onError,
-      onSourceInvalid,
+      onError: (err) => onErrorRef.current?.(err),
+      onSourceInvalid: () => onSourceInvalidRef.current?.(),
     });
 
     const onTimeUpdate = () => controller.handleTimeUpdate(audio);
@@ -48,5 +52,5 @@ export const useMseSource = (
       controller.destroy(audio);
       controllerRef.current = null;
     };
-  }, [src.url, src.protocol, audioRef, onError, onSourceInvalid]);
+  }, [src.url, src.protocol, src.codec, audioRef]);
 };

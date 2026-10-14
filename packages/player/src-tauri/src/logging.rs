@@ -38,6 +38,7 @@ pub fn mark_startup_complete() {
 #[tauri::command]
 #[specta::specta]
 pub fn get_startup_logs() -> Vec<StartupLogEntry> {
+    mark_startup_complete();
     STARTUP_LOG_BUFFER
         .lock()
         .unwrap_or_else(|e| e.into_inner())

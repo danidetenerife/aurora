@@ -72,7 +72,9 @@ export const ArtistAlbumsGrid: FC<ArtistAlbumsGridProps> = ({
             />
           }
           onClick={() =>
-            navigate({ to: `/album/${provider!.id}/${album.source.id}` })
+            navigate({
+              to: `/album/${album.source.provider || provider?.id || providerId}/${album.source.id}`,
+            })
           }
         />
       ))}

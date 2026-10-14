@@ -43,7 +43,8 @@ export const PersonalizedPlaylistsShelf: FC = () => {
             subtitle={`${playlist.itemCount} canciones`}
             onClick={() =>
               navigate({
-                to: `/playlist/${playlist.id}`,
+                to: '/playlists/$playlistId',
+                params: { playlistId: playlist.id },
               })
             }
           />

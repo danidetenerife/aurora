@@ -44,8 +44,18 @@ try {
   console.error('Warning: could not read git tags:', err.message);
 }
 
+const parseEntryDate = (dateStr) => {
+  if (!dateStr) {
+    return new Date(NaN);
+  }
+  if (dateStr.includes('T')) {
+    return new Date(dateStr.endsWith('Z') ? dateStr : `${dateStr}Z`);
+  }
+  return new Date(`${dateStr}T23:59:59Z`);
+};
+
 const entries = previousTagDate
-  ? changelog.filter((entry) => new Date(entry.date + 'Z') > previousTagDate)
+  ? changelog.filter((entry) => parseEntryDate(entry.date) > previousTagDate)
   : changelog;
 
 if (entries.length === 0) {

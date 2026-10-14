@@ -1,5 +1,18 @@
 [
   {
+    "date": "2026-10-14T08:00",
+    "description": "Auditoría integral y corrección de fallos en todas las variantes de Aurora (Escritorio Tauri, Móvil Android Capacitor, Android Auto, Modo Coche, Google TV, motor de audio @aurora/hifi, SDK de plugins, servidor de sincronización P2P/WebDAV/Gist, temas e i18n): ejecución asíncrona no bloqueante de yt-dlp y bloqueo de concurrencia en su auto-instalación; recuperación segura de SQLite eliminando archivos WAL/SHM corruptos y protección frente a arrays de artistas vacíos en estadísticas; corrección de condiciones de carrera, fugas de hilos y redirecciones multi-salto en servicios nativos Android (MediaSession, AudioForegroundService, AutoArtworkGenerator, VideoProxyServer, ApkUpdater); estabilización de sesiones MSE/HLS y reproductor embebido de YouTube; sincronización multiplataforma preservando ajustes por dispositivo e índice de listas; y mejoras en componentes UI, accesibilidad, temas integrados y traducciones.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Desktop", "color": "blue" },
+      { "label": "Android", "color": "green" },
+      { "label": "Google TV", "color": "red" },
+      { "label": "Playback", "color": "orange" },
+      { "label": "Sync", "color": "purple" }
+    ]
+  },
+  {
     "date": "2026-09-25T18:00",
     "description": "Corrección definitiva del control de volumen en la versión de escritorio y sincronización P2P: independiza el volumen y silencio como configuraciones estrictamente locales por dispositivo para que la sincronización en segundo plano con Gist, WebDAV o LAN nunca sobrescriba el nivel de audio ni lo revierta a posiciones fijas anteriores; optimiza la actualización inmediata del estado en useSettingsStore sin bloquear la interfaz ante escrituras asíncronas en disco o IPC; y protege los atajos globales con cálculo seguro y redondeo de precisión.",
     "type": "fix",

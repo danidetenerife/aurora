@@ -378,7 +378,7 @@ public class AudioForegroundService extends Service {
         boolean metadataChanged = !newTitle.equals(currentTitle) || !newArtist.equals(currentArtist)
             || !newAlbum.equals(currentAlbum) || (durationMs > 0 && durationMs != currentDurationMs);
 
-        if (!metadataChanged && (artworkUrl == null || artworkUrl.equals(currentArtworkUrl))) {
+        if (!metadataChanged && ((artworkUrl == null && currentArtworkUrl.isEmpty()) || (artworkUrl != null && artworkUrl.equals(currentArtworkUrl)))) {
             return;
         }
 
@@ -390,6 +390,13 @@ public class AudioForegroundService extends Service {
         currentAlbum = newAlbum;
         if (durationMs > 0) {
             currentDurationMs = durationMs;
+        }
+
+        if (artworkUrl == null || artworkUrl.isEmpty()) {
+            currentArtworkUrl = "";
+            currentArtworkBitmap = null;
+        } else if (!artworkUrl.equals(currentArtworkUrl)) {
+            currentArtworkBitmap = null;
         }
 
         String mediaId = "track:" + (currentTitle + "_" + currentArtist).replaceAll("[^a-zA-Z0-9_]+", "_");
@@ -439,54 +446,56 @@ public class AudioForegroundService extends Service {
         mediaSession.setQueue(queueItems);
         mediaSession.setQueueTitle("Aurora - Ahora Suena");
 
-        updateNotification(title, artist);
+        updateNotification(currentTitle, currentArtist);
 
         if (artworkUrl != null && !artworkUrl.isEmpty() && !artworkUrl.equals(currentArtworkUrl)) {
             currentArtworkUrl = artworkUrl;
-            final String finalTitle = title;
-            final String finalArtist = artist;
-            final String finalAlbum = album;
+            final String finalTitle = currentTitle;
+            final String finalArtist = currentArtist;
+            final String finalAlbum = currentAlbum;
 
             artworkExecutor.execute(() -> {
                 Bitmap bitmap = downloadBitmap(artworkUrl);
-                if (bitmap != null && artworkUrl.equals(currentArtworkUrl)) {
-                    currentArtworkBitmap = bitmap;
+                synchronized (AudioForegroundService.this) {
+                    if (bitmap != null && instance != null && mediaSession != null && artworkUrl.equals(currentArtworkUrl)) {
+                        currentArtworkBitmap = bitmap;
 
-                    String safeArtUri = ArtworkContentProvider.getRemoteUri(artworkUrl).toString();
-                    MediaMetadataCompat.Builder updatedMetadataBuilder = new MediaMetadataCompat.Builder()
-                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
-                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, finalTitle)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, finalTitle)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, finalArtist)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, finalArtist)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, finalAlbum)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, finalAlbum)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, safeArtUri)
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, safeArtUri)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, safeArtUri)
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
+                        String safeArtUri = ArtworkContentProvider.getRemoteUri(artworkUrl).toString();
+                        MediaMetadataCompat.Builder updatedMetadataBuilder = new MediaMetadataCompat.Builder()
+                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, finalTitle)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, finalTitle)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, finalArtist)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, finalArtist)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, finalAlbum)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, finalAlbum)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, safeArtUri)
+                            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, safeArtUri)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, safeArtUri)
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
 
-                    if (currentDurationMs > 0) {
-                        updatedMetadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentDurationMs);
+                        if (currentDurationMs > 0) {
+                            updatedMetadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, currentDurationMs);
+                        }
+
+                        mediaSession.setMetadata(updatedMetadataBuilder.build());
+
+                        MediaDescriptionCompat updatedQueueDesc = new MediaDescriptionCompat.Builder()
+                            .setMediaId(mediaId)
+                            .setTitle(finalTitle)
+                            .setSubtitle(finalArtist)
+                            .setDescription(finalAlbum)
+                            .setIconUri(Uri.parse(safeArtUri))
+                            .setIconBitmap(bitmap)
+                            .build();
+                        List<MediaSessionCompat.QueueItem> updatedQueueItems = new ArrayList<>();
+                        updatedQueueItems.add(new MediaSessionCompat.QueueItem(updatedQueueDesc, 0));
+                        mediaSession.setQueue(updatedQueueItems);
+
+                        updateNotification(finalTitle, finalArtist);
                     }
-
-                    mediaSession.setMetadata(updatedMetadataBuilder.build());
-
-                    MediaDescriptionCompat updatedQueueDesc = new MediaDescriptionCompat.Builder()
-                        .setMediaId(mediaId)
-                        .setTitle(finalTitle)
-                        .setSubtitle(finalArtist)
-                        .setDescription(finalAlbum)
-                        .setIconUri(Uri.parse(safeArtUri))
-                        .setIconBitmap(bitmap)
-                        .build();
-                    List<MediaSessionCompat.QueueItem> updatedQueueItems = new ArrayList<>();
-                    updatedQueueItems.add(new MediaSessionCompat.QueueItem(updatedQueueDesc, 0));
-                    mediaSession.setQueue(updatedQueueItems);
-
-                    updateNotification(finalTitle, finalArtist);
                 }
             });
         }
@@ -553,8 +562,7 @@ public class AudioForegroundService extends Service {
         long currentPos = state != null ? state.getPosition() : 0;
         long newPos = Math.max(0, currentPos - 15000);
         seekStream(newPos);
-        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-        if (nms != null) nms.notifyMediaAction("seekto", newPos);
+        NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "seekto", newPos);
     }
 
     private void handleForward30() {
@@ -562,8 +570,7 @@ public class AudioForegroundService extends Service {
         long currentPos = state != null ? state.getPosition() : 0;
         long newPos = currentPos + 30000;
         seekStream(newPos);
-        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-        if (nms != null) nms.notifyMediaAction("seekto", newPos);
+        NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "seekto", newPos);
     }
 
     private void cyclePlaybackSpeed() {
@@ -572,8 +579,7 @@ public class AudioForegroundService extends Service {
         else if (currentPlaybackSpeed == 1.5f) currentPlaybackSpeed = 2.0f;
         else currentPlaybackSpeed = 1.0f;
         refreshPlaybackStateImmediately();
-        NativeMediaSessionPlugin nms = NativeMediaSessionPlugin.getInstance();
-        if (nms != null) nms.notifyMediaAction("speed_" + currentPlaybackSpeed, -1);
+        NativeMediaSessionPlugin.queueOrDispatchMediaAction(this, "speed_" + currentPlaybackSpeed, -1);
     }
 
     private void handlePlaybackStateUpdate(Intent intent) {
@@ -828,10 +834,10 @@ public class AudioForegroundService extends Service {
                 telephonyManager.listen(phoneStateListener, android.telephony.PhoneStateListener.LISTEN_NONE);
             } catch (Throwable ignored) {}
         }
-        if (mediaSession != null && AuroraAutoMediaBrowserService.getInstance() == null) {
-            mediaSession.setActive(false);
-            mediaSession.release();
+        if (AuroraAutoMediaBrowserService.getInstance() == null) {
+            AuroraMediaSessionHolder.releaseSession();
         }
+        mediaSession = null;
         artworkExecutor.shutdownNow();
         try {
             if (serviceWakeLock != null && serviceWakeLock.isHeld()) {

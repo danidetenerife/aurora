@@ -54,10 +54,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build model package
-        run: pnpm --filter @nuclearplayer/model build
+        run: pnpm --filter @aurora/model build
 
       - name: Build package for npm
-        run: pnpm --filter @nuclearplayer/plugin-sdk build:npm
+        run: pnpm --filter @aurora/plugin-sdk build:npm
 
       - name: Prepare package.json for publishing
         run: |
@@ -69,14 +69,14 @@ jobs:
             pkg.module = './dist/index.js';
             pkg.exports['.'].import = './dist/index.js';
             
-            delete pkg.dependencies['@nuclearplayer/ui'];
-            delete pkg.dependencies['@nuclearplayer/model'];
+            delete pkg.dependencies['@aurora/ui'];
+            delete pkg.dependencies['@aurora/model'];
             
             require('fs').writeFileSync('./package.json', JSON.stringify(pkg, null, 2));
           "
 
       - name: Run tests
-        run: pnpm --filter @nuclearplayer/plugin-sdk test
+        run: pnpm --filter @aurora/plugin-sdk test
 
       - name: Publish to npm
         run: |

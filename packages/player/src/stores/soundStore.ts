@@ -81,7 +81,8 @@ export const useSoundStore = create<SoundState & SoundActions>((set, get) => ({
     });
     set({ seek: seconds, targetSeek: seconds });
   },
-  updatePlayback: (position, duration) => set({ seek: position, duration }),
+  updatePlayback: (position, duration) =>
+    set({ seek: position, targetSeek: null, duration }),
   setCrossfadeMs: (ms) => set({ crossfadeMs: ms }),
   setPreload: (mode) => set({ preload: mode }),
   setCrossOrigin: (origin) => set({ crossOrigin: origin }),

@@ -15,7 +15,7 @@ export const isCapacitorEnvironment = (): boolean =>
     ).Capacitor?.isNativePlatform?.(),
   );
 
-export interface UniversalStore {
+export type UniversalStore = {
   entries<T = unknown>(): Promise<[string, T][]>;
   get<T>(key: string): Promise<T | null | undefined>;
   set(key: string, value: unknown): Promise<void>;
@@ -23,7 +23,7 @@ export interface UniversalStore {
   save(): Promise<void>;
   clear(): Promise<void>;
   close?: () => Promise<void>;
-}
+};
 
 class LocalStorageStore implements UniversalStore {
   private prefix: string;

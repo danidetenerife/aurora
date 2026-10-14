@@ -146,18 +146,31 @@ public class ApkUpdaterPlugin extends Plugin {
             }
 
             URL url = new URL(downloadUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setInstanceFollowRedirects(true);
-            connection.setRequestProperty("User-Agent", "Aurora-Music-Player-Android");
-            connection.connect();
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == 307 || responseCode == 308) {
-                String redirectUrl = connection.getHeaderField("Location");
-                connection.disconnect();
-                url = new URL(redirectUrl);
+            int redirects = 0;
+            while (true) {
                 connection = (HttpURLConnection) url.openConnection();
+                connection.setInstanceFollowRedirects(true);
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(30000);
+                connection.setRequestProperty("User-Agent", "Aurora-Music-Player-Android");
                 connection.connect();
+
+                int responseCode = connection.getResponseCode();
+                if ((responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                        || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER
+                        || responseCode == 307
+                        || responseCode == 308) && redirects < 5) {
+                    String redirectUrl = connection.getHeaderField("Location");
+                    connection.disconnect();
+                    if (redirectUrl == null || redirectUrl.isEmpty()) {
+                        break;
+                    }
+                    url = new URL(url, redirectUrl);
+                    redirects++;
+                    continue;
+                }
+                break;
             }
 
             int fileLength = connection.getContentLength();
@@ -320,5 +333,11 @@ public class ApkUpdaterPlugin extends Plugin {
         } catch (Exception e) {
             Log.e(TAG, "Fallback Intent install failed", e);
         }
+    }
+
+    @Override
+    protected void handleOnDestroy() {
+        executor.shutdownNow();
+        super.handleOnDestroy();
     }
 }

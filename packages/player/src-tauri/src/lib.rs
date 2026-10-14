@@ -93,7 +93,6 @@ pub fn run() {
     builder
         .invoke_handler(specta_builder.invoke_handler())
         .setup(|app| {
-            logging::mark_startup_complete();
             stream_server::init_stream_server(app.handle().clone());
             sync_server::init_sync_server(app.handle());
             history::init_history(app.handle().clone());

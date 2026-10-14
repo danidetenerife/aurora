@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Button } from '..';
@@ -28,6 +28,7 @@ describe('Popover', () => {
     );
     await userEvent.click(screen.getByText('Open Popover'));
     await screen.findByText('Popover Content');
+    await act(() => new Promise((resolve) => setTimeout(resolve, 100)));
     expect(document.body).toMatchSnapshot();
   });
 

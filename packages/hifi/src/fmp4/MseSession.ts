@@ -57,7 +57,11 @@ export class MseSession {
       return;
     }
 
-    await this.fetchAndAppendSegment(0);
+    const initialIndex =
+      audio.currentTime > 0
+        ? Math.max(0, this.timeline.segmentIndexForTime(audio.currentTime))
+        : 0;
+    await this.fetchAndAppendSegment(initialIndex);
   }
 
   dispose(): void {
@@ -102,16 +106,16 @@ export class MseSession {
     }
 
     this.seekGeneration += 1;
+    const generation = this.seekGeneration;
 
     try {
       await this.bufferQueue.enqueue(() =>
         this.sourceBuffer.remove(0, Infinity),
       );
-      this.timeline.clearFetched();
-
-      if (this.signal.aborted) {
+      if (this.signal.aborted || this.seekGeneration !== generation) {
         return;
       }
+      this.timeline.clearFetched();
 
       await this.bufferQueue.enqueue(() =>
         this.sourceBuffer.appendBuffer(this.initSegment.buffer as ArrayBuffer),
@@ -120,17 +124,28 @@ export class MseSession {
       return;
     }
 
+    if (this.signal.aborted || this.seekGeneration !== generation) {
+      return;
+    }
+
     const prefetchIndices = [...Array(SEEK_PREFETCH_COUNT).keys()]
       .map((offset) => targetIndex + offset)
       .filter((index) => this.timeline.contains(index));
 
-    await this.fetchSegmentsSequentially(prefetchIndices);
+    await this.fetchSegmentsSequentially(prefetchIndices, generation);
   }
 
   private nextSegmentIndexToBuffer(currentTime: number): number {
     const { buffered } = this.sourceBuffer;
     if (buffered.length === 0) {
-      return -1;
+      const targetIndex =
+        currentTime > 0
+          ? Math.max(0, this.timeline.segmentIndexForTime(currentTime))
+          : 0;
+      return this.timeline.contains(targetIndex) &&
+        !this.timeline.isFetched(targetIndex)
+        ? targetIndex
+        : -1;
     }
 
     const bufferedEnd = buffered.end(buffered.length - 1);
@@ -148,28 +163,44 @@ export class MseSession {
     );
   }
 
-  private async fetchSegmentsSequentially(indices: number[]): Promise<void> {
+  private async fetchSegmentsSequentially(
+    indices: number[],
+    generation = this.seekGeneration,
+  ): Promise<void> {
     const [head, ...rest] = indices;
-    if (head === undefined || this.signal.aborted) {
+    if (
+      head === undefined ||
+      this.signal.aborted ||
+      this.seekGeneration !== generation
+    ) {
       return;
     }
 
-    await this.fetchAndAppendSegment(head);
-    await this.fetchSegmentsSequentially(rest);
+    await this.fetchAndAppendSegment(head, generation);
+    await this.fetchSegmentsSequentially(rest, generation);
   }
 
-  private async fetchAndAppendSegment(segmentIndex: number): Promise<void> {
+  private async fetchAndAppendSegment(
+    segmentIndex: number,
+    generation = this.seekGeneration,
+  ): Promise<void> {
     const { timeline } = this;
 
-    if (!timeline.contains(segmentIndex) || timeline.isFetched(segmentIndex)) {
+    if (
+      !timeline.contains(segmentIndex) ||
+      timeline.isFetched(segmentIndex) ||
+      this.seekGeneration !== generation
+    ) {
       return;
     }
 
     timeline.markFetched(segmentIndex);
 
-    const appended = await this.fetchAndAppend(segmentIndex);
+    const appended = await this.fetchAndAppend(segmentIndex, generation);
     if (!appended) {
-      timeline.unmarkFetched(segmentIndex);
+      if (this.seekGeneration === generation) {
+        timeline.unmarkFetched(segmentIndex);
+      }
       return;
     }
 
@@ -178,9 +209,11 @@ export class MseSession {
     }
   }
 
-  private async fetchAndAppend(segmentIndex: number): Promise<boolean> {
+  private async fetchAndAppend(
+    segmentIndex: number,
+    generation = this.seekGeneration,
+  ): Promise<boolean> {
     const segment = this.timeline.get(segmentIndex);
-    const generation = this.seekGeneration;
 
     const result = await this.fetcher.fetchRange(
       segment.startByte,

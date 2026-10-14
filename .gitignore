@@ -10,6 +10,7 @@ target
 storybook-static
 coverage
 test-results
+graphify-out
 
 # Binaries & Installers
 ejecutables

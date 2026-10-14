@@ -8,6 +8,23 @@ Set-Location $Root
 
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
+Write-Host "==========================================================" -ForegroundColor Cyan
+Write-Host " [Aurora CI] Verificaciones de calidad previas al release..." -ForegroundColor Cyan
+Write-Host " 1/3 Type-check (TypeScript)..." -ForegroundColor Yellow
+npx turbo type-check
+if ($LASTEXITCODE -ne 0) { throw "Fallo en type-check. Despliegue cancelado." }
+
+Write-Host " 2/3 Lint (ESLint + Prettier)..." -ForegroundColor Yellow
+npx turbo lint
+if ($LASTEXITCODE -ne 0) { throw "Fallo en linting. Despliegue cancelado." }
+
+Write-Host " 3/3 Tests automáticos (Vitest)..." -ForegroundColor Yellow
+npx turbo test
+if ($LASTEXITCODE -ne 0) { throw "Fallo en tests automáticos. Despliegue cancelado." }
+
+Write-Host " [OK] Todas las comprobaciones han pasado con exito." -ForegroundColor Green
+Write-Host "==========================================================" -ForegroundColor Cyan
+
 # Read current version from packages/player/package.json
 $PackageJsonPath = "$Root\packages\player\package.json"
 $rawPkg = [System.IO.File]::ReadAllText($PackageJsonPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
@@ -34,6 +51,7 @@ Write-Host "==========================================================" -Foregro
 $PackageJson.version = $NextVer
 $pkgStr = ($PackageJson | ConvertTo-Json -Depth 10)
 [System.IO.File]::WriteAllText($PackageJsonPath, $pkgStr, $utf8NoBom)
+npx prettier --write $PackageJsonPath
 
 # 2. Update packages/player/src-tauri/tauri.conf.json
 $TauriConfPath = "$Root\packages\player\src-tauri\tauri.conf.json"
@@ -42,6 +60,7 @@ $TauriConf = $rawTauri | ConvertFrom-Json
 $TauriConf.version = $NextVer
 $tauriStr = ($TauriConf | ConvertTo-Json -Depth 10)
 [System.IO.File]::WriteAllText($TauriConfPath, $tauriStr, $utf8NoBom)
+npx prettier --write $TauriConfPath
 
 # 3. Update packages/player/src/stores/updaterStore.ts
 $UpdaterStorePath = "$Root\packages\player\src\stores\updaterStore.ts"

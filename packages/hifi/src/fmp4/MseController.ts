@@ -79,6 +79,11 @@ export class MseController {
       options.onError?.(error);
       return;
     }
-    throw error;
+    options.onError?.(
+      new SoundError(
+        'unsupportedFormat',
+        error instanceof Error ? error.message : String(error),
+      ),
+    );
   }
 }

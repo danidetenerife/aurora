@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export interface LayoutState {
+export type LayoutState = {
   leftSidebar: {
     isCollapsed: boolean;
     width: number;
@@ -14,7 +14,7 @@ export interface LayoutState {
   toggleRightSidebar: () => void;
   setLeftSidebarWidth: (width: number) => void;
   setRightSidebarWidth: (width: number) => void;
-}
+};
 
 const isMobileDevice =
   typeof window !== 'undefined' &&
@@ -67,11 +67,42 @@ export const useLayoutStore = create<LayoutState>()(
       name: 'aurora-layout-store',
       version: 1,
       migrate: (persistedState: unknown) => {
-        const state = persistedState as Partial<LayoutState> | undefined;
-        if (state?.rightSidebar && state.rightSidebar.width < 320) {
-          state.rightSidebar.width = 320;
+        const defaultState = {
+          leftSidebar: {
+            isCollapsed: isMobileDevice,
+            width: 200,
+          },
+          rightSidebar: {
+            isCollapsed: isMobileDevice,
+            width: 320,
+          },
+        };
+        if (!persistedState || typeof persistedState !== 'object') {
+          return defaultState;
         }
-        return state as LayoutState;
+        const state = persistedState as Partial<LayoutState>;
+        return {
+          leftSidebar: {
+            isCollapsed:
+              typeof state.leftSidebar?.isCollapsed === 'boolean'
+                ? state.leftSidebar.isCollapsed
+                : defaultState.leftSidebar.isCollapsed,
+            width:
+              typeof state.leftSidebar?.width === 'number'
+                ? state.leftSidebar.width
+                : defaultState.leftSidebar.width,
+          },
+          rightSidebar: {
+            isCollapsed:
+              typeof state.rightSidebar?.isCollapsed === 'boolean'
+                ? state.rightSidebar.isCollapsed
+                : defaultState.rightSidebar.isCollapsed,
+            width:
+              typeof state.rightSidebar?.width === 'number'
+                ? Math.max(320, state.rightSidebar.width)
+                : defaultState.rightSidebar.width,
+          },
+        };
       },
       onRehydrateStorage: () => (state) => {
         if (state?.rightSidebar && state.rightSidebar.width < 320) {

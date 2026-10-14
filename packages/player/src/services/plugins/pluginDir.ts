@@ -79,13 +79,20 @@ const resolveRelativeManagedPath = async (
 ): Promise<string | undefined> => {
   const normalizedPath = await normalize(absolutePath);
   const normalizedBase = await normalize(await appDataDir());
-  if (!normalizedPath.startsWith(normalizedBase)) {
+  const normalizedPluginsDir = await normalize(await getPluginsDir());
+  const isInsidePluginsDir =
+    normalizedPath.startsWith(`${normalizedPluginsDir}/`) ||
+    normalizedPath.startsWith(`${normalizedPluginsDir}\\`) ||
+    ((normalizedPluginsDir.endsWith('/') ||
+      normalizedPluginsDir.endsWith('\\')) &&
+      normalizedPath.startsWith(normalizedPluginsDir));
+  if (!isInsidePluginsDir || !normalizedPath.startsWith(normalizedBase)) {
     return undefined;
   }
   const trimmed = normalizedPath
     .slice(normalizedBase.length)
     .replace(/^[/\\]/, '');
-  return trimmed;
+  return trimmed || undefined;
 };
 
 export const removeManagedPluginInstall = async (

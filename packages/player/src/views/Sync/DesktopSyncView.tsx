@@ -39,13 +39,17 @@ export const DesktopSyncView: FC = () => {
 
   useEffect(() => {
     void loadInfo();
+  }, []);
+
+  useEffect(() => {
+    if (!serverInfo) {
+      return;
+    }
     const interval = setInterval(() => {
-      if (serverInfo) {
-        void checkHealth(serverInfo.ip, serverInfo.port);
-      }
+      void checkHealth(serverInfo.ip, serverInfo.port);
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [serverInfo]);
 
   const serverUrl = serverInfo
     ? `http://${serverInfo.ip}:${serverInfo.port}`

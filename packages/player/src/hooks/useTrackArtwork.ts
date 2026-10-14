@@ -40,8 +40,9 @@ export const useTrackArtwork = (
       return;
     }
 
+    setResolvedUrl(baseArtworkUrl);
+
     if (!primaryArtist || !title) {
-      setResolvedUrl(undefined);
       return;
     }
 

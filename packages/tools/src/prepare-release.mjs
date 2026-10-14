@@ -11,8 +11,8 @@ import {
 } from './metainfo-releases.mjs';
 
 const version = process.argv[2];
-if (!version) {
-  console.error('Usage: prepare-release.mjs <version>');
+if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
+  console.error('Usage: prepare-release.mjs <major.minor.patch>');
   process.exit(1);
 }
 

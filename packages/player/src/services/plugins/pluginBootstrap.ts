@@ -21,12 +21,32 @@ import {
 const isManagedPath = async (absPath: string): Promise<boolean> => {
   const normalizedPath = await normalize(absPath);
   const normalizedBase = await normalize(await getPluginsDir());
-  return normalizedPath.startsWith(normalizedBase);
+  if (normalizedPath === normalizedBase) {
+    return true;
+  }
+  const baseWithSep =
+    normalizedBase.endsWith('/') || normalizedBase.endsWith('\\')
+      ? normalizedBase
+      : undefined;
+  if (baseWithSep) {
+    return normalizedPath.startsWith(baseWithSep);
+  }
+  return (
+    normalizedPath.startsWith(`${normalizedBase}/`) ||
+    normalizedPath.startsWith(`${normalizedBase}\\`)
+  );
 };
 
 const loadBundledPlugins = (): void => {
   const ytMusicId = 'aurora-plugin-youtube-music';
   const ytMusicApi = createPluginAPI(ytMusicId, 'YouTube Music');
+  if (ytMusicPlugin.onLoad) {
+    try {
+      void ytMusicPlugin.onLoad(ytMusicApi);
+    } catch {
+      /* ignore */
+    }
+  }
   if (ytMusicPlugin.onEnable) {
     try {
       ytMusicPlugin.onEnable(ytMusicApi);
@@ -37,6 +57,13 @@ const loadBundledPlugins = (): void => {
 
   const spotifyId = 'aurora-plugin-something';
   const spotifyApi = createPluginAPI(spotifyId, 'Spotify');
+  if (spotifyPlugin.onLoad) {
+    try {
+      void spotifyPlugin.onLoad(spotifyApi);
+    } catch {
+      /* ignore */
+    }
+  }
   if (spotifyPlugin.onEnable) {
     try {
       spotifyPlugin.onEnable(spotifyApi);
@@ -47,6 +74,13 @@ const loadBundledPlugins = (): void => {
 
   const youtubeId = 'aurora-plugin-youtube';
   const youtubeApi = createPluginAPI(youtubeId, 'YouTube');
+  if (youtubePlugin.onLoad) {
+    try {
+      void youtubePlugin.onLoad(youtubeApi);
+    } catch {
+      /* ignore */
+    }
+  }
   if (youtubePlugin.onEnable) {
     try {
       youtubePlugin.onEnable(youtubeApi);

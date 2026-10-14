@@ -172,7 +172,11 @@ public class MainActivity extends BridgeActivity {
             filter.addAction(Intent.ACTION_SCREEN_OFF);
             filter.addAction(Intent.ACTION_SCREEN_ON);
             filter.addAction(Intent.ACTION_USER_PRESENT);
-            registerReceiver(screenStateReceiver, filter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(screenStateReceiver, filter, Context.RECEIVER_EXPORTED);
+            } else {
+                registerReceiver(screenStateReceiver, filter);
+            }
         } catch (Throwable t) {}
     }
 
@@ -255,9 +259,13 @@ public class MainActivity extends BridgeActivity {
             if (webView != null) {
                 switch (keyCode) {
                     case android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                    case android.view.KeyEvent.KEYCODE_MEDIA_PLAY:
-                    case android.view.KeyEvent.KEYCODE_MEDIA_PAUSE:
                         webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('tv:playpause'))", null);
+                        return true;
+                    case android.view.KeyEvent.KEYCODE_MEDIA_PLAY:
+                        webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('tv:play'))", null);
+                        return true;
+                    case android.view.KeyEvent.KEYCODE_MEDIA_PAUSE:
+                        webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('tv:pause'))", null);
                         return true;
                     case android.view.KeyEvent.KEYCODE_MEDIA_NEXT:
                     case android.view.KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:

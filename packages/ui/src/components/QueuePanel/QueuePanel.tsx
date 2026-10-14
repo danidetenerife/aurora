@@ -65,6 +65,19 @@ export const QueuePanel: FC<QueuePanelProps> = ({
     onReorder(fromIndex, toIndex);
   };
 
+  const itemIds = items.map((item) => item.id);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const shouldVirtualize = items.length > VIRTUALIZATION_THRESHOLD;
+
+  const rowVirtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => viewportRef.current,
+    estimateSize: () =>
+      isCollapsed ? ITEM_HEIGHT_COLLAPSED : ITEM_HEIGHT_EXPANDED,
+    overscan: OVERSCAN_COUNT,
+    enabled: shouldVirtualize,
+  });
+
   if (items.length === 0) {
     return (
       <div
@@ -96,19 +109,6 @@ export const QueuePanel: FC<QueuePanelProps> = ({
       </div>
     );
   }
-
-  const itemIds = items.map((item) => item.id);
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const shouldVirtualize = items.length > VIRTUALIZATION_THRESHOLD;
-
-  const rowVirtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => viewportRef.current,
-    estimateSize: () =>
-      isCollapsed ? ITEM_HEIGHT_COLLAPSED : ITEM_HEIGHT_EXPANDED,
-    overscan: OVERSCAN_COUNT,
-    enabled: shouldVirtualize,
-  });
 
   const virtualItems = rowVirtualizer.getVirtualItems();
   const paddingTop =

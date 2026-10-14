@@ -1,6 +1,6 @@
 {
     "name":  "@aurora/player",
-    "version":  "1.48.64",
+    "version":  "1.48.65",
     "private":  true,
     "type":  "module",
     "scripts":  {

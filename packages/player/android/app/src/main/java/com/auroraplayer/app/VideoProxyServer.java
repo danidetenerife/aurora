@@ -17,6 +17,7 @@ public class VideoProxyServer {
     private ServerSocket serverSocket;
     private int port;
     private volatile boolean running;
+    private final java.util.concurrent.ExecutorService clientExecutor = java.util.concurrent.Executors.newCachedThreadPool();
 
     public static synchronized VideoProxyServer getInstance() {
         if (instance == null) {
@@ -40,7 +41,7 @@ public class VideoProxyServer {
             while (running) {
                 try {
                     Socket client = serverSocket.accept();
-                    new Thread(() -> handleClient(client)).start();
+                    clientExecutor.execute(() -> handleClient(client));
                 } catch (IOException e) {
                     if (running) Log.e(TAG, "Accept error: " + e.getMessage());
                 }
@@ -53,7 +54,9 @@ public class VideoProxyServer {
     }
 
     private void handleClient(Socket client) {
+        HttpURLConnection conn = null;
         try {
+            client.setSoTimeout(30000);
             InputStream clientIn = client.getInputStream();
             StringBuilder requestLine = new StringBuilder();
             int c;
@@ -104,7 +107,7 @@ public class VideoProxyServer {
 
             Log.d(TAG, "Proxying: " + targetUrl.substring(0, Math.min(targetUrl.length(), 500)));
 
-            HttpURLConnection conn = (HttpURLConnection) new URL(targetUrl).openConnection();
+            conn = (HttpURLConnection) new URL(targetUrl).openConnection();
             conn.setRequestProperty("User-Agent", YtStreamExtractorPlugin.MOBILE_UA);
             conn.setRequestProperty("Referer", "https://m.youtube.com/");
             conn.setRequestProperty("Origin", "https://m.youtube.com");
@@ -148,18 +151,22 @@ public class VideoProxyServer {
             OutputStream clientOut = client.getOutputStream();
             clientOut.write(response.toString().getBytes());
 
-            InputStream serverIn = conn.getInputStream();
-            byte[] buffer = new byte[65536];
-            int bytesRead;
-            while ((bytesRead = serverIn.read(buffer)) != -1) {
-                clientOut.write(buffer, 0, bytesRead);
+            try (InputStream serverIn = (responseCode >= 400 ? conn.getErrorStream() : conn.getInputStream())) {
+                if (serverIn != null) {
+                    byte[] buffer = new byte[65536];
+                    int bytesRead;
+                    while ((bytesRead = serverIn.read(buffer)) != -1) {
+                        clientOut.write(buffer, 0, bytesRead);
+                    }
+                }
             }
             clientOut.flush();
-            serverIn.close();
-            conn.disconnect();
-            client.close();
         } catch (Exception e) {
             Log.e(TAG, "Proxy error: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                try { conn.disconnect(); } catch (Exception ignored) {}
+            }
             try { client.close(); } catch (IOException ignored) {}
         }
     }

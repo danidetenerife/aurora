@@ -130,7 +130,7 @@ export const Badge: FC<BadgeProps> = ({
   animated,
   ...props
 }) => {
-  if (variant === 'dot' && children) {
+  if ((variant ?? 'dot') === 'dot' && children) {
     throw new Error('Badge variant "dot" does not support children');
   }
 

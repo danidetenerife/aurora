@@ -18,13 +18,11 @@ export class PlaylistIndexStore {
         'playlists',
       )) ?? [];
 
-    // Deduplicate by name and ID
     const seen = new Map<string, PlaylistIndexEntry>();
     for (const item of raw) {
-      if (item && item.name) {
-        const key = item.name.toLowerCase().trim();
-        if (!seen.has(key)) {
-          seen.set(key, item);
+      if (item && item.id && item.name) {
+        if (!seen.has(item.id)) {
+          seen.set(item.id, item);
         }
       }
     }
@@ -39,11 +37,8 @@ export class PlaylistIndexStore {
   async save(index: PlaylistIndexEntry[]): Promise<void> {
     const seen = new Map<string, PlaylistIndexEntry>();
     for (const item of index) {
-      if (item && item.name) {
-        const key = item.name.toLowerCase().trim();
-        if (!seen.has(key)) {
-          seen.set(key, item);
-        }
+      if (item && item.id && item.name) {
+        seen.set(item.id, item);
       }
     }
     const deduplicated = Array.from(seen.values());

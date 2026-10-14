@@ -22,11 +22,17 @@ export const useStreamResolution = (): void => {
     const onCurrentItemChanged = (currentItem: QueueItem | undefined): void => {
       if (!currentItem) {
         currentItemIdRef.current = null;
+        resolutionKeyRef.current = null;
         return;
       }
 
       const isSameItem = currentItemIdRef.current === currentItem.id;
       currentItemIdRef.current = currentItem.id;
+
+      if (currentItem.status === 'error') {
+        resolutionKeyRef.current = null;
+        return;
+      }
 
       const resolutionKey = buildResolutionKey(currentItem);
       if (resolutionKey === resolutionKeyRef.current && isSameItem) {
@@ -51,6 +57,7 @@ export const useStreamResolution = (): void => {
     });
 
     onCurrentItemChanged(useQueueStore.getState().getCurrentItem());
+    isFirstResolutionRef.current = false;
 
     return unsubscribe;
   }, []);

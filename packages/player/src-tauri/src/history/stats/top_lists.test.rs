@@ -315,6 +315,30 @@ async fn counts_only_album_plays_that_started_inside_the_range() {
 }
 
 #[tokio::test]
+async fn handles_album_tracks_with_empty_artists_array() {
+    let db = HistoryDb(fixtures::pool().await);
+    let untagged = TrackSnapshotBuilder::new("Mystery Track")
+        .artists(&[])
+        .album("Unknown Album")
+        .artwork("mystery.jpg")
+        .build();
+    seed_play(&db, "play-1", &untagged, local_date(1), 45_000).await;
+
+    let albums = db.top_albums(0, i64::MAX, 10).await.unwrap();
+
+    assert_eq!(
+        albums,
+        vec![TopAlbum {
+            title: "Unknown Album".to_string(),
+            artist: String::new(),
+            artwork_url: Some("mystery.jpg".to_string()),
+            ms_played: 45_000,
+            plays: 1,
+        }]
+    );
+}
+
+#[tokio::test]
 async fn sums_listening_time_across_repeated_plays_of_a_track() {
     let db = HistoryDb(fixtures::pool().await);
     let duet = TrackSnapshotBuilder::new("Fright Night")

@@ -32,7 +32,7 @@ const isYouTubeChannelId = (id: string): boolean => {
 };
 
 const isSpotifyUri = (id: string): boolean => {
-  return id.startsWith('spotify:artist:') || id.includes(':');
+  return id.startsWith('spotify:');
 };
 
 export const Artist: FC<ArtistProps> = () => {

@@ -128,7 +128,7 @@ impl HistoryDb {
             ), \
             releases AS ( \
                 SELECT tracks.album_title AS title, \
-                    json_extract(tracks.artists, '$[0]') AS artist, \
+                    COALESCE(json_extract(tracks.artists, '$[0]'), '') AS artist, \
                     tracks.artwork_url, \
                     track_totals.ms_played, \
                     track_totals.plays \

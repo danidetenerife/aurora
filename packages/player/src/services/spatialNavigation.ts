@@ -30,6 +30,14 @@ export const initSpatialNavigation = (): void => {
       playbackManager.toggle();
     });
 
+    window.addEventListener('tv:play', () => {
+      playbackManager.play();
+    });
+
+    window.addEventListener('tv:pause', () => {
+      playbackManager.pause();
+    });
+
     window.addEventListener('tv:next', () => {
       useQueueStore.getState().goToNext();
     });

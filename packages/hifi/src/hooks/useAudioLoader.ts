@@ -10,6 +10,7 @@ export const useAudioLoader = (
 
   useEffect(() => {
     if (src.protocol === 'hls' || src.protocol === 'mse') {
+      prevUrl.current = null;
       return;
     }
 

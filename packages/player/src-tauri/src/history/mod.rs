@@ -26,18 +26,45 @@ pub fn init_history(app_handle: tauri::AppHandle) {
             }
         };
 
-        let pool = match crate::db::open(&data_dir.join("databases").join("history.db")).await {
-            Ok(pool) => pool,
+        let db_path = data_dir.join("databases").join("history.db");
+        let pool = match crate::db::open(&db_path).await {
+            Ok(p) => match sqlx::migrate!("./migrations/history").run(&p).await {
+                Ok(_) => p,
+                Err(err) => {
+                    log::error!("History migration failed: {err}. Attempting recovery...");
+                    p.close().await;
+                    drop(p);
+                    let backup_name = format!(
+                        "history.db.corrupt.{}",
+                        std::time::SystemTime::now()
+                            .duration_since(std::time::UNIX_EPOCH)
+                            .unwrap_or_default()
+                            .as_secs()
+                    );
+                    let backup_path = db_path.with_file_name(backup_name);
+                    let _ = std::fs::rename(&db_path, backup_path);
+                    let _ = std::fs::remove_file(db_path.with_extension("db-wal"));
+                    let _ = std::fs::remove_file(db_path.with_extension("db-shm"));
+                    match crate::db::open(&db_path).await {
+                        Ok(new_p) => {
+                            if let Err(migration_error) = sqlx::migrate!("./migrations/history").run(&new_p).await {
+                                log::error!("Fatal: Failed to migrate fresh history db: {migration_error}");
+                                return;
+                            }
+                            new_p
+                        }
+                        Err(open_error) => {
+                            log::error!("Fatal: Failed to open fresh history db: {open_error}");
+                            return;
+                        }
+                    }
+                }
+            },
             Err(err) => {
                 log::error!("Failed to open history database: {err}");
                 return;
             }
         };
-
-        if let Err(err) = sqlx::migrate!("./migrations/history").run(&pool).await {
-            log::error!("Failed to run history migrations: {err}");
-            return;
-        }
 
         app_handle.manage(HistoryDb(pool));
         log::info!("History database initialized");

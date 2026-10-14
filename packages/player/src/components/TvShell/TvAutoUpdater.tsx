@@ -151,9 +151,16 @@ export const TvAutoUpdater: FC = () => {
   const handleAccept = async () => {
     setIsInstalling(true);
     try {
+      let installed = false;
       if (typeof ApkUpdaterPlugin.installUpdate === 'function') {
-        await ApkUpdaterPlugin.installUpdate();
-      } else if (apkDownloadUrlRef.current) {
+        try {
+          const result = await ApkUpdaterPlugin.installUpdate();
+          installed = Boolean(result?.success);
+        } catch {
+          installed = false;
+        }
+      }
+      if (!installed && apkDownloadUrlRef.current) {
         await ApkUpdaterPlugin.downloadAndInstall({
           url: apkDownloadUrlRef.current,
         });

@@ -61,10 +61,10 @@ export const MobileExpandedPlayer: FC = () => {
 
   const isFavorite = useFavoritesStore((state) =>
     track
-      ? state.tracks.some(
-          (entry) =>
-            entry.ref.source?.provider === track.source?.provider &&
-            entry.ref.source?.id === track.source?.id,
+      ? state.isTrackFavorite(
+          track.source,
+          track.title,
+          track.artists?.[0]?.name,
         )
       : false,
   );
@@ -79,11 +79,12 @@ export const MobileExpandedPlayer: FC = () => {
     pickArtwork(track.artwork, 'cover', 500) ??
     pickArtwork(track.artwork, 'thumbnail', 300);
   const title = track.title;
-  const artist = track.artists?.map((a) => a.name).join(', ') ?? '';
+  const artist =
+    track.artists?.map((artistItem) => artistItem.name).join(', ') ?? '';
 
   const handleToggleFavorite = () => {
     if (isFavorite) {
-      void removeTrack(track.source);
+      void removeTrack(track.source, track.title, track.artists?.[0]?.name);
     } else {
       void addTrack(track);
     }

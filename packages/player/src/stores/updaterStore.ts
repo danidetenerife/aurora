@@ -10,7 +10,7 @@ import { errorMessage } from '../utils/errorMessage';
 import { reportError } from '../utils/logging';
 import { getSetting } from './settingsStore';
 
-const CURRENT_VERSION = '1.48.64';
+const CURRENT_VERSION = '1.48.65';
 const GITHUB_REPO = 'danidetenerife/aurora';
 const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
@@ -229,8 +229,8 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
 
     if (androidApkUrl) {
       set({ isDownloading: true, downloadProgress: 0, error: null });
+      let listenerHandle: { remove: () => void } | null = null;
       try {
-        let listenerHandle: { remove: () => void } | null = null;
         try {
           listenerHandle = await ApkUpdaterPlugin.addListener(
             'downloadProgress',
@@ -243,10 +243,6 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
         }
 
         await ApkUpdaterPlugin.downloadAndInstall({ url: androidApkUrl });
-
-        if (listenerHandle) {
-          listenerHandle.remove();
-        }
 
         set({
           isDownloading: false,
@@ -262,6 +258,10 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
           isInstalling: false,
           error: message,
         });
+      } finally {
+        if (listenerHandle) {
+          listenerHandle.remove();
+        }
       }
     }
   },
@@ -284,11 +284,17 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
     }
 
     const { androidApkUrl } = get();
-    if (androidApkUrl) {
-      try {
-        await ApkUpdaterPlugin.downloadAndInstall({ url: androidApkUrl });
-      } catch (error) {
-        set({ error: errorMessage(error) });
+    try {
+      await ApkUpdaterPlugin.installUpdate();
+    } catch (installError) {
+      if (androidApkUrl) {
+        try {
+          await ApkUpdaterPlugin.downloadAndInstall({ url: androidApkUrl });
+        } catch (error) {
+          set({ error: errorMessage(error) });
+        }
+      } else {
+        set({ error: errorMessage(installError) });
       }
     }
   },

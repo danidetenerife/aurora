@@ -562,13 +562,13 @@
   font-size: 14px;
   line-height: 18px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--foreground);
 }
 
 .aurora-mobile-page-rows td .line-clamp-1 {
   font-size: 12px;
   line-height: 16px;
-  color: #a1a1aa;
+  color: var(--foreground-secondary);
 }
 
 .aurora-workspace[data-native-mobile] .aurora-player {

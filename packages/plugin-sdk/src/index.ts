@@ -10,9 +10,14 @@ export { EventsAPI } from './api/events';
 export { FavoritesAPI } from './api/favorites';
 export { HttpAPI } from './api/http';
 export { LoggerAPI } from './api/logger';
+export { MetadataAPI } from './api/metadata';
 export { PlaybackAPI } from './api/playback';
 export { PlaylistsAPI } from './api/playlists';
+export { Providers } from './api/providers';
+export { QueueAPI } from './api/queue';
+export { Settings } from './api/settings';
 export { ShellAPI } from './api/shell';
+export { StreamingAPI } from './api/streaming';
 export { YtdlpAPI } from './api/ytdlp';
 export type {
   FetchFunction,

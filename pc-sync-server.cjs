@@ -6,13 +6,63 @@ const { pathToFileURL } = require('url');
 let mergeListenRecords;
 
 const PORT = Number(process.env.AURORA_SYNC_PORT || 4122);
-const APP_DATA =
-  process.env.AURORA_SYNC_APP_DATA ||
-  (fs.existsSync(path.join(os.homedir(), 'AppData', 'Roaming', 'com.auroraplayer'))
-    ? path.join(os.homedir(), 'AppData', 'Roaming', 'com.auroraplayer')
-    : fs.existsSync(path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player'))
-      ? path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player')
-      : path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer'));
+const MAX_BODY_BYTES = 50 * 1024 * 1024;
+const DEVICE_SPECIFIC_SETTINGS_KEYS = new Set([
+  'core.playback.volume',
+  'core.playback.muted',
+  'core.carMode.autoBluetooth',
+  'core.carMode.keepScreenAwake',
+]);
+
+function resolveDefaultAppData() {
+  const candidates =
+    process.platform === 'win32'
+      ? [
+          path.join(os.homedir(), 'AppData', 'Roaming', 'com.auroraplayer'),
+          path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player'),
+          path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer'),
+        ]
+      : process.platform === 'darwin'
+        ? [
+            path.join(
+              os.homedir(),
+              'Library',
+              'Application Support',
+              'com.auroraplayer',
+            ),
+            path.join(
+              os.homedir(),
+              'Library',
+              'Application Support',
+              'org.aurora.player',
+            ),
+          ]
+        : [
+            path.join(
+              process.env.XDG_DATA_HOME ||
+                path.join(os.homedir(), '.local', 'share'),
+              'com.auroraplayer',
+            ),
+            path.join(
+              process.env.XDG_DATA_HOME ||
+                path.join(os.homedir(), '.local', 'share'),
+              'org.aurora.player',
+            ),
+          ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return candidates[0];
+}
+
+const APP_DATA = process.env.AURORA_SYNC_APP_DATA || resolveDefaultAppData();
+
+function sanitizePlaylistId(id) {
+  return String(id).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
 
 // Connected SSE clients
 const sseClients = new Set();
@@ -126,6 +176,10 @@ function getFullSyncPayload() {
   const rawQueue = readJsonFile('queue.json', {});
   const rawPlugins = readJsonFile('plugins.json', {});
   const rawActiveProviders = readJsonFile('active-providers.json', {});
+  const activeProviders =
+    rawActiveProviders && typeof rawActiveProviders.active === 'object' && rawActiveProviders.active !== null
+      ? rawActiveProviders.active
+      : rawActiveProviders;
   const playlists = readPlaylists();
   const playlistIndex = readPlaylistIndex();
   const userProfile = readJsonFile('user_profile.json', { listens: [] });
@@ -154,7 +208,7 @@ function getFullSyncPayload() {
     },
     settings: rawSettings,
     plugins: rawPlugins,
-    activeProviders: rawActiveProviders,
+    activeProviders,
     queue: rawQueue,
     playlists,
     playlistIndex,
@@ -210,8 +264,22 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/api/sync/push' && req.method === 'POST') {
     let body = '';
-    req.on('data', (chunk) => (body += chunk));
+    let bodyBytes = 0;
+    let aborted = false;
+    req.on('data', (chunk) => {
+      if (aborted) return;
+      bodyBytes += chunk.length;
+      if (bodyBytes > MAX_BODY_BYTES) {
+        aborted = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload too large' }));
+        req.destroy();
+        return;
+      }
+      body += chunk;
+    });
     req.on('end', () => {
+      if (aborted) return;
       try {
         const pushData = JSON.parse(body);
         let profileChanged = false;
@@ -241,9 +309,13 @@ const server = http.createServer((req, res) => {
         }
 
         // 2. Merge Settings from mobile into PC settings.json
-        if (pushData.settings) {
+        if (pushData.settings && typeof pushData.settings === 'object') {
           const currentSettings = readJsonFile('settings.json', {});
-          Object.assign(currentSettings, pushData.settings);
+          for (const [settingKey, settingVal] of Object.entries(pushData.settings)) {
+            if (!DEVICE_SPECIFIC_SETTINGS_KEYS.has(settingKey)) {
+              currentSettings[settingKey] = settingVal;
+            }
+          }
           writeJsonFile('settings.json', currentSettings);
         }
 
@@ -253,22 +325,32 @@ const server = http.createServer((req, res) => {
           if (!fs.existsSync(playlistsDir)) {
             fs.mkdirSync(playlistsDir, { recursive: true });
           }
-          const indexEntries = [];
+          const existingIndex = readPlaylistIndex();
+          const entriesById = new Map();
+          for (const existingEntry of existingIndex) {
+            if (existingEntry && existingEntry.id) {
+              entriesById.set(existingEntry.id, existingEntry);
+            }
+          }
+
           for (const rawPl of pushData.playlists) {
             const pl = rawPl.playlist || rawPl;
             if (pl && pl.name && pl.id) {
+              const safeId = sanitizePlaylistId(pl.id);
+              if (!safeId) continue;
+              const normalizedPlaylist = { ...pl, id: safeId };
               fs.writeFileSync(
-                path.join(playlistsDir, `${pl.id}.json`),
-                JSON.stringify({ playlist: pl }, null, 2),
+                path.join(playlistsDir, `${safeId}.json`),
+                JSON.stringify({ playlist: normalizedPlaylist }, null, 2),
                 'utf8',
               );
-              indexEntries.push({
-                id: pl.id,
+              entriesById.set(safeId, {
+                id: safeId,
                 name: pl.name,
                 itemCount: (pl.items || []).length,
                 createdAtIso: pl.createdAtIso || new Date().toISOString(),
                 lastModifiedIso: pl.lastModifiedIso || new Date().toISOString(),
-                isReadOnly: false,
+                isReadOnly: Boolean(pl.isReadOnly),
                 thumbnails: pl.artwork?.items?.map((i) => i.url) || [],
                 totalDurationMs: (pl.items || []).reduce(
                   (acc, item) => acc + (item.track?.durationMs || 0),
@@ -277,9 +359,9 @@ const server = http.createServer((req, res) => {
               });
             }
           }
-          if (indexEntries.length > 0) {
+          if (entriesById.size > 0) {
             writeJsonFile(path.join('playlists', 'index.json'), {
-              entries: indexEntries,
+              entries: Array.from(entriesById.values()),
             });
           }
         }
@@ -420,10 +502,22 @@ const server = http.createServer((req, res) => {
           Object.assign(currentPlugins, pushData.plugins);
           writeJsonFile('plugins.json', currentPlugins);
         }
-        if (pushData.activeProviders) {
-          const currentActive = readJsonFile('active-providers.json', {});
-          Object.assign(currentActive, pushData.activeProviders);
-          writeJsonFile('active-providers.json', currentActive);
+        if (pushData.activeProviders && typeof pushData.activeProviders === 'object') {
+          const rawCurrentActive = readJsonFile('active-providers.json', {});
+          const currentMap =
+            rawCurrentActive &&
+            typeof rawCurrentActive.active === 'object' &&
+            rawCurrentActive.active !== null
+              ? { ...rawCurrentActive.active }
+              : { ...rawCurrentActive };
+          delete currentMap.active;
+          const incomingMap =
+            pushData.activeProviders.active &&
+            typeof pushData.activeProviders.active === 'object'
+              ? pushData.activeProviders.active
+              : pushData.activeProviders;
+          Object.assign(currentMap, incomingMap);
+          writeJsonFile('active-providers.json', { active: currentMap });
         }
 
         res.writeHead(200, { 'Content-Type': 'application/json' });

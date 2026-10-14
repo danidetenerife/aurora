@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ArtworkContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.auroraplayer.app.artwork";
@@ -40,8 +38,6 @@ public class ArtworkContentProvider extends ContentProvider {
             return value.length;
         }
     };
-
-    private final ExecutorService networkExecutor = Executors.newFixedThreadPool(4);
 
     public static Uri getPresetUri(String name) {
         return new Uri.Builder()

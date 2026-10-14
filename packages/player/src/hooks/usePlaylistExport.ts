@@ -15,8 +15,15 @@ export const usePlaylistExport = (playlistId: string) => {
 
   const exportAsJson = useCallback(async () => {
     try {
+      const targetPlaylist =
+        playlist ??
+        (await usePlaylistStore.getState().loadPlaylist(playlistId));
+      if (!targetPlaylist) {
+        return;
+      }
+
       const filePath = await save({
-        defaultPath: `${playlist?.name ?? 'playlist'}.json`,
+        defaultPath: `${targetPlaylist.name || 'playlist'}.json`,
         filters: [{ name: 'JSON Files', extensions: ['json'] }],
       });
 
@@ -24,7 +31,10 @@ export const usePlaylistExport = (playlistId: string) => {
         return;
       }
 
-      const exportData = { version: PLAYLIST_EXPORT_VERSION, playlist };
+      const exportData = {
+        version: PLAYLIST_EXPORT_VERSION,
+        playlist: targetPlaylist,
+      };
       await writeTextFile(filePath, JSON.stringify(exportData, null, 2));
       toast.success(t('exportSuccess'));
     } catch (error) {
@@ -33,7 +43,7 @@ export const usePlaylistExport = (playlistId: string) => {
         error,
       });
     }
-  }, [playlist, t]);
+  }, [playlist, playlistId, t]);
 
   return { exportAsJson };
 };

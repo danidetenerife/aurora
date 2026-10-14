@@ -11,6 +11,9 @@ import {
   resolveTrackCoverUrl,
 } from './coverArtResolver';
 import { metadataHost } from './metadataHost';
+import { createUniversalStore } from './universalStore';
+
+const favoritesDiskStore = createUniversalStore('favorites.json');
 
 const artworkCache = new Map<string, ArtworkSet>();
 
@@ -160,14 +163,24 @@ export const enrichFavoriteTracks = async (): Promise<void> => {
   );
 
   if (hasUpdates) {
+    let didUpdateState = false;
     useFavoritesStore.setState((state) => {
       const tracks = state.tracks.map((entry) => {
         const originalIndex = favorites.indexOf(entry);
         return originalIndex >= 0 ? updatedFavorites[originalIndex] : entry;
       });
-      return tracks.some((entry, index) => entry !== state.tracks[index])
-        ? { tracks }
-        : state;
+      if (tracks.some((entry, index) => entry !== state.tracks[index])) {
+        didUpdateState = true;
+        return { tracks };
+      }
+      return state;
     });
+    if (didUpdateState) {
+      await favoritesDiskStore.set(
+        'favorites.tracks',
+        useFavoritesStore.getState().tracks,
+      );
+      await favoritesDiskStore.save();
+    }
   }
 };

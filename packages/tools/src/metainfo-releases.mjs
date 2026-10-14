@@ -3,16 +3,18 @@ const RELEASE_DEPTH = 2;
 const RELEASES_OPENING_TAG = '<releases>';
 
 function escapeXml(text) {
-  return text
+  return String(text)
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
 }
 
 function renderElement({ name, attributes = {}, children }, depth) {
   const pad = INDENT.repeat(depth);
   const attributeText = Object.entries(attributes)
-    .map(([key, value]) => ` ${key}="${value}"`)
+    .map(([key, value]) => ` ${key}="${escapeXml(value)}"`)
     .join('');
 
   if (typeof children === 'string') {

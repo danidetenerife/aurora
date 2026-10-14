@@ -18,8 +18,11 @@ export const createDiscoveryHost = (): DiscoveryHost => ({
       resolvedId,
       'discovery',
     );
+    if (!provider) {
+      return [];
+    }
 
-    return provider!.getRecommendations(context, options);
+    return provider.getRecommendations(context, options);
   },
 });
 

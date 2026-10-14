@@ -20,7 +20,12 @@ export type Fmp4Index = {
 };
 
 const BOX_HEADER_SIZE = 8;
+const EXTENDED_BOX_HEADER_SIZE = 16;
 const EXTENDED_SIZE_MARKER = 1;
+const SIDX_HEADER_MIN_BYTES = 12;
+const SIDX_V0_OFFSET_BYTES = 12;
+const SIDX_V1_OFFSET_BYTES = 20;
+const SIDX_REFERENCE_BYTES = 12;
 
 export function findBoxes(data: Uint8Array): Fmp4Box[] {
   const boxes: Fmp4Box[] = [];
@@ -31,16 +36,28 @@ export function findBoxes(data: Uint8Array): Fmp4Box[] {
 
     let size = reader.readUint32();
     const type = reader.readAscii(4);
+    const isExtended = size === EXTENDED_SIZE_MARKER;
 
-    if (size === EXTENDED_SIZE_MARKER) {
+    if (isExtended) {
+      if (!reader.hasRemaining(BOX_HEADER_SIZE)) {
+        break;
+      }
       size = reader.readUint64();
     } else if (size === 0) {
       size = data.length - offset;
     }
 
+    const minBoxSize = isExtended ? EXTENDED_BOX_HEADER_SIZE : BOX_HEADER_SIZE;
+    if (size < minBoxSize) {
+      break;
+    }
+
     boxes.push({ type, offset, size });
 
     const nextBox = offset + size;
+    if (nextBox > data.length) {
+      break;
+    }
     reader.skip(nextBox - reader.position);
   }
 
@@ -57,12 +74,24 @@ export function parseSidx(
   boxSize: number,
 ): { references: SegmentReference[]; timescale: number } {
   const reader = new BinaryReader(data, boxOffset + BOX_HEADER_SIZE);
+  if (!reader.hasRemaining(SIDX_HEADER_MIN_BYTES)) {
+    throw new Error('Truncated sidx box header');
+  }
 
   const version = reader.readUint8();
   reader.skip(3); // flags
 
   reader.skip(4); // reference_ID
   const timescale = reader.readUint32();
+  if (timescale === 0) {
+    throw new Error('Invalid sidx timescale: 0');
+  }
+
+  const requiredOffsetBytes =
+    version === 0 ? SIDX_V0_OFFSET_BYTES : SIDX_V1_OFFSET_BYTES;
+  if (!reader.hasRemaining(requiredOffsetBytes)) {
+    throw new Error('Truncated sidx box offset fields');
+  }
 
   let firstOffset: number;
   if (version === 0) {
@@ -81,6 +110,9 @@ export function parseSidx(
   const references: SegmentReference[] = [];
 
   for (let index = 0; index < referenceCount; index++) {
+    if (!reader.hasRemaining(SIDX_REFERENCE_BYTES)) {
+      throw new Error('Truncated sidx reference entry');
+    }
     const referencedSize = reader.readUint32() & 0x7fffffff;
     const subsegmentDuration = reader.readUint32();
     reader.skip(4); // starts_with_SAP + SAP_type + SAP_delta_time

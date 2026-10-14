@@ -102,6 +102,7 @@ export class PlaybackManager {
     const repeatMode = (getSetting('core.playback.repeat') as string) ?? 'off';
     if (repeatMode === 'one') {
       useSoundStore.getState().seekTo(0);
+      useSoundStore.getState().play();
       eventBus.emit('trackStarted', item.track);
       return;
     }
@@ -113,9 +114,12 @@ export class PlaybackManager {
 
     if (isLastTrack && isDiscoveryEnabled) {
       await ensureUpcomingTracks(true);
+      if (useQueueStore.getState().getCurrentItem()?.id !== item.id) {
+        return;
+      }
     }
 
-    useQueueStore.getState().goToNext();
+    useQueueStore.getState().goToNext({ isNaturalFinish: true });
   };
 }
 

@@ -38,7 +38,7 @@ public class YtStreamExtractorPlugin extends Plugin {
     private static final String TAG = "YtStreamExtractor";
     private static final long STAGE1_TIMEOUT_MS = 8000;
     private static final long STAGE2_TIMEOUT_MS = 7000;
-    private final java.util.Map<WebView, Runnable> activeExtractions = new java.util.HashMap<>();
+    private final java.util.Map<WebView, Runnable> activeExtractions = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static final String MOBILE_UA =
         "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) " +

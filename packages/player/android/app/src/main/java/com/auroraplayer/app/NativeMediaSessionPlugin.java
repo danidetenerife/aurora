@@ -97,8 +97,9 @@ public class NativeMediaSessionPlugin extends Plugin {
     }
 
     private synchronized void checkAndNotifyBluetoothState() {
-        boolean isConnected = isBluetoothAudioConnected();
-        String deviceName = isConnected ? (lastDeviceName.isEmpty() ? "Bluetooth Audio" : lastDeviceName) : "";
+        String connectedDevice = findConnectedBluetoothDeviceName();
+        boolean isConnected = connectedDevice != null;
+        String deviceName = isConnected ? connectedDevice : "";
 
         if (isConnected != lastBluetoothConnected || !deviceName.equals(lastDeviceName)) {
             lastBluetoothConnected = isConnected;
@@ -111,15 +112,15 @@ public class NativeMediaSessionPlugin extends Plugin {
         }
     }
 
-    private boolean isBluetoothAudioConnected() {
+    private String findConnectedBluetoothDeviceName() {
         if (audioManager == null) {
             try {
                 audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
             } catch (Throwable t) {
-                return false;
+                return null;
             }
         }
-        if (audioManager == null) return false;
+        if (audioManager == null) return null;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
@@ -133,9 +134,9 @@ public class NativeMediaSessionPlugin extends Plugin {
                             || type == AudioDeviceInfo.TYPE_USB_HEADSET) {
                         CharSequence name = device.getProductName();
                         if (name != null && name.length() > 0) {
-                            lastDeviceName = name.toString();
+                            return name.toString();
                         }
-                        return true;
+                        return "Bluetooth Audio";
                     }
                 }
             } catch (Throwable t) {
@@ -144,18 +145,22 @@ public class NativeMediaSessionPlugin extends Plugin {
         }
 
         try {
-            return audioManager.isBluetoothA2dpOn() || audioManager.isBluetoothScoOn();
+            if (audioManager.isBluetoothA2dpOn() || audioManager.isBluetoothScoOn()) {
+                return "Bluetooth Audio";
+            }
         } catch (Throwable t) {
-            return false;
+            return null;
         }
+        return null;
     }
 
     @PluginMethod
     public void isBluetoothConnected(PluginCall call) {
-        boolean connected = isBluetoothAudioConnected();
+        String connectedDevice = findConnectedBluetoothDeviceName();
+        boolean connected = connectedDevice != null;
         JSObject result = new JSObject();
         result.put("isConnected", connected);
-        result.put("deviceName", connected ? (lastDeviceName.isEmpty() ? "Bluetooth" : lastDeviceName) : "");
+        result.put("deviceName", connected ? connectedDevice : "");
         call.resolve(result);
     }
 

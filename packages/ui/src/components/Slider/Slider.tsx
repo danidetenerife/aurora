@@ -193,6 +193,19 @@ export const SliderRangeInput: FC = () => {
     onKeyDown,
     disabled,
   } = useSliderContext();
+  const lastNativeEventRef = useRef<Event | null>(null);
+  const handleRangeEvent = (
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.FormEvent<HTMLInputElement>,
+  ) => {
+    if (lastNativeEventRef.current === event.nativeEvent) {
+      return;
+    }
+    lastNativeEventRef.current = event.nativeEvent;
+    emit(Number((event.target as HTMLInputElement).value));
+  };
+
   return (
     <input
       id={inputId}
@@ -201,8 +214,8 @@ export const SliderRangeInput: FC = () => {
       max={max}
       step={step}
       value={value}
-      onChange={(e) => emit(Number(e.target.value))}
-      onInput={(e) => emit(Number((e.target as HTMLInputElement).value))}
+      onChange={handleRangeEvent}
+      onInput={handleRangeEvent}
       onKeyDown={onKeyDown}
       disabled={disabled}
       aria-labelledby={labelId}

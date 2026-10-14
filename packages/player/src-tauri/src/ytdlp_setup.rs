@@ -316,9 +316,12 @@ async fn check_for_update(ytdlp_dir: &Path, binary_path: &Path) {
     }
 }
 
+static INSTALL_LOCK: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
+
 #[command]
 #[specta::specta]
 pub async fn ytdlp_ensure_installed(app_handle: AppHandle) -> Result<bool, String> {
+    let _guard = INSTALL_LOCK.lock().await;
     let ytdlp_dir = ytdlp_dir(&app_handle)?;
     let binary_path = ytdlp_dir.join(binary_name());
 

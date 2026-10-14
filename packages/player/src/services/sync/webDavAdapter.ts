@@ -3,7 +3,11 @@ import type { SyncAdapter, SyncPayload, WebDavConfig } from './types';
 const DEFAULT_SYNC_FILENAME = 'aurora_sync.json';
 
 const buildAuthHeader = (username: string, password: string): string => {
-  const token = btoa(`${username}:${password}`);
+  const utf8Bytes = new TextEncoder().encode(`${username}:${password}`);
+  const binaryString = Array.from(utf8Bytes, (byte) =>
+    String.fromCharCode(byte),
+  ).join('');
+  const token = btoa(binaryString);
   return `Basic ${token}`;
 };
 

@@ -9,6 +9,7 @@ export const useSetting = <T extends SettingValue = SettingValue>(
   const [currentValue, setCurrentValue] = useState<T | undefined>(undefined);
 
   useEffect(() => {
+    setCurrentValue(undefined);
     if (!host) {
       return;
     }
@@ -21,14 +22,17 @@ export const useSetting = <T extends SettingValue = SettingValue>(
       hasReceivedUpdate = true;
       setCurrentValue(nextValue);
     });
-    host.get<T>(id).then((initialValue) => {
-      if (!isMounted) {
-        return;
-      }
-      if (!hasReceivedUpdate) {
-        setCurrentValue(initialValue);
-      }
-    });
+    host
+      .get<T>(id)
+      .then((initialValue) => {
+        if (!isMounted) {
+          return;
+        }
+        if (!hasReceivedUpdate) {
+          setCurrentValue(initialValue);
+        }
+      })
+      .catch(() => {});
     return () => {
       isMounted = false;
       if (unsubscribe) {
@@ -43,7 +47,7 @@ export const useSetting = <T extends SettingValue = SettingValue>(
         return;
       }
       setCurrentValue(nextValue);
-      void host.set<T>(id, nextValue);
+      void host.set<T>(id, nextValue).catch(() => {});
     },
     [id, host],
   );

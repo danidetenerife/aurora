@@ -43,7 +43,8 @@ export const AlbumHeader: FC<AlbumHeaderProps> = ({ providerId, albumId }) => {
 
   const cover = pickArtwork(album.artwork, 'cover', 600);
   const releaseYear = album.releaseDate
-    ? new Date(album.releaseDate.dateIso).getFullYear()
+    ? Number(album.releaseDate.dateIso.slice(0, 4)) ||
+      new Date(album.releaseDate.dateIso).getFullYear()
     : undefined;
   const trackCount = album.tracks?.length ?? 0;
 

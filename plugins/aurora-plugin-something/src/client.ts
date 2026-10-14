@@ -215,7 +215,9 @@ export class MetadataClient {
     if (!discographyAll) {
       return [];
     }
-    return discographyAll.items.map((entry) => entry.releases.items[0]);
+    return discographyAll.items
+      .map((entry) => entry.releases.items[0])
+      .filter((release): release is ReleaseItem => Boolean(release));
   }
 
   async getRelatedArtists(artistUri: string): Promise<Artist[]> {
@@ -249,7 +251,11 @@ export class MetadataClient {
         'fetchPlaylist',
         { uri, offset: nextOffset, limit },
       );
-      playlist.content.items.push(...nextPage.data.playlistV2.content.items);
+      const nextItems = nextPage.data.playlistV2.content.items;
+      if (nextItems.length === 0) {
+        break;
+      }
+      playlist.content.items.push(...nextItems);
     }
 
     return playlist;

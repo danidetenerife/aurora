@@ -36,7 +36,10 @@ export const isStreamExpired = (candidate: StreamCandidate): boolean => {
     return false;
   }
 
-  const expiryMs = getSetting('playback.streamExpiryMs') as number;
+  const expiryMs =
+    (getSetting('core.playback.streamExpiryMs') as number | undefined) ??
+    (getSetting('playback.streamExpiryMs') as number | undefined) ??
+    3600000;
   const resolvedAt = new Date(candidate.lastResolvedAtIso).getTime();
 
   return Date.now() - resolvedAt > expiryMs;
@@ -55,11 +58,12 @@ const withRetry = async <T>(
   maxAttempts: number,
   baseDelayMs = 500,
 ): Promise<T> => {
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  const attempts = Math.max(1, maxAttempts);
+  for (let attempt = 0; attempt < attempts; attempt++) {
     try {
       return await fn();
     } catch (error) {
-      if (attempt === maxAttempts - 1) {
+      if (attempt === attempts - 1) {
         throw error;
       }
       await sleep(baseDelayMs * 2 ** attempt);
@@ -81,7 +85,6 @@ export const createStreamingHost = (): StreamingHost => ({
     }
 
     try {
-      // Temporarily provide both methods to avoid breaking existing providers until we have autoupdate for plugins
       const candidates = provider.searchForTrackV2
         ? await provider.searchForTrackV2(track)
         : await provider.searchForTrack(
@@ -126,13 +129,19 @@ export const createStreamingHost = (): StreamingHost => ({
       return candidate;
     }
 
-    const retries =
+    const configuredRetries =
       (useSettingsStore
         .getState()
-        .getValue('playback.streamResolutionRetries') as number) ?? 3;
+        .getValue('core.playback.streamResolutionRetries') as
+        | number
+        | undefined) ??
+      (useSettingsStore
+        .getState()
+        .getValue('playback.streamResolutionRetries') as number | undefined) ??
+      3;
+    const retries = Math.max(1, configuredRetries);
 
     try {
-      // Temporarily provide both methods to avoid breaking existing providers until we have autoupdate for plugins
       const stream = await withRetry(
         () =>
           provider.getStreamUrlV2

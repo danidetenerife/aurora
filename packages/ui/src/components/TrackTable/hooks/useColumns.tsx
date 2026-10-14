@@ -82,6 +82,8 @@ export function useColumns<T extends Track = Track>(
         columnHelper.accessor((track) => formatTimeMillis(track.durationMs), {
           id: 'duration',
           enableSorting: true,
+          sortingFn: (rowA, rowB) =>
+            (rowA.original.durationMs ?? 0) - (rowB.original.durationMs ?? 0),
           header: (context) => (
             <TextHeader context={context}>{labels.headers.duration}</TextHeader>
           ),

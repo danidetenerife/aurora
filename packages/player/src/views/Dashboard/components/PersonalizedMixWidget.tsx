@@ -225,7 +225,6 @@ export const PersonalizedMixWidget: FC = () => {
     data: tracks,
     isLoading,
     isFetching,
-    refetch,
   } = useQuery<Track[]>({
     queryKey: [
       ...PERSONALIZED_MIX_QUERY_KEY,
@@ -327,13 +326,9 @@ export const PersonalizedMixWidget: FC = () => {
     setPage(0);
   }, [activeProviderId, activeDiscoveryId]);
 
-  const handleRefresh = async () => {
+  const handleRefresh = () => {
     setPage(0);
     setRefreshNonce((previousNonce) => previousNonce + 1);
-    const result = await refetch();
-    if (result.data) {
-      setVisibleTracks(result.data);
-    }
   };
 
   if (

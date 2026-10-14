@@ -71,13 +71,14 @@ const loadPluginData = async (
   sourcePath: string,
   id: string,
   version: string,
+  api: AuroraPluginAPI,
 ): Promise<LoadedPluginData> => {
   const loader = new PluginLoader(sourcePath);
   const metadata = await loader.loadMetadata();
 
   const permissions = metadata.permissions || [];
   const unknownPermissions = permissions.filter(
-    (p) => !allowedPermissions.includes(p),
+    (permission) => !allowedPermissions.includes(permission),
   );
   const warnings: string[] = unknownPermissions.length
     ? [`Unknown permissions: ${unknownPermissions.join(', ')}`]
@@ -91,7 +92,7 @@ const loadPluginData = async (
 
   const managedPath = await installPluginToManagedDir(id, version, sourcePath);
   const managedPluginLoader = new PluginLoader(managedPath);
-  const { instance } = await managedPluginLoader.load();
+  const { instance } = await managedPluginLoader.load(api);
 
   return { metadata, managedPath, instance, warnings };
 };
@@ -121,12 +122,14 @@ export const usePluginStore = create<PluginStore>((set, get) => ({
         `Plugin ${id}: installationMethod=${installationMethod}, hasExistingEntry=${!!existing}`,
       );
 
+      const api = createPluginAPI(id, metadata.displayName);
+
       const {
         metadata: loadedMetadata,
         managedPath,
         instance,
         warnings,
-      } = await loadPluginData(path, id, metadata.version);
+      } = await loadPluginData(path, id, metadata.version, api);
 
       const now = new Date().toISOString();
       const enabled = existing ? existing.enabled : false;
@@ -142,8 +145,6 @@ export const usePluginStore = create<PluginStore>((set, get) => ({
         lastUpdatedAt: now,
         warnings,
       });
-
-      const api = createPluginAPI(id, loadedMetadata.displayName);
 
       set(
         produce((state: PluginStore) => {
@@ -313,15 +314,14 @@ export const usePluginStore = create<PluginStore>((set, get) => ({
       const loader = new PluginLoader(originalPath);
       const metadata = await loader.loadMetadata();
       const newVersion = metadata.version;
+      const api = createPluginAPI(id, metadata.displayName);
 
       const {
         metadata: loadedMetadata,
         managedPath,
         instance,
         warnings,
-      } = await loadPluginData(originalPath, id, newVersion);
-
-      const api = createPluginAPI(id, loadedMetadata.displayName);
+      } = await loadPluginData(originalPath, id, newVersion, api);
 
       const now = new Date().toISOString();
       const existingEntry = await getRegistryEntry(id);

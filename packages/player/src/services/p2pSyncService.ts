@@ -39,7 +39,11 @@ export const isDeviceSpecificSettingKey = (key: string): boolean => {
     normalized.startsWith('layout.') ||
     normalized.startsWith('updates.') ||
     normalized === 'playback.volume' ||
-    normalized === 'playback.muted'
+    normalized === 'playback.muted' ||
+    normalized === 'volume' ||
+    normalized === 'muted' ||
+    normalized.endsWith('.volume') ||
+    normalized.endsWith('.muted')
   );
 };
 
@@ -271,6 +275,43 @@ export class P2PSyncService {
         }
       }
     }, P2PSyncService.PUSH_DEBOUNCE_MS);
+  }
+
+  private async applyIncomingSettings(
+    settings: Record<string, unknown>,
+  ): Promise<number> {
+    const currentValues = { ...useSettingsStore.getState().values };
+    const settingsDiskStore = createUniversalStore('settings.json');
+    let appliedCount = 0;
+
+    for (const [key, value] of Object.entries(settings)) {
+      if (isDeviceSpecificSettingKey(key)) {
+        continue;
+      }
+      const rawKey = key.replace(/^core\./, '');
+      const fullKey = `core.${rawKey}`;
+
+      currentValues[key] = value as never;
+      currentValues[rawKey] = value as never;
+      currentValues[fullKey] = value as never;
+
+      await settingsDiskStore.set(key, value);
+      await settingsDiskStore.set(rawKey, value);
+      await settingsDiskStore.set(fullKey, value);
+      appliedCount++;
+    }
+
+    useSettingsStore.setState({ values: currentValues });
+    await settingsDiskStore.save();
+
+    const language = (settings['core.general.language'] ||
+      settings['general.language'] ||
+      settings.language) as string | undefined;
+    if (language) {
+      void changeLanguage(language);
+    }
+
+    return appliedCount;
   }
 
   async getSyncProvider(): Promise<SyncProviderType> {
@@ -672,6 +713,11 @@ export class P2PSyncService {
             artwork: playlist.artwork,
           };
           await playlistFileService.savePlaylist(playlistObj as never);
+          usePlaylistStore.setState((state) => {
+            const nextPlaylists = new Map(state.playlists);
+            nextPlaylists.set(playlistObj.id, playlistObj as never);
+            return { playlists: nextPlaylists };
+          });
           syncedPlaylists++;
         }
       }
@@ -679,36 +725,9 @@ export class P2PSyncService {
     }
 
     if (remotePayload.settings) {
-      const settings = remotePayload.settings;
-      const currentValues = { ...useSettingsStore.getState().values };
-      const settingsDiskStore = createUniversalStore('settings.json');
-
-      for (const [key, value] of Object.entries(settings)) {
-        if (isDeviceSpecificSettingKey(key)) {
-          continue;
-        }
-        const rawKey = key.replace(/^core\./, '');
-        const fullKey = `core.${rawKey}`;
-
-        currentValues[key] = value as never;
-        currentValues[rawKey] = value as never;
-        currentValues[fullKey] = value as never;
-
-        await settingsDiskStore.set(key, value);
-        await settingsDiskStore.set(rawKey, value);
-        await settingsDiskStore.set(fullKey, value);
-        syncedSettings++;
-      }
-
-      useSettingsStore.setState({ values: currentValues });
-      await settingsDiskStore.save();
-
-      const language = (settings['core.general.language'] ||
-        settings['general.language'] ||
-        settings.language) as string | undefined;
-      if (language) {
-        void changeLanguage(language);
-      }
+      syncedSettings += await this.applyIncomingSettings(
+        remotePayload.settings,
+      );
     }
 
     if (
@@ -718,9 +737,17 @@ export class P2PSyncService {
       const providersDiskStore = createUniversalStore('active-providers.json');
       const existing =
         (await providersDiskStore.get<Record<string, string>>('active')) ?? {};
+      const rawActive = remotePayload.activeProviders as Record<
+        string,
+        unknown
+      >;
+      const unwrappedActive =
+        rawActive.active && typeof rawActive.active === 'object'
+          ? (rawActive.active as Record<string, string>)
+          : (rawActive as Record<string, string>);
       const merged = {
         ...existing,
-        ...remotePayload.activeProviders,
+        ...unwrappedActive,
       };
       await providersDiskStore.set('active', merged);
       await providersDiskStore.save();
@@ -883,6 +910,7 @@ export class P2PSyncService {
 
       let syncedTracks = 0;
       let syncedArtists = 0;
+      let syncedPlaylists = 0;
       let syncedSettings = 0;
 
       const librarySnapshot = JSON.stringify({
@@ -995,49 +1023,28 @@ export class P2PSyncService {
                 id: playlistId,
                 name: playlist.name || 'Playlist',
                 description: playlist.description || '',
-                createdAtIso: new Date().toISOString(),
-                lastModifiedIso: new Date().toISOString(),
+                createdAtIso: playlist.createdAtIso || new Date().toISOString(),
+                lastModifiedIso:
+                  playlist.lastModifiedIso || new Date().toISOString(),
                 isReadOnly: false,
                 items: playlist.items || [],
                 artwork: playlist.artwork,
               };
 
               await playlistFileService.savePlaylist(playlistObj as never);
+              usePlaylistStore.setState((state) => {
+                const nextPlaylists = new Map(state.playlists);
+                nextPlaylists.set(playlistObj.id, playlistObj as never);
+                return { playlists: nextPlaylists };
+              });
+              syncedPlaylists++;
             }
           }
           await usePlaylistStore.getState().loadIndex();
         }
 
         if (syncData.settings) {
-          const settings = syncData.settings;
-          const currentValues = { ...useSettingsStore.getState().values };
-          const settingsDiskStore = createUniversalStore('settings.json');
-
-          for (const [key, value] of Object.entries(settings)) {
-            if (isDeviceSpecificSettingKey(key)) {
-              continue;
-            }
-            const rawKey = key.replace(/^core\./, '');
-            const fullKey = `core.${rawKey}`;
-
-            currentValues[key] = value as never;
-            currentValues[rawKey] = value as never;
-            currentValues[fullKey] = value as never;
-
-            await settingsDiskStore.set(key, value);
-            await settingsDiskStore.set(rawKey, value);
-            await settingsDiskStore.set(fullKey, value);
-          }
-
-          useSettingsStore.setState({ values: currentValues });
-          await settingsDiskStore.save();
-
-          const language = (settings['core.general.language'] ||
-            settings['general.language'] ||
-            settings.language) as string | undefined;
-          if (language) {
-            void changeLanguage(language);
-          }
+          syncedSettings += await this.applyIncomingSettings(syncData.settings);
         }
 
         if (
@@ -1050,9 +1057,14 @@ export class P2PSyncService {
           const existing =
             (await providersDiskStore.get<Record<string, string>>('active')) ??
             {};
+          const rawActive = syncData.activeProviders as Record<string, unknown>;
+          const unwrappedActive =
+            rawActive.active && typeof rawActive.active === 'object'
+              ? (rawActive.active as Record<string, string>)
+              : (rawActive as Record<string, string>);
           const merged = {
             ...existing,
-            ...(syncData.activeProviders as Record<string, string>),
+            ...unwrappedActive,
           };
           await providersDiskStore.set('active', merged);
           await providersDiskStore.save();
@@ -1083,16 +1095,19 @@ export class P2PSyncService {
       if (pcSettings) {
         const settingsStore = useSettingsStore.getState();
         if (pcSettings.shuffle !== undefined) {
-          settingsStore.setValue('playback.shuffle', pcSettings.shuffle);
+          settingsStore.setValue('core.playback.shuffle', pcSettings.shuffle);
         }
         if (pcSettings.repeat !== undefined) {
-          settingsStore.setValue('playback.repeat', pcSettings.repeat);
+          settingsStore.setValue('core.playback.repeat', pcSettings.repeat);
         }
         if (pcSettings.discovery !== undefined) {
-          settingsStore.setValue('playback.discovery', pcSettings.discovery);
+          settingsStore.setValue(
+            'core.playback.discovery',
+            pcSettings.discovery,
+          );
         }
         if (pcSettings.language) {
-          settingsStore.setValue('general.language', pcSettings.language);
+          settingsStore.setValue('core.general.language', pcSettings.language);
           void changeLanguage(pcSettings.language);
         }
         syncedSettings++;
@@ -1114,7 +1129,7 @@ export class P2PSyncService {
         syncedCounts: {
           tracks: syncedTracks,
           artists: syncedArtists,
-          playlists: 0,
+          playlists: syncedPlaylists,
           settings: syncedSettings,
         },
       };
@@ -1167,7 +1182,11 @@ export class P2PSyncService {
       config.lan = { serverUrl: await this.getSyncServerUrl() };
     }
     const jsonString = JSON.stringify(config);
-    return `aurora-sync://${btoa(jsonString)}`;
+    const utf8Bytes = new TextEncoder().encode(jsonString);
+    const binaryString = Array.from(utf8Bytes, (byte) =>
+      String.fromCharCode(byte),
+    ).join('');
+    return `aurora-sync://${btoa(binaryString)}`;
   }
 
   async applyQrConfigString(scanned: string): Promise<boolean> {
@@ -1175,7 +1194,11 @@ export class P2PSyncService {
     if (trimmed.startsWith('aurora-sync://')) {
       try {
         const base64Data = trimmed.replace('aurora-sync://', '');
-        const decodedJson = atob(base64Data);
+        const binaryString = atob(base64Data);
+        const utf8Bytes = Uint8Array.from(binaryString, (char) =>
+          char.charCodeAt(0),
+        );
+        const decodedJson = new TextDecoder().decode(utf8Bytes);
         const config = JSON.parse(decodedJson) as SyncConfig;
 
         if (config.provider === 'webdav' && config.webdav) {

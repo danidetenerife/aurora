@@ -18,13 +18,9 @@ pub fn log_plugin<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
             log::LevelFilter::Info
         })
         .format(|callback, message, record| {
-            logging::capture_startup_log(record.level(), &message.to_string());
-            callback.finish(format_args!(
-                "[{}][{}] {}",
-                record.level(),
-                record.target(),
-                message
-            ))
+            let formatted = format!("[{}][{}] {}", record.level(), record.target(), message);
+            logging::capture_startup_log(record.level(), &formatted);
+            callback.finish(format_args!("{}", formatted))
         })
         .build()
 }

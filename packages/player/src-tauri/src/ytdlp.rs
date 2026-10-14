@@ -94,30 +94,34 @@ struct YtdlpJson {
     upload_date: Option<String>,
 }
 
-fn run_ytdlp(args: &[&str]) -> Result<String, String> {
+async fn run_ytdlp(args: Vec<String>) -> Result<String, String> {
     let program = get_ytdlp_path()?;
-    let mut cmd = Command::new(&program);
-    cmd.args(args).stdout(Stdio::piped()).stderr(Stdio::piped());
+    tokio::task::spawn_blocking(move || {
+        let mut cmd = Command::new(&program);
+        cmd.args(&args).stdout(Stdio::piped()).stderr(Stdio::piped());
 
-    #[cfg(target_os = "windows")]
-    {
-        use std::os::windows::process::CommandExt;
-        const CREATE_NO_WINDOW: u32 = 0x08000000;
-        cmd.creation_flags(CREATE_NO_WINDOW);
-    }
+        #[cfg(target_os = "windows")]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x08000000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
 
-    let output = cmd.output().map_err(|error| {
-        error!("[yt-dlp] Failed to execute: {}", error);
-        format!("Failed to execute yt-dlp: {}. Is yt-dlp installed?", error)
-    })?;
+        let output = cmd.output().map_err(|error| {
+            error!("[yt-dlp] Failed to execute: {}", error);
+            format!("Failed to execute yt-dlp: {}. Is yt-dlp installed?", error)
+        })?;
 
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        error!("[yt-dlp] Command failed: {}", stderr);
-        return Err(format!("yt-dlp failed: {}", stderr));
-    }
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            error!("[yt-dlp] Command failed: {}", stderr);
+            return Err(format!("yt-dlp failed: {}", stderr));
+        }
 
-    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+        Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+    })
+    .await
+    .map_err(|error| format!("yt-dlp task failed: {}", error))?
 }
 
 fn parse_ndjson_entries(stdout: &str) -> Vec<YtdlpJson> {
@@ -153,12 +157,13 @@ pub async fn ytdlp_search(
     debug!("[yt-dlp] Searching: {} (limit: {})", query, limit);
 
     let search_url = format!("ytsearch{}:{}", limit, query);
-    let stdout = run_ytdlp(&[
-        "--dump-json",
-        "--flat-playlist",
-        "--no-warnings",
-        &search_url,
-    ])?;
+    let stdout = run_ytdlp(vec![
+        "--dump-json".to_string(),
+        "--flat-playlist".to_string(),
+        "--no-warnings".to_string(),
+        search_url,
+    ])
+    .await?;
 
     let results: Vec<YtdlpSearchResult> = parse_ndjson_entries(&stdout)
         .into_iter()
@@ -198,14 +203,15 @@ pub async fn ytdlp_get_stream(
 
     debug!("[yt-dlp] Getting stream for: {}", resolved_url);
 
-    let stdout = run_ytdlp(&[
-        "-f",
-        "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio",
-        "--dump-json",
-        "--no-playlist",
-        "--no-warnings",
-        &resolved_url,
-    ])?;
+    let stdout = run_ytdlp(vec![
+        "-f".to_string(),
+        "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio".to_string(),
+        "--dump-json".to_string(),
+        "--no-playlist".to_string(),
+        "--no-warnings".to_string(),
+        resolved_url,
+    ])
+    .await?;
 
     let info: YtdlpJson = serde_json::from_str(&stdout).map_err(|error| {
         error!("[yt-dlp] Failed to parse output: {}", error);
@@ -244,7 +250,13 @@ pub async fn ytdlp_get_stream(
 pub async fn ytdlp_get_playlist(url: String) -> Result<YtdlpPlaylistInfo, String> {
     debug!("[yt-dlp] Getting playlist: {}", url);
 
-    let stdout = run_ytdlp(&["--dump-json", "--flat-playlist", "--no-warnings", &url])?;
+    let stdout = run_ytdlp(vec![
+        "--dump-json".to_string(),
+        "--flat-playlist".to_string(),
+        "--no-warnings".to_string(),
+        url,
+    ])
+    .await?;
     let entries_json = parse_ndjson_entries(&stdout);
 
     let playlist_title = entries_json

@@ -12,6 +12,7 @@ import { podcastService } from './podcastService';
 import { isCapacitorEnvironment } from './universalStore';
 
 const secondsToMs = (seconds: number): number => Math.round(seconds * 1000);
+const attemptedPlaylistLoads = new Set<string>();
 
 const syncAutoCatalog = (): void => {
   if (!isCapacitorEnvironment()) {
@@ -38,7 +39,11 @@ const syncAutoCatalog = (): void => {
 
   const playlistState = usePlaylistStore.getState();
   for (const entry of playlistState.index.slice(0, 10)) {
-    if (!playlistState.playlists.has(entry.id)) {
+    if (
+      !playlistState.playlists.has(entry.id) &&
+      !attemptedPlaylistLoads.has(entry.id)
+    ) {
+      attemptedPlaylistLoads.add(entry.id);
       void usePlaylistStore.getState().loadPlaylist(entry.id);
     }
   }
@@ -167,6 +172,7 @@ export const initMediaSessionService = (): void => {
 
     const currentItem = state.getCurrentItem();
     if (!currentItem) {
+      lastSentItemId = null;
       return;
     }
 
@@ -507,6 +513,16 @@ export const initMediaSessionService = (): void => {
             .catch((error) =>
               console.error('[mediaSessionService] search error', error),
             );
+        }
+        return;
+      }
+
+      if (data.action.startsWith('speed_')) {
+        const parsedSpeed = Number(data.action.slice('speed_'.length));
+        if (Number.isFinite(parsedSpeed) && parsedSpeed > 0) {
+          document.querySelectorAll('audio').forEach((audioElement) => {
+            audioElement.playbackRate = parsedSpeed;
+          });
         }
         return;
       }

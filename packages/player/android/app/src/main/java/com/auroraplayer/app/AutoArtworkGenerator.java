@@ -36,7 +36,7 @@ public final class AutoArtworkGenerator {
         Bitmap bitmap = Bitmap.createBitmap(CANVAS_SIZE, CANVAS_SIZE, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
-        int hash = Math.abs(title != null ? title.hashCode() : 0);
+        int hash = title != null ? (title.hashCode() & 0x7fffffff) : 0;
         int[] palette = GRADIENTS[hash % GRADIENTS.length];
 
         Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

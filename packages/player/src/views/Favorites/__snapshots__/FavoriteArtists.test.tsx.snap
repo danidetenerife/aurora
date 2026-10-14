@@ -107,9 +107,9 @@ exports[`FavoriteArtists view > (Snapshot) renders with artists 1`] = `
               Favorite artists
             </span>
             <button
-              aria-label="Borrar todos"
+              aria-label="Clear all"
               class="text-accent-red hover:bg-accent-red/15 focus-visible:outline-accent-red pointer-events-auto flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-2"
-              title="Borrar todos"
+              title="Clear all"
               type="button"
             >
               <svg

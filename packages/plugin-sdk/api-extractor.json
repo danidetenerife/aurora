@@ -6,6 +6,12 @@
     "tsconfigFilePath": "<projectFolder>/tsconfig.json",
     "overrideTsconfig": {
       "compilerOptions": {
+        "target": "ES2022",
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
         "paths": {
           "@aurora/model": ["../model/dist/index.d.ts"]
         }

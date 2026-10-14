@@ -63,6 +63,9 @@ pub fn init_sync_server(app: &AppHandle) {
     );
 
     let mut command = Command::new("node");
+    if let Ok(app_data_dir) = app.path().app_data_dir() {
+        command.env("AURORA_SYNC_APP_DATA", app_data_dir);
+    }
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;

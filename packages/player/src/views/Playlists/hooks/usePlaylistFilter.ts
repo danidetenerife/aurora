@@ -7,17 +7,17 @@ export const usePlaylistFilter = (playlists: PlaylistIndexEntry[]) => {
   const query = filter.trim().toLowerCase();
 
   const filteredPlaylists = useMemo(() => {
-    // Deduplicate by name first
     const seen = new Set<string>();
-    const unique = (playlists || []).filter((p) => {
-      if (!p || !p.name) {
+    const unique = (playlists || []).filter((playlistItem) => {
+      if (!playlistItem || !playlistItem.name) {
         return false;
       }
-      const name = p.name.toLowerCase().trim();
-      if (seen.has(name)) {
+      const dedupeKey =
+        playlistItem.id || playlistItem.name.toLowerCase().trim();
+      if (seen.has(dedupeKey)) {
         return false;
       }
-      seen.add(name);
+      seen.add(dedupeKey);
       return true;
     });
 

@@ -14,13 +14,17 @@
 @theme {
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
+  --color-background-tertiary: var(--background-tertiary);
   --color-background-input: var(--background-input);
+  --color-card: var(--card);
 
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
   --color-foreground-input: var(--foreground-input);
+  --color-text-secondary: var(--text-secondary);
 
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 
   --color-border: var(--border);
   --color-border-input: var(--border-input);
@@ -60,18 +64,24 @@
   /* Core Backgrounds */
   --background: oklch(0.9163 0.0361 7.16);
   --background-secondary: oklch(100% 0 0);
+  --background-tertiary: var(--background-secondary);
   --background-input: oklch(100% 0 0);
+  --card: var(--background-secondary);
 
   /* Text Colors */
   --foreground: oklch(0% 0 0);
   --foreground-secondary: oklch(0.42 0.1 5);
   --foreground-input: oklch(0% 0 0);
+  --text-secondary: var(--foreground-secondary);
 
   /* Interactive Elements */
   --primary: oklch(0.8 0.12 4.56);
+  --primary-foreground: var(--foreground);
 
   /* Borders & Outlines */
   --border: oklch(0% 0 0);
+  --border-input: var(--border);
+  --dark-border: var(--border);
   --ring: oklch(100% 0 0);
 
   /* Accent Colors */
@@ -138,15 +148,21 @@
 [data-theme='dark'] {
   --background: oklch(0.16 0.025 240);
   --background-secondary: oklch(0.2 0.03 235);
+  --background-tertiary: var(--background-secondary);
   --background-input: oklch(0.13 0.02 245);
+  --card: var(--background-secondary);
 
   --foreground: oklch(0.96 0.015 180);
   --foreground-secondary: oklch(0.72 0.04 200);
   --foreground-input: oklch(0.96 0.015 180);
+  --text-secondary: var(--foreground-secondary);
 
   --primary: oklch(0.76 0.175 162);
+  --primary-foreground: var(--foreground);
 
   --border: oklch(0.3 0.035 230);
+  --border-input: var(--border);
+  --dark-border: var(--border);
 
   --accent-green: oklch(0.78 0.18 150);
   --accent-yellow: oklch(0.84 0.15 95);

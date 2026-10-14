@@ -28,6 +28,9 @@
     "errors": {
       "network": "Network error. Please check your connection.",
       "notFound": "Not found"
+    },
+    "misc": {
+      "episodes": "episodes"
     }
   },
   "navigation": {
@@ -39,7 +42,8 @@
     "favoriteArtists": "Favorite artists",
     "playlists": "Playlists",
     "history": "History",
-    "sources": "Sources"
+    "sources": "Sources",
+    "queue": "Queue"
   },
   "history": {
     "openError": "Could not open this item. Check your connection and metadata source, then try again.",
@@ -94,6 +98,7 @@
     "discovery": "Discovery",
     "discoveryDescription": "Discovery sources recommend new tracks based on what you're listening to. Enable music discovery by using the boombox icon in the bottom bar.",
     "lyrics": "Lyrics",
+    "lyricsDescription": "Lyrics sources provide synchronized or plain lyrics for the currently playing track.",
     "lockedReason": "<metadata>{{metadataName}}</metadata> metadata source requires <streaming>{{streamingName}}</streaming> streaming source.",
     "missingStreamingProvider": "Required streaming provider \"{{providerId}}\" is not available",
     "noProviders": "No providers installed"
@@ -115,7 +120,8 @@
     "artists": {
       "title": "Favorite artists",
       "empty": "No favorite artists yet",
-      "emptyDescription": "Artists you mark as favorites will appear here"
+      "emptyDescription": "Artists you mark as favorites will appear here",
+      "clearAll": "Clear all"
     }
   },
   "playlists": {
@@ -132,6 +138,7 @@
     "add": "Add",
     "delete": "Delete playlist",
     "deleteConfirm": "Are you sure you want to delete this playlist?",
+    "playlistDeleted": "Playlist deleted",
     "play": "Play",
     "addToQueue": "Add to queue",
     "saveLocally": "Save locally",
@@ -392,8 +399,15 @@
       },
       "titleBarStyle": {
         "title": "Title bar style",
-        "description": "Choose the visual style for the custom title bar controls."
+        "description": "Choose the visual style for the custom title bar controls.",
+        "options": {
+          "classic": "Classic",
+          "traffic-lights": "Traffic lights"
+        }
       }
+    },
+    "sync": {
+      "title": "Sync"
     },
     "playback": {
       "title": "Playback",
@@ -520,6 +534,8 @@
       "addToQueue": "Add to queue",
       "addToFavorites": "Add to favorites",
       "removeFromFavorites": "Remove from favorites",
+      "addedToFavorites": "Added to favorites",
+      "removedFromFavorites": "Removed from favorites",
       "addAlbumToFavorites": "Add album to favorites",
       "removeAlbumFromFavorites": "Remove album from favorites",
       "goToAlbum": "Go to album",
@@ -658,7 +674,33 @@
     "updateNow": "Update now",
     "updateLater": "Later",
     "updateOpeningInstaller": "Opening installer...",
-    "updateFailed": "Failed to download update"
+    "updateFailed": "Failed to download update",
+    "playNow": "Play now",
+    "Shuffle": "Shuffle",
+    "upNext": "Up next",
+    "continueListening": "Continue listening",
+    "recommendedMix": "Recommended for you",
+    "favoriteSongs": "Favorite songs",
+    "favoriteArtists": "Favorite artists",
+    "yourPlaylists": "Your playlists",
+    "featuredPlaylists": "Featured playlists",
+    "searchPlaceholder": "Search for songs, artists, or albums...",
+    "clear": "Clear",
+    "space": "Space",
+    "searching": "Searching...",
+    "topSongs": "Top songs",
+    "albums": "Albums",
+    "noResults": "No results found",
+    "typeToSearch": "Use the keyboard or voice search to find music",
+    "playAll": "Play all",
+    "popularSongs": "Popular songs",
+    "playlistTracks": "Tracks",
+    "loadingPlaylist": "Loading playlist...",
+    "loadingTracks": "Loading tracks...",
+    "loadingArtist": "Loading artist...",
+    "podcastsTitle": "Podcasts",
+    "favoritePodcasts": "Favorite podcasts",
+    "topPodcasts": "Top podcasts"
   },
   "podcastBrowser": {
     "available": "Available podcasts",

@@ -14,22 +14,39 @@ const headersToRecord = (headers: HeadersInit): Record<string, string> => {
   return headers;
 };
 
+const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
+
 function createFetchFromHost(host: HttpHost): FetchFunction {
   return async (
     input: RequestInfo | URL,
     init?: RequestInit,
   ): Promise<Response> => {
-    const url = String(input instanceof Request ? input.url : input);
-    const headers = init?.headers ? headersToRecord(init.headers) : undefined;
+    const isRequest = input instanceof Request;
+    const url = String(isRequest ? input.url : input);
+    const requestHeaders = isRequest
+      ? headersToRecord(input.headers)
+      : undefined;
+    const initHeaders = init?.headers
+      ? headersToRecord(init.headers)
+      : undefined;
+    const headers =
+      requestHeaders || initHeaders
+        ? { ...requestHeaders, ...initHeaders }
+        : undefined;
+    const method = init?.method ?? (isRequest ? input.method : undefined);
     const body = typeof init?.body === 'string' ? init.body : undefined;
 
     const response = await host.fetch(url, {
-      method: init?.method,
+      method,
       headers,
       body,
     });
 
-    return new Response(response.body, {
+    const responseBody = NULL_BODY_STATUSES.has(response.status)
+      ? null
+      : response.body;
+
+    return new Response(responseBody, {
       status: response.status,
       headers: new Headers(response.headers),
     });

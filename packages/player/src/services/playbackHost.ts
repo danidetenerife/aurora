@@ -38,8 +38,10 @@ export const createPlaybackHost = (): PlaybackHost => ({
 
   getVolume: async () => (getSetting('core.playback.volume') as number) ?? 1,
   setVolume: async (volume) => {
-    const clamped = Math.max(0, Math.min(1, volume));
-    await setSetting('core.playback.volume', clamped);
+    const safeVolume = Number.isFinite(volume)
+      ? Math.max(0, Math.min(1, Math.round(volume * 100) / 100))
+      : 1;
+    await setSetting('core.playback.volume', safeVolume);
   },
   isMuted: async () => (getSetting('core.playback.muted') as boolean) ?? false,
   setMuted: async (muted) => setSetting('core.playback.muted', muted),

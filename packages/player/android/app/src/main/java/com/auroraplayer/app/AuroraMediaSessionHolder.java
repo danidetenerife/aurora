@@ -41,4 +41,14 @@ public final class AuroraMediaSessionHolder {
     public static MediaSessionCompat getSession() {
         return mediaSession;
     }
+
+    public static synchronized void releaseSession() {
+        if (mediaSession != null) {
+            try {
+                mediaSession.setActive(false);
+                mediaSession.release();
+            } catch (Throwable ignored) {}
+            mediaSession = null;
+        }
+    }
 }

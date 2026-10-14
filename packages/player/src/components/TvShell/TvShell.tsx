@@ -164,10 +164,10 @@ const TvMainContent: FC = () => {
         playTvTracks(response.tracks);
         setError(false);
       } else {
-        useTvStore.getState().openSearch();
+        setError(true);
       }
     } catch {
-      useTvStore.getState().openSearch();
+      setError(true);
     }
   };
 

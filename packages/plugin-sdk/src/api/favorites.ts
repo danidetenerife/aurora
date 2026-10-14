@@ -1,4 +1,10 @@
-import type { AlbumRef, ArtistRef, ProviderRef, Track } from '@aurora/model';
+import type {
+  AlbumRef,
+  ArtistRef,
+  PlaylistRef,
+  ProviderRef,
+  Track,
+} from '@aurora/model';
 
 import type { FavoritesHost, FavoritesListener } from '../types/favorites';
 
@@ -18,62 +24,78 @@ export class FavoritesAPI {
   }
 
   getTracks() {
-    return this.#withHost((h) => h.getTracks());
+    return this.#withHost((host) => host.getTracks());
   }
 
   getAlbums() {
-    return this.#withHost((h) => h.getAlbums());
+    return this.#withHost((host) => host.getAlbums());
   }
 
   getArtists() {
-    return this.#withHost((h) => h.getArtists());
+    return this.#withHost((host) => host.getArtists());
+  }
+
+  getPlaylists() {
+    return this.#withHost((host) => host.getPlaylists());
   }
 
   addTrack(track: Track) {
-    return this.#withHost((h) => h.addTrack(track));
+    return this.#withHost((host) => host.addTrack(track));
   }
 
   removeTrack(source: ProviderRef) {
-    return this.#withHost((h) => h.removeTrack(source));
+    return this.#withHost((host) => host.removeTrack(source));
   }
 
   isTrackFavorite(source: ProviderRef) {
-    return this.#withHost((h) => h.isTrackFavorite(source));
+    return this.#withHost((host) => host.isTrackFavorite(source));
   }
 
   addAlbum(ref: AlbumRef) {
-    return this.#withHost((h) => h.addAlbum(ref));
+    return this.#withHost((host) => host.addAlbum(ref));
   }
 
   removeAlbum(source: ProviderRef) {
-    return this.#withHost((h) => h.removeAlbum(source));
+    return this.#withHost((host) => host.removeAlbum(source));
   }
 
   isAlbumFavorite(source: ProviderRef) {
-    return this.#withHost((h) => h.isAlbumFavorite(source));
+    return this.#withHost((host) => host.isAlbumFavorite(source));
   }
 
   addArtist(ref: ArtistRef) {
-    return this.#withHost((h) => h.addArtist(ref));
+    return this.#withHost((host) => host.addArtist(ref));
   }
 
   removeArtist(source: ProviderRef) {
-    return this.#withHost((h) => h.removeArtist(source));
+    return this.#withHost((host) => host.removeArtist(source));
   }
 
   removeArtistByName(name: string) {
-    return this.#withHost((h) => h.removeArtistByName(name));
+    return this.#withHost((host) => host.removeArtistByName(name));
   }
 
   isArtistFavorite(source: ProviderRef) {
-    return this.#withHost((h) => h.isArtistFavorite(source));
+    return this.#withHost((host) => host.isArtistFavorite(source));
+  }
+
+  addPlaylist(ref: PlaylistRef) {
+    return this.#withHost((host) => host.addPlaylist(ref));
+  }
+
+  removePlaylist(source: ProviderRef) {
+    return this.#withHost((host) => host.removePlaylist(source));
+  }
+
+  isPlaylistFavorite(source: ProviderRef) {
+    return this.#withHost((host) => host.isPlaylistFavorite(source));
   }
 
   getDeletedKeys() {
-    return this.#withHost((h) => h.getDeletedKeys());
+    return this.#withHost((host) => host.getDeletedKeys());
   }
 
   subscribe(listener: FavoritesListener) {
-    return this.#withHost((h) => h.subscribe(listener));
+    return this.#withHost((host) => host.subscribe(listener));
   }
 }

@@ -34,7 +34,7 @@ type QueueStore = Queue & {
   updateCandidate: (itemId: string, candidate: StreamCandidate) => void;
   removeCandidate: (itemId: string, candidateId: string) => void;
   selectCandidate: (itemId: string, candidateId: string) => void;
-  goToNext: () => void;
+  goToNext: (options?: { isNaturalFinish?: boolean } | unknown) => void;
   goToPrevious: () => void;
   goToIndex: (index: number) => void;
   goToId: (id: string) => void;
@@ -354,19 +354,28 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     });
   },
 
-  goToNext: withPersistence(() => {
-    const state = get();
-    const nextIndex = getDirectionalIndex(state, 'forward');
-    if (nextIndex !== state.currentIndex) {
-      emitSkip();
-      useSoundStore.getState().stop();
-      set({ currentIndex: nextIndex });
-      Logger.queue.debug(`Moved to next track (index ${nextIndex})`);
-    } else {
-      useSoundStore.getState().stop();
-      Logger.queue.debug('Reached end of queue, stopping playback');
-    }
-  }),
+  goToNext: withPersistence(
+    (options?: { isNaturalFinish?: boolean } | unknown) => {
+      const state = get();
+      const nextIndex = getDirectionalIndex(state, 'forward');
+      const isNaturalFinish =
+        typeof options === 'object' &&
+        options !== null &&
+        'isNaturalFinish' in options &&
+        Boolean((options as { isNaturalFinish?: boolean }).isNaturalFinish);
+      if (nextIndex !== state.currentIndex) {
+        if (!isNaturalFinish) {
+          emitSkip();
+        }
+        useSoundStore.getState().stop();
+        set({ currentIndex: nextIndex });
+        Logger.queue.debug(`Moved to next track (index ${nextIndex})`);
+      } else {
+        useSoundStore.getState().stop();
+        Logger.queue.debug('Reached end of queue, stopping playback');
+      }
+    },
+  ),
 
   goToPrevious: withPersistence(() => {
     const state = get();

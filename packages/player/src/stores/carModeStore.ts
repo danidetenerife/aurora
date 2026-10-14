@@ -11,6 +11,7 @@ const LEGACY_STORAGE_KEY_AUTO_CAR_MODE = 'nuclear_auto_car_mode_enabled';
 
 type CarModeState = {
   isCarMode: boolean;
+  enteredViaBluetooth: boolean;
   autoCarModeEnabled: boolean;
   isBluetoothConnected: boolean;
   bluetoothDeviceName: string;
@@ -50,20 +51,24 @@ const isNativeCarEnvironment = (): boolean => {
 
 export const useCarModeStore = create<CarModeState>((set) => ({
   isCarMode: isNativeCarEnvironment(),
+  enteredViaBluetooth: false,
   autoCarModeEnabled: getInitialAutoCarMode(),
   isBluetoothConnected: false,
   bluetoothDeviceName: '',
 
   enterCarMode: () => {
-    set({ isCarMode: true });
+    set({ isCarMode: true, enteredViaBluetooth: false });
   },
 
   exitCarMode: () => {
-    set({ isCarMode: false });
+    set({ isCarMode: false, enteredViaBluetooth: false });
   },
 
   toggleCarMode: () => {
-    set((state) => ({ isCarMode: !state.isCarMode }));
+    set((state) => ({
+      isCarMode: !state.isCarMode,
+      enteredViaBluetooth: false,
+    }));
   },
 
   setAutoCarModeEnabled: (enabled: boolean) => {
@@ -85,7 +90,7 @@ export const initCarModeService = async (): Promise<void> => {
   isInitialized = true;
 
   if (isNativeCarEnvironment()) {
-    useCarModeStore.setState({ isCarMode: true });
+    useCarModeStore.setState({ isCarMode: true, enteredViaBluetooth: false });
   }
 
   if (!isCapacitorEnvironment()) {
@@ -99,8 +104,14 @@ export const initCarModeService = async (): Promise<void> => {
         isBluetoothConnected: true,
         bluetoothDeviceName: initialStatus.deviceName || 'Bluetooth',
       });
-      if (useCarModeStore.getState().autoCarModeEnabled) {
-        useCarModeStore.getState().enterCarMode();
+      if (
+        useCarModeStore.getState().autoCarModeEnabled &&
+        !useCarModeStore.getState().isCarMode
+      ) {
+        useCarModeStore.setState({
+          isCarMode: true,
+          enteredViaBluetooth: true,
+        });
       }
     }
 
@@ -114,13 +125,23 @@ export const initCarModeService = async (): Promise<void> => {
         });
 
         if (isConnected) {
-          if (useCarModeStore.getState().autoCarModeEnabled) {
-            useCarModeStore.getState().enterCarMode();
+          if (
+            useCarModeStore.getState().autoCarModeEnabled &&
+            !useCarModeStore.getState().isCarMode
+          ) {
+            useCarModeStore.setState({
+              isCarMode: true,
+              enteredViaBluetooth: true,
+            });
           }
         } else {
-          // Disconnected from Bluetooth
-          if (useCarModeStore.getState().isCarMode) {
-            useCarModeStore.getState().exitCarMode();
+          const state = useCarModeStore.getState();
+          if (
+            state.isCarMode &&
+            state.enteredViaBluetooth &&
+            !isNativeCarEnvironment()
+          ) {
+            state.exitCarMode();
           }
         }
       },

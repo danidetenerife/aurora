@@ -13,12 +13,15 @@ export const ConnectedVolume: FC = () => {
   }, [volume]);
 
   const handleVolumeChange = (value: number) => {
-    setLocalVolume(value);
-    setVolume(value / 100);
+    const normalizedValue = Math.max(0, Math.min(100, Math.round(value)));
+    setLocalVolume(normalizedValue);
+    setVolume(normalizedValue / 100);
   };
 
   const currentVolume =
-    localVolume !== null ? localVolume : Math.round((volume ?? 1) * 100);
+    localVolume !== null
+      ? localVolume
+      : Math.max(0, Math.min(100, Math.round((volume ?? 1) * 100)));
 
   return (
     <PlayerBar.Volume

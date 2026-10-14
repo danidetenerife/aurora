@@ -20,7 +20,9 @@ export class AudioSourceFactory {
       return { url: stream.url, protocol: 'hls' };
     }
 
-    const port = await this.streamServerPort();
+    const shouldSkipProxy =
+      stream.protocol === 'file' || stream.url.startsWith('http://127.0.0.1:');
+    const port = shouldSkipProxy ? null : await this.streamServerPort();
     const playbackUrl = port ? this.proxiedUrl(stream.url, port) : stream.url;
 
     const durationMs = stream.durationMs ?? candidate.durationMs;
@@ -28,6 +30,7 @@ export class AudioSourceFactory {
       url: playbackUrl,
       protocol: stream.protocol,
       durationSeconds: durationMs ? durationMs / 1000 : undefined,
+      ...(stream.codec ? { codec: stream.codec } : {}),
     };
   }
 
@@ -46,7 +49,11 @@ export class AudioSourceFactory {
   // Encode the URL in base64 and proxy through the local streaming server to bypass CORS
   // Check packages/player/src-tauri/src/stream_server.rs to see how this works
   private proxiedUrl(url: string, port: number): string {
-    const encoded = btoa(url)
+    const utf8Bytes = new TextEncoder().encode(url);
+    const binaryString = Array.from(utf8Bytes, (byte) =>
+      String.fromCharCode(byte),
+    ).join('');
+    const encoded = btoa(binaryString)
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=+$/, '');

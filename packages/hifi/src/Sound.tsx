@@ -47,7 +47,7 @@ const NativeAudioPlayer: React.FC<SoundProps> = ({
   useAudioSeek(audioRef, seek);
   useStartPosition(audioRef, src);
   useAudioLoader(audioRef, src);
-  useHlsSource(audioRef, src);
+  useHlsSource(audioRef, src, onError, onSourceInvalid);
   useMseSource(audioRef, src, onError, onSourceInvalid);
   usePlaybackStatus(audioRef, status, src.url, onError);
 

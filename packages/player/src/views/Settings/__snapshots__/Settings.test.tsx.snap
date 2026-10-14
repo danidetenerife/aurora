@@ -378,7 +378,7 @@ exports[`Settings view > (Snapshot) renders the settings view 1`] = `
               <span
                 class="cursor-text text-xs select-all"
               >
-                v1.48.63 (d239455)
+                v1.48.64 (ea1b3ec)
               </span>
             </div>
           </div>

@@ -44,7 +44,12 @@ impl HistoryDb {
 
         let mut buckets = vec![0; 24];
         for (hour, ms_played) in rows {
-            buckets[hour as usize] = ms_played;
+            if let Some(bucket) = usize::try_from(hour)
+                .ok()
+                .and_then(|idx| buckets.get_mut(idx))
+            {
+                *bucket = ms_played;
+            }
         }
         Ok(buckets)
     }
