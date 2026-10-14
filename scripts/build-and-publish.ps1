@@ -153,6 +153,14 @@ try {
                 Write-Host "[ADB] Dispositivo detectado ($serial). Instalando APK..." -ForegroundColor Cyan
                 & $adbCmd -s $serial install -r -d "$Root\ejecutables\aurora-music-player.apk"
                 & $adbCmd -s $serial reverse tcp:4122 tcp:4122 2>$null
+                $pcSyncFile = Join-Path $env:APPDATA "com.auroraplayer\p2p_sync.json"
+                if (Test-Path -LiteralPath $pcSyncFile) {
+                    $pcSync = Get-Content -LiteralPath $pcSyncFile -Raw -Encoding UTF8 | ConvertFrom-Json
+                    if ($pcSync.gist_token -or $pcSync.gist_id) {
+                        Write-Host "[ADB] Sincronizando credenciales GitHub Gist en $serial..." -ForegroundColor Cyan
+                        & $adbCmd -s $serial shell am start -n com.auroraplayer.app/.MainActivity --es gist_token "$($pcSync.gist_token)" --es gist_id "$($pcSync.gist_id)" | Out-Null
+                    }
+                }
             }
         }
     }

@@ -1005,6 +1005,25 @@ export class P2PSyncService {
         }
         if (remoteGistToken || remoteGistId) {
           await syncStore.save();
+          try {
+            const gistAdapter = new GistAdapter(
+              { token: remoteGistToken, gistId: remoteGistId },
+              async (newGistId) => {
+                await syncStore.set('gist_id', newGistId);
+                await syncStore.save();
+              },
+              async (newToken) => {
+                await syncStore.set('gist_token', newToken);
+                await syncStore.save();
+              },
+            );
+            const cloudPayload = await gistAdapter.fetchRemote();
+            if (cloudPayload) {
+              await this.applyRemotePayload(cloudPayload);
+            }
+          } catch {
+            // Continue with LAN sync data if cloud fetch fails
+          }
         }
       }
 
@@ -1488,6 +1507,37 @@ export class P2PSyncService {
   }
 
   startBackgroundSyncWatcher(): void {
+    const globalWindow = window as unknown as {
+      __auroraConfigureGistSync?: (
+        token: string,
+        gistId: string,
+      ) => Promise<void>;
+      __auroraPendingGistSync?: { token: string; gistId: string };
+    };
+    globalWindow.__auroraConfigureGistSync = async (
+      token: string,
+      gistId: string,
+    ) => {
+      if (token.trim()) {
+        await syncStore.set('gist_token', token.trim());
+      }
+      if (gistId.trim()) {
+        await syncStore.set('gist_id', gistId.trim());
+      }
+      await syncStore.set('sync_provider', 'gist');
+      await syncStore.save();
+      this.isSyncing = false;
+      await this.syncNow();
+    };
+    if (globalWindow.__auroraPendingGistSync) {
+      const pending = globalWindow.__auroraPendingGistSync;
+      delete globalWindow.__auroraPendingGistSync;
+      void globalWindow.__auroraConfigureGistSync(
+        pending.token,
+        pending.gistId,
+      );
+    }
+
     if (this.syncIntervalTimer) {
       return;
     }

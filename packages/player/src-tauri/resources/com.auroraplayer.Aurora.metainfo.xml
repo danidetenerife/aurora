@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.69" date="2026-10-14">
+      <description>
+        <p>Release 1.48.69: Mejoras en navegación e interfaz móvil Android: soporte nativo del botón/gesto Atrás de Android para cerrar paneles desplegables (ajustes, cuenta, notificaciones, menú contextual, reproductor expandido, cola y modo coche) o minimizar la aplicación a segundo plano sin interrumpir la reproducción de audio; y fallback automático de carátulas con política no-referrer en listas, reproductor y modo coche para evitar iconos de imagen rota cuando falla un CDN externo.</p>
+      </description>
+    </release>
+
     <release version="1.48.68" date="2026-10-14">
       <description>
         <p>Release 1.48.68: Mejoras en navegación e interfaz móvil Android: soporte nativo del botón/gesto Atrás de Android para cerrar paneles desplegables (ajustes, cuenta, notificaciones, menú contextual, reproductor expandido, cola y modo coche) o minimizar la aplicación a segundo plano sin interrumpir la reproducción de audio; y fallback automático de carátulas con política no-referrer en listas, reproductor y modo coche para evitar iconos de imagen rota cuando falla un CDN externo.</p>

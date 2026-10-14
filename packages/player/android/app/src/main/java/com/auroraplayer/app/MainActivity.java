@@ -59,10 +59,16 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         instance = this;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        }
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         bridgeBuilder.addWebViewListener(new WebViewListener() {
             @Override
             public void onPageLoaded(WebView webView) {
                 NativeMediaSessionPlugin.flushPendingMediaAction();
+                handleSyncIntent(getIntent());
             }
         });
         registerPlugin(MediaRouterPlugin.class);
@@ -77,6 +83,38 @@ public class MainActivity extends BridgeActivity {
         requestNotificationPermission();
         startAudioService();
         setupTvBackCallback();
+        handleSyncIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleSyncIntent(intent);
+    }
+
+    private void handleSyncIntent(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+        String gistToken = intent.getStringExtra("gist_token");
+        String gistId = intent.getStringExtra("gist_id");
+        if ((gistToken == null || gistToken.isEmpty()) && (gistId == null || gistId.isEmpty())) {
+            return;
+        }
+        intent.removeExtra("gist_token");
+        intent.removeExtra("gist_id");
+        final String safeToken = (gistToken != null ? gistToken : "").replace("\\", "\\\\").replace("'", "\\'");
+        final String safeGistId = (gistId != null ? gistId : "").replace("\\", "\\\\").replace("'", "\\'");
+        WebView webView = getBridge() != null ? getBridge().getWebView() : null;
+        if (webView != null) {
+            webView.postDelayed(() -> {
+                webView.evaluateJavascript(
+                    "if (window.__auroraConfigureGistSync) { window.__auroraConfigureGistSync('" + safeToken + "', '" + safeGistId + "'); } else { window.__auroraPendingGistSync = { token: '" + safeToken + "', gistId: '" + safeGistId + "' }; }",
+                    null
+                );
+            }, 800);
+        }
     }
 
     private void requestNotificationPermission() {
