@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-10-14T22:00",
+    "description": "Motor de aprendizaje y recomendación musical ultra-inteligente y renombrado integral a Aurora: incorpora grafo de afinidad multi-artista y sinergia de colaboraciones (feat.), decaimiento de recencia de doble horizonte (obsesión a 48h + afinidad a 21 días), bonificación por bucle de sobre-reproducción, resonancia contextual por franja horaria (mañana, tarde, noche, madrugada), pivote inmediato ante artistas saltados en la sesión activa, deduplicación canónica de pistas (Official Video/Audio/Remastered) y suplementación inteligente de semillas desde favoritos sincronizados en la nube; además de eliminar todas las referencias heredadas para unificar toda la plataforma bajo la identidad Aurora.",
+    "type": "feature",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Android", "color": "green" },
+      { "label": "Desktop", "color": "blue" },
+      { "label": "Sync", "color": "purple" },
+      { "label": "Playback", "color": "orange" }
+    ]
+  },
+  {
     "date": "2026-10-14T21:20",
     "description": "Mejoras en navegación e interfaz móvil Android: soporte nativo del botón/gesto Atrás de Android para cerrar paneles desplegables (ajustes, cuenta, notificaciones, menú contextual, reproductor expandido, cola y modo coche) o minimizar la aplicación a segundo plano sin interrumpir la reproducción de audio; y fallback automático de carátulas con política no-referrer en listas, reproductor y modo coche para evitar iconos de imagen rota cuando falla un CDN externo.",
     "type": "fix",
@@ -1195,7 +1207,7 @@
     "date": "2026-08-29T00:00",
     "description": "Fixed pressing Enter in the search box searching for a hovered recent search instead of the typed text.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1207,7 +1219,7 @@
     "date": "2026-08-29T00:00",
     "description": "Clickable artist/track title in the player bar",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1219,7 +1231,7 @@
     "date": "2026-08-16T00:00",
     "description": "Fixed various Appimage issues caused by Wayland.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Linux",
@@ -1231,7 +1243,7 @@
     "date": "2026-08-13T00:00",
     "description": "Fixed playback stopping after double clicking a track in the queue.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Queue",
@@ -1243,7 +1255,7 @@
     "date": "2026-08-13T00:00",
     "description": "Fixed duplicate entries appearing in the listening history.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1255,7 +1267,7 @@
     "date": "2026-08-13T00:00",
     "description": "Fixed the previous track briefly playing when starting a new track before its stream is ready.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1267,7 +1279,7 @@
     "date": "2026-08-10T00:00",
     "description": "Aurora starts maximized by default",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1279,7 +1291,7 @@
     "date": "2026-08-08T00:00",
     "description": "Aurora Jam remote control now supports searching for music, adding tracks to the queue, and removing tracks from the queue.",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Integrations",
@@ -1291,7 +1303,7 @@
     "date": "2026-08-05T00:00",
     "description": "Playlists can now be sorted.",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -1303,7 +1315,7 @@
     "date": "2026-08-03T00:00",
     "description": "Playlists can now be filtered.",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -1315,7 +1327,7 @@
     "date": "2026-07-30T00:00",
     "description": "History stats tab shows a selection of charts showcasing your listening habits.",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "History",
@@ -1327,7 +1339,7 @@
     "date": "2026-07-20T00:00",
     "description": "Fix bluetooth issues on Linux.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1339,7 +1351,7 @@
     "date": "2026-07-20T00:00",
     "description": "Tracks that failed to resolve their streams now retry with a fresh search when you come back to them. When no streaming provider is installed, the error message now prompts you to install one.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1351,7 +1363,7 @@
     "date": "2026-07-18T00:00",
     "description": "Fix streaming getting permanently stuck at 10s intervals.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1363,7 +1375,7 @@
     "date": "2026-07-16T00:00",
     "description": "Listening history: Aurora now keeps a history of the tracks you play. Can be disabled in the preferences.",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "History",
@@ -1375,7 +1387,7 @@
     "date": "2026-07-08T00:00",
     "description": "Fix playback stalling at 10-second fMP4 segment boundaries (0:09, 0:19, 0:29...) when streaming via yt-dlp, caused by sub-frame gaps between appended segments",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1387,7 +1399,7 @@
     "date": "2026-07-07T00:00",
     "description": "Theme loading performance improvements",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Themes",
@@ -1399,7 +1411,7 @@
     "date": "2026-07-07T00:00",
     "description": "Recent searches appear under the search box, with keyboard navigation and one-click history clearing",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1411,7 +1423,7 @@
     "date": "2026-07-06T00:00",
     "description": "Search box with clear button, search icon, Escape to clear, and URL sync",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1423,7 +1435,7 @@
     "date": "2026-07-01T00:00",
     "description": "Fix audio going silent after about a second over Bluetooth on Linux",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1435,7 +1447,7 @@
     "date": "2026-07-01T00:00",
     "description": "Fix yt-dlp playback stalling at segment boundaries (e.g. 0:09, 0:29) when buffered audio drifted past the next segment's start time",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1447,7 +1459,7 @@
     "date": "2026-07-01T00:00",
     "description": "Fix marketplace themes resetting to default on restart",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Themes",
@@ -1459,7 +1471,7 @@
     "date": "2026-06-21T00:00",
     "description": "Custom title bar for frameless window mode. Enable in Settings -> Appearance",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1471,7 +1483,7 @@
     "date": "2026-06-19T00:00",
     "description": "Fix HLS playback failing on Windows with Chromium 147+",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1483,7 +1495,7 @@
     "date": "2026-06-19T00:00",
     "description": "We're temporarily switching to nightly yt-dlp due to a regression. This will fix playlist imports.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -1495,7 +1507,7 @@
     "date": "2026-06-17T00:00",
     "description": "Navigate to playlists directly from artist pages that have them",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Artists",
@@ -1507,7 +1519,7 @@
     "date": "2026-06-14T00:00",
     "description": "Fix the queue getting stuck at the end of some tracks, where playback parked a fraction of a second before the end and never advanced to the next track",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1519,7 +1531,7 @@
     "date": "2026-06-10T00:00",
     "description": "Right-click a queue item to see its stream candidates and switch to a different source; picking a failed source retries it",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Queue",
@@ -1531,7 +1543,7 @@
     "date": "2026-06-09T00:00",
     "description": "Fix TSX plugins failing with 'React is not defined' unless they imported React manually, and fix stale plugin code being served when an imported file changed but the entry file didn't",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1543,7 +1555,7 @@
     "date": "2026-06-01T00:00",
     "description": "The window now remembers its size, position, and maximized state between restarts",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1555,7 +1567,7 @@
     "date": "2026-05-27T00:00",
     "description": "Aurora Jam lets you control playback from any device on your local network. Enable it in Settings -> Integrations, then scan the QR code with your phone.",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Integrations",
@@ -1567,7 +1579,7 @@
     "date": "2026-05-22T00:00",
     "description": "Fix HLS tracks getting stuck at 0:00 when the queue advances",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Streaming",
@@ -1579,7 +1591,7 @@
     "date": "2026-05-21T00:00",
     "description": "Fix tracks failing to play in saved playlists and in queues restored after restart by re-resolving stream URLs when they expire",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Streaming",
@@ -1591,7 +1603,7 @@
     "date": "2026-05-11T00:00",
     "description": "MPD server lets you control Aurora from MPD clients like mpc and ncmpcpp",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Integrations",
@@ -1603,7 +1615,7 @@
     "date": "2026-05-04T00:00",
     "description": "Installed plugins are automatically updated to the latest version on startup",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1615,7 +1627,7 @@
     "date": "2026-04-22T00:00",
     "description": "Fix legacy playlist import failing when track durations use mm:ss or hh:mm:ss format",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -1627,7 +1639,7 @@
     "date": "2026-04-17T00:00",
     "description": "Fix source selection being reset to the first available provider on startup",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1639,7 +1651,7 @@
     "date": "2026-04-17T00:00",
     "description": "Show an empty state in Sources when no providers of a given kind are installed",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1651,7 +1663,7 @@
     "date": "2026-04-08T00:00",
     "description": "Streaming providers can now access full track metadata when resolving streams",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1663,7 +1675,7 @@
     "date": "2026-04-08T00:00",
     "description": "Fix paired streaming provider not activating when registered after the metadata provider",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1675,7 +1687,7 @@
     "date": "2026-04-02T00:00",
     "description": "Frameless window toggle in settings",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1687,7 +1699,7 @@
     "date": "2026-04-01T00:00",
     "description": "Back and forward navigation buttons in the top bar",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1699,7 +1711,7 @@
     "date": "2026-04-01T00:00",
     "description": "Theme store for browsing and installing community themes",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Themes",
@@ -1711,7 +1723,7 @@
     "date": "2026-03-27T00:00",
     "description": "Discord rich presence integration",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Integrations",
@@ -1723,7 +1735,7 @@
     "date": "2026-03-26T00:00",
     "description": "Plugins can provide music discovery recommendations based on the current queue",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1739,7 +1751,7 @@
     "date": "2026-03-24T00:00",
     "description": "Introduce dark mode as persistent preference",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Settings",
@@ -1751,7 +1763,7 @@
     "date": "2026-03-24T00:00",
     "description": "Fix issues with tables being way too wide with longer track titles",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "UI",
@@ -1763,7 +1775,7 @@
     "date": "2026-03-21T00:00",
     "description": "Aurora is now built from source for Flatpak, with new app icons",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Linux",
@@ -1775,7 +1787,7 @@
     "date": "2026-03-20T00:00",
     "description": "Fixed album tracks being added to the queue without thumbnails",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Queue",
@@ -1787,7 +1799,7 @@
     "date": "2026-03-20T00:00",
     "description": "Dashboard, search, and plugins views now prompt to install plugins when none are active",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1799,7 +1811,7 @@
     "date": "2026-03-18T00:00",
     "description": "AUR packages are now automatically updated when a new release is published",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Linux",
@@ -1811,7 +1823,7 @@
     "date": "2026-03-16T00:00",
     "description": "Fixed a console window briefly appearing on Windows each time yt-dlp was invoked",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Windows",
@@ -1823,7 +1835,7 @@
     "date": "2026-03-16T00:00",
     "description": "Queue items are now correctly restored when restarting Aurora.",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1835,7 +1847,7 @@
     "date": "2026-03-16T00:00",
     "description": "New Sources view lets you switch the active metadata and streaming providers from the sidebar",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Sources",
@@ -1847,7 +1859,7 @@
     "date": "2026-03-14T00:00",
     "description": "yt-dlp is now downloaded and updated automatically at runtime, fixing Flatpak and AppImage compatibility",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1859,7 +1871,7 @@
     "date": "2026-03-13T00:00",
     "description": "Border width is now themable - advanced themes can set border-width to control all borders in the app",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Themes",
@@ -1871,7 +1883,7 @@
     "date": "2026-03-13T00:00",
     "description": "Improved dark mode for all basic themes with better backgrounds, toned-down primaries, and themed borders",
     "type": "improvement",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Themes",
@@ -1883,7 +1895,7 @@
     "date": "2026-03-12T00:00",
     "description": "Update badge shows download progress and lets you click to update or restart",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Updates",
@@ -1895,7 +1907,7 @@
     "date": "2026-03-09T00:00",
     "description": "Social links in settings sidebar (Discord, GitHub, Mastodon, Website)",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Settings",
@@ -1907,7 +1919,7 @@
     "date": "2026-03-08T00:00",
     "description": "Fixed repeat, shuffle, and volume for MSE streams",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1919,7 +1931,7 @@
     "date": "2026-03-07T00:00",
     "description": "Plugins can import YouTube playlists by URL via yt-dlp",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -1939,7 +1951,7 @@
     "date": "2026-03-06T00:00",
     "description": "YouTube tracks now play using MSE-based streaming, fixing incorrect duration display and enabling proper seeking",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -1955,7 +1967,7 @@
     "date": "2026-03-05T00:00",
     "description": "Customizable keyboard shortcuts with settings UI for rebinding",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Settings",
@@ -1971,7 +1983,7 @@
     "date": "2026-03-04T00:00",
     "description": "Plugin event bus with trackFinished and trackStarted events",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1983,7 +1995,7 @@
     "date": "2026-03-04T00:00",
     "description": "Custom settings widgets for plugins (render React components in settings UI)",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -1995,7 +2007,7 @@
     "date": "2026-03-04T00:00",
     "description": "Shell API for plugins to open URLs in the system browser",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -2007,7 +2019,7 @@
     "date": "2026-03-04T00:00",
     "description": "Plugins can use Aurora UI components (Button, Toggle, etc.)",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -2019,7 +2031,7 @@
     "date": "2026-03-04T00:00",
     "description": "Fixed plugin settings using wrong storage key (core prefix instead of plugin prefix)",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Settings",
@@ -2031,7 +2043,7 @@
     "date": "2026-03-03T00:00",
     "description": "Fixed old audio stream continuing to play when switching tracks or clearing the queue",
     "type": "fix",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playback",
@@ -2043,7 +2055,7 @@
     "date": "2026-03-01T00:00",
     "description": "In-app changelog in settings (What's New tab)",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Settings",
@@ -2055,13 +2067,13 @@
     "date": "2026-03-01T00:00",
     "description": "Release pipeline auto-generates GitHub release notes from changelog data",
     "type": "improvement",
-    "contributors": ["nukeop"]
+    "contributors": ["danidetenerife"]
   },
   {
     "date": "2026-03-01T00:00",
     "description": "Support importing legacy format playlists (from legacy format)",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -2073,13 +2085,13 @@
     "date": "2026-02-28T00:00",
     "description": "Migrated repository to danidetenerife/aurora",
     "type": "chore",
-    "contributors": ["nukeop"]
+    "contributors": ["danidetenerife"]
   },
   {
     "date": "2026-02-25T00:00",
     "description": "Playlist import from URL",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -2091,7 +2103,7 @@
     "date": "2026-02-25T00:00",
     "description": "Playlist provider adapter view with cover art",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Playlists",
@@ -2107,13 +2119,13 @@
     "date": "2026-02-25T00:00",
     "description": "Fixed loading status getting stuck on stream resolution",
     "type": "fix",
-    "contributors": ["nukeop"]
+    "contributors": ["danidetenerife"]
   },
   {
     "date": "2026-02-20T00:00",
     "description": "MCP server for controlling Aurora from AI agents and other tools",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "MCP",
@@ -2125,7 +2137,7 @@
     "date": "2026-02-20T00:00",
     "description": "Plugin store with browsing, search, and installation",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Plugins",
@@ -2137,7 +2149,7 @@
     "date": "2026-02-20T00:00",
     "description": "Flatpak packaging",
     "type": "feature",
-    "contributors": ["nukeop"],
+    "contributors": ["danidetenerife"],
     "tags": [
       {
         "label": "Linux",

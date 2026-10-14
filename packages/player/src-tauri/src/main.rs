@@ -74,7 +74,7 @@ fn apply_linux_workarounds() {
 
     // Request high-latency audio streams. Web Audio's low-latency request
     // forces the PipeWire quantum down below what Bluetooth A2DP can service,
-    // killing playback: https://github.com/nukeop/nuclear/discussions/1980
+    // killing playback.
     if std::env::var("PULSE_LATENCY_MSEC").is_err() {
         unsafe {
             std::env::set_var("PULSE_LATENCY_MSEC", "60");

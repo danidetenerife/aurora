@@ -1,9 +1,4 @@
-export {
-  AuroraPluginAPI,
-  AuroraAPI,
-  NuclearPluginAPI,
-  NuclearAPI,
-} from './api';
+export { AuroraPluginAPI, AuroraAPI } from './api';
 export { DashboardAPI } from './api/dashboard';
 export { DiscoveryAPI } from './api/discovery';
 export { EventsAPI } from './api/events';

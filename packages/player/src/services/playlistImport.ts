@@ -8,22 +8,22 @@ import {
 } from '@aurora/model';
 
 export type PlaylistFormat =
-  | 'nuclear'
-  | 'nuclear-legacy'
-  | 'nuclear-legacy-config'
+  | 'aurora'
+  | 'aurora-legacy'
+  | 'aurora-legacy-config'
   | 'unknown';
 
 export const detectPlaylistFormat = (json: unknown): PlaylistFormat => {
   if (playlistExportSchema.safeParse(json).success) {
-    return 'nuclear';
+    return 'aurora';
   }
 
   if (legacyConfigSchema.safeParse(json).success) {
-    return 'nuclear-legacy-config';
+    return 'aurora-legacy-config';
   }
 
   if (legacyPlaylistSchema.safeParse(json).success) {
-    return 'nuclear-legacy';
+    return 'aurora-legacy';
   }
 
   return 'unknown';
@@ -42,7 +42,7 @@ const convertLegacyTrack = (track: LegacyTrack): PlaylistItem => {
       album: track.album
         ? {
             title: track.album,
-            source: { provider: 'nuclear-legacy', id: '' },
+            source: { provider: 'aurora-legacy', id: '' },
           }
         : undefined,
       durationMs:
@@ -51,7 +51,7 @@ const convertLegacyTrack = (track: LegacyTrack): PlaylistItem => {
         ? { items: [{ url: track.thumbnail, purpose: 'thumbnail' }] }
         : undefined,
       source: {
-        provider: 'nuclear-legacy',
+        provider: 'aurora-legacy',
         id: track.uuid ?? uuidv4(),
       },
     },
@@ -76,13 +76,13 @@ export const importPlaylistFromJson = (json: unknown): Playlist[] => {
   const format = detectPlaylistFormat(json);
 
   switch (format) {
-    case 'nuclear': {
+    case 'aurora': {
       const { playlist } = playlistExportSchema.parse(json);
       return [playlist];
     }
-    case 'nuclear-legacy':
+    case 'aurora-legacy':
       return [convertLegacyPlaylist(json)];
-    case 'nuclear-legacy-config': {
+    case 'aurora-legacy-config': {
       const { playlists } = legacyConfigSchema.parse(json);
       return playlists
         .filter((entry) => legacyPlaylistSchema.safeParse(entry).success)

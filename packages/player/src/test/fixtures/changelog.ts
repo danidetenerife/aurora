@@ -5,7 +5,7 @@ export const TEST_CHANGELOG: ChangelogEntry[] = [
     date: '2026-03-01T22:00',
     description: 'Support importing legacy format playlists',
     type: 'feature',
-    contributors: ['nukeop'],
+    contributors: ['danidetenerife'],
     tags: [{ label: 'Playlists', color: 'cyan' }],
   },
   {
@@ -17,7 +17,7 @@ export const TEST_CHANGELOG: ChangelogEntry[] = [
     date: '2026-02-25T16:00',
     description: 'Improved plugin loading performance',
     type: 'improvement',
-    contributors: ['someDev', 'nukeop'],
+    contributors: ['someDev', 'danidetenerife'],
   },
   {
     date: '2026-02-20T14:00',

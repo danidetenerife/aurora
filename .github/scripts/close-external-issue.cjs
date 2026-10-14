@@ -9,7 +9,7 @@ module.exports = async ({ github, context }) => {
     body: [
       'Aurora does not accept external issues.',
       '',
-      'If you want to discuss Aurora, use the [Discussions](https://github.com/nukeop/nuclear/discussions) tab.',
+      'If you want to discuss Aurora, use the [Discussions](https://github.com/danidetenerife/aurora/discussions) tab.',
     ].join('\n'),
   });
 

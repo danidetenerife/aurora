@@ -71,7 +71,7 @@ describe('Plugins view', () => {
         path.posix.join(
           AppData,
           'plugins',
-          'nuclear-fake-plugin',
+          'aurora-fake-plugin',
           '0.1.0',
           'package.json',
         ),
@@ -85,7 +85,7 @@ describe('Plugins view', () => {
         path.posix.join(
           AppData,
           'plugins',
-          'nuclear-fake-plugin',
+          'aurora-fake-plugin',
           '0.1.0',
           'index.ts',
         ),
@@ -102,7 +102,7 @@ describe('Plugins view', () => {
       ).toMatchInlineSnapshot(`
         [
           {
-            "author": "nukeop",
+            "author": "Aurora Team",
             "description": "Fake plugin for testing",
             "name": "Fake plugin",
           },
@@ -142,10 +142,10 @@ describe('Plugins view', () => {
 
     try {
       await userEvent.click(reloadButton);
-      expect(reloadSpy).toHaveBeenCalledWith('nuclear-fake-plugin');
+      expect(reloadSpy).toHaveBeenCalledWith('aurora-fake-plugin');
 
       await userEvent.click(removeButton);
-      expect(removeSpy).toHaveBeenCalledWith('nuclear-fake-plugin');
+      expect(removeSpy).toHaveBeenCalledWith('aurora-fake-plugin');
     } finally {
       reloadSpy.mockRestore();
       removeSpy.mockRestore();

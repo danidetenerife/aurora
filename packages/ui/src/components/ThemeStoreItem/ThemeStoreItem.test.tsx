@@ -5,7 +5,7 @@ import { ThemeStoreItem } from './ThemeStoreItem';
 const DEFAULT_PROPS = {
   name: 'Gruvbox',
   description: 'Retro groove color scheme. Based on the classic Vim theme.',
-  author: 'nukeop',
+  author: 'Aurora Team',
   palette: [
     'oklch(0.96 0.055 96)',
     'oklch(0.28 0.000 263)',

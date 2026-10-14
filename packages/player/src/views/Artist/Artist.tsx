@@ -14,14 +14,10 @@ import { ARTIST_WIDGETS, groupWidgets } from './artistWidgets';
 type ArtistProps = Record<string, never>;
 
 const normalizeProviderId = (id: string): string => {
-  if (
-    id === 'youtube' ||
-    id === 'aurora-plugin-youtube-music' ||
-    id === 'nuclear-plugin-youtube-music'
-  ) {
+  if (id === 'youtube' || id === 'aurora-plugin-youtube-music') {
     return 'youtube-music';
   }
-  if (id === 'aurora-plugin-something' || id === 'nuclear-plugin-something') {
+  if (id === 'aurora-plugin-something') {
     return 'spotify';
   }
   return id;

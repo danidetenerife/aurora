@@ -53,6 +53,12 @@ export const normalizeListen = (raw) => {
   const genres = Array.isArray(raw.genres)
     ? raw.genres.filter((g) => typeof g === 'string' && g.trim().length > 0)
     : [];
+  const collaborators = Array.isArray(raw.collaborators)
+    ? raw.collaborators.filter(
+        (collaborator) =>
+          typeof collaborator === 'string' && collaborator.trim().length > 0,
+      )
+    : [];
 
   return {
     trackId: raw.trackId,
@@ -67,6 +73,7 @@ export const normalizeListen = (raw) => {
     ...(raw.source ? { source: raw.source } : {}),
     ...(raw.artistSource ? { artistSource: raw.artistSource } : {}),
     ...(genres.length > 0 ? { genres } : {}),
+    ...(collaborators.length > 0 ? { collaborators } : {}),
     contributions,
     ...totals,
   };
@@ -101,6 +108,12 @@ export const mergeListenRecords = (local, remote) => {
     const mergedGenres = Array.from(
       new Set([...(existing.genres || []), ...(incoming.genres || [])]),
     );
+    const mergedCollaborators = Array.from(
+      new Set([
+        ...(existing.collaborators || []),
+        ...(incoming.collaborators || []),
+      ]),
+    );
     records.set(
       incoming.trackId,
       normalizeListen({
@@ -110,6 +123,8 @@ export const mergeListenRecords = (local, remote) => {
         artistSource:
           latest.artistSource ?? existing.artistSource ?? incoming.artistSource,
         genres: mergedGenres.length > 0 ? mergedGenres : undefined,
+        collaborators:
+          mergedCollaborators.length > 0 ? mergedCollaborators : undefined,
         contributions,
         firstPlayedAt: Math.min(existing.firstPlayedAt, incoming.firstPlayedAt),
         lastPlayedAt: Math.max(existing.lastPlayedAt, incoming.lastPlayedAt),

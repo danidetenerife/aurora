@@ -33,7 +33,7 @@ export const Installed: Story = {
     name: 'Discogs Metadata',
     description:
       'Fetch album and artist metadata from Discogs, including cover art and release information.',
-    author: 'nukeop',
+    author: 'Aurora Team',
     categories: ['Metadata', 'Streaming'],
     version: '3.0.1',
     isInstalled: true,

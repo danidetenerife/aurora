@@ -38,8 +38,8 @@ envsubst '$TAG $COMMIT $PNPM_VERSION $PNPM_SHA256' \
   < "${FLATPAK_DIR}/${MANIFEST}.template" \
   > "${WORKDIR}/${MANIFEST}"
 
-git -C "${WORKDIR}" config user.name nukeop
-git -C "${WORKDIR}" config user.email 12746779+nukeop@users.noreply.github.com
+git -C "${WORKDIR}" config user.name danidetenerife
+git -C "${WORKDIR}" config user.email noreply@auroraplayer.com
 git -C "${WORKDIR}" add -A
 git -C "${WORKDIR}" commit -m "Update to ${VERSION}"
 git -C "${WORKDIR}" push origin "${BRANCH}"

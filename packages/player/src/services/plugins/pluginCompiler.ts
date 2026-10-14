@@ -1,5 +1,5 @@
 /**
- * Nuclear Player - Plugin Compiler (browser/Tauri, esbuild-wasm)
+ * Aurora Player - Plugin Compiler (browser/Tauri, esbuild-wasm)
  *
  * Why this exists:
  * - We need to compile third-party plugins written in TS/TSX inside the Tauri webview,

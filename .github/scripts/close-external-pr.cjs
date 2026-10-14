@@ -16,14 +16,14 @@ module.exports = async ({ github, context }) => {
     'Thanks for your interest in Aurora, but this repository does not accept external pull requests.',
     '',
     'If you want to extend Aurora, consider writing a plugin instead.',
-    'See [CONTRIBUTING.md](../blob/master/CONTRIBUTING.md) and the [contributing guide](https://docs.nuclearplayer.com/nuclear/development/contributing) for details.',
+    'See [CONTRIBUTING.md](../blob/master/CONTRIBUTING.md) and the [contributing guide](https://aurora-player.org/development/contributing) for details.',
   ].join('\n');
 
   const i18nMessage = [
     'Thanks for your interest in translating Aurora!',
     '',
     'We use Crowdin to manage translations. Please contribute translations there instead:',
-    'https://crowdin.com/project/nuclear',
+    'https://crowdin.com/project/aurora',
     '',
     "If you're new to Crowdin, check out the [getting started guide for translators](https://support.crowdin.com/for-translators/).",
   ].join('\n');

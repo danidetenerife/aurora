@@ -15,13 +15,6 @@ export type PluginManifest = {
     icon?: PluginIcon;
     permissions?: string[];
   };
-  nuclear?: {
-    displayName?: string;
-    category?: string;
-    categories?: string[];
-    icon?: PluginIcon;
-    permissions?: string[];
-  };
 };
 
 export type AuroraPlugin = {
@@ -30,8 +23,6 @@ export type AuroraPlugin = {
   onEnable?(api: AuroraPluginAPI): void | Promise<void>;
   onDisable?(api: AuroraPluginAPI): void | Promise<void>;
 };
-
-export type NuclearPlugin = AuroraPlugin;
 
 export type PluginMetadata = {
   id: string;

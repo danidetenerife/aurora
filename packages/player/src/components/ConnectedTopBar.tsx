@@ -8,7 +8,7 @@ import { FC } from 'react';
 
 import { TopBar, TopBarLogo, TopBarNavigation } from '@aurora/ui';
 
-import AuroraWavesLogo from '../../../ui/src/assets/logo-icon-waves.png';
+import AuroraWavesLogo from '../assets/logo-icon-waves.png';
 import { useCanGoForward } from '../hooks/useCanGoForward';
 import { isCapacitorEnvironment } from '../services/universalStore';
 import { useAccountModalStore } from '../stores/accountModalStore';

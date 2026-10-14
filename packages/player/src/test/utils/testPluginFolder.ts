@@ -42,10 +42,6 @@ export const createPluginFolder = (
       displayName: displayName ?? name,
       permissions,
     },
-    nuclear: {
-      displayName: displayName ?? name,
-      permissions,
-    },
   };
 
   PluginFsMock.setReadTextFileByMap({

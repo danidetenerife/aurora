@@ -4,8 +4,8 @@ structure:
   readme: README.md
   summary: SUMMARY.md
 
-title: Nuclear Documentation
-description: Complete documentation for Nuclear music player
+title: Aurora Documentation
+description: Complete documentation for Aurora music player
 
 plugins:
   - search

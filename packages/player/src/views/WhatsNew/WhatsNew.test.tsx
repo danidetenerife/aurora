@@ -54,7 +54,7 @@ describe("What's New view", () => {
     await WhatsNewWrapper.mount();
     expect(WhatsNewWrapper.entry(0).contributors).toHaveLength(1);
     expect(WhatsNewWrapper.entry(0).contributors[0]).toHaveTextContent(
-      '@nukeop',
+      '@danidetenerife',
     );
   });
 
@@ -65,7 +65,7 @@ describe("What's New view", () => {
       '@someDev',
     );
     expect(WhatsNewWrapper.entry(2).contributors[1]).toHaveTextContent(
-      '@nukeop',
+      '@danidetenerife',
     );
   });
 

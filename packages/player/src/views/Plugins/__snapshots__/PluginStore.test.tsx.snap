@@ -377,7 +377,7 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
               <span
                 class="cursor-text text-xs select-all"
               >
-                v1.48.68 (829aa5d)
+                v1.48.69 (979d4f5)
               </span>
             </div>
           </div>
@@ -605,7 +605,7 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
                                               <span
                                                 data-testid="plugin-store-item-author"
                                               >
-                                                nukeop
+                                                Aurora Team
                                               </span>
                                             </span>
                                           </h3>
@@ -694,7 +694,7 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
                                               <span
                                                 data-testid="plugin-store-item-author"
                                               >
-                                                nukeop
+                                                Aurora Team
                                               </span>
                                             </span>
                                           </h3>
@@ -783,7 +783,7 @@ exports[`Plugin Store > (Snapshot) renders the plugin store with plugins from th
                                               <span
                                                 data-testid="plugin-store-item-author"
                                               >
-                                                nukeop
+                                                Aurora Team
                                               </span>
                                             </span>
                                           </h3>

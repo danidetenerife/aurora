@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 describe('detectPlaylistFormat', () => {
-  it('returns nuclear for a valid Nuclear envelope', () => {
+  it('returns aurora for a valid Aurora envelope', () => {
     expect(
       detectPlaylistFormat({
         version: 1,
@@ -37,24 +37,24 @@ describe('detectPlaylistFormat', () => {
           items: [],
         },
       }),
-    ).toBe('nuclear');
+    ).toBe('aurora');
   });
 
-  it('returns nuclear-legacy for a legacy playlist', () => {
+  it('returns aurora-legacy for a legacy playlist', () => {
     expect(
       detectPlaylistFormat({
         name: 'Old Playlist',
         tracks: [{ artist: 'Radiohead', name: 'Creep' }],
       }),
-    ).toBe('nuclear-legacy');
+    ).toBe('aurora-legacy');
   });
 
-  it('returns nuclear-legacy-config when playlists array has valid entries', () => {
+  it('returns aurora-legacy-config when playlists array has valid entries', () => {
     expect(
       detectPlaylistFormat({
         playlists: [{ name: 'Playlist 1', tracks: [] }],
       }),
-    ).toBe('nuclear-legacy-config');
+    ).toBe('aurora-legacy-config');
   });
 
   it('returns unknown for an empty or invalid playlists array', () => {
@@ -62,17 +62,17 @@ describe('detectPlaylistFormat', () => {
     expect(detectPlaylistFormat({ playlists: [1, 2, 3] })).toBe('unknown');
   });
 
-  it('falls through to nuclear-legacy when playlists array is empty but legacy shape matches', () => {
+  it('falls through to aurora-legacy when playlists array is empty but legacy shape matches', () => {
     expect(
       detectPlaylistFormat({
         playlists: [],
         name: 'My Playlist',
         tracks: [{ name: 'Track' }],
       }),
-    ).toBe('nuclear-legacy');
+    ).toBe('aurora-legacy');
   });
 
-  it('prefers Nuclear envelope when multiple shapes match', () => {
+  it('prefers Aurora envelope when multiple shapes match', () => {
     expect(
       detectPlaylistFormat({
         version: 1,
@@ -87,7 +87,7 @@ describe('detectPlaylistFormat', () => {
         name: 'Also a name',
         tracks: [],
       }),
-    ).toBe('nuclear');
+    ).toBe('aurora');
   });
 
   it('returns unknown for non-object values', () => {
@@ -100,10 +100,10 @@ describe('detectPlaylistFormat', () => {
 });
 
 describe('importPlaylistFromJson', () => {
-  it('passes through a Nuclear envelope playlist', () => {
+  it('passes through an Aurora envelope playlist', () => {
     const playlist: Playlist = {
-      id: 'nuclear-pl-1',
-      name: 'Nuclear Playlist',
+      id: 'aurora-pl-1',
+      name: 'Aurora Playlist',
       createdAtIso: FROZEN_NOW,
       lastModifiedIso: FROZEN_NOW,
       isReadOnly: false,
@@ -139,7 +139,7 @@ describe('importPlaylistFromJson', () => {
           "album": {
             "source": {
               "id": "",
-              "provider": "nuclear-legacy",
+              "provider": "aurora-legacy",
             },
             "title": "Pablo Honey",
           },
@@ -162,7 +162,7 @@ describe('importPlaylistFromJson', () => {
           "durationMs": 236000,
           "source": {
             "id": "original-uuid-1",
-            "provider": "nuclear-legacy",
+            "provider": "aurora-legacy",
           },
           "title": "Creep",
         },

@@ -102,16 +102,9 @@ const executeMetadataSearch = async (
 export const createMetadataHost = (): MetadataHost => {
   const getProvider = (providerId?: string): MetadataProvider | undefined => {
     let targetId = providerId ?? providersHost.getActive('metadata');
-    if (
-      targetId === 'youtube' ||
-      targetId === 'aurora-plugin-youtube-music' ||
-      targetId === 'nuclear-plugin-youtube-music'
-    ) {
+    if (targetId === 'youtube' || targetId === 'aurora-plugin-youtube-music') {
       targetId = 'youtube-music';
-    } else if (
-      targetId === 'aurora-plugin-something' ||
-      targetId === 'nuclear-plugin-something'
-    ) {
+    } else if (targetId === 'aurora-plugin-something') {
       targetId = 'spotify';
     }
     return (

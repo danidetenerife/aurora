@@ -130,7 +130,7 @@ const loadBundledPlugins = (): void => {
           version: '0.2.2',
           description: 'Spotify metadata and playlists provider for Aurora',
           categories: ['metadata', 'playlists'],
-          author: 'nukeop',
+          author: 'Aurora Team',
           icon: {
             type: 'link',
             link: 'https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png',
@@ -154,7 +154,7 @@ const loadBundledPlugins = (): void => {
           version: '0.1.2',
           description: 'YouTube streaming provider for Aurora',
           categories: ['streaming'],
-          author: 'nukeop',
+          author: 'Aurora Team',
           icon: {
             type: 'link',
             link: 'https://www.youtube.com/s/desktop/26a583e4/img/favicon_144x144.png',
@@ -200,9 +200,6 @@ export const hydratePluginsFromRegistry = async (options?: {
     'aurora-plugin-something',
     'aurora-plugin-youtube-music',
     'aurora-plugin-youtube',
-    'nuclear-plugin-something',
-    'nuclear-plugin-youtube-music',
-    'nuclear-plugin-youtube',
   ]);
 
   for (const entry of entries) {

@@ -17,6 +17,7 @@ export type UserListenRecord = ListenCounters & {
   source?: ProviderRef;
   artistSource?: ProviderRef;
   genres?: string[];
+  collaborators?: string[];
   contributions?: Record<string, ListenCounters>;
 };
 

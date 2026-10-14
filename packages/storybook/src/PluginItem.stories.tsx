@@ -99,7 +99,7 @@ export const WithRightAccessory: Story = {
 export const UpdateAvailable: Story = {
   args: {
     name: 'Discogs Metadata',
-    author: 'nukeop',
+    author: 'Aurora Team',
     description:
       'Fetch album and artist metadata from Discogs, including cover art and release information.',
     version: '1.3.0',

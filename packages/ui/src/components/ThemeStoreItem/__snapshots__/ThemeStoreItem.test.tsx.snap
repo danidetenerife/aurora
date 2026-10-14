@@ -65,7 +65,7 @@ exports[`ThemeStoreItem > (Snapshot) renders installed state 1`] = `
             class="text-foreground-secondary text-xs"
             data-testid="theme-store-item-author"
           >
-            by nukeop
+            by Aurora Team
           </p>
         </div>
         <div
@@ -241,7 +241,7 @@ exports[`ThemeStoreItem > (Snapshot) renders with all props 1`] = `
             class="text-foreground-secondary text-xs"
             data-testid="theme-store-item-author"
           >
-            by nukeop
+            by Aurora Team
           </p>
         </div>
         <div

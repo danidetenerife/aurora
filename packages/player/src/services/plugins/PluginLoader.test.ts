@@ -15,11 +15,11 @@ vi.mock('./pluginCompiler', () => ({
   }),
 }));
 
-const mockNuclearPluginAPI = vi.fn();
+const mockAuroraPluginAPI = vi.fn();
 vi.mock('@aurora/plugin-sdk', () => ({
-  AuroraPluginAPI: class MockNuclearPluginAPI {
+  AuroraPluginAPI: class MockAuroraPluginAPI {
     constructor() {
-      mockNuclearPluginAPI();
+      mockAuroraPluginAPI();
     }
     static add() {
       return 2 + 2;
@@ -39,7 +39,7 @@ describe('PluginLoader', () => {
 
   const makeManifest = (
     overrides: Partial<
-      typeof baseManifest & { main?: string; nuclear?: unknown }
+      typeof baseManifest & { main?: string; aurora?: unknown }
     > = {},
   ) => ({
     ...baseManifest,
@@ -203,8 +203,7 @@ describe('PluginLoader', () => {
 
     it.each([
       ['@aurora/plugin-sdk', 'AuroraPluginAPI'],
-      ['@nuclearplayer/plugin-sdk', 'NuclearPluginAPI'],
-      ['@nuclearplayer/plugin-sdk', 'AuroraPluginAPI'],
+      ['@auroraplayer/plugin-sdk', 'AuroraPluginAPI'],
     ])('loads %s through %s', async (moduleName, apiName) => {
       const pluginContents = `const { ${apiName} } = require('${moduleName}'); module.exports = { testAdd: ${apiName}.add() }`;
       const manifest = makeManifest({ main: 'index.ts' });
@@ -231,10 +230,10 @@ describe('PluginLoader', () => {
   });
 
   describe('load metadata assembly', () => {
-    it('builds metadata including nuclear section', async () => {
+    it('builds metadata including aurora section', async () => {
       const manifest = makeManifest({
         main: 'index.js',
-        nuclear: {
+        aurora: {
           displayName: 'Display Name',
           category: 'integration',
           permissions: ['net'],
@@ -255,7 +254,7 @@ describe('PluginLoader', () => {
 
     it('adds a warning when main is missing and still loads via fallback', async () => {
       const manifest = makeManifest({
-        nuclear: { permissions: [] },
+        aurora: { permissions: [] },
       });
       PluginFsMock.setReadTextFileByMap({
         '/test/plugin/path/package.json': JSON.stringify(manifest),
@@ -273,7 +272,7 @@ describe('PluginLoader', () => {
     it('dedupes and sorts permissions and warns on duplicates', async () => {
       const manifest = makeManifest({
         main: 'index.js',
-        nuclear: { permissions: ['net', ' net ', 'fs', 'net'] },
+        aurora: { permissions: ['net', ' net ', 'fs', 'net'] },
       });
       PluginFsMock.setReadTextFileByMap({
         '/test/plugin/path/package.json': JSON.stringify(manifest),
@@ -288,10 +287,10 @@ describe('PluginLoader', () => {
       );
     });
 
-    it('warns about unknown nuclear keys but keeps parsing', async () => {
+    it('warns about unknown aurora keys but keeps parsing', async () => {
       const manifest = makeManifest({
         main: 'index.js',
-        nuclear: { permissions: ['net'], foo: 'bar' } as unknown as Record<
+        aurora: { permissions: ['net'], foo: 'bar' } as unknown as Record<
           string,
           unknown
         >,
@@ -303,7 +302,7 @@ describe('PluginLoader', () => {
       await loader.load();
       expect(loader.getWarnings()).toEqual(
         expect.arrayContaining([
-          expect.stringMatching(/nuclear contains unknown keys: foo/),
+          expect.stringMatching(/aurora contains unknown keys: foo/),
         ]),
       );
     });

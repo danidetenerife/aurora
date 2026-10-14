@@ -20,7 +20,7 @@ export const Default: Story = {
   args: {
     name: 'Gruvbox',
     description: 'Retro groove color scheme. Based on the classic Vim theme.',
-    author: 'nukeop',
+    author: 'Aurora Team',
     palette: [
       'oklch(0.96 0.055 96)',
       'oklch(0.6303 0.0168 90.30)',
@@ -37,7 +37,7 @@ export const Installed: Story = {
     name: 'Rosé Pine',
     description:
       'All natural pine, faux fur and a bit of soho vibes for the classy minimalist.',
-    author: 'nukeop',
+    author: 'Aurora Team',
     palette: [
       'oklch(0.97 0.011 72)',
       'oklch(0.46 0.063 290)',
@@ -54,7 +54,7 @@ export const Installing: Story = {
   args: {
     name: 'YoRHa',
     description: 'Inspired by the UI of NieR:Automata.',
-    author: 'nukeop',
+    author: 'Aurora Team',
     palette: [
       'oklch(0.9112 0.0325 95.42)',
       'oklch(0.3102 0.0113 84.59)',

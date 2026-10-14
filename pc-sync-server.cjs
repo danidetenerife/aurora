@@ -20,7 +20,6 @@ function resolveDefaultAppData() {
       ? [
           path.join(os.homedir(), 'AppData', 'Roaming', 'com.auroraplayer'),
           path.join(os.homedir(), 'AppData', 'Roaming', 'org.aurora.player'),
-          path.join(os.homedir(), 'AppData', 'Roaming', 'com.nuclearplayer'),
         ]
       : process.platform === 'darwin'
         ? [
@@ -239,7 +238,7 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/api/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok', server: 'nuclear-p2p-sync' }));
+    res.end(JSON.stringify({ status: 'ok', server: 'aurora-p2p-sync' }));
     return;
   }
 
@@ -567,6 +566,6 @@ const profileModule = fs.existsSync(path.join(__dirname, 'listeningProfile.mjs')
 import(pathToFileURL(profileModule).href).then((profile) => {
   mergeListenRecords = profile.mergeListenRecords;
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Nuclear PC Bidirectional Sync Server running on http://0.0.0.0:${server.address().port}`);
+    console.log(`Aurora PC Bidirectional Sync Server running on http://0.0.0.0:${server.address().port}`);
   });
 });

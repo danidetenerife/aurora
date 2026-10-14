@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 /// <reference types="vite-plugin-svgr/client" />
 import { execSync } from 'child_process';
+import path from 'path';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
@@ -18,6 +19,14 @@ const commitHash = (() => {
 })();
 
 export default defineConfig(() => ({
+  resolve: {
+    alias: [
+      {
+        find: /.*logo-icon-waves\.png$/,
+        replacement: path.resolve(__dirname, 'src/assets/logo-icon-waves.png'),
+      },
+    ],
+  },
   define: {
     __COMMIT_HASH__: JSON.stringify(commitHash),
   },

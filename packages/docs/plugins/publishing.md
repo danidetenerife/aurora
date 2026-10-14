@@ -58,7 +58,7 @@ A plugin can belong to multiple categories. Pick all that apply based on the pro
   "name": "aurora-plugin-discogs",
   "version": "1.0.0",
   "description": "Fetch album and artist metadata from Discogs",
-  "author": "nukeop",
+  "author": "Aurora Team",
   "license": "MIT",
   "main": "dist/index.js",
   "aurora": {
@@ -110,7 +110,7 @@ Set up CI to build and create the release automatically. Manual zip creation is 
   "id": "aurora-plugin-discogs",
   "name": "Discogs",
   "description": "Fetch album and artist metadata from Discogs",
-  "author": "nukeop",
+  "author": "Aurora Team",
   "repo": "AuroraPlayer/aurora-plugin-discogs",
   "category": "metadata",
   "categories": ["metadata"],

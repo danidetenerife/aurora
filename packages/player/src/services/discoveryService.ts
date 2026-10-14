@@ -17,6 +17,24 @@ const sessionTrackIds = new Set<string>();
 let isFetching = false;
 let activeFetchPromise: Promise<Track[]> | null = null;
 
+const getCanonicalTrackSignature = (track: Track): string => {
+  const primaryArtist = (track.artists?.[0]?.name ?? '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  const normalizedTitle = (track.title ?? '')
+    .toLowerCase()
+    .replace(
+      /\s*[([](?:official\s*(?:music\s*)?(?:video|audio|lyric\s*video|visualizer)|lyric\s*video|visualizer|audio|video\s*oficial|hd|hq|4k|remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at\s*[^)\]]*)?)[)\]]/gi,
+      '',
+    )
+    .replace(/\s*-\s*remaster(?:ed)?(?:\s*\d{4})?\b/gi, '')
+    .replace(/\s*[([]?(?:feat\.?|ft\.?)\s+[^)\]]+[)\]]?/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return normalizedTitle ? `${primaryArtist}::${normalizedTitle}` : '';
+};
+
 export const registerTrackInSet = (
   track: Track,
   targetSet: Set<string>,
@@ -29,6 +47,10 @@ export const registerTrackInSet = (
   if (title) {
     targetSet.add(`${artist}-${title}`);
   }
+  const signature = getCanonicalTrackSignature(track);
+  if (signature) {
+    targetSet.add(signature);
+  }
 };
 
 export const isTrackInSet = (track: Track, targetSet: Set<string>): boolean => {
@@ -38,6 +60,10 @@ export const isTrackInSet = (track: Track, targetSet: Set<string>): boolean => {
   const artist = (track.artists?.[0]?.name ?? '').toLowerCase().trim();
   const title = (track.title ?? '').toLowerCase().trim();
   if (title && targetSet.has(`${artist}-${title}`)) {
+    return true;
+  }
+  const signature = getCanonicalTrackSignature(track);
+  if (signature && targetSet.has(signature)) {
     return true;
   }
   return false;

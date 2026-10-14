@@ -52,7 +52,7 @@ export class PluginLoader {
   }
 
   private buildMetadata(manifest: PluginManifest): PluginMetadata {
-    const auroraMeta = manifest.aurora || manifest.nuclear;
+    const auroraMeta = manifest.aurora;
     return {
       id: manifest.name,
       name: manifest.name,
@@ -121,11 +121,10 @@ export class PluginLoader {
     const ALLOWED_MODULES: Record<string, unknown> = {
       '@aurora/plugin-sdk': { AuroraPluginAPI },
       '@aurora/ui': auroraUI,
-      '@nuclearplayer/plugin-sdk': {
-        NuclearPluginAPI: AuroraPluginAPI,
+      '@auroraplayer/plugin-sdk': {
         AuroraPluginAPI,
       },
-      '@nuclearplayer/ui': auroraUI,
+      '@auroraplayer/ui': auroraUI,
       react: React,
       'react/jsx-runtime': jsxRuntime,
     };

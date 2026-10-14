@@ -157,8 +157,8 @@ jobs:
       - name: Build Flatpak bundle
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: nuclear-music-player.flatpak
-          manifest-path: flatpak/com.nuclearplayer.Nuclear.yml
+          bundle: aurora-music-player.flatpak
+          manifest-path: flatpak/com.auroraplayer.Aurora.yml
           cache-key: flatpak-builder-${{ github.sha }}
 
       - name: Upload Flatpak to GitHub Release
@@ -168,5 +168,5 @@ jobs:
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           gh release upload "player@${{ steps.version.outputs.version }}" \
-            nuclear-music-player.flatpak \
+            aurora-music-player.flatpak \
             --clobber

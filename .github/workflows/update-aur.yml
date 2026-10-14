@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.AUR_SSH_KEY }}
           known_hosts: ${{ secrets.AUR_KNOWN_HOSTS }}
 
-      - name: Update nuclear-player-bin
+      - name: Update aurora-player-bin
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             VERSION="${{ github.event.inputs.version }}"

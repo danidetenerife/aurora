@@ -31,7 +31,7 @@ modules:
     buildsystem: simple
     sources:
       - type: git
-        url: https://github.com/nukeop/aurora.git
+        url: https://github.com/danidetenerife/aurora.git
         tag: ${TAG}
         commit: ${COMMIT}
       - type: file

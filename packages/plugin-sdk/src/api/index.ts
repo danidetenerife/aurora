@@ -88,5 +88,3 @@ export class AuroraAPI {
 }
 
 export class AuroraPluginAPI extends AuroraAPI {}
-
-export { AuroraAPI as NuclearAPI, AuroraPluginAPI as NuclearPluginAPI };

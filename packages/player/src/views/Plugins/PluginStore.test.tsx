@@ -44,22 +44,22 @@ describe('Plugin Store', () => {
     await screen.findAllByTestId('plugin-store-item');
 
     const storePlugins = PluginsWrapper.getStorePlugins();
-    expect(storePlugins.map((p) => p.data)).toMatchInlineSnapshot(`
+    expect(storePlugins.map((plugin) => plugin.data)).toMatchInlineSnapshot(`
       [
         {
-          "author": "nukeop",
+          "author": "Aurora Team",
           "description": "Stream music from YouTube",
           "isInstalled": false,
           "name": "YouTube Music",
         },
         {
-          "author": "nukeop",
+          "author": "Aurora Team",
           "description": "Scrobble your listening history to Last.fm",
           "isInstalled": false,
           "name": "Last.fm Scrobbler",
         },
         {
-          "author": "nukeop",
+          "author": "Aurora Team",
           "description": "Fetch metadata from MusicBrainz database",
           "isInstalled": false,
           "name": "MusicBrainz Metadata",
@@ -112,8 +112,8 @@ describe('Plugin Store', () => {
   it('installs a plugin from the store', async () => {
     setupRegistryMock();
     FetchMock.get(
-      '/repos/NuclearPlayer/nuclear-youtube-plugin/releases/latest',
-      fakeGitHubRelease('NuclearPlayer/nuclear-youtube-plugin'),
+      '/repos/AuroraPlayer/aurora-youtube-plugin/releases/latest',
+      fakeGitHubRelease('AuroraPlayer/aurora-youtube-plugin'),
     );
 
     mockIPC((cmd) => {

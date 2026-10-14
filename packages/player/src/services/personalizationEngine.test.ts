@@ -265,4 +265,145 @@ describe('personalization learning across devices', () => {
     expect(ranked).toHaveLength(1);
     expect(ranked[0].title).toBe(TRACK.title);
   });
+
+  it('learns featured collaborators and boosts multi-artist collaboration synergy', async () => {
+    const collabTrack: Track = {
+      title: 'Midnight Collab (feat. Featured Star)',
+      source: { provider: 'music', id: 'collab-1' },
+      artists: [
+        { name: 'Primary Star', roles: [] },
+        { name: 'Featured Star', roles: [] },
+      ],
+      tags: ['synthpop'],
+      durationMs: 200_000,
+    };
+
+    await mobile.recordPlay(collabTrack, true, 240_000);
+    const topArtists = await mobile.getTopArtists();
+    expect(topArtists.map((artist) => artist.name)).toEqual([
+      'Primary Star',
+      'Featured Star',
+    ]);
+    expect(topArtists[0].score).toBeGreaterThan(topArtists[1].score);
+
+    const soloCandidate: Track = {
+      title: 'Solo Track',
+      source: { provider: 'music', id: 'cand-solo' },
+      artists: [{ name: 'Primary Star', roles: [] }],
+    };
+    const synergyCandidate: Track = {
+      title: 'Synergy Track',
+      source: { provider: 'music', id: 'cand-synergy' },
+      artists: [
+        { name: 'Primary Star', roles: [] },
+        { name: 'Featured Star', roles: [] },
+      ],
+    };
+
+    const ranked = mobile.scoreAndRankTracks(
+      [
+        { track: soloCandidate, source: 'topTracks' },
+        { track: synergyCandidate, source: 'topTracks' },
+      ],
+      topArtists,
+      await mobile.getListenRecords(),
+      { tracks: [], artists: [] },
+      0.2,
+      42,
+    );
+    expect(ranked[0].title).toBe('Synergy Track');
+  });
+
+  it('deduplicates canonical track variants such as Official Video and Official Audio', () => {
+    const audioVersion: Track = {
+      title: 'Starlight (Official Audio)',
+      source: { provider: 'youtube', id: 'yt-audio-1' },
+      artists: [{ name: 'Muse', roles: [] }],
+    };
+    const videoVersion: Track = {
+      title: 'Starlight (Official Music Video) [HD]',
+      source: { provider: 'youtube', id: 'yt-video-2' },
+      artists: [{ name: 'Muse', roles: [] }],
+    };
+    const remasterVersion: Track = {
+      title: 'Starlight - Remastered 2021',
+      source: { provider: 'spotify', id: 'sp-remaster-3' },
+      artists: [{ name: 'Muse', roles: [] }],
+    };
+
+    const ranked = mobile.scoreAndRankTracks(
+      [
+        { track: audioVersion, source: 'topTracks' },
+        { track: videoVersion, source: 'search' },
+        { track: remasterVersion, source: 'related' },
+      ],
+      [{ name: 'Muse', score: 120 }],
+    );
+
+    expect(ranked).toHaveLength(1);
+    expect(ranked[0].source.id).toBe('yt-audio-1');
+  });
+
+  it('pivots away from artists skipped in the active session and supplements seeds from favorites', async () => {
+    const artistA: Track = {
+      title: 'Song A',
+      source: { provider: 'music', id: 'song-a' },
+      artists: [{ name: 'Skipped Session Artist', roles: [] }],
+    };
+    const artistB: Track = {
+      title: 'Song B',
+      source: { provider: 'music', id: 'song-b' },
+      artists: [{ name: 'Active Session Artist', roles: [] }],
+    };
+
+    await mobile.recordPlay(artistA, false, 4_000);
+    await mobile.recordPlay(artistA, false, 5_000);
+    await mobile.recordPlay(artistB, true, 180_000);
+
+    const ranked = mobile.scoreAndRankTracks(
+      [
+        {
+          track: {
+            title: 'Another by Skipped',
+            source: { provider: 'music', id: 'cand-a' },
+            artists: [{ name: 'Skipped Session Artist', roles: [] }],
+          },
+          source: 'topTracks',
+        },
+        {
+          track: {
+            title: 'Another by Active',
+            source: { provider: 'music', id: 'cand-b' },
+            artists: [{ name: 'Active Session Artist', roles: [] }],
+          },
+          source: 'topTracks',
+        },
+      ],
+      [
+        { name: 'Skipped Session Artist', score: 100 },
+        { name: 'Active Session Artist', score: 100 },
+      ],
+    );
+
+    expect(ranked[0].title).toBe('Another by Active');
+
+    useFavoritesStore.setState({
+      tracks: [
+        {
+          key: 'fav-1',
+          addedAtIso: new Date().toISOString(),
+          ref: {
+            title: 'Cloud Synced Favorite',
+            artists: [{ name: 'Cloud Artist' }],
+            source: { provider: 'spotify', id: 'cloud-fav-1' },
+          },
+        },
+      ],
+      artists: [],
+      albums: [],
+    });
+
+    const seeds = await mobile.getSeedTracks(5);
+    expect(seeds.map((seed) => seed.title)).toContain('Cloud Synced Favorite');
+  });
 });

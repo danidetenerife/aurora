@@ -8,10 +8,9 @@ const PluginIconLinkSchema = z
 
 const PluginIconSchema = PluginIconLinkSchema;
 
-const NuclearSchema = z
+const AuroraSchema = z
   .object({
     displayName: z.string().min(1).optional(),
-    // TODO: Remove category after registry migration to categories
     category: z.string().min(1).optional(),
     categories: z.array(z.string().min(1)).optional(),
     icon: PluginIconSchema.optional(),
@@ -26,12 +25,11 @@ const PackageJsonSchema = z
     description: z.string().min(1),
     author: z.string().min(1),
     main: z.string().min(1).optional(),
-    aurora: NuclearSchema.optional(),
-    nuclear: NuclearSchema.optional(),
+    aurora: AuroraSchema.optional(),
   })
   .passthrough();
 
-type NuclearType = NonNullable<PluginManifest['nuclear']>;
+type AuroraType = NonNullable<PluginManifest['aurora']>;
 
 const normalizePermissions = (
   perms: unknown,
@@ -41,49 +39,49 @@ const normalizePermissions = (
     return undefined;
   }
   const trimmed = perms
-    .map((p) => (typeof p === 'string' ? p.trim() : ''))
-    .filter((p) => p.length > 0);
+    .map((permission) =>
+      typeof permission === 'string' ? permission.trim() : '',
+    )
+    .filter((permission) => permission.length > 0);
   const before = trimmed.length;
   const deduped = Array.from(new Set(trimmed));
   if (deduped.length < before) {
     warnings.push('Duplicate permissions removed.');
   }
-  return deduped.sort((a, b) => a.localeCompare(b));
+  return deduped.sort((first, second) => first.localeCompare(second));
 };
 
-const collectUnknownNuclearKeys = (
-  nuclear: Record<string, unknown>,
-): string[] =>
-  Object.keys(nuclear).filter(
-    (k) =>
+const collectUnknownAuroraKeys = (aurora: Record<string, unknown>): string[] =>
+  Object.keys(aurora).filter(
+    (key) =>
       ![
         'displayName',
         'category',
         'categories',
         'icon',
         'permissions',
-      ].includes(k),
+      ].includes(key),
   );
 
-const normalizeNuclear = (
-  nuclear: z.infer<typeof NuclearSchema> | undefined,
+const normalizeAurora = (
+  aurora: z.infer<typeof AuroraSchema> | undefined,
   warnings: string[],
-): NuclearType | undefined => {
-  if (!nuclear) {
+): AuroraType | undefined => {
+  if (!aurora) {
     return undefined;
   }
-  const unknown = collectUnknownNuclearKeys(nuclear as Record<string, unknown>);
+  const unknown = collectUnknownAuroraKeys(aurora as Record<string, unknown>);
   if (unknown.length > 0) {
-    warnings.push(`nuclear contains unknown keys: ${unknown.join(', ')}`);
+    warnings.push(`aurora contains unknown keys: ${unknown.join(', ')}`);
   }
-  const permissions = normalizePermissions(nuclear.permissions, warnings);
-  const category = nuclear.category?.trim();
-  const categories = nuclear.categories ?? (category ? [category] : []);
+  const permissions = normalizePermissions(aurora.permissions, warnings);
+  const category = aurora.category?.trim();
+  const categories = aurora.categories ?? (category ? [category] : []);
   return {
-    displayName: nuclear.displayName?.trim(),
+    displayName: aurora.displayName?.trim(),
     category,
     categories,
-    icon: nuclear.icon as NuclearType['icon'],
+    icon: aurora.icon as AuroraType['icon'],
     permissions,
   };
 };
@@ -107,7 +105,7 @@ export const safeParsePluginManifest = (raw: unknown): SafeParseResult => {
   const result = PackageJsonSchema.safeParse(raw);
   if (!result.success) {
     const errors = result.error.issues.map(
-      (i) => `${i.path.join('.')}: ${i.message}`,
+      (issue) => `${issue.path.join('.')}: ${issue.message}`,
     );
     return { success: false, errors, warnings };
   }
@@ -120,10 +118,7 @@ export const safeParsePluginManifest = (raw: unknown): SafeParseResult => {
     );
   }
 
-  const auroraMetadata = normalizeNuclear(
-    data.aurora ?? data.nuclear,
-    warnings,
-  );
+  const auroraMetadata = normalizeAurora(data.aurora, warnings);
 
   const manifest: PluginManifest = {
     name: data.name.trim(),
@@ -132,7 +127,6 @@ export const safeParsePluginManifest = (raw: unknown): SafeParseResult => {
     author: data.author.trim(),
     main: data.main?.trim(),
     aurora: auroraMetadata,
-    nuclear: auroraMetadata,
   };
 
   return { success: true, data: manifest, warnings };

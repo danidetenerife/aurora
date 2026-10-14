@@ -23,8 +23,18 @@ const DEFAULT_DURATION_MS = 180_000;
 const MILLISECONDS_PER_SECOND = 1000;
 const MILLISECONDS_PER_DAY = 86_400_000;
 const RECENCY_HALF_LIFE_DAYS = 21;
+const SHORT_TERM_HALF_LIFE_DAYS = 2;
 const REPLAY_WINDOW_DAYS = 1;
-const COOLDOWN_WINDOW_MS = 4 * 60 * 60 * 1000; // 4 hours
+const COOLDOWN_WINDOW_MS = 4 * 60 * 60 * 1000;
+const COLLABORATOR_AFFINITY_WEIGHT = 0.65;
+const COLLABORATION_SYNERGY_MULTIPLIER = 1.28;
+const DAYPART_RESONANCE_MULTIPLIER = 1.12;
+const SESSION_MOMENTUM_MULTIPLIER = 1.18;
+const SESSION_SKIP_DECAY_BASE = 0.45;
+const OVER_COMPLETION_THRESHOLD = 1.05;
+const MAX_OVER_COMPLETION_BONUS = 1.35;
+
+export type Daypart = 'morning' | 'afternoon' | 'evening' | 'night';
 
 export type ArtistScore = {
   name: string;
@@ -46,8 +56,52 @@ type ListeningSession = {
   position: number;
 };
 
+export const cleanTrackTitle = (rawTitle: string): string =>
+  rawTitle
+    .toLowerCase()
+    .replace(
+      /\s*[([](?:official\s*(?:music\s*)?(?:video|audio|lyric\s*video|visualizer)|lyric\s*video|visualizer|audio|video\s*oficial|hd|hq|4k|remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at\s*[^)\]]*)?)[)\]]/gi,
+      '',
+    )
+    .replace(/\s*-\s*remaster(?:ed)?(?:\s*\d{4})?\b/gi, '')
+    .replace(/\s*[([]?(?:feat\.?|ft\.?)\s+[^)\]]+[)\]]?/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+export const normalizeTrackSignature = (track: {
+  title?: string;
+  artists?: Array<{ name?: string }>;
+}): string => {
+  const primaryArtist = (track.artists?.[0]?.name ?? '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  const normalizedTitle = cleanTrackTitle(track.title ?? '');
+  return normalizedTitle ? `${primaryArtist}::${normalizedTitle}` : '';
+};
+
+const getDaypart = (timestampMs: number): Daypart => {
+  const hour = new Date(timestampMs).getHours();
+  if (hour >= 5 && hour < 12) {
+    return 'morning';
+  }
+  if (hour >= 12 && hour < 18) {
+    return 'afternoon';
+  }
+  if (hour >= 18 && hour < 23) {
+    return 'evening';
+  }
+  return 'night';
+};
+
 const exponentialDecay = (daysAgo: number): number =>
   Math.exp((-Math.LN2 * daysAgo) / RECENCY_HALF_LIFE_DAYS);
+
+const shortTermDecay = (daysAgo: number): number =>
+  Math.exp((-Math.LN2 * daysAgo) / SHORT_TERM_HALF_LIFE_DAYS);
+
+const dualHorizonRecency = (daysAgo: number): number =>
+  exponentialDecay(daysAgo) * 0.75 + shortTermDecay(daysAgo) * 0.25;
 
 const completionRate = (record: UserListenRecord): number => {
   const durationMs = record.durationMs;
@@ -65,6 +119,24 @@ const completionRate = (record: UserListenRecord): number => {
   }
   const ratio = totalListenMs / (playCount * durationMs);
   return Math.max(0, Math.min(1, ratio));
+};
+
+const overCompletionMultiplier = (record: UserListenRecord): number => {
+  if (
+    !Number.isFinite(record.durationMs) ||
+    !Number.isFinite(record.playCount) ||
+    !Number.isFinite(record.totalListenMs) ||
+    record.durationMs <= 0 ||
+    record.playCount <= 0
+  ) {
+    return 1.0;
+  }
+  const rawRatio =
+    record.totalListenMs / (record.playCount * record.durationMs);
+  if (rawRatio <= OVER_COMPLETION_THRESHOLD) {
+    return 1.0;
+  }
+  return Math.min(MAX_OVER_COMPLETION_BONUS, 1 + (rawRatio - 1) * 0.5);
 };
 
 const loyaltyBonus = (record: UserListenRecord): number => {
@@ -102,6 +174,8 @@ export class PersonalizationEngine {
   private unsubscribe: Array<() => void> = [];
   private saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private consecutiveSkips = 0;
+  private sessionSkippedArtists = new Map<string, number>();
+  private sessionCompletedArtists = new Set<string>();
   private artistResolutionCache = new Map<
     string,
     { spotifyUri?: string; genres: string[] }
@@ -376,6 +450,24 @@ export class PersonalizationEngine {
     immediateSkipCount = 0,
     persistImmediately = true,
   ): Promise<void> {
+    const primaryArtistKey = (track.artists[0]?.name || '')
+      .toLowerCase()
+      .trim();
+    if (playCount > 0) {
+      for (const artistEntry of track.artists ?? []) {
+        const normalizedKey = artistEntry.name.toLowerCase().trim();
+        if (normalizedKey) {
+          this.sessionSkippedArtists.delete(normalizedKey);
+          this.sessionCompletedArtists.add(normalizedKey);
+        }
+      }
+    } else if (skipCount > 0 && primaryArtistKey) {
+      this.sessionSkippedArtists.set(
+        primaryArtistKey,
+        (this.sessionSkippedArtists.get(primaryArtistKey) ?? 0) + 1,
+      );
+    }
+
     const notifyListeners = persistImmediately;
     return this.mutate(
       async (records) => {
@@ -385,10 +477,23 @@ export class PersonalizationEngine {
           await this.profileStore.set('deviceId', deviceId);
         }
         const artistName = track.artists[0]?.name || 'Unknown';
+        const collaborators = (track.artists ?? [])
+          .slice(1)
+          .map((artistEntry) => artistEntry.name.trim())
+          .filter((name) => name.length > 0 && name !== artistName);
+        const trackGenres = (track.tags ?? [])
+          .map((tag) => tag.toLowerCase().trim())
+          .filter((tag) => tag.length > 0);
         const trackId = track.source.id || artistName + '-' + track.title;
         const existing = records.find((record) => record.trackId === trackId);
         const counters = existing?.contributions?.[deviceId];
         const now = Date.now();
+        const mergedCollaborators = Array.from(
+          new Set([...(existing?.collaborators ?? []), ...collaborators]),
+        );
+        const mergedGenres = Array.from(
+          new Set([...(existing?.genres ?? []), ...trackGenres]),
+        );
         const updated: UserListenRecord = {
           ...existing,
           trackId,
@@ -396,6 +501,10 @@ export class PersonalizationEngine {
           artist: artistName,
           source: track.source,
           artistSource: track.artists[0]?.source,
+          ...(mergedCollaborators.length > 0
+            ? { collaborators: mergedCollaborators }
+            : {}),
+          ...(mergedGenres.length > 0 ? { genres: mergedGenres } : {}),
           durationMs: track.durationMs ?? DEFAULT_DURATION_MS,
           firstPlayedAt: existing?.firstPlayedAt ?? now,
           lastPlayedAt: now,
@@ -421,8 +530,6 @@ export class PersonalizationEngine {
       notifyListeners,
     );
   }
-
-  // --- Blacklist / Dislike Management ---
 
   async getBlacklist(): Promise<{ tracks: string[]; artists: string[] }> {
     await this.pendingWrite;
@@ -495,10 +602,14 @@ export class PersonalizationEngine {
       (await this.profileStore.get<string[]>('blacklistedArtists')) ?? [];
 
     const normalizedArtists = artists
-      .filter((a) => typeof a === 'string' && a.trim().length > 0)
-      .map((a) => a.trim().toLowerCase());
+      .filter(
+        (artistItem) =>
+          typeof artistItem === 'string' && artistItem.trim().length > 0,
+      )
+      .map((artistItem) => artistItem.trim().toLowerCase());
     const validTracks = tracks.filter(
-      (t) => typeof t === 'string' && t.trim().length > 0,
+      (trackItem) =>
+        typeof trackItem === 'string' && trackItem.trim().length > 0,
     );
 
     const mergedTracks = Array.from(
@@ -531,11 +642,10 @@ export class PersonalizationEngine {
     if (tracks.includes(trackId)) {
       return true;
     }
-    const artist = (track.artists?.[0]?.name || '').toLowerCase().trim();
-    return artists.includes(artist);
+    return (track.artists ?? []).some((artistEntry) =>
+      artists.includes(artistEntry.name.toLowerCase().trim()),
+    );
   }
-
-  // --- Artist Auto-resolution & Metadata Enrichment ---
 
   async resolveArtistMetadata(
     artistName: string,
@@ -562,26 +672,26 @@ export class PersonalizationEngine {
           const bio = await metadataHost.fetchArtistBio(uri);
           if (bio?.tags && Array.isArray(bio.tags)) {
             genres = bio.tags
-              .map((t) => t.toLowerCase().trim())
+              .map((tagItem) => tagItem.toLowerCase().trim())
               .filter(Boolean);
           }
         } catch {
-          // ignore bio fetch error
+          genres = [];
         }
         const resolved = { spotifyUri: uri, genres };
         this.artistResolutionCache.set(key, resolved);
         return resolved;
       }
     } catch {
-      // ignore network or plugin search errors
+      const emptyFallback = { genres: [] };
+      this.artistResolutionCache.set(key, emptyFallback);
+      return emptyFallback;
     }
 
     const fallback = { genres: [] };
     this.artistResolutionCache.set(key, fallback);
     return fallback;
   }
-
-  // --- Scoring & Profile Analysis ---
 
   async getTopArtists(): Promise<ArtistScore[]> {
     const listens = await this.getListenRecords();
@@ -613,16 +723,13 @@ export class PersonalizationEngine {
         continue;
       }
 
-      if (blacklistedArtists.includes(record.artist.toLowerCase().trim())) {
-        continue;
-      }
-
       const daysAgo = Math.max(
         0,
-        (now - record.lastPlayedAt) / (1000 * 60 * 60 * 24),
+        (now - record.lastPlayedAt) / MILLISECONDS_PER_DAY,
       );
-      const recencyWeight = exponentialDecay(daysAgo);
+      const recencyWeight = dualHorizonRecency(daysAgo);
       const completion = completionRate(record);
+      const loopBonus = overCompletionMultiplier(record);
       const loyalty = loyaltyBonus(record);
 
       const isReplayIn24h =
@@ -649,35 +756,70 @@ export class PersonalizationEngine {
         recencyWeight *
         (1 + loyalty * 0.3) *
         replayMultiplier *
+        loopBonus *
         skipPenalty *
         immediatePenalty;
 
-      const entry = ensureArtist(record.artist);
-      entry.score += score;
+      if (!blacklistedArtists.includes(record.artist.toLowerCase().trim())) {
+        const entry = ensureArtist(record.artist);
+        entry.score += score;
 
-      if (record.artistSource?.provider === 'spotify') {
-        entry.spotifyUri = record.artistSource.id;
+        if (record.artistSource?.provider === 'spotify') {
+          entry.spotifyUri = record.artistSource.id;
+        }
+
+        if (record.genres && record.genres.length > 0) {
+          entry.genres = Array.from(
+            new Set([...(entry.genres ?? []), ...record.genres]),
+          );
+        }
       }
 
-      if (record.genres && record.genres.length > 0) {
-        entry.genres = Array.from(
-          new Set([...(entry.genres ?? []), ...record.genres]),
-        );
+      for (const collaborator of record.collaborators ?? []) {
+        const cleanCollaborator = collaborator.trim();
+        if (
+          !cleanCollaborator ||
+          cleanCollaborator === 'Unknown' ||
+          blacklistedArtists.includes(cleanCollaborator.toLowerCase())
+        ) {
+          continue;
+        }
+        const collabEntry = ensureArtist(cleanCollaborator);
+        collabEntry.score += score * COLLABORATOR_AFFINITY_WEIGHT;
+        if (record.genres && record.genres.length > 0) {
+          collabEntry.genres = Array.from(
+            new Set([...(collabEntry.genres ?? []), ...record.genres]),
+          );
+        }
       }
     }
 
     for (const favTrack of favState.tracks) {
-      const artist = favTrack.ref.artists?.[0]?.name;
-      if (artist && !blacklistedArtists.includes(artist.toLowerCase().trim())) {
-        const daysAgo = favTrack.addedAtIso
-          ? Math.max(
-              0,
-              (now - new Date(favTrack.addedAtIso).getTime()) /
-                (1000 * 60 * 60 * 24),
-            )
-          : 30;
-        ensureArtist(artist).score += 15 * exponentialDecay(daysAgo);
-      }
+      const daysAgo = favTrack.addedAtIso
+        ? Math.max(
+            0,
+            (now - new Date(favTrack.addedAtIso).getTime()) /
+              MILLISECONDS_PER_DAY,
+          )
+        : 30;
+      const trackDecay = dualHorizonRecency(daysAgo);
+      (favTrack.ref.artists ?? []).forEach((artistEntry, index) => {
+        const artistName = artistEntry.name;
+        if (
+          artistName &&
+          !blacklistedArtists.includes(artistName.toLowerCase().trim())
+        ) {
+          const weight = index === 0 ? 15 : 15 * COLLABORATOR_AFFINITY_WEIGHT;
+          const scoredEntry = ensureArtist(artistName);
+          scoredEntry.score += weight * trackDecay;
+          if (
+            artistEntry.source?.provider === 'spotify' &&
+            !scoredEntry.spotifyUri
+          ) {
+            scoredEntry.spotifyUri = artistEntry.source.id;
+          }
+        }
+      });
     }
 
     for (const favArtist of favState.artists) {
@@ -693,26 +835,27 @@ export class PersonalizationEngine {
 
     playlistState.playlists.forEach((playlist) => {
       for (const item of playlist.items || []) {
-        const artist = item.track?.artists?.[0]?.name;
-        if (
-          artist &&
-          !blacklistedArtists.includes(artist.toLowerCase().trim())
-        ) {
-          const entry = ensureArtist(artist);
-          entry.score += 5;
-          const artistSource = item.track?.artists?.[0]?.source;
-          if (artistSource?.provider === 'spotify' && !entry.spotifyUri) {
-            entry.spotifyUri = artistSource.id;
+        (item.track?.artists ?? []).forEach((artistEntry, index) => {
+          const artist = artistEntry.name;
+          if (
+            artist &&
+            !blacklistedArtists.includes(artist.toLowerCase().trim())
+          ) {
+            const entry = ensureArtist(artist);
+            entry.score += index === 0 ? 5 : 5 * COLLABORATOR_AFFINITY_WEIGHT;
+            const artistSource = artistEntry.source;
+            if (artistSource?.provider === 'spotify' && !entry.spotifyUri) {
+              entry.spotifyUri = artistSource.id;
+            }
           }
-        }
+        });
       }
     });
 
     const sorted = Object.values(artistScores)
       .filter((artist) => artist.score > 0)
-      .sort((a, b) => b.score - a.score);
+      .sort((first, second) => second.score - first.score);
 
-    // Trigger background auto-resolution without blocking
     sorted.slice(0, 5).forEach((artist) => {
       if (!artist.spotifyUri || !artist.genres || artist.genres.length === 0) {
         void this.resolveArtistMetadata(artist.name).then((meta) => {
@@ -751,7 +894,7 @@ export class PersonalizationEngine {
 
     return Array.from(genreMap.entries())
       .map(([genre, score]) => ({ genre, score }))
-      .sort((a, b) => b.score - a.score)
+      .sort((first, second) => second.score - first.score)
       .slice(0, limit);
   }
 
@@ -759,8 +902,9 @@ export class PersonalizationEngine {
     const listens = await this.getListenRecords();
     const { tracks: blacklistedTracks, artists: blacklistedArtists } =
       await this.getBlacklist();
+    const now = Date.now();
 
-    return listens
+    const learnedSeeds: Track[] = listens
       .filter((record) => {
         if (record.playCount <= 0 || completionRate(record) <= 0.5) {
           return false;
@@ -773,31 +917,84 @@ export class PersonalizationEngine {
         }
         return true;
       })
-      .sort((a, b) => {
-        const aScore =
-          a.playCount *
-          completionRate(a) *
-          exponentialDecay(
-            Math.max(0, (Date.now() - a.lastPlayedAt) / (1000 * 60 * 60 * 24)),
+      .sort((first, second) => {
+        const firstScore =
+          first.playCount *
+          completionRate(first) *
+          overCompletionMultiplier(first) *
+          dualHorizonRecency(
+            Math.max(0, (now - first.lastPlayedAt) / MILLISECONDS_PER_DAY),
           );
-        const bScore =
-          b.playCount *
-          completionRate(b) *
-          exponentialDecay(
-            Math.max(0, (Date.now() - b.lastPlayedAt) / (1000 * 60 * 60 * 24)),
+        const secondScore =
+          second.playCount *
+          completionRate(second) *
+          overCompletionMultiplier(second) *
+          dualHorizonRecency(
+            Math.max(0, (now - second.lastPlayedAt) / MILLISECONDS_PER_DAY),
           );
-        return bScore - aScore;
+        return secondScore - firstScore;
       })
       .slice(0, limit)
       .map((record) => ({
         title: record.title,
         artists: [
           { name: record.artist, roles: [], source: record.artistSource },
+          ...(record.collaborators ?? []).map((collaborator) => ({
+            name: collaborator,
+            roles: [],
+          })),
         ],
         source: record.source ?? { provider: 'unknown', id: record.trackId },
         durationMs: record.durationMs,
         artwork: undefined,
       }));
+
+    if (learnedSeeds.length >= limit) {
+      return learnedSeeds;
+    }
+
+    const seenSignatures = new Set(
+      learnedSeeds.map((seedTrack) => normalizeTrackSignature(seedTrack)),
+    );
+    const favoriteTracks = useFavoritesStore.getState().tracks;
+    for (const favEntry of favoriteTracks) {
+      if (learnedSeeds.length >= limit) {
+        break;
+      }
+      const ref = favEntry.ref;
+      const trackId =
+        ref.source?.id || `${ref.artists?.[0]?.name}-${ref.title}`;
+      if (blacklistedTracks.includes(trackId)) {
+        continue;
+      }
+      if (
+        (ref.artists ?? []).some((artistItem) =>
+          blacklistedArtists.includes(artistItem.name.toLowerCase().trim()),
+        )
+      ) {
+        continue;
+      }
+      const candidateTrack: Track = {
+        title: ref.title,
+        artists: (ref.artists ?? []).map((artistItem) => ({
+          name: artistItem.name,
+          roles: [],
+          source: artistItem.source,
+        })),
+        source: ref.source,
+        artwork: ref.artwork,
+      };
+      const signature = normalizeTrackSignature(candidateTrack);
+      if (signature && seenSignatures.has(signature)) {
+        continue;
+      }
+      if (signature) {
+        seenSignatures.add(signature);
+      }
+      learnedSeeds.push(candidateTrack);
+    }
+
+    return learnedSeeds;
   }
 
   scoreAndRankTracks(
@@ -814,22 +1011,48 @@ export class PersonalizationEngine {
     variety: number = 0.5,
     seed: number = 0,
   ): Track[] {
-    const listeningByTrack = new Map(
-      listens.map((record) => [record.trackId, record]),
-    );
+    const now = Date.now();
+    const currentDaypart = getDaypart(now);
+    const listeningByTrack = new Map<string, UserListenRecord>();
+    const listeningBySignature = new Map<string, UserListenRecord>();
+    const daypartArtists = new Set<string>();
+
+    for (const record of listens) {
+      listeningByTrack.set(record.trackId, record);
+      const signature = normalizeTrackSignature({
+        title: record.title,
+        artists: [{ name: record.artist }],
+      });
+      if (signature && !listeningBySignature.has(signature)) {
+        listeningBySignature.set(signature, record);
+      }
+      if (
+        record.playCount > 0 &&
+        record.lastPlayedAt > 0 &&
+        getDaypart(record.lastPlayedAt) === currentDaypart
+      ) {
+        daypartArtists.add(record.artist.toLowerCase().trim());
+        for (const collaborator of record.collaborators ?? []) {
+          daypartArtists.add(collaborator.toLowerCase().trim());
+        }
+      }
+    }
+
     const artistAffinityMap = new Map<string, number>();
     const maxScore = Math.max(1, ...topArtists.map((artist) => artist.score));
     for (const artist of topArtists) {
       const normalizedAffinity =
         Math.log(1 + Math.max(0, artist.score)) / Math.log(1 + maxScore);
-      artistAffinityMap.set(artist.name.toLowerCase(), normalizedAffinity);
+      artistAffinityMap.set(
+        artist.name.toLowerCase().trim(),
+        normalizedAffinity,
+      );
     }
 
-    // Build user genre weights from top artists
     const userGenreWeights = new Map<string, number>();
     for (const artist of topArtists) {
       const artistWeight =
-        artistAffinityMap.get(artist.name.toLowerCase()) ?? 0;
+        artistAffinityMap.get(artist.name.toLowerCase().trim()) ?? 0;
       for (const genre of artist.genres ?? []) {
         const clean = genre.toLowerCase().trim();
         if (clean) {
@@ -853,13 +1076,13 @@ export class PersonalizationEngine {
     };
 
     const seenIds = new Set<string>();
+    const seenSignatures = new Set<string>();
     const artistTrackCount = new Map<string, number>();
 
     const familiarCandidates: Array<{ track: Track; score: number }> = [];
     const relatedCandidates: Array<{ track: Track; score: number }> = [];
     const discoveryCandidates: Array<{ track: Track; score: number }> = [];
 
-    const now = Date.now();
     const hasSkipStreak = this.consecutiveSkips >= 3;
 
     const favTracks = useFavoritesStore.getState().tracks;
@@ -868,36 +1091,59 @@ export class PersonalizationEngine {
       .getState()
       .getCurrentItem()?.track;
     const currentTags = new Set(
-      (currentPlayingTrack?.tags ?? []).map((t) => t.toLowerCase().trim()),
+      (currentPlayingTrack?.tags ?? []).map((tagItem) =>
+        tagItem.toLowerCase().trim(),
+      ),
     );
 
     for (const candidate of candidates) {
       const trackId =
         candidate.track.source?.id ||
         `${candidate.track.artists?.[0]?.name}-${candidate.track.title}`;
-      if (seenIds.has(trackId)) {
+      const signature = normalizeTrackSignature(candidate.track);
+      if (
+        seenIds.has(trackId) ||
+        (signature.length > 0 && seenSignatures.has(signature))
+      ) {
         continue;
       }
       seenIds.add(trackId);
+      if (signature.length > 0) {
+        seenSignatures.add(signature);
+      }
 
-      const artistName = (
-        candidate.track.artists?.[0]?.name || ''
-      ).toLowerCase();
+      const candidateArtists = (candidate.track.artists ?? [])
+        .map((artistItem) => artistItem.name.toLowerCase().trim())
+        .filter(Boolean);
 
-      // Check blacklist
       if (
         blacklists.tracks.includes(trackId) ||
-        blacklists.artists.includes(artistName)
+        candidateArtists.some((artistKey) =>
+          blacklists.artists.includes(artistKey),
+        )
       ) {
         continue;
       }
 
-      let affinity = artistAffinityMap.get(artistName) ?? 0;
+      let maxAffinity = 0;
+      let totalAffinity = 0;
+      let matchedAffinityArtists = 0;
+      for (const artistKey of candidateArtists) {
+        const artistAffinity = artistAffinityMap.get(artistKey) ?? 0;
+        if (artistAffinity > 0) {
+          matchedAffinityArtists++;
+          maxAffinity = Math.max(maxAffinity, artistAffinity);
+          totalAffinity += artistAffinity;
+        }
+      }
+      const secondaryAffinity = Math.max(0, totalAffinity - maxAffinity);
+      let affinity = Math.min(1.35, maxAffinity + secondaryAffinity * 0.35);
+      const collaborationMultiplier =
+        matchedAffinityArtists >= 2 ? COLLABORATION_SYNERGY_MULTIPLIER : 1.0;
 
-      // Genre vector matching for unfamiliar or discovery tracks
       if (affinity === 0 && userGenreWeights.size > 0) {
-        const candidateTags = (candidate.track.tags ?? []).map((t) =>
-          t.toLowerCase().trim(),
+        const candidateTags = (candidate.track.tags ?? []).map((tagItem) =>
+          tagItem.toLowerCase().trim(),
         );
         let bestGenreScore = 0;
         for (const tag of candidateTags) {
@@ -915,7 +1161,9 @@ export class PersonalizationEngine {
 
       const sourceBonus = sourceWeights[candidate.source] ?? 0.5;
       const freshnessNoise = getDeterministicJitter(trackId, seed);
-      const listen = listeningByTrack.get(trackId);
+      const listen =
+        listeningByTrack.get(trackId) ??
+        (signature ? listeningBySignature.get(signature) : undefined);
 
       const skipRatio =
         listen && listen.skipCount > 0
@@ -926,6 +1174,17 @@ export class PersonalizationEngine {
       const immediateSkips = listen?.immediateSkipCount ?? 0;
       const immediatePenalty =
         immediateSkips > 0 ? Math.pow(0.2, immediateSkips) : 1.0;
+
+      let sessionSkipPenalty = 1.0;
+      for (const artistKey of candidateArtists) {
+        const sessionSkips = this.sessionSkippedArtists.get(artistKey) ?? 0;
+        if (sessionSkips > 0) {
+          sessionSkipPenalty = Math.min(
+            sessionSkipPenalty,
+            Math.pow(SESSION_SKIP_DECAY_BASE, sessionSkips),
+          );
+        }
+      }
 
       let cooldownMultiplier = 1.0;
       if (listen?.lastPlayedAt) {
@@ -938,6 +1197,21 @@ export class PersonalizationEngine {
         }
       }
 
+      let trackQualityMultiplier = 1.0;
+      if (listen && listen.playCount > 0) {
+        const completion = completionRate(listen);
+        const overComp = overCompletionMultiplier(listen);
+        if (completion >= 0.75) {
+          trackQualityMultiplier =
+            (1 +
+              Math.min(
+                0.3,
+                Math.log2(1 + listen.playCount) * 0.08 * completion,
+              )) *
+            overComp;
+        }
+      }
+
       const streakMultiplier = hasSkipStreak
         ? candidate.source === 'topTracks'
           ? 1.3
@@ -947,32 +1221,48 @@ export class PersonalizationEngine {
       const isFavTrack = favTracks.some(
         (entry) =>
           (entry.ref.source?.id && entry.ref.source.id === trackId) ||
-          (entry.ref.title.toLowerCase().trim() ===
-            candidate.track.title.toLowerCase().trim() &&
-            entry.ref.artists?.[0]?.name?.toLowerCase().trim() === artistName),
+          (signature.length > 0 &&
+            normalizeTrackSignature(entry.ref) === signature),
       );
-      const isFavArtist = favArtists.some(
-        (entry) => entry.ref.name.toLowerCase().trim() === artistName,
+      const isFavArtist = favArtists.some((entry) =>
+        candidateArtists.includes(entry.ref.name.toLowerCase().trim()),
       );
       const libraryMultiplier = isFavTrack ? 1.6 : isFavArtist ? 1.25 : 1.0;
 
+      const daypartMultiplier = candidateArtists.some((artistKey) =>
+        daypartArtists.has(artistKey),
+      )
+        ? DAYPART_RESONANCE_MULTIPLIER
+        : 1.0;
+
       let sessionTransitionMultiplier = 1.0;
       if (currentTags.size > 0 && candidate.track.tags) {
-        const candidateTags = candidate.track.tags.map((t) =>
-          t.toLowerCase().trim(),
+        const candidateTags = candidate.track.tags.map((tagItem) =>
+          tagItem.toLowerCase().trim(),
         );
         if (candidateTags.some((tag) => currentTags.has(tag))) {
           sessionTransitionMultiplier = 1.25;
         }
       }
+      if (
+        candidateArtists.some((artistKey) =>
+          this.sessionCompletedArtists.has(artistKey),
+        )
+      ) {
+        sessionTransitionMultiplier *= SESSION_MOMENTUM_MULTIPLIER;
+      }
 
       const finalScore =
         (affinity * 0.35 + sourceBonus * 0.2 + 0.15 + freshnessNoise * 0.3) *
+        collaborationMultiplier *
         skipWeight *
         immediatePenalty *
+        sessionSkipPenalty *
         cooldownMultiplier *
+        trackQualityMultiplier *
         streakMultiplier *
         libraryMultiplier *
+        daypartMultiplier *
         sessionTransitionMultiplier;
 
       const item = { track: candidate.track, score: finalScore };
@@ -986,12 +1276,10 @@ export class PersonalizationEngine {
       }
     }
 
-    // Sort each pool by score descending
-    familiarCandidates.sort((a, b) => b.score - a.score);
-    relatedCandidates.sort((a, b) => b.score - a.score);
-    discoveryCandidates.sort((a, b) => b.score - a.score);
+    familiarCandidates.sort((first, second) => second.score - first.score);
+    relatedCandidates.sort((first, second) => second.score - first.score);
+    discoveryCandidates.sort((first, second) => second.score - first.score);
 
-    // Target familiar/related mix based on variety setting
     const totalDesired =
       familiarCandidates.length +
       relatedCandidates.length +
@@ -1009,7 +1297,9 @@ export class PersonalizationEngine {
     ) => {
       let added = 0;
       for (const entry of pool) {
-        const artist = (entry.track.artists[0]?.name ?? '').toLowerCase();
+        const artist = (
+          entry.track.artists[0]?.name ?? primaryFallbackArtist
+        ).toLowerCase();
         const currentCount = artistTrackCount.get(artist) ?? 0;
         if (currentCount >= dynamicMaxTracks) {
           continue;
@@ -1022,19 +1312,19 @@ export class PersonalizationEngine {
         }
       }
     };
+    const primaryFallbackArtist = '';
 
     pushFromPool(familiarCandidates, targetFamiliar);
     pushFromPool(relatedCandidates, targetRelated);
-    pushFromPool(discoveryCandidates, 0); // rest
+    pushFromPool(discoveryCandidates, 0);
 
-    // Also pick up any remaining high-scoring candidates from all pools
     const remaining = [
       ...familiarCandidates,
       ...relatedCandidates,
       ...discoveryCandidates,
     ]
-      .filter((e) => !merged.includes(e.track))
-      .sort((a, b) => b.score - a.score);
+      .filter((entry) => !merged.includes(entry.track))
+      .sort((first, second) => second.score - first.score);
 
     pushFromPool(remaining, 0);
 
@@ -1058,7 +1348,7 @@ export class PersonalizationEngine {
     }
 
     const queues = Array.from(byArtist.values()).sort(
-      (a, b) => b.length - a.length,
+      (first, second) => second.length - first.length,
     );
 
     let queueIndex = seed > 0 ? seed % Math.max(1, queues.length) : 0;
@@ -1079,7 +1369,6 @@ export class PersonalizationEngine {
       }
     }
 
-    // Google benchmark: enforce max 2 tracks per artist in the top 10 recommendations
     const top10ArtistCounts = new Map<string, number>();
     const top10: Track[] = [];
     const overflow: Track[] = [];

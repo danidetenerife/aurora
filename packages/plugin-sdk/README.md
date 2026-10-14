@@ -33,7 +33,7 @@ export default {
 };
 ```
 
-You can load both TS and JS files. Nuclear compiles TS using esbuild.
+You can load both TS and JS files. Aurora compiles TS using esbuild.
 
 ## Manifest (package.json)
 
