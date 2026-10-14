@@ -125,13 +125,18 @@ cmd.exe /c "cd packages\player && npx cap sync android && android\build-apk.bat"
 
 # 6b. Install to Android device if connected
 try {
-    $devices = & adb devices 2>$null | Where-Object { $_ -match '\bdevice$' }
+    $adbCmd = "adb"
+    $sdkAdb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+    if (Test-Path -LiteralPath $sdkAdb) {
+        $adbCmd = $sdkAdb
+    }
+    $devices = & $adbCmd devices 2>$null | Where-Object { $_ -match '\bdevice$' }
     if ($devices) {
         foreach ($line in $devices) {
             $serial = ($line -split '\s+')[0]
             if ($serial) {
                 Write-Host "[ADB] Dispositivo detectado ($serial). Instalando APK..." -ForegroundColor Cyan
-                & adb -s $serial install -r -d "$Root\ejecutables\aurora-music-player.apk"
+                & $adbCmd -s $serial install -r -d "$Root\ejecutables\aurora-music-player.apk"
             }
         }
     }
@@ -213,9 +218,7 @@ powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\auto-sync-github.ps1
 powershell.exe -ExecutionPolicy Bypass -File "$Root\scripts\publish-release.ps1" -Version $NextVer -Notes "$releaseNotes"
 
 try {
-    git tag -a "player@$NextVer" -m "player@$NextVer" -f
     git tag -a "$Tag" -m "$Tag" -f
-    git push origin "player@$NextVer" -f
     git push origin "$Tag" -f
 } catch {
     Write-Host "[Git Tags] Aviso al pushear tags: $_" -ForegroundColor Yellow

@@ -194,6 +194,8 @@ function getFullSyncPayload() {
     ...(Array.isArray(syncedProfile.blacklistedArtists) ? syncedProfile.blacklistedArtists : []),
   ]));
 
+  const rawSyncConfig = readJsonFile('p2p_sync.json', {});
+
   const tracks = rawFavs['favorites.tracks'] || [];
   const artists = rawFavs['favorites.artists'] || [];
   const albums = rawFavs['favorites.albums'] || [];
@@ -209,6 +211,7 @@ function getFullSyncPayload() {
     settings: rawSettings,
     plugins: rawPlugins,
     activeProviders,
+    p2p_sync: rawSyncConfig,
     queue: rawQueue,
     playlists,
     playlistIndex,

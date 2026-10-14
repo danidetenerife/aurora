@@ -879,6 +879,60 @@ export class P2PSyncService {
       // LAN Sync Provider
       const workingUrl = await this.getWorkingServerUrl();
       if (!workingUrl) {
+        const gistConfig = await this.getGistConfig();
+        const webdavConfig = await this.getWebDavConfig();
+        const fallbackAdapter: SyncAdapter | null =
+          gistConfig.token || gistConfig.gistId
+            ? new GistAdapter(
+                gistConfig,
+                async (newGistId) => {
+                  await syncStore.set('gist_id', newGistId);
+                  await syncStore.save();
+                },
+                async (newToken) => {
+                  await syncStore.set('gist_token', newToken);
+                  await syncStore.save();
+                },
+              )
+            : webdavConfig.url
+              ? new WebDavAdapter(webdavConfig)
+              : null;
+
+        if (fallbackAdapter) {
+          try {
+            const remotePayload = await fallbackAdapter.fetchRemote();
+            let applyResult = {
+              needsPushBack: true,
+              counts: { tracks: 0, artists: 0, playlists: 0, settings: 0 },
+            };
+            if (remotePayload) {
+              applyResult = await this.applyRemotePayload(remotePayload);
+            }
+            if (!remotePayload || applyResult.needsPushBack) {
+              const fullLocal = await this.gatherLocalPayload();
+              await fallbackAdapter.pushRemote(fullLocal);
+            }
+            await syncStore.set('last_sync_time', Date.now());
+            await syncStore.save();
+            this.lastSyncFinishedAt = Date.now();
+            void defaultQueryClient.invalidateQueries({
+              queryKey: ['history'],
+            });
+            void defaultQueryClient.invalidateQueries({
+              queryKey: ['favorites'],
+            });
+            void defaultQueryClient.invalidateQueries({
+              queryKey: ['playlists'],
+            });
+            return {
+              success: true,
+              syncedCounts: applyResult.counts,
+            };
+          } catch {
+            // Fall through to LAN connection error
+          }
+        }
+
         this.isSyncing = false;
         const savedUrl = await this.getSyncServerUrl();
         return {
@@ -909,6 +963,7 @@ export class P2PSyncService {
         settings?: Record<string, unknown>;
         plugins?: Record<string, unknown>;
         activeProviders?: Record<string, unknown>;
+        p2p_sync?: Record<string, unknown>;
         playlists?: Array<{ id: string; name: string; tracks?: unknown[] }>;
         user_profile?: UserListenRecord[];
         blacklist?: { tracks?: string[]; artists?: string[] };
@@ -921,6 +976,26 @@ export class P2PSyncService {
           success: false,
           error: i18n.t('common:sync.profileDownloadFailed'),
         };
+      }
+
+      if (syncData.p2p_sync && typeof syncData.p2p_sync === 'object') {
+        const remoteGistToken =
+          typeof syncData.p2p_sync.gist_token === 'string'
+            ? syncData.p2p_sync.gist_token.trim()
+            : '';
+        const remoteGistId =
+          typeof syncData.p2p_sync.gist_id === 'string'
+            ? syncData.p2p_sync.gist_id.trim()
+            : '';
+        if (remoteGistToken) {
+          await syncStore.set('gist_token', remoteGistToken);
+        }
+        if (remoteGistId) {
+          await syncStore.set('gist_id', remoteGistId);
+        }
+        if (remoteGistToken || remoteGistId) {
+          await syncStore.save();
+        }
       }
 
       await personalizationEngine.mergeRemoteListens(
@@ -1227,12 +1302,17 @@ export class P2PSyncService {
   async generateQrConfigString(): Promise<string> {
     const provider = await this.getSyncProvider();
     const config: Record<string, unknown> = { provider };
-    if (provider === 'webdav') {
-      config.webdav = await this.getWebDavConfig();
-    } else if (provider === 'gist') {
-      config.gist = await this.getGistConfig();
-    } else if (provider === 'lan') {
-      config.lan = { serverUrl: await this.getSyncServerUrl() };
+    const webdav = await this.getWebDavConfig();
+    if (provider === 'webdav' || webdav.url) {
+      config.webdav = webdav;
+    }
+    const gist = await this.getGistConfig();
+    if (provider === 'gist' || gist.token || gist.gistId) {
+      config.gist = gist;
+    }
+    const serverUrl = await this.getSyncServerUrl();
+    if (provider === 'lan' || serverUrl) {
+      config.lan = { serverUrl };
     }
     const jsonString = JSON.stringify(config);
     const utf8Bytes = new TextEncoder().encode(jsonString);
@@ -1254,16 +1334,21 @@ export class P2PSyncService {
         const decodedJson = new TextDecoder().decode(utf8Bytes);
         const config = JSON.parse(decodedJson) as SyncConfig;
 
-        if (config.provider === 'webdav' && config.webdav) {
+        let applied = false;
+        if (config.webdav?.url) {
           await this.setWebDavConfig(config.webdav);
-          return true;
+          applied = true;
         }
-        if (config.provider === 'gist' && config.gist) {
+        if (config.gist?.token || config.gist?.gistId) {
           await this.setGistConfig(config.gist);
-          return true;
+          applied = true;
         }
-        if (config.provider === 'lan' && config.lan) {
+        if (config.lan?.serverUrl) {
           await this.setSyncServerUrl(config.lan.serverUrl);
+          applied = true;
+        }
+        if (applied && config.provider) {
+          await this.setSyncProvider(config.provider);
           return true;
         }
       } catch {

@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.67" date="2026-10-14">
+      <description>
+        <p>Release 1.48.67: Corrección de publicación de Releases y experiencia móvil Android: asegura que el release oficial con el APK de Android sea siempre el marcado como Latest en GitHub (con fallback automático a la lista de releases recientes en el actualizador de Android y Google TV); corrige la autodetección de idioma español en instalaciones limpias; soluciona el solapamiento de títulos de canciones de más de dos líneas y el recorte de filas en el Inicio móvil; muestra la versión real en el panel de cuenta móvil; e incorpora transferencia automática de credenciales Gist/WebDAV por LAN/QR con fallback automático a la nube cuando el PC no está accesible en la red local.</p>
+      </description>
+    </release>
+
     <release version="1.48.66" date="2026-10-14">
       <description>
         <p>Release 1.48.66: Corrección de error HTTP 401 (Unauthorized) en sincronización con GitHub Gist cuando expira el Personal Access Token de 30 días: fallback automático de lectura pública por ID de Gist ante respuestas 401, renovación cifrada automática del token entre dispositivos vinculados (tokenHandover) sin necesidad de reintroducirlo manualmente en móvil o TV, soporte de descarga por raw_url para archivos truncados y prueba de conexión directa con los valores del formulario activo.</p>

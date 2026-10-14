@@ -350,14 +350,14 @@ export const MobileTrackPages: FC<{
 
                   <div className="flex min-w-0 flex-1 flex-col justify-center">
                     <span
-                      className={`text-sm leading-snug font-bold break-words ${
+                      className={`line-clamp-2 text-sm leading-snug font-bold break-words ${
                         isCurrent ? 'font-black text-emerald-400' : 'text-white'
                       }`}
                     >
                       {track.title}
                     </span>
                     {artistName && (
-                      <span className="mt-0.5 text-xs leading-snug break-words text-zinc-400">
+                      <span className="mt-0.5 line-clamp-1 text-xs leading-snug break-words text-zinc-400">
                         {artistName}
                       </span>
                     )}

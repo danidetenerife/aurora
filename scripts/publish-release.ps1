@@ -87,7 +87,7 @@ foreach ($asset in $assetsToUpload) {
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 # Create release
-gh release create $Tag @assetsToUpload --title "Aurora Music Player $Tag" --notes "$Notes"
+gh release create $Tag @assetsToUpload --title "Aurora Music Player $Tag" --notes "$Notes" --latest
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "¡Release $Tag publicado exitosamente en GitHub!" -ForegroundColor Green
@@ -95,5 +95,6 @@ if ($LASTEXITCODE -eq 0) {
 } else {
     Write-Host "Subiendo assets al release existente $Tag..." -ForegroundColor Yellow
     gh release upload $Tag @assetsToUpload --clobber
+    gh release edit $Tag --latest
     Write-Host "¡Assets actualizados en el release $Tag!" -ForegroundColor Green
 }

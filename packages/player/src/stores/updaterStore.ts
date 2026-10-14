@@ -10,9 +10,19 @@ import { errorMessage } from '../utils/errorMessage';
 import { reportError } from '../utils/logging';
 import { getSetting } from './settingsStore';
 
-const CURRENT_VERSION = '1.48.66';
+const CURRENT_VERSION = '1.48.67';
 const GITHUB_REPO = 'danidetenerife/aurora';
 const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+const GITHUB_RELEASES_LIST_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=10`;
+
+const findMobileApkAsset = (assets?: GitHubAsset[]) =>
+  assets?.find(
+    (asset) =>
+      asset.name.toLowerCase().endsWith('.apk') &&
+      !/google[-_ ]?tv|android[-_ ]?tv|(?:^|[-_.])tv(?:[-_.]|$)|tvpreview/i.test(
+        asset.name,
+      ),
+  );
 
 type GitHubAsset = {
   name: string;
@@ -111,7 +121,33 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
         throw new Error(`GitHub API returned status ${response.status}`);
       }
 
-      const release: GitHubRelease = await response.json();
+      let release: GitHubRelease = await response.json();
+      let apkAsset = findMobileApkAsset(release.assets);
+
+      if (!apkAsset) {
+        try {
+          const listResponse = await fetch(GITHUB_RELEASES_LIST_URL, {
+            headers: {
+              Accept: 'application/vnd.github.v3+json',
+            },
+          });
+          if (listResponse.ok) {
+            const releasesList: unknown = await listResponse.json();
+            if (Array.isArray(releasesList)) {
+              const releaseWithApk = (releasesList as GitHubRelease[]).find(
+                (candidate) => Boolean(findMobileApkAsset(candidate.assets)),
+              );
+              if (releaseWithApk) {
+                release = releaseWithApk;
+                apkAsset = findMobileApkAsset(releaseWithApk.assets);
+              }
+            }
+          }
+        } catch {
+          // Keep original release if list fallback fails
+        }
+      }
+
       const latestTag = release.tag_name.replace(/^(?:player@|v)/, '');
       let currentClean = CURRENT_VERSION.replace(/^v/, '');
       try {
@@ -127,14 +163,6 @@ export const useUpdaterStore = create<UpdaterState>((set, get) => ({
         semver.valid(latestTag) &&
         semver.valid(currentClean) &&
         semver.gt(latestTag, currentClean),
-      );
-
-      const apkAsset = release.assets?.find(
-        (asset) =>
-          asset.name.toLowerCase().endsWith('.apk') &&
-          !/google[-_ ]?tv|android[-_ ]?tv|(?:^|[-_.])tv(?:[-_.]|$)|tvpreview/i.test(
-            asset.name,
-          ),
       );
 
       if (isNewer && apkAsset) {

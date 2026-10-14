@@ -15,6 +15,8 @@ import { Logger } from '../../services/logger';
 
 const GITHUB_LATEST_RELEASE_URL =
   'https://api.github.com/repos/danidetenerife/aurora/releases/latest';
+const GITHUB_RELEASES_LIST_URL =
+  'https://api.github.com/repos/danidetenerife/aurora/releases?per_page=10';
 const CHECK_INTERVAL_MS = 10 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 30 * 1000;
 const COMPLETE_PERCENT = 100;
@@ -23,6 +25,21 @@ type GitHubRelease = {
   tag_name: string;
   assets: { name: string; browser_download_url: string }[];
 };
+
+const findTvApkAsset = (assets?: GitHubRelease['assets']) =>
+  assets?.find(
+    (asset) =>
+      asset.name.toLowerCase().endsWith('.apk') &&
+      /google[-_ ]?tv|android[-_ ]?tv|(?:^|[-_.])tv(?:[-_.]|$)/i.test(
+        asset.name,
+      ) &&
+      !/unsigned|tvpreview/i.test(asset.name),
+  ) ??
+  assets?.find(
+    (asset) =>
+      asset.name.toLowerCase().endsWith('.apk') &&
+      !/unsigned/i.test(asset.name),
+  );
 
 type TvUpdateModalProps = {
   targetVersion: string;
@@ -205,25 +222,36 @@ export const TvAutoUpdater: FC = () => {
         if (!response.ok) {
           throw new Error(`GitHub API returned status ${response.status}`);
         }
-        const release: GitHubRelease = await response.json();
+        let release: GitHubRelease = await response.json();
+        let apkAsset = findTvApkAsset(release.assets);
+
+        if (!apkAsset) {
+          try {
+            const listResponse = await fetch(GITHUB_RELEASES_LIST_URL, {
+              headers: { Accept: 'application/vnd.github.v3+json' },
+              signal: requestController.signal,
+              cache: 'no-store',
+            });
+            if (listResponse.ok) {
+              const releasesList: unknown = await listResponse.json();
+              if (Array.isArray(releasesList)) {
+                const releaseWithApk = (releasesList as GitHubRelease[]).find(
+                  (candidate) => Boolean(findTvApkAsset(candidate.assets)),
+                );
+                if (releaseWithApk) {
+                  release = releaseWithApk;
+                  apkAsset = findTvApkAsset(releaseWithApk.assets);
+                }
+              }
+            }
+          } catch {
+            // Keep original release if list fallback fails
+          }
+        }
+
         const latestVersion = release.tag_name.replace(/^(?:player@|v)/, '');
         const appVersion = await ApkUpdaterPlugin.getAppVersion();
         const currentVersion = appVersion.version.replace(/^(?:player@|v)/, '');
-
-        const apkAsset =
-          release.assets.find(
-            (asset) =>
-              asset.name.toLowerCase().endsWith('.apk') &&
-              /google[-_ ]?tv|android[-_ ]?tv|(?:^|[-_.])tv(?:[-_.]|$)/i.test(
-                asset.name,
-              ) &&
-              !/unsigned|tvpreview/i.test(asset.name),
-          ) ??
-          release.assets.find(
-            (asset) =>
-              asset.name.toLowerCase().endsWith('.apk') &&
-              !/unsigned/i.test(asset.name),
-          );
 
         if (
           !semver.valid(latestVersion) ||

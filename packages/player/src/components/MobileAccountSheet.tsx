@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { FC } from 'react';
 
+import { useAppVersion } from '../hooks/useAppVersion';
 import { useAccountModalStore } from '../stores/accountModalStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 
@@ -19,6 +20,7 @@ export const MobileAccountSheet: FC = () => {
   const navigate = useNavigate();
   const { isOpen, close, userName } = useAccountModalStore();
   const openSettings = useSettingsModalStore((state) => state.open);
+  const { version } = useAppVersion();
 
   if (!isOpen) {
     return null;
@@ -253,7 +255,7 @@ export const MobileAccountSheet: FC = () => {
         {/* Version Badge Footer */}
         <div className="border-t border-white/10 pt-3 text-center">
           <p className="text-[11px] text-zinc-400">
-            Aurora Player • v0.0.10 • 100% Libre y Privado
+            Aurora Player • v{version} • 100% Libre y Privado
           </p>
         </div>
         <div

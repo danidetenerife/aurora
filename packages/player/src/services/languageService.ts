@@ -2,6 +2,7 @@ import { Settings } from 'luxon';
 
 import { i18n } from '@aurora/i18n';
 
+import { useSettingsStore } from '../stores/settingsStore';
 import { coreSettingsHost } from './settingsHost';
 
 export const changeLanguage = async (locale: string) => {
@@ -13,7 +14,13 @@ export const applyLanguageFromSettings = async () => {
   if (process.env.NODE_ENV === 'test') {
     return;
   }
-  const savedLanguage = await coreSettingsHost.get<string>('general.language');
+  const persistedValues = useSettingsStore.getState().values;
+  const hasExplicitLanguage =
+    persistedValues['core.general.language'] !== undefined ||
+    persistedValues['general.language'] !== undefined;
+  const savedLanguage = hasExplicitLanguage
+    ? await coreSettingsHost.get<string>('general.language')
+    : undefined;
   if (savedLanguage && typeof savedLanguage === 'string') {
     await changeLanguage(savedLanguage);
   } else {
@@ -22,6 +29,12 @@ export const applyLanguageFromSettings = async () => {
     if (browserLang.toLowerCase().startsWith('es')) {
       await changeLanguage('es_ES');
       await coreSettingsHost.set('general.language', 'es_ES');
+    } else {
+      const defaultLanguage =
+        await coreSettingsHost.get<string>('general.language');
+      if (defaultLanguage && typeof defaultLanguage === 'string') {
+        await changeLanguage(defaultLanguage);
+      }
     }
   }
 };
