@@ -11,7 +11,7 @@ import {
   SkipBack,
   SkipForward,
 } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useTranslation } from '@aurora/i18n';
@@ -70,6 +70,7 @@ export const MobileExpandedPlayer: FC = () => {
   );
   const addTrack = useFavoritesStore((state) => state.addTrack);
   const removeTrack = useFavoritesStore((state) => state.removeTrack);
+  const [brokenUrl, setBrokenUrl] = useState<string | null>(null);
 
   if (!isCapacitorEnvironment() || !isExpanded || !track) {
     return null;
@@ -167,10 +168,12 @@ export const MobileExpandedPlayer: FC = () => {
       {/* Main Canvas: Artwork */}
       <div className="my-4 flex w-full flex-1 flex-col items-center justify-center">
         <div className="border-border bg-card relative aspect-square h-64 w-64 overflow-hidden rounded-2xl border-2 shadow-2xl sm:h-72 sm:w-72">
-          {artwork?.url ? (
+          {artwork?.url && brokenUrl !== artwork.url ? (
             <img
               src={artwork.url}
               alt={title}
+              referrerPolicy="no-referrer"
+              onError={() => setBrokenUrl(artwork.url)}
               className="h-full w-full object-cover"
             />
           ) : (

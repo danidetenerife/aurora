@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-10-14T21:20",
+    "description": "Mejoras en navegación e interfaz móvil Android: soporte nativo del botón/gesto Atrás de Android para cerrar paneles desplegables (ajustes, cuenta, notificaciones, menú contextual, reproductor expandido, cola y modo coche) o minimizar la aplicación a segundo plano sin interrumpir la reproducción de audio; y fallback automático de carátulas con política no-referrer en listas, reproductor y modo coche para evitar iconos de imagen rota cuando falla un CDN externo.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Android", "color": "green" },
+      { "label": "Playback", "color": "orange" },
+      { "label": "Google TV", "color": "red" }
+    ]
+  },
+  {
     "date": "2026-10-14T20:55",
     "description": "Corrección de publicación de Releases y experiencia móvil Android: asegura que el release oficial con el APK de Android sea siempre el marcado como Latest en GitHub (con fallback automático a la lista de releases recientes en el actualizador de Android y Google TV); corrige la autodetección de idioma español en instalaciones limpias; soluciona el solapamiento de títulos de canciones de más de dos líneas y el recorte de filas en el Inicio móvil; muestra la versión real en el panel de cuenta móvil; e incorpora transferencia automática de credenciales Gist/WebDAV por LAN/QR con fallback automático a la nube cuando el PC no está accesible en la red local.",
     "type": "fix",

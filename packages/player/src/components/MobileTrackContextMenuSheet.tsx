@@ -39,6 +39,7 @@ export const MobileTrackContextMenuSheet: FC = () => {
     'main' | 'playlist_select' | 'create_playlist'
   >('main');
   const [newPlaylistName, setNewPlaylistName] = useState('');
+  const [brokenUrl, setBrokenUrl] = useState<string | null>(null);
 
   const { activeContextTrack, closeContextMenu, closeExpanded } =
     useMobilePlayerStore();
@@ -240,10 +241,12 @@ export const MobileTrackContextMenuSheet: FC = () => {
             {/* Track Header */}
             <div className="border-border flex items-center gap-3 border-b pb-3">
               <div className="border-border bg-card size-14 shrink-0 overflow-hidden rounded-xl border">
-                {thumbnail ? (
+                {thumbnail && brokenUrl !== thumbnail ? (
                   <img
                     src={thumbnail}
                     alt={track.title}
+                    referrerPolicy="no-referrer"
+                    onError={() => setBrokenUrl(thumbnail)}
                     className="h-full w-full object-cover"
                   />
                 ) : (

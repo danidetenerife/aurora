@@ -8,7 +8,7 @@ import {
   Video,
   VideoOff,
 } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
@@ -28,6 +28,7 @@ export const TvNowPlayingBar: FC = () => {
   const status = useSoundStore((state) => state.status);
   const showVideo = useTvStore((state) => state.showVideo);
   const setShowVideo = useTvStore((state) => state.setShowVideo);
+  const [brokenUrl, setBrokenUrl] = useState<string | null>(null);
   const playing = status === 'playing';
   const artworkUrl = current
     ? pickArtwork(
@@ -91,12 +92,13 @@ export const TvNowPlayingBar: FC = () => {
   return (
     <footer data-testid="tv-now-playing-bar" className="tv-player">
       <div className="tv-track-info">
-        {artworkUrl ? (
+        {artworkUrl && brokenUrl !== artworkUrl ? (
           <img
             src={artworkUrl}
             alt=""
             className="tv-player-art"
             referrerPolicy="no-referrer"
+            onError={() => setBrokenUrl(artworkUrl)}
           />
         ) : (
           <Music className="tv-player-art" />

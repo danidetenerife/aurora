@@ -1,5 +1,5 @@
 import { Disc, Pause, Play, SkipForward } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { pickArtwork } from '@aurora/model';
 import { PlayerBar } from '@aurora/ui';
@@ -26,6 +26,7 @@ export const ConnectedPlayerBar: FC = () => {
   const status = useSoundStore((state) => state.status);
   const seek = useSoundStore((state) => state.seek);
   const duration = useSoundStore((state) => state.duration);
+  const [brokenUrl, setBrokenUrl] = useState<string | null>(null);
 
   if (isCapacitor) {
     if (!track) {
@@ -36,7 +37,8 @@ export const ConnectedPlayerBar: FC = () => {
       pickArtwork(track.artwork, 'thumbnail', 96) ??
       pickArtwork(track.artwork, 'cover', 96);
     const title = track.title;
-    const artist = track.artists?.map((a) => a.name).join(', ') ?? '';
+    const artist =
+      track.artists?.map((artistItem) => artistItem.name).join(', ') ?? '';
     const progressPercent =
       duration > 0 ? Math.min(100, Math.max(0, (seek / duration) * 100)) : 0;
 
@@ -46,7 +48,6 @@ export const ConnectedPlayerBar: FC = () => {
         onClick={() => useMobilePlayerStore.getState().openExpanded()}
         data-testid="mobile-mini-player"
       >
-        {/* YouTube Music ultra-thin top progress indicator */}
         <div className="bg-border/40 h-[2px] w-full overflow-hidden">
           <div
             className="bg-primary h-full transition-all duration-300"
@@ -54,14 +55,14 @@ export const ConnectedPlayerBar: FC = () => {
           />
         </div>
 
-        {/* Mini Player Row */}
         <div className="flex min-h-14 w-full items-center justify-between gap-3 px-3 py-2">
-          {/* Artwork */}
           <div className="border-border bg-card size-10 shrink-0 overflow-hidden rounded-lg border">
-            {artwork?.url ? (
+            {artwork?.url && brokenUrl !== artwork.url ? (
               <img
                 src={artwork.url}
                 alt={title}
+                referrerPolicy="no-referrer"
+                onError={() => setBrokenUrl(artwork.url)}
                 className="h-full w-full object-cover"
               />
             ) : (

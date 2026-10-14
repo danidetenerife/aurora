@@ -8,6 +8,27 @@ Set-Location $Root
 
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
+# Read current version from packages/player/package.json
+$PackageJsonPath = "$Root\packages\player\package.json"
+$rawPkg = [System.IO.File]::ReadAllText($PackageJsonPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
+$PackageJson = $rawPkg | ConvertFrom-Json
+$CurrentVer = $PackageJson.version
+$HeadSha = (& git rev-parse --short HEAD).Trim()
+
+$SnapFiles = @(
+    "$Root\packages\player\src\views\Plugins\__snapshots__\PluginStore.test.tsx.snap",
+    "$Root\packages\player\src\views\Settings\__snapshots__\Settings.test.tsx.snap"
+)
+foreach ($snapPath in $SnapFiles) {
+    if (Test-Path -LiteralPath $snapPath) {
+        $rawSnap = [System.IO.File]::ReadAllText($snapPath, [System.Text.Encoding]::UTF8)
+        $updatedSnap = $rawSnap -replace 'v\d+\.\d+\.\d+ \([0-9a-f]+\)', "v$CurrentVer ($HeadSha)"
+        if ($updatedSnap -ne $rawSnap) {
+            [System.IO.File]::WriteAllText($snapPath, $updatedSnap, $utf8NoBom)
+        }
+    }
+}
+
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host " [Aurora CI] Verificaciones de calidad previas al release..." -ForegroundColor Cyan
 Write-Host " 1/3 Type-check (TypeScript)..." -ForegroundColor Yellow
@@ -24,12 +45,6 @@ if ($LASTEXITCODE -ne 0) { throw "Fallo en tests automáticos. Despliegue cancel
 
 Write-Host " [OK] Todas las comprobaciones han pasado con exito." -ForegroundColor Green
 Write-Host "==========================================================" -ForegroundColor Cyan
-
-# Read current version from packages/player/package.json
-$PackageJsonPath = "$Root\packages\player\package.json"
-$rawPkg = [System.IO.File]::ReadAllText($PackageJsonPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
-$PackageJson = $rawPkg | ConvertFrom-Json
-$CurrentVer = $PackageJson.version
 
 # Compute next version
 if ($CustomVersion -ne "") {
@@ -137,6 +152,7 @@ try {
             if ($serial) {
                 Write-Host "[ADB] Dispositivo detectado ($serial). Instalando APK..." -ForegroundColor Cyan
                 & $adbCmd -s $serial install -r -d "$Root\ejecutables\aurora-music-player.apk"
+                & $adbCmd -s $serial reverse tcp:4122 tcp:4122 2>$null
             }
         }
     }

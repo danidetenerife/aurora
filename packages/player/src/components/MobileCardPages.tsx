@@ -19,6 +19,7 @@ export const MobileCardPages: FC<{
   const [query, setQuery] = useState('');
   const [offset, setOffset] = useState(0);
   const [capacity, setCapacity] = useState(1);
+  const [brokenUrls, setBrokenUrls] = useState<Record<string, boolean>>({});
   const viewport = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = viewport.current;
@@ -74,33 +75,43 @@ export const MobileCardPages: FC<{
         </Button>
       </div>
       <div ref={viewport} className="aurora-mobile-page-rows">
-        {filtered.slice(page * capacity, (page + 1) * capacity).map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            data-testid="mobile-dashboard-card"
-            onClick={item.onClick}
-            className="border-border flex min-h-[60px] w-full items-center gap-3 border-b py-1 text-left"
-          >
-            {item.imageUrl ? (
-              <img
-                src={item.imageUrl}
-                alt=""
-                className="size-9 shrink-0 rounded-md object-cover"
-              />
-            ) : (
-              <Music className="size-9 shrink-0" />
-            )}
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm leading-tight font-semibold break-words">
-                {item.title}
+        {filtered.slice(page * capacity, (page + 1) * capacity).map((item) => {
+          const imageUrl = item.imageUrl;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              data-testid="mobile-dashboard-card"
+              onClick={item.onClick}
+              className="border-border flex min-h-[60px] w-full items-center gap-3 border-b py-1 text-left"
+            >
+              {imageUrl && !brokenUrls[imageUrl] ? (
+                <img
+                  src={imageUrl}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  onError={() =>
+                    setBrokenUrls((previous) => ({
+                      ...previous,
+                      [imageUrl]: true,
+                    }))
+                  }
+                  className="size-9 shrink-0 rounded-md object-cover"
+                />
+              ) : (
+                <Music className="size-9 shrink-0" />
+              )}
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm leading-tight font-semibold break-words">
+                  {item.title}
+                </span>
+                <span className="text-foreground-secondary block text-xs leading-tight break-words">
+                  {item.subtitle}
+                </span>
               </span>
-              <span className="text-foreground-secondary block text-xs leading-tight break-words">
-                {item.subtitle}
-              </span>
-            </span>
-          </button>
-        ))}
+            </button>
+          );
+        })}
         {!filtered.length && <p className="text-sm">{labels.nothingFound}</p>}
       </div>
     </div>

@@ -50,6 +50,7 @@ export const MobileTrackPages: FC<{
   const viewport = useRef<HTMLDivElement>(null);
   const [capacity, setCapacity] = useState(pageSize ?? initialCapacity);
   const [offset, setOffset] = useState(0);
+  const [brokenUrls, setBrokenUrls] = useState<Record<string, boolean>>({});
   const [, setIsUserBrowsing] = useState(false);
   const autoReturnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -332,12 +333,19 @@ export const MobileTrackPages: FC<{
                   }`}
                 >
                   <div className="flex size-13 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-black/40">
-                    {artworkUrl ? (
+                    {artworkUrl && !brokenUrls[artworkUrl] ? (
                       <img
                         src={artworkUrl}
                         alt={track.title}
                         className="size-full object-cover"
                         loading="lazy"
+                        referrerPolicy="no-referrer"
+                        onError={() =>
+                          setBrokenUrls((previous) => ({
+                            ...previous,
+                            [artworkUrl]: true,
+                          }))
+                        }
                       />
                     ) : (
                       <CassetteTape

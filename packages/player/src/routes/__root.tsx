@@ -47,7 +47,11 @@ import {
   isTauriEnvironment,
 } from '../services/universalStore';
 import { GlobalShortcuts } from '../shortcuts';
+import { useAccountModalStore } from '../stores/accountModalStore';
+import { useCarModeStore } from '../stores/carModeStore';
 import { useLayoutStore } from '../stores/layoutStore';
+import { useMobilePlayerStore } from '../stores/mobilePlayerStore';
+import { useNotificationStore } from '../stores/notificationStore';
 import { useSettingsModalStore } from '../stores/settingsModalStore';
 import { useStartupStore } from '../stores/startupStore';
 import { useUpdaterStore } from '../stores/updaterStore';
@@ -71,6 +75,57 @@ const DesktopMobileRootComponent = () => {
   } = useLayoutStore();
   const openSettings = useSettingsModalStore((state) => state.open);
   const isStartingUp = useStartupStore((state) => state.isStartingUp);
+  useEffect(() => {
+    const handleBack = (event: Event) => {
+      if (useCarModeStore.getState().isCarMode) {
+        useCarModeStore.getState().exitCarMode();
+        event.preventDefault();
+        return;
+      }
+      if (useMobilePlayerStore.getState().activeContextTrack) {
+        useMobilePlayerStore.getState().closeContextMenu();
+        event.preventDefault();
+        return;
+      }
+      if (useSettingsModalStore.getState().isOpen) {
+        useSettingsModalStore.getState().close();
+        event.preventDefault();
+        return;
+      }
+      if (useAccountModalStore.getState().isOpen) {
+        useAccountModalStore.getState().close();
+        event.preventDefault();
+        return;
+      }
+      if (useNotificationStore.getState().isOpen) {
+        useNotificationStore.getState().close();
+        event.preventDefault();
+        return;
+      }
+      if (useMobilePlayerStore.getState().isExpanded) {
+        useMobilePlayerStore.getState().closeExpanded();
+        event.preventDefault();
+        return;
+      }
+      if (
+        isCapacitorEnvironment() &&
+        !useLayoutStore.getState().rightSidebar.isCollapsed
+      ) {
+        useLayoutStore.getState().toggleRightSidebar();
+        event.preventDefault();
+        return;
+      }
+      if (
+        window.location.pathname !== '/dashboard' &&
+        window.location.pathname !== '/'
+      ) {
+        window.history.back();
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('tv:back', handleBack);
+    return () => window.removeEventListener('tv:back', handleBack);
+  }, []);
   useEffect(() => {
     if (!isCapacitorEnvironment() || isStartingUp) {
       return;

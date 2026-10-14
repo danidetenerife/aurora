@@ -282,9 +282,6 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void setupTvBackCallback() {
-        if (!TvWebView.isTelevision(this)) {
-            return;
-        }
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -294,16 +291,24 @@ public class MainActivity extends BridgeActivity {
                         "window.dispatchEvent(new CustomEvent('tv:back', { cancelable: true }))",
                         unhandled -> {
                             if ("true".equals(unhandled)) {
-                                setEnabled(false);
-                                getOnBackPressedDispatcher().onBackPressed();
-                                setEnabled(true);
+                                if (!TvWebView.isTelevision(MainActivity.this)) {
+                                    moveTaskToBack(true);
+                                } else {
+                                    setEnabled(false);
+                                    getOnBackPressedDispatcher().onBackPressed();
+                                    setEnabled(true);
+                                }
                             }
                         }
                     );
                 } else {
-                    setEnabled(false);
-                    getOnBackPressedDispatcher().onBackPressed();
-                    setEnabled(true);
+                    if (!TvWebView.isTelevision(MainActivity.this)) {
+                        moveTaskToBack(true);
+                    } else {
+                        setEnabled(false);
+                        getOnBackPressedDispatcher().onBackPressed();
+                        setEnabled(true);
+                    }
                 }
             }
         });

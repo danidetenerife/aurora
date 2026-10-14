@@ -25,7 +25,7 @@ import type {
   WebDavConfig,
 } from './sync/types';
 import { WebDavAdapter } from './sync/webDavAdapter';
-import { createUniversalStore, isTauriEnvironment } from './universalStore';
+import { createUniversalStore } from './universalStore';
 
 const SYNC_STORE_FILE = 'p2p_sync.json';
 const syncStore = createUniversalStore(SYNC_STORE_FILE);
@@ -414,7 +414,7 @@ export class P2PSyncService {
     const host = hostMatch ? hostMatch[1] : '192.168.0.12';
 
     const candidates = [
-      ...(isTauriEnvironment() ? ['http://127.0.0.1:4122'] : []),
+      'http://127.0.0.1:4122',
       `http://${host}:4122`,
       savedUrl,
       `http://${host}:4120`,
@@ -987,11 +987,21 @@ export class P2PSyncService {
           typeof syncData.p2p_sync.gist_id === 'string'
             ? syncData.p2p_sync.gist_id.trim()
             : '';
+        const remoteProvider =
+          typeof syncData.p2p_sync.sync_provider === 'string'
+            ? syncData.p2p_sync.sync_provider.trim()
+            : '';
         if (remoteGistToken) {
           await syncStore.set('gist_token', remoteGistToken);
         }
         if (remoteGistId) {
           await syncStore.set('gist_id', remoteGistId);
+        }
+        if (
+          (remoteProvider === 'gist' || remoteProvider === 'webdav') &&
+          (remoteGistToken || remoteGistId)
+        ) {
+          await syncStore.set('sync_provider', remoteProvider);
         }
         if (remoteGistToken || remoteGistId) {
           await syncStore.save();

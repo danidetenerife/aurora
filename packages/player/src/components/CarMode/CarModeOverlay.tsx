@@ -115,6 +115,7 @@ const CarModeOverlayContent: FC = () => {
   }, [currentTrack]);
 
   const [seekingValue, setSeekingValue] = useState<number | null>(null);
+  const [brokenUrl, setBrokenUrl] = useState<string | null>(null);
   const effectiveTime = seekingValue ?? seek;
 
   return (
@@ -164,10 +165,12 @@ const CarModeOverlayContent: FC = () => {
       <div className="aurora-car-track relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center px-6 py-2">
         {/* Giant Artwork */}
         <div className="relative mb-6 flex aspect-square max-h-[36vh] w-auto items-center justify-center overflow-hidden rounded-2xl border-2 border-zinc-700/80 bg-zinc-900 shadow-2xl sm:max-h-[44vh]">
-          {artwork?.url ? (
+          {artwork?.url && brokenUrl !== artwork.url ? (
             <img
               src={artwork.url}
               alt={currentTrack?.title ?? 'Artwork'}
+              referrerPolicy="no-referrer"
+              onError={() => setBrokenUrl(artwork.url)}
               className="h-full w-full object-cover"
             />
           ) : (
