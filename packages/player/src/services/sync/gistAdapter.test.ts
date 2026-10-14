@@ -83,4 +83,58 @@ describe('GistAdapter', () => {
     expect(savedGistId).toBe('newly_created_gist_id');
     expect(JSON.parse(createdBody).public).toBe(false);
   });
+
+  it('falls back to unauthenticated GET and auto-refreshes expired token via tokenHandover', async () => {
+    const { encryptTokenHandover } = await import('./gistAdapter');
+    const oldToken = 'ghp_expired_token_12345678901234567890';
+    const newToken = 'gho_fresh_token_9876543210987654321098';
+    const handover = encryptTokenHandover(oldToken, newToken);
+    const payload = {
+      timestamp: 99999,
+      playlists: [],
+      tokenHandover: handover,
+    };
+
+    let refreshedToken = '';
+    const calls: Array<{ url: string; auth?: string }> = [];
+
+    vi.stubGlobal('fetch', async (url: string, options?: RequestInit) => {
+      const headers = (options?.headers ?? {}) as Record<string, string>;
+      calls.push({ url, auth: headers.Authorization });
+
+      if (headers.Authorization === `Bearer ${oldToken}`) {
+        return new Response('Unauthorized', { status: 401 });
+      }
+      if (url === 'https://api.github.com/gists/gist_abc_123') {
+        return Response.json({
+          id: 'gist_abc_123',
+          files: {
+            'aurora_sync.json': {
+              content: JSON.stringify(payload),
+            },
+          },
+        });
+      }
+      if (
+        url === 'https://api.github.com/user' &&
+        headers.Authorization === `Bearer ${newToken}`
+      ) {
+        return Response.json({ login: 'danidetenerife' });
+      }
+      return new Response('Not found', { status: 404 });
+    });
+
+    const adapter = new GistAdapter(
+      { token: oldToken, gistId: 'gist_abc_123' },
+      undefined,
+      (token) => {
+        refreshedToken = token;
+      },
+    );
+
+    const connResult = await adapter.testConnection();
+    expect(connResult.success).toBe(true);
+    expect(refreshedToken).toBe(newToken);
+    expect(calls.some((call) => call.auth === undefined)).toBe(true);
+  });
 });

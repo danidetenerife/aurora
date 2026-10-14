@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.66" date="2026-10-14">
+      <description>
+        <p>Release 1.48.66: Corrección de error HTTP 401 (Unauthorized) en sincronización con GitHub Gist cuando expira el Personal Access Token de 30 días: fallback automático de lectura pública por ID de Gist ante respuestas 401, renovación cifrada automática del token entre dispositivos vinculados (tokenHandover) sin necesidad de reintroducirlo manualmente en móvil o TV, soporte de descarga por raw_url para archivos truncados y prueba de conexión directa con los valores del formulario activo.</p>
+      </description>
+    </release>
+
     <release version="1.48.65" date="2026-10-14">
       <description>
         <p>Release 1.48.65: Auditoría integral y corrección de fallos en todas las variantes de Aurora (Escritorio Tauri, Móvil Android Capacitor, Android Auto, Modo Coche, Google TV, motor de audio @aurora/hifi, SDK de plugins, servidor de sincronización P2P/WebDAV/Gist, temas e i18n): ejecución asíncrona no bloqueante de yt-dlp y bloqueo de concurrencia en su auto-instalación; recuperación segura de SQLite eliminando archivos WAL/SHM corruptos y protección frente a arrays de artistas vacíos en estadísticas; corrección de condiciones de carrera, fugas de hilos y redirecciones multi-salto en servicios nativos Android (MediaSession, AudioForegroundService, AutoArtworkGenerator, VideoProxyServer, ApkUpdater); estabilización de sesiones MSE/HLS y reproductor embebido de YouTube; sincronización multiplataforma preservando ajustes por dispositivo e índice de listas; y mejoras en componentes UI, accesibilidad, temas integrados y traducciones.</p>

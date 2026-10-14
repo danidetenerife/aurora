@@ -113,7 +113,7 @@ export const SyncSettingsView: FC = () => {
   };
 
   const handleSaveGist = async () => {
-    if (!gistToken.trim()) {
+    if (!gistToken.trim() && !gistId.trim()) {
       toast.error('Introduce tu Personal Access Token de GitHub');
       return;
     }
@@ -139,7 +139,26 @@ export const SyncSettingsView: FC = () => {
 
   const handleTestConnection = async () => {
     setIsTesting(true);
-    const result = await p2pSyncService.testActiveConnection();
+    const result = await p2pSyncService.testActiveConnection({
+      provider: activeTab === 'backup' ? provider : activeTab,
+      webdav: {
+        url: webdavUrl,
+        username: webdavUser,
+        password: webdavPass,
+        remotePath: webdavPath,
+      },
+      gist: {
+        token: gistToken,
+        gistId: gistId.trim() || undefined,
+      },
+    });
+    const updatedGist = await p2pSyncService.getGistConfig();
+    if (updatedGist.token && updatedGist.token !== gistToken) {
+      setGistToken(updatedGist.token);
+    }
+    if (updatedGist.gistId && updatedGist.gistId !== gistId) {
+      setGistId(updatedGist.gistId);
+    }
     setIsTesting(false);
     if (result.success) {
       toast.success('¡Conexión exitosa con el almacenamiento!');
@@ -151,6 +170,13 @@ export const SyncSettingsView: FC = () => {
   const handleSyncNow = async () => {
     setIsSyncing(true);
     const result = await p2pSyncService.syncNow();
+    const updatedGist = await p2pSyncService.getGistConfig();
+    if (updatedGist.token && updatedGist.token !== gistToken) {
+      setGistToken(updatedGist.token);
+    }
+    if (updatedGist.gistId && updatedGist.gistId !== gistId) {
+      setGistId(updatedGist.gistId);
+    }
     setIsSyncing(false);
 
     if (result.success) {

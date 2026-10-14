@@ -38,6 +38,10 @@ export type SyncPayload = {
   settings?: Record<string, unknown>;
   activeProviders?: Record<string, string>;
   plugins?: Record<string, unknown>;
+  tokenHandover?: {
+    keyHash: string;
+    cipher: string;
+  };
 };
 
 export type WebDavConfig = {

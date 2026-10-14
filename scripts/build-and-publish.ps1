@@ -48,19 +48,14 @@ Write-Host " [Aurora CI] Subiendo de versión: $CurrentVer -> $NextVer ($Tag)" -
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 # 1. Update packages/player/package.json
-$PackageJson.version = $NextVer
-$pkgStr = ($PackageJson | ConvertTo-Json -Depth 10)
+$pkgStr = $rawPkg -replace '"version":\s*".*?"', "`"version`": `"$NextVer`""
 [System.IO.File]::WriteAllText($PackageJsonPath, $pkgStr, $utf8NoBom)
-npx prettier --write $PackageJsonPath
 
 # 2. Update packages/player/src-tauri/tauri.conf.json
 $TauriConfPath = "$Root\packages\player\src-tauri\tauri.conf.json"
 $rawTauri = [System.IO.File]::ReadAllText($TauriConfPath, [System.Text.Encoding]::UTF8).TrimStart([char]0xFEFF)
-$TauriConf = $rawTauri | ConvertFrom-Json
-$TauriConf.version = $NextVer
-$tauriStr = ($TauriConf | ConvertTo-Json -Depth 10)
+$tauriStr = $rawTauri -replace '"version":\s*".*?"', "`"version`": `"$NextVer`""
 [System.IO.File]::WriteAllText($TauriConfPath, $tauriStr, $utf8NoBom)
-npx prettier --write $TauriConfPath
 
 # 3. Update packages/player/src/stores/updaterStore.ts
 $UpdaterStorePath = "$Root\packages\player\src\stores\updaterStore.ts"

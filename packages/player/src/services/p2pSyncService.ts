@@ -12,7 +12,7 @@ import {
   type UserListenRecord,
 } from './personalizationEngine';
 import { playlistFileService } from './playlistFileService';
-import { GistAdapter } from './sync/gistAdapter';
+import { encryptTokenHandover, GistAdapter } from './sync/gistAdapter';
 import type {
   FavEntry,
   GistConfig,
@@ -363,8 +363,13 @@ export class P2PSyncService {
   }
 
   async setGistConfig(config: GistConfig): Promise<void> {
-    await syncStore.set('gist_token', config.token.trim());
-    if (config.gistId) {
+    const nextToken = config.token.trim();
+    const currentToken = (await syncStore.get<string>('gist_token'))?.trim();
+    if (currentToken && nextToken && currentToken !== nextToken) {
+      await syncStore.set('previous_gist_token', currentToken);
+    }
+    await syncStore.set('gist_token', nextToken);
+    if (config.gistId !== undefined) {
       await syncStore.set('gist_id', config.gistId.trim());
     }
     await syncStore.set('sync_provider', 'gist');
@@ -489,19 +494,30 @@ export class P2PSyncService {
     }
     if (provider === 'gist') {
       const config = await this.getGistConfig();
-      if (!config.token) {
+      if (!config.token && !config.gistId) {
         return null;
       }
-      return new GistAdapter(config, async (newGistId) => {
-        await syncStore.set('gist_id', newGistId);
-        await syncStore.save();
-      });
+      return new GistAdapter(
+        config,
+        async (newGistId) => {
+          await syncStore.set('gist_id', newGistId);
+          await syncStore.save();
+        },
+        async (newToken) => {
+          await syncStore.set('gist_token', newToken);
+          await syncStore.save();
+        },
+      );
     }
     return null;
   }
 
-  async testActiveConnection(): Promise<{ success: boolean; error?: string }> {
-    const provider = await this.getSyncProvider();
+  async testActiveConnection(custom?: {
+    provider?: SyncProviderType;
+    webdav?: WebDavConfig;
+    gist?: GistConfig;
+  }): Promise<{ success: boolean; error?: string }> {
+    const provider = custom?.provider ?? (await this.getSyncProvider());
     if (provider === 'lan') {
       const workingUrl = await this.getWorkingServerUrl();
       if (workingUrl) {
@@ -511,6 +527,34 @@ export class P2PSyncService {
         success: false,
         error: `No se puede conectar al servidor LAN en ${await this.getSyncServerUrl()}`,
       };
+    }
+    if (provider === 'webdav' && custom?.webdav) {
+      if (!custom.webdav.url.trim()) {
+        return {
+          success: false,
+          error: 'Introduce la URL de tu servidor WebDAV',
+        };
+      }
+      return new WebDavAdapter(custom.webdav).testConnection();
+    }
+    if (provider === 'gist' && custom?.gist) {
+      if (!custom.gist.token.trim() && !custom.gist.gistId?.trim()) {
+        return {
+          success: false,
+          error: 'Introduce tu Personal Access Token de GitHub',
+        };
+      }
+      return new GistAdapter(
+        custom.gist,
+        async (newGistId) => {
+          await syncStore.set('gist_id', newGistId);
+          await syncStore.save();
+        },
+        async (newToken) => {
+          await syncStore.set('gist_token', newToken);
+          await syncStore.save();
+        },
+      ).testConnection();
     }
     const adapter = await this.getActiveAdapter();
     if (!adapter) {
@@ -537,6 +581,14 @@ export class P2PSyncService {
 
     const userProfileListens = await personalizationEngine.getListenRecords();
     const blacklist = await personalizationEngine.getBlacklist();
+    const currentToken = (await syncStore.get<string>('gist_token'))?.trim();
+    const previousToken = (
+      await syncStore.get<string>('previous_gist_token')
+    )?.trim();
+    const tokenHandover =
+      currentToken && previousToken && currentToken !== previousToken
+        ? encryptTokenHandover(previousToken, currentToken)
+        : undefined;
 
     return {
       version: 1,
@@ -552,6 +604,7 @@ export class P2PSyncService {
       user_profile: userProfileListens,
       blacklist,
       activeProviders: useProvidersStore.getState().active,
+      ...(tokenHandover ? { tokenHandover } : {}),
     };
   }
 
