@@ -406,4 +406,147 @@ describe('personalization learning across devices', () => {
     const seeds = await mobile.getSeedTracks(5);
     expect(seeds.map((seed) => seed.title)).toContain('Cloud Synced Favorite');
   });
+
+  it('records an implicit skip when switching to another track before 30 seconds', async () => {
+    const abandonedTrack: Track = {
+      title: 'Abandoned Early',
+      source: { provider: 'music', id: 'abandoned-1' },
+      artists: [{ name: 'Abandoned Artist', roles: [] }],
+      durationMs: 200_000,
+    };
+    const nextTrack: Track = {
+      title: 'Replacement Song',
+      source: { provider: 'music', id: 'next-1' },
+      artists: [{ name: 'Preferred Artist', roles: [] }],
+      durationMs: 180_000,
+    };
+
+    mobile.start();
+    useSoundStore.getState().play();
+    eventBus.emit('trackStarted', abandonedTrack);
+    useSoundStore.getState().updatePlayback(5, 200);
+    eventBus.emit('trackStarted', nextTrack);
+
+    const records = await mobile.getListenRecords();
+    const abandonedRecord = records.find(
+      (record) => record.trackId === 'abandoned-1',
+    );
+    expect(abandonedRecord).toMatchObject({
+      playCount: 0,
+      skipCount: 1,
+      immediateSkipCount: 1,
+      totalListenMs: 5_000,
+    });
+    expect(mobile.isArtistSkippedInSession('Abandoned Artist')).toBe(true);
+  });
+
+  it('unifies accented and unaccented artist names and incorporates favorite albums', async () => {
+    const ytTrack: Track = {
+      title: 'Primera Cita',
+      source: { provider: 'youtube-music', id: 'yt-1' },
+      artists: [
+        {
+          name: 'Carin Leon',
+          roles: [],
+          source: { provider: 'youtube-music', id: 'yt-artist' },
+        },
+      ],
+      durationMs: 180_000,
+    };
+    await mobile.recordPlay(ytTrack, true, 180_000);
+
+    useFavoritesStore.setState({
+      tracks: [],
+      artists: [],
+      albums: [
+        {
+          key: 'alb-1',
+          addedAtIso: new Date().toISOString(),
+          ref: {
+            title: 'Colmillo de Leche',
+            artists: [
+              {
+                name: 'Carín León',
+                source: { provider: 'spotify', id: 'spotify:artist:carin' },
+              },
+            ],
+            source: { provider: 'spotify', id: 'spotify:album:1' },
+          },
+        },
+      ],
+    });
+
+    const topArtists = await mobile.getTopArtists();
+    expect(topArtists).toHaveLength(1);
+    expect(topArtists[0]).toMatchObject({
+      name: 'Carín León',
+      spotifyUri: 'spotify:artist:carin',
+    });
+    expect(topArtists[0].score).toBeGreaterThan(18);
+  });
+
+  it('prioritizes fresh tracks by favorite artists over overplayed or low-completion tracks', async () => {
+    const now = Date.now();
+    const listens = [
+      {
+        trackId: 'overplayed-1',
+        title: 'Played Ten Times',
+        artist: 'Favorite Band',
+        playCount: 10,
+        skipCount: 0,
+        totalListenMs: 10 * 180_000,
+        durationMs: 180_000,
+        firstPlayedAt: now - 20 * 86_400_000,
+        lastPlayedAt: now - 10 * 3600 * 1000,
+      },
+      {
+        trackId: 'abandoned-mid-1',
+        title: 'Abandoned At 40s',
+        artist: 'Favorite Band',
+        playCount: 1,
+        skipCount: 0,
+        totalListenMs: 40_000,
+        durationMs: 240_000,
+        firstPlayedAt: now - 2 * 86_400_000,
+        lastPlayedAt: now - 10 * 3600 * 1000,
+      },
+    ];
+
+    const ranked = mobile.scoreAndRankTracks(
+      [
+        {
+          track: {
+            title: 'Played Ten Times',
+            source: { provider: 'spotify', id: 'overplayed-1' },
+            artists: [{ name: 'Favorite Band', roles: [] }],
+          },
+          source: 'topTracks',
+        },
+        {
+          track: {
+            title: 'Abandoned At 40s',
+            source: { provider: 'spotify', id: 'abandoned-mid-1' },
+            artists: [{ name: 'Favorite Band', roles: [] }],
+          },
+          source: 'topTracks',
+        },
+        {
+          track: {
+            title: 'Fresh Unheard Gem',
+            source: { provider: 'spotify', id: 'fresh-1' },
+            artists: [{ name: 'Favorite Band', roles: [] }],
+          },
+          source: 'topTracks',
+        },
+      ],
+      [{ name: 'Favorite Band', score: 150 }],
+      listens,
+      { tracks: [], artists: [] },
+      0.2,
+      7,
+    );
+
+    expect(ranked[0].title).toBe('Fresh Unheard Gem');
+    expect(ranked[ranked.length - 1].title).toBe('Abandoned At 40s');
+  });
 });

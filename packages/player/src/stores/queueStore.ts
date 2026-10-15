@@ -172,6 +172,15 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
   playTracks: withPersistence((tracks: Track[], startIndex = 0) => {
     const sanitizedIndex =
       startIndex >= 0 && startIndex < tracks.length ? startIndex : 0;
+    const currentTrack = get().getCurrentItem()?.track;
+    const nextTrack = tracks[sanitizedIndex];
+    if (
+      currentTrack &&
+      useSoundStore.getState().status === 'playing' &&
+      currentTrack.source?.id !== nextTrack?.source?.id
+    ) {
+      emitSkip();
+    }
     const newItems = tracks.map(createQueueItem);
     useSoundStore.getState().stop();
     set({

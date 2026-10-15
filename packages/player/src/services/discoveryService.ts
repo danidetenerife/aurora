@@ -314,9 +314,17 @@ export const ensureUpcomingTracks = async (
           .getValue('core.playback.discoveryVariety') as number) ?? 0.5;
 
       const playedItems = items.slice(0, currentIndex + 1);
-      const contextTracks: Track[] = playedItems
+      const rawContextTracks: Track[] = playedItems
         .slice(-CONTEXT_SIZE)
         .map((item) => item.track);
+      const unskippedContextTracks = rawContextTracks.filter((trackItem) => {
+        const primaryArtist = trackItem.artists?.[0]?.name ?? '';
+        return !personalizationEngine.isArtistSkippedInSession(primaryArtist);
+      });
+      const contextTracks =
+        unskippedContextTracks.length > 0
+          ? unskippedContextTracks
+          : rawContextTracks;
 
       const activeDiscoveryId = providersHost.getActive('discovery');
       const hasActiveDiscovery = Boolean(
@@ -329,6 +337,7 @@ export const ensureUpcomingTracks = async (
       }
 
       let recommended: Track[] = [];
+      let discoveryProviderFailed = false;
 
       if (hasActiveDiscovery) {
         try {
@@ -339,17 +348,67 @@ export const ensureUpcomingTracks = async (
               limit: RECOMMENDATION_LIMIT,
             },
           );
-          recommended = rawRecommendations.filter((trackItem) => {
-            return (
-              !isTrackInSet(trackItem, sessionTrackIds) &&
-              !isTrackInSet(trackItem, existingQueueIds)
-            );
+          const [topArtists, listens, blacklist] = await Promise.all([
+            personalizationEngine.getTopArtists(),
+            personalizationEngine.getListenRecords(),
+            personalizationEngine.getBlacklist(),
+          ]);
+
+          const filteredRaw = rawRecommendations.filter((trackItem) => {
+            if (
+              isTrackInSet(trackItem, sessionTrackIds) ||
+              isTrackInSet(trackItem, existingQueueIds)
+            ) {
+              return false;
+            }
+            if (blacklist.tracks.includes(trackItem.source?.id || '')) {
+              return false;
+            }
+            const artist = (trackItem.artists?.[0]?.name || '')
+              .toLowerCase()
+              .trim();
+            if (blacklist.artists.includes(artist)) {
+              return false;
+            }
+            return true;
           });
+
+          if (filteredRaw.length > 0 && topArtists.length > 0) {
+            const personalizedTracks = await getIntelligentAutoplayTracks(
+              contextTracks,
+              existingQueueIds,
+              RECOMMENDATION_LIMIT,
+              false,
+            );
+            const combinedCandidates: TaggedCandidate[] = [
+              ...personalizedTracks.map((track) => ({
+                track,
+                source: 'topTracks' as const,
+              })),
+              ...filteredRaw.map((track) => ({
+                track,
+                source: 'radio' as const,
+              })),
+            ];
+            recommended = personalizationEngine
+              .scoreAndRankTracks(
+                combinedCandidates,
+                topArtists,
+                listens,
+                blacklist,
+                variety,
+              )
+              .slice(0, RECOMMENDATION_LIMIT);
+          } else {
+            recommended = filteredRaw.slice(0, RECOMMENDATION_LIMIT);
+          }
+
           for (const trackItem of recommended) {
             registerTrackInSet(trackItem, sessionTrackIds);
             registerTrackInSet(trackItem, existingQueueIds);
           }
         } catch (error) {
+          discoveryProviderFailed = true;
           reportError('discovery', {
             userMessage: i18n.t('discovery:recommendationError'),
             error,
@@ -357,7 +416,11 @@ export const ensureUpcomingTracks = async (
         }
       }
 
-      if (recommended.length === 0 && contextTracks.length > 0) {
+      if (
+        recommended.length === 0 &&
+        contextTracks.length > 0 &&
+        !discoveryProviderFailed
+      ) {
         recommended = await getIntelligentAutoplayTracks(
           contextTracks,
           existingQueueIds,

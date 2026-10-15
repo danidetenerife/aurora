@@ -23,6 +23,7 @@ import {
 } from '../../../services/personalizationEngine';
 import { providersHost } from '../../../services/providersHost';
 import { isCapacitorEnvironment } from '../../../services/universalStore';
+import { useSettingsStore } from '../../../stores/settingsStore';
 
 type TaggedCandidate = {
   track: Track;
@@ -42,86 +43,119 @@ const trackRefToTrack = (ref: TrackRef): Track => ({
   source: ref.source,
 });
 
+const selectArtistsForMix = (
+  artists: ArtistScore[],
+  limit: number,
+  seed: number,
+): ArtistScore[] => {
+  if (artists.length <= limit) {
+    return artists;
+  }
+  const anchorCount = Math.min(4, Math.ceil(limit * 0.4));
+  const anchors = artists.slice(0, anchorCount);
+  const pool = artists.slice(anchorCount, Math.min(artists.length, 20));
+  const picked: ArtistScore[] = [...anchors];
+  const offset = seed > 0 ? seed : Math.floor(Date.now() / (1000 * 60 * 30));
+
+  for (let index = 0; index < pool.length && picked.length < limit; index++) {
+    const candidate = pool[(index + offset) % pool.length];
+    if (candidate && !picked.includes(candidate)) {
+      picked.push(candidate);
+    }
+  }
+
+  return picked;
+};
+
 const fetchTopTracksForArtists = async (
   provider: MetadataProvider,
   artists: ArtistScore[],
   limit: number,
+  seed = 0,
 ): Promise<TaggedCandidate[]> => {
-  const candidates: TaggedCandidate[] = [];
-
-  for (const artist of artists.slice(0, limit)) {
-    try {
-      const artistUri = artist.spotifyUri;
-      if (!artistUri || !provider.fetchArtistTopTracks) {
-        continue;
-      }
-
-      const topTracks = await provider.fetchArtistTopTracks(artistUri);
-      for (const trackRef of topTracks.slice(0, 10)) {
-        candidates.push({
-          track: trackRefToTrack(trackRef),
-          source: 'topTracks',
-        });
-      }
-    } catch {
-      // ignore
-    }
+  if (!provider.fetchArtistTopTracks) {
+    return [];
   }
+  const selectedArtists = selectArtistsForMix(artists, limit, seed);
+  const fetchTopTracks = provider.fetchArtistTopTracks.bind(provider);
 
-  return candidates;
+  const results = await Promise.allSettled(
+    selectedArtists.map(async (artist) => {
+      if (!artist.spotifyUri) {
+        return [];
+      }
+      const topTracks = await fetchTopTracks(artist.spotifyUri);
+      return topTracks.slice(0, 6).map((trackRef) => ({
+        track: trackRefToTrack(trackRef),
+        source: 'topTracks' as const,
+      }));
+    }),
+  );
+
+  return results.flatMap((result) =>
+    result.status === 'fulfilled' ? result.value : [],
+  );
 };
 
 const fetchRelatedArtistTracks = async (
   provider: MetadataProvider,
   artists: ArtistScore[],
   limit: number,
+  seed = 0,
 ): Promise<TaggedCandidate[]> => {
-  const candidates: TaggedCandidate[] = [];
-  const seenArtistUris = new Set<string>();
+  if (!provider.fetchArtistRelatedArtists || !provider.fetchArtistTopTracks) {
+    return [];
+  }
+  const selectedArtists = selectArtistsForMix(artists, limit, seed);
+  const seenArtistUris = new Set<string>(
+    artists
+      .map((artist) => artist.spotifyUri)
+      .filter((uri): uri is string => Boolean(uri)),
+  );
+  const fetchRelated = provider.fetchArtistRelatedArtists.bind(provider);
+  const fetchTopTracks = provider.fetchArtistTopTracks.bind(provider);
 
-  for (const artist of artists.slice(0, limit)) {
-    try {
-      const artistUri = artist.spotifyUri;
-      if (
-        !artistUri ||
-        !provider.fetchArtistRelatedArtists ||
-        !provider.fetchArtistTopTracks
-      ) {
-        continue;
+  const relatedLists = await Promise.allSettled(
+    selectedArtists.map(async (artist) => {
+      if (!artist.spotifyUri) {
+        return [];
       }
+      return fetchRelated(artist.spotifyUri);
+    }),
+  );
 
-      const relatedArtists =
-        await provider.fetchArtistRelatedArtists(artistUri);
-
-      for (const relatedArtist of relatedArtists.slice(0, 4)) {
-        const relatedUri = relatedArtist.source?.id;
-        if (!relatedUri || seenArtistUris.has(relatedUri)) {
-          continue;
-        }
+  const relatedUrisToFetch: string[] = [];
+  for (const listResult of relatedLists) {
+    if (listResult.status !== 'fulfilled') {
+      continue;
+    }
+    for (const relatedArtist of listResult.value.slice(0, 3)) {
+      const relatedUri = relatedArtist.source?.id;
+      if (relatedUri && !seenArtistUris.has(relatedUri)) {
         seenArtistUris.add(relatedUri);
-
-        try {
-          const topTracks = await provider.fetchArtistTopTracks(relatedUri);
-          for (const trackRef of topTracks.slice(0, 4)) {
-            candidates.push({
-              track: trackRefToTrack(trackRef),
-              source: 'related',
-            });
-          }
-        } catch {
-          // ignore
-        }
+        relatedUrisToFetch.push(relatedUri);
       }
-    } catch {
-      // ignore
     }
   }
 
-  return candidates;
+  const trackResults = await Promise.allSettled(
+    relatedUrisToFetch.slice(0, 12).map(async (relatedUri) => {
+      const topTracks = await fetchTopTracks(relatedUri);
+      return topTracks.slice(0, 3).map((trackRef) => ({
+        track: trackRefToTrack(trackRef),
+        source: 'related' as const,
+      }));
+    }),
+  );
+
+  return trackResults.flatMap((result) =>
+    result.status === 'fulfilled' ? result.value : [],
+  );
 };
 
 const fetchRadioRecommendations = async (
   seedTracks: Track[],
+  variety = 0.6,
 ): Promise<TaggedCandidate[]> => {
   try {
     const activeDiscoveryId = providersHost.getActive('discovery');
@@ -131,7 +165,7 @@ const fetchRadioRecommendations = async (
 
     const recommendations = await discoveryHost.getRecommendations(
       seedTracks.slice(0, 5),
-      { variety: 0.7, limit: 20 },
+      { variety, limit: 20 },
     );
 
     return recommendations.map((track) => ({
@@ -160,11 +194,20 @@ const fetchSearchFallback = async (
     'Top Exitos',
     'Indie Espanol',
   ];
-  const queries: string[] = [
-    ...topArtists.slice(0, 4).map((artist) => artist.name),
-    ...topGenres.slice(0, 3).map((genreScore) => `${genreScore.genre} mix`),
-    ...defaultSeeds,
-  ].slice(0, 6);
+  const unlinkedArtists = topArtists
+    .slice(4, 14)
+    .filter((artist) => !artist.spotifyUri)
+    .slice(0, 3)
+    .map((artist) => artist.name);
+
+  const queries: string[] = Array.from(
+    new Set([
+      ...topArtists.slice(0, 4).map((artist) => artist.name),
+      ...unlinkedArtists,
+      ...topGenres.slice(0, 3).map((genreScore) => `${genreScore.genre} mix`),
+      ...defaultSeeds,
+    ]),
+  ).slice(0, 7);
 
   for (const query of queries) {
     try {
@@ -200,6 +243,10 @@ export const PersonalizedMixWidget: FC = () => {
   const [visibleTracks, setVisibleTracks] = useState<Track[]>();
   const [topGenres, setTopGenres] = useState<GenreScore[]>([]);
   const [refreshNonce, setRefreshNonce] = useState(0);
+  const discoveryVariety = useSettingsStore(
+    (state) =>
+      (state.getValue('core.playback.discoveryVariety') as number) ?? 0.5,
+  );
   const metadataProviders = useProviders('metadata') as MetadataProvider[];
   const discoveryProviders = useProviders('discovery');
   const activeProviderId =
@@ -230,6 +277,7 @@ export const PersonalizedMixWidget: FC = () => {
       ...PERSONALIZED_MIX_QUERY_KEY,
       activeProviderId,
       activeDiscoveryId,
+      discoveryVariety,
       refreshNonce,
     ],
     enabled: metadataProviders.length > 0,
@@ -239,7 +287,7 @@ export const PersonalizedMixWidget: FC = () => {
       const topArtists = await personalizationEngine.getTopArtists();
       const fetchedGenres = await personalizationEngine.getTopGenres(5);
       setTopGenres(fetchedGenres);
-      const seedTracks = await personalizationEngine.getSeedTracks(5);
+      const seedTracks = await personalizationEngine.getSeedTracks(6);
       const listens = await personalizationEngine.getListenRecords();
       const blacklist = await personalizationEngine.getBlacklist();
 
@@ -251,15 +299,25 @@ export const PersonalizedMixWidget: FC = () => {
 
       const candidateSources = await Promise.allSettled([
         hasSpotifyCapabilities && artistsWithUris.length > 0
-          ? fetchTopTracksForArtists(metadataProvider, artistsWithUris, 6)
+          ? fetchTopTracksForArtists(
+              metadataProvider,
+              artistsWithUris,
+              10,
+              refreshNonce,
+            )
           : Promise.resolve([]),
 
         hasSpotifyCapabilities && artistsWithUris.length > 0
-          ? fetchRelatedArtistTracks(metadataProvider, artistsWithUris, 4)
+          ? fetchRelatedArtistTracks(
+              metadataProvider,
+              artistsWithUris,
+              6,
+              refreshNonce,
+            )
           : Promise.resolve([]),
 
         seedTracks.length > 0
-          ? fetchRadioRecommendations(seedTracks)
+          ? fetchRadioRecommendations(seedTracks, discoveryVariety)
           : Promise.resolve([]),
 
         fetchSearchFallback(metadataProvider, topArtists, fetchedGenres),
@@ -294,7 +352,7 @@ export const PersonalizedMixWidget: FC = () => {
         topArtists,
         listens,
         blacklist,
-        0.5,
+        discoveryVariety,
         refreshNonce,
       );
     },
