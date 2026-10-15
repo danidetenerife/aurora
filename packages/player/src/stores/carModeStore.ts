@@ -21,33 +21,11 @@ type CarModeState = {
 };
 
 const getInitialAutoCarMode = (): boolean => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY_AUTO_CAR_MODE);
-    return saved === null ? true : saved === 'true';
-  } catch {
-    return true;
-  }
-};
-
-const isNativeCarEnvironment = (): boolean => {
-  try {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    return (
-      (window as unknown as { AndroidCar?: unknown }).AndroidCar !==
-        undefined ||
-      (window as unknown as { __AURORA_CAR_MODE__?: boolean })
-        .__AURORA_CAR_MODE__ === true ||
-      localStorage.getItem('aurora:car_mode') === 'true'
-    );
-  } catch {
-    return false;
-  }
+  return false;
 };
 
 export const useCarModeStore = create<CarModeState>((set) => ({
-  isCarMode: isNativeCarEnvironment(),
+  isCarMode: false,
   enteredViaBluetooth: false,
   autoCarModeEnabled: getInitialAutoCarMode(),
   isBluetoothConnected: false,
@@ -86,10 +64,6 @@ export const initCarModeService = async (): Promise<void> => {
   }
   isInitialized = true;
 
-  if (isNativeCarEnvironment()) {
-    useCarModeStore.setState({ isCarMode: true, enteredViaBluetooth: false });
-  }
-
   if (!isCapacitorEnvironment()) {
     return;
   }
@@ -101,15 +75,6 @@ export const initCarModeService = async (): Promise<void> => {
         isBluetoothConnected: true,
         bluetoothDeviceName: initialStatus.deviceName || 'Bluetooth',
       });
-      if (
-        useCarModeStore.getState().autoCarModeEnabled &&
-        !useCarModeStore.getState().isCarMode
-      ) {
-        useCarModeStore.setState({
-          isCarMode: true,
-          enteredViaBluetooth: true,
-        });
-      }
     }
 
     await NativeMediaSessionPlugin.addListener(
@@ -120,30 +85,9 @@ export const initCarModeService = async (): Promise<void> => {
           isBluetoothConnected: isConnected,
           bluetoothDeviceName: deviceName || (isConnected ? 'Bluetooth' : ''),
         });
-
-        if (isConnected) {
-          if (
-            useCarModeStore.getState().autoCarModeEnabled &&
-            !useCarModeStore.getState().isCarMode
-          ) {
-            useCarModeStore.setState({
-              isCarMode: true,
-              enteredViaBluetooth: true,
-            });
-          }
-        } else {
-          const state = useCarModeStore.getState();
-          if (
-            state.isCarMode &&
-            state.enteredViaBluetooth &&
-            !isNativeCarEnvironment()
-          ) {
-            state.exitCarMode();
-          }
-        }
       },
     );
   } catch (error) {
-    console.warn('Failed to initialize Car Mode Bluetooth listener:', error);
+    console.warn('Failed to initialize Bluetooth listener:', error);
   }
 };

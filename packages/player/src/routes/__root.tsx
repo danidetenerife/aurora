@@ -23,7 +23,6 @@ import {
   Toaster,
 } from '@aurora/ui';
 
-import { CarModeOverlay } from '../components/CarMode/CarModeOverlay';
 import { ConnectedMobileNav } from '../components/ConnectedMobileNav';
 import { ConnectedPlayerBar } from '../components/ConnectedPlayerBar';
 import { MobileExpandedPlayer } from '../components/ConnectedPlayerBar/MobileExpandedPlayer';
@@ -48,7 +47,6 @@ import {
 } from '../services/universalStore';
 import { GlobalShortcuts } from '../shortcuts';
 import { useAccountModalStore } from '../stores/accountModalStore';
-import { useCarModeStore } from '../stores/carModeStore';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useMobilePlayerStore } from '../stores/mobilePlayerStore';
 import { useNotificationStore } from '../stores/notificationStore';
@@ -77,11 +75,6 @@ const DesktopMobileRootComponent = () => {
   const isStartingUp = useStartupStore((state) => state.isStartingUp);
   useEffect(() => {
     const handleBack = (event: Event) => {
-      if (useCarModeStore.getState().isCarMode) {
-        useCarModeStore.getState().exitCarMode();
-        event.preventDefault();
-        return;
-      }
       if (useMobilePlayerStore.getState().activeContextTrack) {
         useMobilePlayerStore.getState().closeContextMenu();
         event.preventDefault();
@@ -237,6 +230,42 @@ const DesktopMobileRootComponent = () => {
               <ConnectedQueuePanel isCollapsed={rightSidebar.isCollapsed} />
             )}
           </PlayerWorkspace.RightSidebar>
+
+          {isCapacitorEnvironment() && !rightSidebar.isCollapsed && (
+            <div className="bg-background absolute inset-0 z-40 flex flex-col md:hidden">
+              <div className="border-border flex shrink-0 items-center justify-between border-b px-4 py-2">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    className="border-border text-foreground hover:bg-background-secondary cursor-pointer rounded-xl border p-2 transition-all active:scale-95"
+                    onClick={toggleRightSidebar}
+                    data-testid="mobile-queue-chevron-close"
+                    aria-label="Cerrar cola"
+                  >
+                    <ChevronDown className="size-5" />
+                  </button>
+                  <h2 className="text-lg font-bold">
+                    {t('queue', { defaultValue: 'Cola' })}
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <QueueHeaderActions />
+                  <button
+                    type="button"
+                    className="border-border text-foreground hover:bg-background-secondary cursor-pointer rounded-xl border p-2 transition-all active:scale-95"
+                    onClick={toggleRightSidebar}
+                    data-testid="mobile-queue-close"
+                    aria-label="Cerrar cola"
+                  >
+                    <X className="size-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="min-h-0 flex-1">
+                <ConnectedQueuePanel />
+              </div>
+            </div>
+          )}
         </PlayerWorkspace>
       </SoundProvider>
 
@@ -244,41 +273,6 @@ const DesktopMobileRootComponent = () => {
         <ConnectedPlayerBar />
         <ConnectedMobileNav />
       </div>
-      {isCapacitorEnvironment() && !rightSidebar.isCollapsed && (
-        <div className="bg-background fixed inset-0 z-50 flex flex-col pt-[max(2.25rem,env(safe-area-inset-top,0px))] pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] md:hidden">
-          <div className="border-border flex items-center justify-between border-b px-4 py-2">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                className="border-border text-foreground hover:bg-background-secondary cursor-pointer rounded-xl border p-2 transition-all active:scale-95"
-                onClick={toggleRightSidebar}
-                data-testid="mobile-queue-chevron-close"
-                aria-label="Cerrar cola"
-              >
-                <ChevronDown className="size-5" />
-              </button>
-              <h2 className="text-lg font-bold">
-                {t('queue', { defaultValue: 'Cola' })}
-              </h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <QueueHeaderActions />
-              <button
-                type="button"
-                className="border-border text-foreground hover:bg-background-secondary cursor-pointer rounded-xl border p-2 transition-all active:scale-95"
-                onClick={toggleRightSidebar}
-                data-testid="mobile-queue-close"
-                aria-label="Cerrar cola"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-          </div>
-          <div className="min-h-0 flex-1">
-            <ConnectedQueuePanel />
-          </div>
-        </div>
-      )}
       <Toaster
         position={isTauri ? 'bottom-right' : 'top-center'}
         mobileOffset={{ top: '64px', bottom: '120px' }}
@@ -286,7 +280,6 @@ const DesktopMobileRootComponent = () => {
       <ConnectedSettingsModal />
       <MobileNotificationsSheet />
       <MobileAccountSheet />
-      <CarModeOverlay />
       <MobileExpandedPlayer />
       <MobileTrackContextMenuSheet />
     </PlayerShell>

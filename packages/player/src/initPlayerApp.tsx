@@ -7,6 +7,7 @@ import { initDiscoveryService } from './services/discoveryService';
 import { initHistoryService } from './services/history';
 import {
   applyLanguageFromSettings,
+  changeLanguage,
   initLanguageWatcher,
 } from './services/languageService';
 import { initMediaSessionService } from './services/mediaSessionService';
@@ -32,6 +33,10 @@ import { useUpdaterStore } from './stores/updaterStore';
 export const initPlayerApp = async (
   root: ReturnType<typeof import('react-dom/client').createRoot>,
 ) => {
+  if (process.env.NODE_ENV !== 'test') {
+    await changeLanguage('es_ES');
+  }
+
   root.render(
     <React.StrictMode>
       <App />

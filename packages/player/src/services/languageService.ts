@@ -24,18 +24,8 @@ export const applyLanguageFromSettings = async () => {
   if (savedLanguage && typeof savedLanguage === 'string') {
     await changeLanguage(savedLanguage);
   } else {
-    const browserLang =
-      typeof navigator !== 'undefined' ? navigator.language : '';
-    if (browserLang.toLowerCase().startsWith('es')) {
-      await changeLanguage('es_ES');
-      await coreSettingsHost.set('general.language', 'es_ES');
-    } else {
-      const defaultLanguage =
-        await coreSettingsHost.get<string>('general.language');
-      if (defaultLanguage && typeof defaultLanguage === 'string') {
-        await changeLanguage(defaultLanguage);
-      }
-    }
+    await changeLanguage('es_ES');
+    await coreSettingsHost.set('general.language', 'es_ES');
   }
 };
 

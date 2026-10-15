@@ -75,7 +75,7 @@ const syncAutoCatalog = (): void => {
   const popularPlaylists = [
     {
       id: 'spotify_top',
-      name: "Today's Top Hits",
+      name: 'Éxitos de Hoy',
       description: 'Los mayores éxitos mundiales • Spotify',
       artworkUrl:
         'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop',
@@ -91,7 +91,7 @@ const syncAutoCatalog = (): void => {
     },
     {
       id: 'spotify_rock',
-      name: 'Rock Classics',
+      name: 'Clásicos del Rock',
       description: 'Grandes leyendas del rock • Spotify',
       artworkUrl:
         'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=600&auto=format&fit=crop',

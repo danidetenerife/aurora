@@ -346,7 +346,7 @@ export const SyncSettingsView: FC = () => {
         <div className="border-border/50 text-foreground-secondary flex items-center justify-between border-t pt-3 text-xs">
           <span>Última sincronización: {formatRelativeTime(lastSync)}</span>
           <div className="flex items-center gap-2">
-            <span>Auto-sync</span>
+            <span>Sincronización automática</span>
             <Toggle checked={autoSync} onChange={handleToggleAutoSync} />
           </div>
         </div>
@@ -486,7 +486,7 @@ export const SyncSettingsView: FC = () => {
               </div>
               <div>
                 <label className="text-foreground mb-1.5 block text-xs font-semibold">
-                  Contraseña / App Token
+                  Contraseña / Token de aplicación
                 </label>
                 <Input
                   size="sm"
@@ -541,7 +541,7 @@ export const SyncSettingsView: FC = () => {
             </h3>
             <p className="text-foreground-secondary mt-1 text-xs">
               Guarda tu biblioteca en un Gist secreto en tu cuenta de GitHub.
-              Solo necesitas un Personal Access Token con permiso
+              Solo necesitas un token de acceso personal con permiso
               &quot;gist&quot;.
             </p>
           </div>
@@ -549,7 +549,7 @@ export const SyncSettingsView: FC = () => {
           <div className="flex flex-col gap-3.5">
             <div>
               <label className="text-foreground mb-1.5 block text-xs font-semibold">
-                Personal Access Token (PAT)
+                Token de acceso personal (PAT)
               </label>
               <Input
                 size="sm"

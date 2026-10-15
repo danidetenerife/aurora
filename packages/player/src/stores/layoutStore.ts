@@ -93,8 +93,9 @@ export const useLayoutStore = create<LayoutState>()(
                 : defaultState.leftSidebar.width,
           },
           rightSidebar: {
-            isCollapsed:
-              typeof state.rightSidebar?.isCollapsed === 'boolean'
+            isCollapsed: isMobileDevice
+              ? true
+              : typeof state.rightSidebar?.isCollapsed === 'boolean'
                 ? state.rightSidebar.isCollapsed
                 : defaultState.rightSidebar.isCollapsed,
             width:
@@ -107,6 +108,13 @@ export const useLayoutStore = create<LayoutState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.rightSidebar && state.rightSidebar.width < 320) {
           state.setRightSidebarWidth(320);
+        }
+        if (
+          isMobileDevice &&
+          state?.rightSidebar &&
+          !state.rightSidebar.isCollapsed
+        ) {
+          state.toggleRightSidebar();
         }
       },
     },

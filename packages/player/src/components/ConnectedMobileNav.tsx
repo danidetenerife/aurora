@@ -22,24 +22,27 @@ export const ConnectedMobileNav: FC = () => {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
+  const isQueueOpen = !rightSidebar.isCollapsed;
+
   const navItems = [
     {
       to: '/dashboard',
       icon: <GaugeIcon className="size-6" />,
       label: 'Panel',
-      isActive: currentPath === '/dashboard' || currentPath === '/',
+      isActive:
+        !isQueueOpen && (currentPath === '/dashboard' || currentPath === '/'),
     },
     {
       to: '/favorites/tracks',
       icon: <MusicIcon className="size-6" />,
       label: 'Canciones',
-      isActive: currentPath === '/favorites/tracks',
+      isActive: !isQueueOpen && currentPath === '/favorites/tracks',
     },
     {
       to: '/playlists',
       icon: <ListMusicIcon className="size-6" />,
       label: 'Listas',
-      isActive: currentPath.startsWith('/playlists'),
+      isActive: !isQueueOpen && currentPath.startsWith('/playlists'),
     },
   ];
 
@@ -49,6 +52,11 @@ export const ConnectedMobileNav: FC = () => {
         <Link
           key={item.to}
           to={item.to}
+          onClick={() => {
+            if (isQueueOpen) {
+              toggleRightSidebar();
+            }
+          }}
           aria-current={item.isActive ? 'page' : undefined}
           className={cn(
             'flex flex-1 flex-col items-center justify-center gap-1 rounded-xl py-1 font-medium transition-all',

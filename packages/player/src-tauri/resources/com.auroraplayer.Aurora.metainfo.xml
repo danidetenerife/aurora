@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.72" date="2026-10-15">
+      <description>
+        <p>Release 1.48.72: Corrección de interfaz móvil, reproducción por Bluetooth e idioma español completo: elimina la superposición del Modo Coche al conectar por Bluetooth al vehículo para mantener siempre el reproductor nativo y Android Auto sin interrupciones; reestructura el panel de Cola en móvil dentro del área de trabajo para que la barra de reproducción y la barra de navegación inferior permanezcan siempre visibles al consultar la cola; y completa el 100% de las traducciones al español en toda la aplicación (incluyendo cabecera de Cola, descripciones de plugins integrados, listas populares y ajustes de sincronización).</p>
+      </description>
+    </release>
+
     <release version="1.48.71" date="2026-10-15">
       <description>
         <p>Release 1.48.71: Optimización profunda del algoritmo de aprendizaje de gustos y recomendaciones personalizadas: resolución síncrona de metadatos y URIs de artistas de YouTube Music y favoritos para no excluirlos del motor de descubrimiento; detección automática de saltos implícitos al cambiar de canción antes de 30 segundos y penalización de escuchas abandonadas a mitad; unificación de variantes de nombres con y sin tildes entre proveedores; integración de álbumes favoritos, amplitud de catálogo por artista y suelo de recencia para canciones favoritas; curva de saturación ante temas sobre-reproducidos para priorizar canciones frescas de tus artistas favoritos y afines; entrelazado con diversidad real de hasta 10 artistas distintos en portada; y filtrado inteligente en la cola de reproducción automática (radio) excluyendo artistas saltados en la sesión.</p>

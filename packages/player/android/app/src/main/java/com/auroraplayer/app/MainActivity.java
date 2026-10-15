@@ -172,18 +172,6 @@ public class MainActivity extends BridgeActivity {
                 settings.setJavaScriptEnabled(true);
                 if (TvWebView.isTelevision(this)) {
                     TvWebView.configure(this, webView);
-                } else if (TvWebView.isCar(this)) {
-                    settings.setUserAgentString(YtStreamExtractorPlugin.MOBILE_UA);
-                    settings.setOffscreenPreRaster(true);
-                    try {
-                        webView.addJavascriptInterface(new Object() {
-                            @android.webkit.JavascriptInterface
-                            public boolean isCar() { return true; }
-                        }, "AndroidCar");
-                    } catch (Throwable ignored) {}
-                    try {
-                        webView.evaluateJavascript("window.__AURORA_CAR_MODE__ = true; try { localStorage.removeItem('aurora:tv_mode'); localStorage.setItem('aurora:car_mode', 'true'); } catch(e){}", null);
-                    } catch (Throwable ignored) {}
                 } else {
                     settings.setUserAgentString(YtStreamExtractorPlugin.MOBILE_UA);
                     settings.setOffscreenPreRaster(true);

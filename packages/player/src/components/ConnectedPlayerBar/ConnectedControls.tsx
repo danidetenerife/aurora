@@ -1,4 +1,4 @@
-import { Airplay, Car } from 'lucide-react';
+import { Airplay } from 'lucide-react';
 import { FC } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -9,7 +9,6 @@ import { Button, PlayerBar, Tooltip } from '@aurora/ui';
 import { useCoreSetting } from '../../hooks/useCoreSetting';
 import { useMediaRouter } from '../../hooks/useMediaRouter';
 import { playbackManager } from '../../services/playback';
-import { useCarModeStore } from '../../stores/carModeStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 
@@ -79,19 +78,6 @@ export const ConnectedControls: FC = () => {
           <Airplay size={16} />
         </Button>
       </Tooltip>
-      <div className="aurora-car-control">
-        <Button
-          size="icon-sm"
-          className="sm:size-10"
-          variant="text"
-          title="Modo Coche"
-          aria-label="Modo Coche"
-          onClick={() => useCarModeStore.getState().toggleCarMode()}
-          data-testid="player-car-mode-button"
-        >
-          <Car size={16} />
-        </Button>
-      </div>
     </div>
   );
 };

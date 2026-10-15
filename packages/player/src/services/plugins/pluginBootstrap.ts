@@ -98,7 +98,8 @@ const loadBundledPlugins = (): void => {
           name: ytMusicId,
           displayName: 'YouTube Music',
           version: '0.1.0',
-          description: 'YouTube Music streaming and metadata plugin for Aurora',
+          description:
+            'Plugin de streaming y metadatos de YouTube Music para Aurora',
           categories: [
             'streaming',
             'metadata',
@@ -128,7 +129,7 @@ const loadBundledPlugins = (): void => {
           name: spotifyId,
           displayName: 'Spotify',
           version: '0.2.2',
-          description: 'Spotify metadata and playlists provider for Aurora',
+          description: 'Proveedor de metadatos y listas de Spotify para Aurora',
           categories: ['metadata', 'playlists'],
           author: 'Aurora Team',
           icon: {
@@ -152,7 +153,7 @@ const loadBundledPlugins = (): void => {
           name: youtubeId,
           displayName: 'YouTube',
           version: '0.1.2',
-          description: 'YouTube streaming provider for Aurora',
+          description: 'Proveedor de streaming de YouTube para Aurora',
           categories: ['streaming'],
           author: 'Aurora Team',
           icon: {

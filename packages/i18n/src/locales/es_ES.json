@@ -28,6 +28,9 @@
     "errors": {
       "network": "Error de red. Por favor, verifica tu conexión.",
       "notFound": "No encontrado"
+    },
+    "misc": {
+      "episodes": "episodios"
     }
   },
   "navigation": {
@@ -39,7 +42,8 @@
     "favoriteArtists": "Artistas favoritos",
     "playlists": "Listas",
     "history": "Historial",
-    "sources": "Fuentes"
+    "sources": "Fuentes",
+    "queue": "Cola"
   },
   "history": {
     "openError": "No se pudo abrir este elemento. Comprueba la conexión y la fuente de metadatos e inténtalo de nuevo.",
@@ -94,6 +98,7 @@
     "discovery": "Descubrimiento",
     "discoveryDescription": "Las fuentes de descubrimiento recomiendan nuevas canciones según lo que estás escuchando. Activa el descubrimiento musical con el icono del radiocasete en la barra inferior.",
     "lyrics": "Letras",
+    "lyricsDescription": "Las fuentes de letras proporcionan letras sincronizadas o de texto plano para la canción que se está reproduciendo.",
     "lockedReason": "La fuente de metadatos <metadata>{{metadataName}}</metadata> requiere la fuente de streaming <streaming>{{streamingName}}</streaming>.",
     "missingStreamingProvider": "El proveedor de streaming requerido \"{{providerId}}\" no está disponible",
     "noProviders": "No hay proveedores instalados"
@@ -110,12 +115,13 @@
     "tracks": {
       "title": "Canciones favoritas",
       "empty": "No tienes música favorita aún",
-      "emptyDescription": "La música que marques como favorita aparecerá aquí"
+      "emptyDescription": "La música que marques como favorita aparecerán aquí"
     },
     "artists": {
       "title": "Artistas favoritos",
       "empty": "No tienes ningún artista favorito aún",
-      "emptyDescription": "Los artistas que marques como favoritos aparecerán aquí"
+      "emptyDescription": "Los artistas que marques como favoritos aparecerán aquí",
+      "clearAll": "Limpiar todo"
     }
   },
   "playlists": {
@@ -130,6 +136,7 @@
     "add": "Añadir",
     "delete": "Eliminar lista de reproducción",
     "deleteConfirm": "¿Estás seguro de querer eliminar esta lista de reproducción?",
+    "playlistDeleted": "Lista de reproducción eliminada",
     "play": "Reproducir",
     "addToQueue": "Añadir a la cola",
     "saveLocally": "Guardar localmente",
@@ -200,7 +207,7 @@
     "albums": "Álbumes",
     "tracks": "Canciones",
     "similar": "Artistas similares",
-    "popularTracks": "Tracks populares",
+    "popularTracks": "Canciones populares",
     "biography": "Biografía",
     "discography": "Discografía",
     "topTracks": "Canciones más escuchadas",
@@ -395,7 +402,11 @@
       },
       "titleBarStyle": {
         "title": "Estilo de la barra de título",
-        "description": "Elige el estilo visual para los controles de la barra de título personalizada."
+        "description": "Elige el estilo visual para los controles de la barra de título personalizada.",
+        "options": {
+          "classic": "Clásico",
+          "traffic-lights": "Semáforo"
+        }
       }
     },
     "playback": {
@@ -523,6 +534,8 @@
       "addToQueue": "Añadir a cola de reproducción",
       "addToFavorites": "Añadir a favoritos",
       "removeFromFavorites": "Eliminar de favoritos",
+      "addedToFavorites": "Añadido a favoritos",
+      "removedFromFavorites": "Eliminado de favoritos",
       "dislike": "No me gusta esta canción",
       "blacklistArtist": "No recomendar este artista",
       "trackBlacklisted": "Canción añadida a la lista negra",
@@ -630,7 +643,7 @@
     }
   },
   "titleBar": {
-    "title": "Aurora Music Player",
+    "title": "Reproductor de música Aurora",
     "minimize": "Minimizar",
     "maximize": "Maximizar",
     "close": "Cerrar"
@@ -670,6 +683,39 @@
     "openSearch": "Buscar",
     "queue": "Cola",
     "exitTvMode": "Salir del modo TV",
-    "emptyDashboard": "Explora música para ver tus favoritos aquí"
+    "emptyDashboard": "Explora música para ver tus favoritos aquí",
+    "updateAvailableTitle": "Nueva actualización disponible",
+    "updateDownloadedDesc": "Aurora {{version}} se ha descargado automáticamente. ¿Quieres actualizar ahora?",
+    "updateDownloading": "Descargando actualización {{version}} ({{percent}}%)...",
+    "updateNow": "Actualizar ahora",
+    "updateLater": "Más tarde",
+    "updateOpeningInstaller": "Abriendo instalador...",
+    "updateFailed": "Error al descargar la actualización",
+    "playNow": "Reproducir ahora",
+    "Shuffle": "Aleatorio",
+    "upNext": "A continuación",
+    "continueListening": "Seguir escuchando",
+    "recommendedMix": "Recomendado para ti",
+    "favoriteSongs": "Canciones favoritas",
+    "favoriteArtists": "Artistas favoritos",
+    "yourPlaylists": "Tus listas",
+    "featuredPlaylists": "Listas destacadas",
+    "searchPlaceholder": "Buscar canciones, artistas o álbumes...",
+    "clear": "Limpiar",
+    "space": "Espacio",
+    "searching": "Buscando...",
+    "topSongs": "Canciones principales",
+    "albums": "Álbumes",
+    "noResults": "No se encontraron resultados",
+    "typeToSearch": "Usa el teclado o la búsqueda por voz para encontrar música",
+    "playAll": "Reproducir todo",
+    "popularSongs": "Canciones populares",
+    "playlistTracks": "Canciones",
+    "loadingPlaylist": "Cargando lista...",
+    "loadingTracks": "Cargando canciones...",
+    "loadingArtist": "Cargando artista...",
+    "podcastsTitle": "Podcasts",
+    "favoritePodcasts": "Podcasts favoritos",
+    "topPodcasts": "Podcasts populares"
   }
 }

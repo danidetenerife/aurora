@@ -305,7 +305,9 @@ export const MobileExpandedPlayer: FC = () => {
             type="button"
             onClick={() => {
               closeExpanded();
-              toggleRightSidebar();
+              if (useLayoutStore.getState().rightSidebar.isCollapsed) {
+                toggleRightSidebar();
+              }
             }}
             className="border-border bg-card text-foreground hover:bg-background-secondary flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all active:scale-95"
             data-testid="expanded-player-open-queue"
