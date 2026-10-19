@@ -22,7 +22,11 @@ export const usePlaybackStatus = (
       }
       activeSrcRef.current = srcUrl;
       audio.play().catch((err: DOMException) => {
-        if (err.name === 'AbortError' || err.name === 'NotAllowedError') {
+        if (
+          err.name === 'AbortError' ||
+          err.name === 'NotAllowedError' ||
+          err.name === 'NotSupportedError'
+        ) {
           return;
         }
         onError?.(err);
