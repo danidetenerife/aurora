@@ -17,14 +17,17 @@ import {
   Sparkles,
   Video,
 } from 'lucide-react';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { pickArtwork, type Track } from '@aurora/model';
 import type { MetadataProvider } from '@aurora/plugin-sdk';
 
 import { useProviders } from '../../hooks/useProviders';
 import { getIntelligentAutoplayTracks } from '../../services/discoveryService';
-import { personalizationEngine } from '../../services/personalizationEngine';
+import {
+  normalizeArtistKey,
+  personalizationEngine,
+} from '../../services/personalizationEngine';
 import { providersHost } from '../../services/providersHost';
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { usePlaylistStore } from '../../stores/playlistStore';
@@ -155,15 +158,80 @@ export const TV_YTM_CHIPS = [
   'Romance',
 ];
 
+type RecommendationCache = {
+  tracks: Track[];
+  timestamp: number;
+  providerId: string | null;
+};
+
+let cachedRecommendations: RecommendationCache | null = null;
+const CACHE_TTL_MS = 60000;
+
+export const clearRecommendationCache = () => {
+  cachedRecommendations = null;
+};
+
+export const getCachedRecommendations = () => cachedRecommendations;
+
+export const searchForUserFallbackTracks = async (
+  metadataProvider: MetadataProvider,
+  queries: string[],
+  chunkSize = 3,
+  signal?: AbortSignal,
+): Promise<Track[]> => {
+  if (!metadataProvider?.search) {
+    return [];
+  }
+  const results: Track[] = [];
+  for (let i = 0; i < queries.length; i += chunkSize) {
+    if (signal?.aborted) {
+      break;
+    }
+    const chunk = queries.slice(i, i + chunkSize);
+    const chunkResults = await Promise.all(
+      chunk.map(async (query) => {
+        if (signal?.aborted || !metadataProvider.search) {
+          return [];
+        }
+        try {
+          const searchRes = await metadataProvider.search({
+            query,
+            types: ['tracks'],
+          });
+          return searchRes.tracks?.slice(0, 4) ?? [];
+        } catch {
+          return [];
+        }
+      }),
+    );
+    for (const tracks of chunkResults) {
+      results.push(...tracks);
+    }
+    if (results.length >= 12) {
+      break;
+    }
+  }
+  return results;
+};
+
 export const TvDashboard: FC = () => {
   const [recommendedTracks, setRecommendedTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortedMoods, setSortedMoods] = useState(TV_MOOD_CAPSULES);
   const [selectedChip, setSelectedChip] = useState('Todos');
+  const [blacklist, setBlacklist] = useState<{
+    tracks: string[];
+    artists: string[];
+  }>({ tracks: [], artists: [] });
 
-  const favorites = useFavoritesStore((state) => state.tracks);
-  const playlists = usePlaylistStore((state) => state.index);
-  const podcastFavorites = usePodcastStore((state) => state.favorites);
+  const favoritesCount = useFavoritesStore((state) => state.tracks.length);
+  const playlistsCount = usePlaylistStore((state) => state.index.length);
+  const podcastFavoritesCount = usePodcastStore(
+    (state) => state.favorites.length,
+  );
+
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const metadataProviders = useProviders('metadata') as MetadataProvider[];
   const activeProviderId =
@@ -208,8 +276,32 @@ export const TvDashboard: FC = () => {
     saveLastFocusedChild: true,
   });
 
-  const loadRecommendations = async () => {
+  const loadRecommendations = async (signal?: AbortSignal) => {
+    if (
+      cachedRecommendations &&
+      cachedRecommendations.providerId === activeProviderId &&
+      Date.now() - cachedRecommendations.timestamp < CACHE_TTL_MS &&
+      cachedRecommendations.tracks.length > 0
+    ) {
+      setRecommendedTracks(cachedRecommendations.tracks);
+      setLoading(false);
+      return;
+    }
+
     try {
+      const blacklistData = (await personalizationEngine.getBlacklist?.()) ?? {
+        tracks: [],
+        artists: [],
+      };
+      setBlacklist(blacklistData);
+      const blacklistedTracks = blacklistData.tracks;
+      const normalizedBlacklistedArtists = new Set(
+        blacklistData.artists.flatMap((artistItem) => [
+          artistItem.toLowerCase().trim(),
+          normalizeArtistKey(artistItem),
+        ]),
+      );
+
       const topArtists = await personalizationEngine.getTopArtists();
       const topGenres = await personalizationEngine.getTopGenres(10);
 
@@ -278,12 +370,85 @@ export const TvDashboard: FC = () => {
       if (results.length < 4 && metadataProvider?.search) {
         const queries: string[] = [];
         if (topArtists.length > 0) {
-          queries.push(...topArtists.slice(0, 2).map((artist) => artist.name));
+          queries.push(
+            ...topArtists
+              .filter(
+                (artist) =>
+                  !normalizedBlacklistedArtists.has(
+                    artist.name.toLowerCase().trim(),
+                  ) &&
+                  !normalizedBlacklistedArtists.has(
+                    normalizeArtistKey(artist.name),
+                  ),
+              )
+              .slice(0, 2)
+              .map((artist) => artist.name),
+          );
         }
         if (topGenres.length > 0) {
           queries.push(
             ...topGenres.slice(0, 2).map((genre) => `${genre.genre} hits`),
           );
+        }
+        const userFavorites = useFavoritesStore.getState().tracks;
+        for (const fav of userFavorites.slice(0, 2)) {
+          const trackId =
+            fav.ref?.source?.id ||
+            `${fav.ref?.artists?.[0]?.name}-${fav.ref?.title}`;
+          const artistName = fav.ref?.artists?.[0]?.name;
+          if (blacklistedTracks.includes(trackId)) {
+            continue;
+          }
+          if (
+            artistName &&
+            (normalizedBlacklistedArtists.has(
+              artistName.toLowerCase().trim(),
+            ) ||
+              normalizedBlacklistedArtists.has(normalizeArtistKey(artistName)))
+          ) {
+            continue;
+          }
+          if (fav.ref?.title) {
+            queries.push(`${fav.ref.title} ${artistName ?? ''}`.trim());
+          }
+        }
+        const userPlaylists = Array.from(
+          usePlaylistStore.getState().playlists.values(),
+        );
+        for (const playlist of userPlaylists.slice(0, 2)) {
+          if (playlist.name) {
+            queries.push(playlist.name);
+          }
+        }
+        const userFavArtists = useFavoritesStore.getState().artists;
+        for (const favArtist of userFavArtists.slice(0, 2)) {
+          const artistName = favArtist.ref?.name;
+          if (
+            artistName &&
+            !normalizedBlacklistedArtists.has(
+              artistName.toLowerCase().trim(),
+            ) &&
+            !normalizedBlacklistedArtists.has(normalizeArtistKey(artistName))
+          ) {
+            queries.push(`${artistName} radio`);
+          }
+        }
+        const userFavAlbums = useFavoritesStore.getState().albums;
+        for (const favAlbum of userFavAlbums.slice(0, 2)) {
+          const albumTitle = favAlbum.ref?.title;
+          const albumArtist = favAlbum.ref?.artists?.[0]?.name;
+          if (
+            albumTitle &&
+            (!albumArtist ||
+              (!normalizedBlacklistedArtists.has(
+                albumArtist.toLowerCase().trim(),
+              ) &&
+                !normalizedBlacklistedArtists.has(
+                  normalizeArtistKey(albumArtist),
+                )))
+          ) {
+            queries.push(`${albumTitle} ${albumArtist ?? ''}`.trim());
+          }
         }
         if (queries.length === 0) {
           queries.push(
@@ -293,24 +458,40 @@ export const TvDashboard: FC = () => {
           );
         }
 
-        for (const query of queries) {
-          try {
-            const searchRes = await metadataProvider.search({
-              query,
-              types: ['tracks'],
-            });
-            if (searchRes.tracks?.length) {
-              results.push(...searchRes.tracks.slice(0, 4));
-            }
-          } catch {
-            // search query failed, continue to next
-          }
-        }
+        const fallbackResults = await searchForUserFallbackTracks(
+          metadataProvider,
+          queries,
+          3,
+          signal,
+        );
+        results.push(...fallbackResults);
+      }
+
+      if (signal?.aborted) {
+        return;
       }
 
       if (results.length > 0) {
         const seen = new Set<string>();
         const unique = results.filter((track) => {
+          const trackId =
+            track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
+          if (blacklistedTracks.includes(trackId)) {
+            return false;
+          }
+          if (
+            (track.artists ?? []).some(
+              (artist) =>
+                normalizedBlacklistedArtists.has(
+                  artist.name.toLowerCase().trim(),
+                ) ||
+                normalizedBlacklistedArtists.has(
+                  normalizeArtistKey(artist.name),
+                ),
+            )
+          ) {
+            return false;
+          }
           const key = `${(track.artists?.[0]?.name ?? '').toLowerCase().trim()}-${(track.title ?? '').toLowerCase().trim()}`;
           if (seen.has(key)) {
             return false;
@@ -319,22 +500,51 @@ export const TvDashboard: FC = () => {
           return true;
         });
         setRecommendedTracks(unique);
+        cachedRecommendations = {
+          tracks: unique,
+          timestamp: Date.now(),
+          providerId: activeProviderId,
+        };
       }
     } catch {
       // recommendations fetch failed gracefully
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    void loadRecommendations();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    void loadRecommendations(controller.signal);
 
     const unsubscribe = personalizationEngine.subscribe(() => {
-      void loadRecommendations();
+      clearRecommendationCache();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        const newController = new AbortController();
+        abortControllerRef.current = newController;
+        void loadRecommendations(newController.signal);
+      }, 300);
     });
 
     return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
       unsubscribe();
     };
   }, [metadataProvider]);
@@ -376,16 +586,60 @@ export const TvDashboard: FC = () => {
     setSortedMoods(filtered);
   };
 
-  const heroTrack = recommendedTracks[0] ?? DEFAULT_HERO_TRACK;
+  const normalizedBlacklistArtists = useMemo(
+    () =>
+      new Set(
+        blacklist.artists.flatMap((artistItem) => [
+          artistItem.toLowerCase().trim(),
+          normalizeArtistKey(artistItem),
+        ]),
+      ),
+    [blacklist.artists],
+  );
+
+  const isTrackBlacklisted = (track?: Track) => {
+    if (!track) {
+      return true;
+    }
+    const trackId =
+      track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
+    if (blacklist.tracks.includes(trackId)) {
+      return true;
+    }
+    return (track.artists ?? []).some(
+      (artist) =>
+        normalizedBlacklistArtists.has(artist.name.toLowerCase().trim()) ||
+        normalizedBlacklistArtists.has(normalizeArtistKey(artist.name)),
+    );
+  };
+
+  const firstFavTrack = useFavoritesStore
+    .getState()
+    .tracks.find((item) => item.ref && !isTrackBlacklisted(item.ref))?.ref;
+  const firstPlaylistTrack = (() => {
+    for (const playlist of usePlaylistStore.getState().playlists.values()) {
+      for (const item of playlist.items || []) {
+        if (item.track && !isTrackBlacklisted(item.track)) {
+          return item.track;
+        }
+      }
+    }
+    return undefined;
+  })();
+  const userFallbackHeroTrack = firstFavTrack ?? firstPlaylistTrack;
+  const heroTrack =
+    recommendedTracks[0] ?? userFallbackHeroTrack ?? DEFAULT_HERO_TRACK;
   const heroArtUrl =
     pickArtwork(heroTrack.artwork ?? heroTrack.album?.artwork, 'thumbnail', 600)
       ?.url ??
     'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop';
-  const isHeroFavorite = favorites.some(
-    (item) =>
-      item.ref.title === heroTrack.title &&
-      item.ref.artists?.[0]?.name === heroTrack.artists?.[0]?.name,
-  );
+  const isHeroFavorite = useFavoritesStore
+    .getState()
+    .tracks.some(
+      (item) =>
+        item.ref.title === heroTrack.title &&
+        item.ref.artists?.[0]?.name === heroTrack.artists?.[0]?.name,
+    );
 
   return (
     <FocusContext.Provider value={focusKey}>
@@ -524,7 +778,7 @@ export const TvDashboard: FC = () => {
             <div>
               <div className="tv-stat-chip-title">Tus Favoritos</div>
               <div className="tv-stat-chip-value">
-                {favorites.length} canciones
+                {favoritesCount} canciones
               </div>
             </div>
           </TvButton>
@@ -552,7 +806,7 @@ export const TvDashboard: FC = () => {
             <div>
               <div className="tv-stat-chip-title">Tus Listas</div>
               <div className="tv-stat-chip-value">
-                {playlists.length} guardadas
+                {playlistsCount} guardadas
               </div>
             </div>
           </TvButton>
@@ -580,7 +834,7 @@ export const TvDashboard: FC = () => {
             <div>
               <div className="tv-stat-chip-title">Podcasts</div>
               <div className="tv-stat-chip-value">
-                {podcastFavorites.length} guardados
+                {podcastFavoritesCount} guardados
               </div>
             </div>
           </TvButton>

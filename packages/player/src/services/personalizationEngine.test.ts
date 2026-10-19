@@ -1,4 +1,4 @@
-import type { Track } from '@aurora/model';
+import type { Playlist, Track } from '@aurora/model';
 
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { usePlaylistStore } from '../stores/playlistStore';
@@ -548,5 +548,85 @@ describe('personalization learning across devices', () => {
 
     expect(ranked[0].title).toBe('Fresh Unheard Gem');
     expect(ranked[ranked.length - 1].title).toBe('Abandoned At 40s');
+  });
+
+  it('seeds tracks from saved playlists and favorite artists/albums when listens and favorite tracks are empty', async () => {
+    const playlistTrack: Track = {
+      title: 'Echoes',
+      source: { provider: 'youtube-music', id: 'echoes-yt' },
+      artists: [
+        {
+          name: 'Pink Floyd',
+          roles: [],
+          source: { provider: 'youtube-music', id: 'pink-floyd-yt' },
+        },
+      ],
+      durationMs: 300_000,
+    };
+
+    useFavoritesStore.setState({
+      tracks: [],
+      artists: [
+        {
+          key: 'art-1',
+          addedAtIso: new Date().toISOString(),
+          ref: {
+            name: 'Led Zeppelin',
+            source: { provider: 'spotify', id: 'lz-spotify' },
+          },
+        },
+      ],
+      albums: [],
+    });
+
+    usePlaylistStore.setState({
+      playlists: new Map([
+        [
+          'pl-1',
+          {
+            id: 'pl-1',
+            name: 'Prog Classics',
+            items: [{ id: 'item-1', track: playlistTrack }],
+          } as unknown as Playlist,
+        ],
+      ]),
+    });
+
+    const seeds = await mobile.getSeedTracks(5);
+    expect(seeds.length).toBeGreaterThanOrEqual(2);
+    expect(seeds.some((seed) => seed.title === 'Echoes')).toBe(true);
+    expect(
+      seeds.some((seed) => seed.artists?.[0]?.name === 'Led Zeppelin'),
+    ).toBe(true);
+  });
+
+  it('records an intentional skip after 35 seconds as a skip rather than a play and marks artist skipped in session', async () => {
+    const longTrack: Track = {
+      title: 'Extended Jam',
+      source: { provider: 'spotify', id: 'long-jam-1' },
+      artists: [
+        {
+          name: 'Jam Band',
+          roles: [],
+          source: { provider: 'spotify', id: 'jam-band-1' },
+        },
+      ],
+      durationMs: 300_000,
+    };
+
+    mobile.start();
+    useSoundStore.getState().play();
+    eventBus.emit('trackStarted', longTrack);
+    useSoundStore.getState().updatePlayback(35, 300);
+    eventBus.emit('playbackSkipped', { positionMs: 35_000 });
+    eventBus.emit('trackFinished', longTrack);
+
+    const records = await mobile.getListenRecords();
+    expect(records[0]).toMatchObject({
+      playCount: 0,
+      skipCount: 1,
+      totalListenMs: 35_000,
+    });
+    expect(mobile.isArtistSkippedInSession('Jam Band')).toBe(true);
   });
 });

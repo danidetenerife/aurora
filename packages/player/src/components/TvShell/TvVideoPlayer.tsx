@@ -21,8 +21,8 @@ import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { useTvStore } from '../../stores/tvStore';
+import { TvCoverArtView } from './TvCoverArtView';
 import { playNextInInfiniteQueue, replenishTvQueue } from './tvInfiniteQueue';
-import { extractYouTubeId } from './TvSoundProvider';
 
 const OVERLAY_HIDE_DELAY_MS = 3500;
 const SUBTITLE_CHECK_INTERVAL_MS = 1000;
@@ -138,6 +138,10 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         track.source?.id ||
         `${track.artists?.[0]?.name || ''}-${track.title || ''}`;
       void personalizationEngine.blacklistTrack(trackId);
+      const artistName = track.artists?.[0]?.name;
+      if (artistName) {
+        void personalizationEngine.blacklistArtist(artistName);
+      }
     }
     handleNext();
   }, [track, handleNext]);
@@ -182,22 +186,14 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
           videoIdentifier = propVideoId;
         }
 
-        if (!videoIdentifier && track) {
-          const fallbackIdentifier = extractYouTubeId(
-            track,
-            useSoundStore.getState().src?.url,
-          );
-          if (fallbackIdentifier) {
-            videoIdentifier = fallbackIdentifier;
-          }
-        }
-
         if (!videoIdentifier) {
-          Logger.streaming.warn(
-            'No official video or fallback ID available for track',
+          Logger.streaming.info(
+            'No official video found for track; activating cover art audio fallback',
           );
           if (!cancelled && activeTrackKeyRef.current === trackKey) {
-            setError(true);
+            setTargetVideoId(null);
+            setResolvedVideoTitle(null);
+            setIsVideoPlaying(false);
             setLoading(false);
           }
           return;
@@ -416,38 +412,13 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         className="tv-video-container flex-col"
       >
         <div
-          className="absolute inset-0 scale-125 bg-cover bg-center opacity-25 blur-3xl filter"
+          className="absolute inset-0 scale-105 bg-cover bg-center opacity-20"
           style={{ backgroundImage: `url(${artworkUrl})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
         <div className="relative z-10 flex max-w-2xl flex-col items-center gap-6 text-center">
-          <div className="h-56 w-56 overflow-hidden rounded-3xl border-2 border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-            <img
-              src={artworkUrl}
-              alt=""
-              className="h-full w-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-
-          <div className="flex flex-col items-center gap-2">
-            <div className="tv-video-badge infinite">
-              <InfinityIcon className="h-4 w-4" />
-              <span>Cola Infinita Activa · Reproduciendo Audio</span>
-            </div>
-            <h2 className="line-clamp-1 text-2xl font-black text-white">
-              {track?.title || 'Canción actual'}
-            </h2>
-            <p className="text-base font-semibold text-zinc-300">
-              {track?.artists?.map((artist) => artist.name).join(', ') ||
-                'Aurora'}
-            </p>
-            <p className="text-xs text-zinc-400">
-              Sin videoclip disponible · Pasando automáticamente al siguiente
-              videoclip
-            </p>
-          </div>
+          <TvCoverArtView track={track} />
 
           <div className="tv-video-controls mt-2">
             <button
@@ -623,13 +594,5 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 };
 
 export const useTvVideoId = (): string | null => {
-  const showVideo = useTvStore((state) => state.showVideo);
-  const src = useSoundStore((state) => state.src);
-
-  if (!showVideo) {
-    return null;
-  }
-
-  const videoIdentifier = extractYouTubeId(undefined, src?.url);
-  return videoIdentifier;
+  return null;
 };

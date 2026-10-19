@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Track } from '@aurora/model';
+import type { Playlist, Track } from '@aurora/model';
 
 import * as discoveryService from '../../services/discoveryService';
 import { metadataHost } from '../../services/metadataHost';
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { playbackManager } from '../../services/playback';
+import { useFavoritesStore } from '../../stores/favoritesStore';
+import { usePlaylistStore } from '../../stores/playlistStore';
 import { useQueueStore } from '../../stores/queueStore';
 import {
   checkTvQueueThreshold,
@@ -68,6 +70,8 @@ describe('tvInfiniteQueue', () => {
       items: [],
       currentIndex: 0,
     });
+    useFavoritesStore.setState({ tracks: [], artists: [], albums: [] });
+    usePlaylistStore.setState({ playlists: new Map() });
     resetTvSession();
   });
 
@@ -214,6 +218,50 @@ describe('tvInfiniteQueue', () => {
         (query) => query.includes('indie rock') || query.includes('dream pop'),
       );
       expect(hasGenreQuery).toBe(true);
+    });
+
+    it('uses user favorites and playlists instead of generic chart fallbacks when user signals exist', async () => {
+      useFavoritesStore.setState({
+        tracks: [
+          {
+            key: 'fav-1',
+            addedAtIso: new Date().toISOString(),
+            ref: makeTrack('Paranoid Android', 'Radiohead', 'id-pa'),
+          },
+        ],
+        artists: [],
+        albums: [],
+      });
+      usePlaylistStore.setState({
+        playlists: new Map([
+          [
+            'pl-1',
+            {
+              id: 'pl-1',
+              name: 'Indie Vibes',
+              items: [],
+            } as unknown as Playlist,
+          ],
+        ]),
+      });
+
+      vi.mocked(
+        discoveryService.getIntelligentAutoplayTracks,
+      ).mockResolvedValue([]);
+      vi.mocked(personalizationEngine.getTopArtists).mockResolvedValue([]);
+      vi.mocked(personalizationEngine.getTopGenres).mockResolvedValue([]);
+
+      vi.mocked(metadataHost.search).mockResolvedValue({ tracks: [] });
+
+      await replenishTvQueue();
+
+      const searchCalls = vi.mocked(metadataHost.search).mock.calls;
+      const queries = searchCalls.map((call) => call[0].query);
+      expect(queries).toContain('Paranoid Android Radiohead');
+      expect(queries).toContain('Indie Vibes');
+      expect(queries).not.toContain("Today's Top Hits");
+      expect(queries).not.toContain('Top 50 Global');
+      expect(queries).not.toContain('Billboard Hot 100');
     });
   });
 

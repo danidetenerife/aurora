@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArtworkContentProvider extends ContentProvider {
     public static final String AUTHORITY = "com.auroraplayer.app.artwork";
@@ -53,6 +55,24 @@ public class ArtworkContentProvider extends ContentProvider {
         if (title != null) builder.appendQueryParameter("title", title);
         if (subtitle != null) builder.appendQueryParameter("subtitle", subtitle);
         if (badge != null) builder.appendQueryParameter("badge", badge);
+        return builder.build();
+    }
+
+    public static Uri getCollageUri(String title, String subtitle, String badge, List<String> urls) {
+        if (urls == null || urls.isEmpty()) {
+            return getGeneratedUri(title, subtitle, badge);
+        }
+        Uri.Builder builder = CONTENT_URI.buildUpon().appendPath("collage");
+        if (title != null) builder.appendQueryParameter("title", title);
+        if (subtitle != null) builder.appendQueryParameter("subtitle", subtitle);
+        if (badge != null) builder.appendQueryParameter("badge", badge);
+        int limit = Math.min(urls.size(), 4);
+        for (int index = 0; index < limit; index++) {
+            String url = urls.get(index);
+            if (url != null && !url.trim().isEmpty()) {
+                builder.appendQueryParameter("u" + index, url);
+            }
+        }
         return builder.build();
     }
 
@@ -122,6 +142,25 @@ public class ArtworkContentProvider extends ContentProvider {
             String subtitle = uri.getQueryParameter("subtitle");
             String badge = uri.getQueryParameter("badge");
             Bitmap bitmap = AutoArtworkGenerator.generateCover(title, subtitle, badge);
+            result = bitmapToBytes(bitmap);
+        } else if (path.startsWith("/collage")) {
+            String title = uri.getQueryParameter("title");
+            String subtitle = uri.getQueryParameter("subtitle");
+            String badge = uri.getQueryParameter("badge");
+            List<Bitmap> covers = new ArrayList<>();
+            for (int index = 0; index < 4; index++) {
+                String remoteUrl = uri.getQueryParameter("u" + index);
+                if (remoteUrl != null && !remoteUrl.trim().isEmpty()) {
+                    byte[] remoteBytes = loadRemoteBytes(remoteUrl);
+                    if (remoteBytes != null && remoteBytes.length > 0) {
+                        Bitmap decoded = BitmapFactory.decodeByteArray(remoteBytes, 0, remoteBytes.length);
+                        if (decoded != null) {
+                            covers.add(decoded);
+                        }
+                    }
+                }
+            }
+            Bitmap bitmap = AutoArtworkGenerator.generateCollageCover(title, subtitle, badge, covers);
             result = bitmapToBytes(bitmap);
         } else if (path.startsWith("/remote")) {
             String remoteUrl = uri.getQueryParameter("url");

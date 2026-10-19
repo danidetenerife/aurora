@@ -293,7 +293,7 @@ export class PersonalizationEngine {
     };
   };
 
-  private notify(origin: 'local' | 'remote'): void {
+  notify(origin: 'local' | 'remote' = 'local'): void {
     this.listeners.forEach((listener) => listener(origin));
   }
 
@@ -341,16 +341,17 @@ export class PersonalizationEngine {
     const effectiveCompleted = completed || isNearlyComplete;
 
     const playCount =
-      !session.countedPlay &&
-      session.listenedMs > 0 &&
-      (effectiveCompleted || session.listenedMs >= SKIP_THRESHOLD_MS)
-        ? 1
-        : 0;
+      skipped && !effectiveCompleted
+        ? session.countedPlay
+          ? -1
+          : 0
+        : !session.countedPlay &&
+            session.listenedMs > 0 &&
+            (effectiveCompleted || session.listenedMs >= SKIP_THRESHOLD_MS)
+          ? 1
+          : 0;
 
-    const skipCount =
-      skipped && !effectiveCompleted && session.listenedMs < SKIP_THRESHOLD_MS
-        ? 1
-        : 0;
+    const skipCount = skipped && !effectiveCompleted ? 1 : 0;
 
     const immediateSkipCount =
       skipped &&
@@ -361,12 +362,14 @@ export class PersonalizationEngine {
 
     const listenMs = Math.max(0, session.listenedMs - session.savedMs);
     session.savedMs = session.listenedMs;
-    session.countedPlay ||= playCount > 0;
+    session.countedPlay =
+      effectiveCompleted ||
+      (!skipped && (session.countedPlay || playCount > 0));
 
     const isMajorEvent =
-      playCount > 0 || skipCount > 0 || immediateSkipCount > 0 || completed;
+      playCount !== 0 || skipCount > 0 || immediateSkipCount > 0 || completed;
 
-    if (listenMs || playCount || skipCount || immediateSkipCount) {
+    if (listenMs || playCount !== 0 || skipCount || immediateSkipCount) {
       void this.recordListening(
         session.track,
         listenMs,
@@ -473,7 +476,20 @@ export class PersonalizationEngine {
     persistImmediately = true,
   ): Promise<void> {
     const primaryArtistKey = normalizeArtistKey(track.artists[0]?.name || '');
-    if (playCount > 0) {
+    if (skipCount > 0) {
+      for (const artistEntry of track.artists ?? []) {
+        const normalizedKey = normalizeArtistKey(artistEntry.name);
+        if (normalizedKey) {
+          this.sessionCompletedArtists.delete(normalizedKey);
+        }
+      }
+      if (primaryArtistKey) {
+        this.sessionSkippedArtists.set(
+          primaryArtistKey,
+          (this.sessionSkippedArtists.get(primaryArtistKey) ?? 0) + 1,
+        );
+      }
+    } else if (playCount > 0) {
       for (const artistEntry of track.artists ?? []) {
         const normalizedKey = normalizeArtistKey(artistEntry.name);
         if (normalizedKey) {
@@ -481,11 +497,6 @@ export class PersonalizationEngine {
           this.sessionCompletedArtists.add(normalizedKey);
         }
       }
-    } else if (skipCount > 0 && primaryArtistKey) {
-      this.sessionSkippedArtists.set(
-        primaryArtistKey,
-        (this.sessionSkippedArtists.get(primaryArtistKey) ?? 0) + 1,
-      );
     }
 
     const notifyListeners = persistImmediately;
@@ -535,7 +546,7 @@ export class PersonalizationEngine {
           contributions: {
             ...existing?.contributions,
             [deviceId]: {
-              playCount: (counters?.playCount ?? 0) + playCount,
+              playCount: Math.max(0, (counters?.playCount ?? 0) + playCount),
               skipCount: (counters?.skipCount ?? 0) + skipCount,
               immediateSkipCount:
                 (counters?.immediateSkipCount ?? 0) + immediateSkipCount,
@@ -543,7 +554,10 @@ export class PersonalizationEngine {
             },
           },
         };
-        return mergeListenRecords(records, [updated]);
+        const filteredRecords = records.filter(
+          (record) => record.trackId !== trackId,
+        );
+        return mergeListenRecords(filteredRecords, [updated]);
       },
       'local',
       persistImmediately,
@@ -574,6 +588,14 @@ export class PersonalizationEngine {
   async blacklistArtist(artistName: string): Promise<void> {
     await this.pendingWrite;
     const normalized = artistName.trim().toLowerCase();
+    const normalizedKey = normalizeArtistKey(artistName);
+    if (normalizedKey) {
+      this.sessionCompletedArtists.delete(normalizedKey);
+      this.sessionSkippedArtists.set(
+        normalizedKey,
+        (this.sessionSkippedArtists.get(normalizedKey) ?? 0) + 1,
+      );
+    }
     const current =
       (await this.profileStore.get<string[]>('blacklistedArtists')) ?? [];
     if (!current.includes(normalized)) {
@@ -866,6 +888,8 @@ export class PersonalizationEngine {
 
         if (record.artistSource?.provider === 'spotify') {
           entry.spotifyUri = record.artistSource.id;
+        } else if (!entry.spotifyUri && record.artistSource?.id) {
+          entry.spotifyUri = record.artistSource.id;
         }
 
         if (record.genres && record.genres.length > 0) {
@@ -912,10 +936,9 @@ export class PersonalizationEngine {
           const scoredEntry = ensureArtist(artistName);
           scoredEntry.score += weight * trackDecay;
           registerArtistBreadth(artistName, favTrackId);
-          if (
-            artistEntry.source?.provider === 'spotify' &&
-            !scoredEntry.spotifyUri
-          ) {
+          if (artistEntry.source?.provider === 'spotify') {
+            scoredEntry.spotifyUri = artistEntry.source.id;
+          } else if (!scoredEntry.spotifyUri && artistEntry.source?.id) {
             scoredEntry.spotifyUri = artistEntry.source.id;
           }
         }
@@ -929,6 +952,8 @@ export class PersonalizationEngine {
         entry.score += 32;
         if (favArtist.ref.source?.provider === 'spotify') {
           entry.spotifyUri = favArtist.ref.source.id;
+        } else if (!entry.spotifyUri && favArtist.ref.source?.id) {
+          entry.spotifyUri = favArtist.ref.source.id;
         }
       }
     }
@@ -939,7 +964,9 @@ export class PersonalizationEngine {
         if (artistName && !isArtistBlocked(artistName)) {
           const entry = ensureArtist(artistName);
           entry.score += index === 0 ? 18 : 18 * COLLABORATOR_AFFINITY_WEIGHT;
-          if (artistEntry.source?.provider === 'spotify' && !entry.spotifyUri) {
+          if (artistEntry.source?.provider === 'spotify') {
+            entry.spotifyUri = artistEntry.source.id;
+          } else if (!entry.spotifyUri && artistEntry.source?.id) {
             entry.spotifyUri = artistEntry.source.id;
           }
         }
@@ -958,7 +985,9 @@ export class PersonalizationEngine {
             entry.score += index === 0 ? 8 : 8 * COLLABORATOR_AFFINITY_WEIGHT;
             registerArtistBreadth(artist, itemTrackId);
             const artistSource = artistEntry.source;
-            if (artistSource?.provider === 'spotify' && !entry.spotifyUri) {
+            if (artistSource?.provider === 'spotify') {
+              entry.spotifyUri = artistSource.id;
+            } else if (!entry.spotifyUri && artistSource?.id) {
               entry.spotifyUri = artistSource.id;
             }
           }
@@ -1181,6 +1210,145 @@ export class PersonalizationEngine {
       learnedSeeds.push(candidateTrack);
     }
 
+    const playlists = Array.from(
+      usePlaylistStore.getState().playlists.values(),
+    );
+    for (const playlist of playlists) {
+      if (learnedSeeds.length >= limit) {
+        break;
+      }
+      for (const item of playlist.items || []) {
+        if (learnedSeeds.length >= limit) {
+          break;
+        }
+        const candidateTrack = item.track;
+        if (!candidateTrack) {
+          continue;
+        }
+        const trackId =
+          candidateTrack.source?.id ||
+          `${candidateTrack.artists?.[0]?.name}-${candidateTrack.title}`;
+        if (blacklistedTracks.includes(trackId)) {
+          continue;
+        }
+        if (
+          (candidateTrack.artists ?? []).some(
+            (artistItem) =>
+              normalizedBlacklistedArtists.has(
+                artistItem.name.toLowerCase().trim(),
+              ) ||
+              normalizedBlacklistedArtists.has(
+                normalizeArtistKey(artistItem.name),
+              ),
+          )
+        ) {
+          continue;
+        }
+        const signature = normalizeTrackSignature(candidateTrack);
+        const artistKey = normalizeArtistKey(
+          candidateTrack.artists?.[0]?.name ?? '',
+        );
+        if (
+          (signature && seenSignatures.has(signature)) ||
+          (artistKey && seenSeedArtists.has(artistKey))
+        ) {
+          continue;
+        }
+        if (signature) {
+          seenSignatures.add(signature);
+        }
+        if (artistKey) {
+          seenSeedArtists.add(artistKey);
+        }
+        learnedSeeds.push(candidateTrack);
+      }
+    }
+
+    const favoriteArtists = useFavoritesStore.getState().artists;
+    for (const favArtist of favoriteArtists) {
+      if (learnedSeeds.length >= limit) {
+        break;
+      }
+      const artistName = favArtist.ref?.name;
+      if (!artistName) {
+        continue;
+      }
+      const artistKey = normalizeArtistKey(artistName);
+      if (
+        normalizedBlacklistedArtists.has(artistName.toLowerCase().trim()) ||
+        normalizedBlacklistedArtists.has(artistKey)
+      ) {
+        continue;
+      }
+      if (artistKey && seenSeedArtists.has(artistKey)) {
+        continue;
+      }
+      if (artistKey) {
+        seenSeedArtists.add(artistKey);
+      }
+      const artistSeedTrack: Track = {
+        title: '',
+        artists: [
+          {
+            name: artistName,
+            roles: [],
+            source: favArtist.ref.source,
+          },
+        ],
+        source: favArtist.ref.source ?? {
+          provider: 'artist-favorite',
+          id: artistName,
+        },
+      };
+      learnedSeeds.push(artistSeedTrack);
+    }
+
+    const favoriteAlbums = useFavoritesStore.getState().albums;
+    for (const favAlbum of favoriteAlbums) {
+      if (learnedSeeds.length >= limit) {
+        break;
+      }
+      const ref = favAlbum.ref;
+      if (!ref?.title) {
+        continue;
+      }
+      const primaryArtist = ref.artists?.[0];
+      const artistKey = normalizeArtistKey(primaryArtist?.name ?? '');
+      if (
+        primaryArtist?.name &&
+        (normalizedBlacklistedArtists.has(
+          primaryArtist.name.toLowerCase().trim(),
+        ) ||
+          normalizedBlacklistedArtists.has(artistKey))
+      ) {
+        continue;
+      }
+      const albumSeedTrack: Track = {
+        title: ref.title,
+        artists: (ref.artists ?? []).map((albumArtist) => ({
+          name: albumArtist.name,
+          roles: [],
+          source: albumArtist.source,
+        })),
+        source: ref.source ?? {
+          provider: 'album-favorite',
+          id: ref.title,
+        },
+        artwork: ref.artwork,
+      };
+      const signature = normalizeTrackSignature(albumSeedTrack);
+      if (signature && seenSignatures.has(signature)) {
+        continue;
+      }
+      if (signature) {
+        seenSignatures.add(signature);
+      }
+      if (artistKey) {
+        seenSeedArtists.add(artistKey);
+      }
+      learnedSeeds.push(albumSeedTrack);
+    }
+
     for (const candidateTrack of rankedListens) {
       if (learnedSeeds.length >= limit) {
         break;
@@ -1193,6 +1361,48 @@ export class PersonalizationEngine {
         seenSignatures.add(signature);
       }
       learnedSeeds.push(candidateTrack);
+    }
+
+    for (const playlist of playlists) {
+      if (learnedSeeds.length >= limit) {
+        break;
+      }
+      for (const item of playlist.items || []) {
+        if (learnedSeeds.length >= limit) {
+          break;
+        }
+        const candidateTrack = item.track;
+        if (!candidateTrack) {
+          continue;
+        }
+        const trackId =
+          candidateTrack.source?.id ||
+          `${candidateTrack.artists?.[0]?.name}-${candidateTrack.title}`;
+        if (blacklistedTracks.includes(trackId)) {
+          continue;
+        }
+        if (
+          (candidateTrack.artists ?? []).some(
+            (artistItem) =>
+              normalizedBlacklistedArtists.has(
+                artistItem.name.toLowerCase().trim(),
+              ) ||
+              normalizedBlacklistedArtists.has(
+                normalizeArtistKey(artistItem.name),
+              ),
+          )
+        ) {
+          continue;
+        }
+        const signature = normalizeTrackSignature(candidateTrack);
+        if (signature && seenSignatures.has(signature)) {
+          continue;
+        }
+        if (signature) {
+          seenSignatures.add(signature);
+        }
+        learnedSeeds.push(candidateTrack);
+      }
     }
 
     return learnedSeeds;

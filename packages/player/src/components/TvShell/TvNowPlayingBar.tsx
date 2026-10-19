@@ -14,7 +14,10 @@ import { useTranslation } from '@aurora/i18n';
 import { pickArtwork } from '@aurora/model';
 
 import { eventBus } from '../../services/eventBus';
-import { personalizationEngine } from '../../services/personalizationEngine';
+import {
+  normalizeArtistKey,
+  personalizationEngine,
+} from '../../services/personalizationEngine';
 import { playbackManager } from '../../services/playback';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSoundStore } from '../../stores/soundStore';
@@ -83,7 +86,56 @@ export const TvNowPlayingBar: FC = () => {
         if (track) {
           const trackId =
             track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
+          const artistName = track.artists?.[0]?.name;
+          const seek = useSoundStore.getState().seek;
+          const positionMs = Math.round(seek * 1000);
+
+          eventBus.emit('playbackSkipped', { positionMs });
           void personalizationEngine.blacklistTrack(trackId);
+          if (artistName) {
+            void personalizationEngine.blacklistArtist(artistName);
+          }
+
+          const queueState = useQueueStore.getState();
+          const upcomingItems = queueState.items.slice(
+            queueState.currentIndex + 1,
+          );
+          const normalizedArtist = artistName
+            ? artistName.trim().toLowerCase()
+            : '';
+          const normalizedArtistKeyVal = artistName
+            ? normalizeArtistKey(artistName)
+            : '';
+          const idsToRemove = upcomingItems
+            .filter((item) => {
+              const itemTrackId =
+                item.track.source?.id ||
+                `${item.track.artists?.[0]?.name}-${item.track.title}`;
+              if (itemTrackId === trackId) {
+                return true;
+              }
+              if (
+                (normalizedArtist || normalizedArtistKeyVal) &&
+                item.track.artists?.some(
+                  (artist) =>
+                    (normalizedArtist &&
+                      artist.name.trim().toLowerCase() === normalizedArtist) ||
+                    (normalizedArtistKeyVal &&
+                      normalizeArtistKey(artist.name) ===
+                        normalizedArtistKeyVal),
+                )
+              ) {
+                return true;
+              }
+              return false;
+            })
+            .map((item) => item.id);
+
+          if (idsToRemove.length > 0) {
+            queueState.removeByIds(idsToRemove);
+          }
+
+          personalizationEngine.notify('local');
           void playNextInInfiniteQueue();
         }
       },

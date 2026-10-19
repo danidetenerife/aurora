@@ -2,6 +2,8 @@ import { i18n } from '@aurora/i18n';
 import type { Track, TrackRef } from '@aurora/model';
 import type { MetadataProvider } from '@aurora/plugin-sdk';
 
+import { useFavoritesStore } from '../stores/favoritesStore';
+import { usePlaylistStore } from '../stores/playlistStore';
 import { useQueueStore } from '../stores/queueStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { reportError } from '../utils/logging';
@@ -132,20 +134,18 @@ export const getIntelligentAutoplayTracks = async (
       try {
         const resolved =
           await personalizationEngine.resolveArtistMetadata(artistName);
+        const artistId = resolved.spotifyUri || artistName;
 
         if (
-          resolved.spotifyUri &&
+          artistId &&
           provider.fetchArtistRelatedArtists &&
           provider.fetchArtistTopTracks
         ) {
-          const related = await provider.fetchArtistRelatedArtists(
-            resolved.spotifyUri,
-          );
+          const related = await provider.fetchArtistRelatedArtists(artistId);
           for (const relatedArtist of related.slice(0, 3)) {
-            if (relatedArtist.source?.id) {
-              const tracks = await provider.fetchArtistTopTracks(
-                relatedArtist.source.id,
-              );
+            const relatedId = relatedArtist.source?.id || relatedArtist.name;
+            if (relatedId) {
+              const tracks = await provider.fetchArtistTopTracks(relatedId);
               for (const trackRef of tracks.slice(0, 2)) {
                 candidates.push({
                   track: trackRefToTrack(trackRef),
@@ -156,10 +156,8 @@ export const getIntelligentAutoplayTracks = async (
           }
         }
 
-        if (resolved.spotifyUri && provider.fetchArtistTopTracks) {
-          const tracks = await provider.fetchArtistTopTracks(
-            resolved.spotifyUri,
-          );
+        if (artistId && provider.fetchArtistTopTracks) {
+          const tracks = await provider.fetchArtistTopTracks(artistId);
           for (const trackRef of tracks.slice(0, 3)) {
             candidates.push({
               track: trackRefToTrack(trackRef),
@@ -174,11 +172,10 @@ export const getIntelligentAutoplayTracks = async (
 
     if (provider.fetchArtistTopTracks) {
       for (const topArtist of topArtists.slice(0, 3)) {
-        if (topArtist.spotifyUri) {
+        const artistId = topArtist.spotifyUri || topArtist.name;
+        if (artistId) {
           try {
-            const tracks = await provider.fetchArtistTopTracks(
-              topArtist.spotifyUri,
-            );
+            const tracks = await provider.fetchArtistTopTracks(artistId);
             for (const trackRef of tracks.slice(0, 3)) {
               candidates.push({
                 track: trackRefToTrack(trackRef),
@@ -209,6 +206,26 @@ export const getIntelligentAutoplayTracks = async (
         searchQueries.push(
           `${seedTrack.title} ${seedTrack.artists?.[0]?.name ?? ''}`.trim(),
         );
+      }
+
+      if (searchQueries.length === 0) {
+        for (const topArtist of topArtists.slice(0, 2)) {
+          searchQueries.push(`${topArtist.name} radio`);
+        }
+        const playlists = Array.from(
+          usePlaylistStore.getState().playlists.values(),
+        );
+        for (const playlist of playlists.slice(0, 2)) {
+          if (playlist.name) {
+            searchQueries.push(playlist.name);
+          }
+        }
+        const favArtists = useFavoritesStore.getState().artists;
+        for (const favArtist of favArtists.slice(0, 2)) {
+          if (favArtist.ref?.name) {
+            searchQueries.push(`${favArtist.ref.name} mix`);
+          }
+        }
       }
 
       if (searchQueries.length === 0) {

@@ -243,16 +243,35 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
     }
 
     private void populateExploreCategory(List<MediaBrowserCompat.MediaItem> items) {
+        final String GROUP_QUICK_DRIVE = "Al volante — 1 toque";
+        items.add(createMediaItem(
+            "play_favorites_shuffle",
+            "🔀 Favoritos al Volante",
+            "Tus canciones favoritas en aleatorio",
+            ArtworkContentProvider.getPresetUri("cover_favorites"),
+            false,
+            true,
+            GROUP_QUICK_DRIVE
+        ));
+        items.add(createMediaItem(
+            "search_play:Música para Conducir",
+            "⚡ Mix Rápido Carretera",
+            "1 toque · Ritmo, asfalto y energía",
+            ArtworkContentProvider.getPresetUri("cover_driving"),
+            false,
+            true,
+            GROUP_QUICK_DRIVE
+        ));
+
         final String GROUP_ROAD = "Música para el viaje";
-        items.add(createMediaItem("search_play:Música para Conducir", "Para Conducir", "Ritmo, asfalto y energía", ArtworkContentProvider.getPresetUri("cover_driving"), false, true, GROUP_ROAD));
         items.add(createMediaItem("search_play:Top España 2026", "Top España 2026", "Los mayores éxitos del país", ArtworkContentProvider.getPresetUri("cover_spain"), false, true, GROUP_ROAD));
         items.add(createMediaItem("search_play:Rock Clásico", "Rock Carretera", "Guitarras y leyendas del rock", ArtworkContentProvider.getPresetUri("cover_rock"), false, true, GROUP_ROAD));
         items.add(createMediaItem("search_play:Reggaeton Éxitos", "Reggaetón & Urbano", "Flow y pista de baile", ArtworkContentProvider.getPresetUri("cover_reggaeton"), false, true, GROUP_ROAD));
+        items.add(createMediaItem("search_play:Éxitos de los 80 y 90", "Nostalgia 80s 90s", "Éxitos dorados de dos décadas", ArtworkContentProvider.getPresetUri("cover_retro"), false, true, GROUP_ROAD));
 
         final String GROUP_MOODS = "Géneros y Estados de Ánimo";
         items.add(createMediaItem("search_play:Chill Lo-Fi Beats", "Chill & Lo-Fi", "Calma y concentración", ArtworkContentProvider.getPresetUri("cover_lofi"), false, true, GROUP_MOODS));
         items.add(createMediaItem("search_play:Pop Internacional", "Pop Internacional", "Los hits más cantados", ArtworkContentProvider.getPresetUri("cover_pop"), false, true, GROUP_MOODS));
-        items.add(createMediaItem("search_play:Éxitos de los 80 y 90", "Nostalgia 80s 90s", "Éxitos dorados de dos décadas", ArtworkContentProvider.getPresetUri("cover_retro"), false, true, GROUP_MOODS));
         items.add(createMediaItem("search_play:Electrónica Dance", "Electrónica & Club", "Beats y energía dance", ArtworkContentProvider.getPresetUri("cover_electronic"), false, true, GROUP_MOODS));
         items.add(createMediaItem("search_play:Tendencias Virales", "Tendencias Virales", "Lo más sonado en redes", ArtworkContentProvider.getPresetUri("cover_viral"), false, true, GROUP_MOODS));
         items.add(createMediaItem("search_play:Novedades Semanales", "Novedades de la Semana", "Estrenos recién publicados", ArtworkContentProvider.getPresetUri("cover_new"), false, true, GROUP_MOODS));
@@ -375,12 +394,31 @@ public class AuroraAutoMediaBrowserService extends MediaBrowserServiceCompat {
                 int count = playlist.optInt("trackCount", 0);
                 String subtitle = count > 0 ? count + " canciones" : "Lista personal";
 
-                Uri uri = !artwork.isEmpty()
-                    ? ArtworkContentProvider.getRemoteUri(artwork)
-                    : ArtworkContentProvider.getGeneratedUri(name, subtitle, "LISTA");
-
                 JSONArray trackItems = playlist.optJSONArray("items");
                 boolean hasTracks = trackItems != null && trackItems.length() > 0;
+
+                List<String> trackCovers = new ArrayList<>();
+                if (hasTracks) {
+                    for (int trackIndex = 0; trackIndex < trackItems.length() && trackCovers.size() < 4; trackIndex++) {
+                        JSONObject trackObj = trackItems.optJSONObject(trackIndex);
+                        if (trackObj != null) {
+                            String trackArt = trackObj.optString("artworkUrl", "");
+                            if (!trackArt.isEmpty() && !trackCovers.contains(trackArt)) {
+                                trackCovers.add(trackArt);
+                            }
+                        }
+                    }
+                }
+
+                Uri uri;
+                if (!artwork.isEmpty()) {
+                    uri = ArtworkContentProvider.getRemoteUri(artwork);
+                } else if (!trackCovers.isEmpty()) {
+                    uri = ArtworkContentProvider.getCollageUri(name, subtitle, "LISTA", trackCovers);
+                } else {
+                    uri = ArtworkContentProvider.getGeneratedUri(name, subtitle, "LISTA");
+                }
+
                 items.add(createMediaItem(
                     hasTracks ? "playlist:" + id : "playlist_play:" + id,
                     name,

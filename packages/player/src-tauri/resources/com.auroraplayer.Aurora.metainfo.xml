@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.73" date="2026-10-19">
+      <description>
+        <p>Release 1.48.73: Google TV experience upgrade: enhanced recommendation accuracy learning from favorites, playlists, and history; strict anti-noise music video filtering rejecting parodies, reactions, loops, and gameplay; clean cover-art fallback with unmuted high-fidelity audio; lightweight TV UI eliminating GPU blur bottlenecks and D-pad input latency; and automatic GitHub Releases updates.</p>
+      </description>
+    </release>
+
     <release version="1.48.72" date="2026-10-15">
       <description>
         <p>Release 1.48.72: Corrección de interfaz móvil, reproducción por Bluetooth e idioma español completo: elimina la superposición del Modo Coche al conectar por Bluetooth al vehículo para mantener siempre el reproductor nativo y Android Auto sin interrupciones; reestructura el panel de Cola en móvil dentro del área de trabajo para que la barra de reproducción y la barra de navegación inferior permanezcan siempre visibles al consultar la cola; y completa el 100% de las traducciones al español en toda la aplicación (incluyendo cabecera de Cola, descripciones de plugins integrados, listas populares y ajustes de sincronización).</p>

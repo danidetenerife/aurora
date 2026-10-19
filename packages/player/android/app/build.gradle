@@ -7,8 +7,8 @@ android {
         applicationId "com.auroraplayer.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14872
-        versionName "1.48.72"
+        versionCode 14873
+        versionName "1.48.73"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

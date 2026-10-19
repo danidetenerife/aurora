@@ -1,9 +1,13 @@
 import { screen, waitFor } from '@testing-library/react';
 
-import type { Track } from '@aurora/model';
+import type { Playlist, Track } from '@aurora/model';
 
-import { initDiscoveryService } from '../services/discoveryService';
+import {
+  getIntelligentAutoplayTracks,
+  initDiscoveryService,
+} from '../services/discoveryService';
 import { providersHost } from '../services/providersHost';
+import { usePlaylistStore } from '../stores/playlistStore';
 import { useQueueStore } from '../stores/queueStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { DiscoveryProviderBuilder } from '../test/builders/DiscoveryProviderBuilder';
@@ -162,6 +166,93 @@ describe('Discovery', () => {
       await waitFor(() => {
         expect(useQueueStore.getState().currentIndex).toBe(3);
       });
+    });
+  });
+
+  describe('getIntelligentAutoplayTracks personalization', () => {
+    it('fetches top tracks using provider-agnostic artist ID without requiring spotifyUri', async () => {
+      const fetchArtistTopTracks = vi.fn().mockResolvedValue([
+        {
+          title: 'Provider Hit',
+          artists: [{ name: 'YouTube Artist', roles: [] }],
+          source: { provider: 'youtube-music', id: 'yt-track-1' },
+        },
+      ]);
+      const mockMetaProvider = {
+        id: 'test-yt-meta',
+        name: 'Test YT Meta',
+        kind: 'metadata' as const,
+        fetchArtistTopTracks,
+      };
+      providersHost.register(
+        mockMetaProvider as unknown as Parameters<
+          typeof providersHost.register
+        >[0],
+      );
+
+      const contextTrack: Track = {
+        title: 'Context Song',
+        artists: [
+          {
+            name: 'YouTube Artist',
+            roles: [],
+            source: { provider: 'youtube-music', id: 'yt-artist-123' },
+          },
+        ],
+        source: { provider: 'youtube-music', id: 'yt-ctx-1' },
+      };
+
+      const tracks = await getIntelligentAutoplayTracks(
+        [contextTrack],
+        new Set(),
+      );
+      expect(fetchArtistTopTracks).toHaveBeenCalledWith('YouTube Artist');
+      expect(tracks.length).toBeGreaterThan(0);
+      expect(tracks[0].title).toBe('Provider Hit');
+    });
+
+    it('derives search queries from user playlists when top artists are empty and avoids pop hits', async () => {
+      const searchFn = vi.fn().mockResolvedValue({
+        tracks: [
+          {
+            title: 'Indie Result',
+            artists: [{ name: 'Indie Band', roles: [] }],
+            source: { provider: 'test', id: 'indie-res-1' },
+          },
+        ],
+      });
+      const mockMetaProvider = {
+        id: 'test-search-meta',
+        name: 'Test Search Meta',
+        kind: 'metadata' as const,
+        search: searchFn,
+      };
+      providersHost.register(
+        mockMetaProvider as unknown as Parameters<
+          typeof providersHost.register
+        >[0],
+      );
+
+      usePlaylistStore.setState({
+        playlists: new Map([
+          [
+            'pl-test',
+            {
+              id: 'pl-test',
+              name: 'Synthwave Dreams',
+              items: [],
+            } as unknown as Playlist,
+          ],
+        ]),
+      });
+
+      await getIntelligentAutoplayTracks([], new Set());
+
+      expect(searchFn).toHaveBeenCalled();
+      const calledQueries = searchFn.mock.calls.map((call) => call[0].query);
+      expect(calledQueries).toContain('Synthwave Dreams');
+      expect(calledQueries).not.toContain('Pop Hits');
+      expect(calledQueries).not.toContain('Trending Music');
     });
   });
 });

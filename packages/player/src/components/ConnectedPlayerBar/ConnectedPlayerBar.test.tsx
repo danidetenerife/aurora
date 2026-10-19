@@ -1,16 +1,26 @@
 import { act } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { personalizationEngine } from '../../services/personalizationEngine';
 import { providersHost } from '../../services/providersHost';
+import { useMobilePlayerStore } from '../../stores/mobilePlayerStore';
 import { useQueueStore } from '../../stores/queueStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useSoundStore } from '../../stores/soundStore';
 import { DiscoveryProviderBuilder } from '../../test/builders/DiscoveryProviderBuilder';
 import { ConnectedPlayerBarWrapper as Wrapper } from './ConnectedPlayerBar.test-wrapper';
 
+type MobileTestWindow = Window & {
+  __TAURI_INTERNALS__?: unknown;
+  Capacitor?: { isNativePlatform?: () => boolean };
+};
+
 beforeEach(() => {
   providersHost.clear();
+  useMobilePlayerStore.setState({
+    isExpanded: false,
+    isDrivingMode: false,
+  });
   useQueueStore.setState({
     items: [],
     currentIndex: 0,
@@ -244,5 +254,96 @@ describe('ConnectedVolume', () => {
       'core.playback.volume'
     ] as number;
     expect(storedVolume).toBe(0.15);
+  });
+});
+
+describe('MobileExpandedPlayer', () => {
+  beforeEach(() => {
+    const testWindow = window as MobileTestWindow;
+    delete testWindow.__TAURI_INTERNALS__;
+    testWindow.Capacitor = {
+      isNativePlatform: () => true,
+    };
+  });
+
+  afterEach(() => {
+    const testWindow = window as MobileTestWindow;
+    delete testWindow.Capacitor;
+    testWindow.__TAURI_INTERNALS__ = {};
+  });
+
+  it('renders ambient artwork background and up-next peek card when open', async () => {
+    const firstItem = new Wrapper.QueueItemBuilder()
+      .withId('item-1')
+      .withTitle('Nightcall')
+      .withArtist('Kavinsky')
+      .withArtwork('https://example.com/nightcall.jpg')
+      .build();
+    const secondItem = new Wrapper.QueueItemBuilder()
+      .withId('item-2')
+      .withTitle('Midnight City')
+      .withArtist('M83')
+      .build();
+    useQueueStore.setState({
+      items: [firstItem, secondItem],
+      currentIndex: 0,
+    });
+    useMobilePlayerStore.setState({ isExpanded: true, isDrivingMode: false });
+
+    await Wrapper.mount();
+
+    expect(Wrapper.mobileExpanded.container).toBeInTheDocument();
+    expect(Wrapper.mobileExpanded.ambientBg).toBeInTheDocument();
+    expect(Wrapper.mobileExpanded.upNextCard).toBeInTheDocument();
+    expect(Wrapper.mobileExpanded.upNextCard).toHaveTextContent(
+      'Midnight City',
+    );
+  });
+
+  it('toggles driving cockpit mode and displays XXL quick action controls', async () => {
+    const item = new Wrapper.QueueItemBuilder()
+      .withTitle('Starboy')
+      .withArtist('The Weeknd')
+      .build();
+    Wrapper.seedQueueItem(item);
+    useMobilePlayerStore.setState({ isExpanded: true, isDrivingMode: false });
+
+    await Wrapper.mount();
+
+    expect(Wrapper.mobileExpanded.drivingDislikeButton).toBeNull();
+
+    await Wrapper.mobileExpanded.clickDrivingToggle();
+
+    expect(useMobilePlayerStore.getState().isDrivingMode).toBe(true);
+    expect(Wrapper.mobileExpanded.drivingDislikeButton).toBeInTheDocument();
+    expect(Wrapper.mobileExpanded.drivingFavoriteButton).toBeInTheDocument();
+  });
+
+  it('advances to the next track when swiping left on the artwork zone or tapping Up Next', async () => {
+    const firstItem = new Wrapper.QueueItemBuilder()
+      .withId('item-1')
+      .withTitle('Track One')
+      .build();
+    const secondItem = new Wrapper.QueueItemBuilder()
+      .withId('item-2')
+      .withTitle('Track Two')
+      .build();
+    const thirdItem = new Wrapper.QueueItemBuilder()
+      .withId('item-3')
+      .withTitle('Track Three')
+      .build();
+    useQueueStore.setState({
+      items: [firstItem, secondItem, thirdItem],
+      currentIndex: 0,
+    });
+    useMobilePlayerStore.setState({ isExpanded: true, isDrivingMode: true });
+
+    await Wrapper.mount();
+
+    Wrapper.mobileExpanded.swipeLeftArtwork();
+    expect(useQueueStore.getState().currentIndex).toBe(1);
+
+    await Wrapper.mobileExpanded.clickUpNext();
+    expect(useQueueStore.getState().currentIndex).toBe(2);
   });
 });

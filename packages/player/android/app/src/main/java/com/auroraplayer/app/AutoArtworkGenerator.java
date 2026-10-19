@@ -11,9 +11,12 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 
+import java.util.List;
+
 public final class AutoArtworkGenerator {
     private static final int CANVAS_SIZE = 512;
-    private static final int SCRIM_START_Y = 240;
+    private static final int HALF_SIZE = 256;
+    private static final int SCRIM_START_Y = 210;
 
     private static final int[][] GRADIENTS = new int[][] {
         { Color.parseColor("#0F172A"), Color.parseColor("#0EA5E9") },
@@ -48,6 +51,7 @@ public final class AutoArtworkGenerator {
         canvas.drawRect(0, 0, CANVAS_SIZE, CANVAS_SIZE, bgPaint);
 
         drawDecorativeMotif(canvas, hash);
+        drawCenterEmblem(canvas);
 
         drawBottomScrim(canvas);
 
@@ -58,6 +62,93 @@ public final class AutoArtworkGenerator {
         drawBorder(canvas);
 
         return bitmap;
+    }
+
+    public static Bitmap generateCollageCover(
+        String title,
+        String subtitle,
+        String badge,
+        List<Bitmap> covers
+    ) {
+        if (covers == null || covers.isEmpty()) {
+            return generateCover(title, subtitle, badge);
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(CANVAS_SIZE, CANVAS_SIZE, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        int hash = title != null ? (title.hashCode() & 0x7fffffff) : 0;
+        int[] palette = GRADIENTS[hash % GRADIENTS.length];
+
+        Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bgPaint.setShader(new LinearGradient(
+            0, 0, CANVAS_SIZE, CANVAS_SIZE,
+            palette[0], palette[1],
+            Shader.TileMode.CLAMP
+        ));
+        canvas.drawRect(0, 0, CANVAS_SIZE, CANVAS_SIZE, bgPaint);
+
+        Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        Rect[] quadrants = new Rect[] {
+            new Rect(0, 0, HALF_SIZE, HALF_SIZE),
+            new Rect(HALF_SIZE, 0, CANVAS_SIZE, HALF_SIZE),
+            new Rect(0, HALF_SIZE, HALF_SIZE, CANVAS_SIZE),
+            new Rect(HALF_SIZE, HALF_SIZE, CANVAS_SIZE, CANVAS_SIZE)
+        };
+
+        for (int index = 0; index < quadrants.length; index++) {
+            Bitmap tile = covers.get(index % covers.size());
+            if (tile != null && !tile.isRecycled()) {
+                drawCenterCropBitmap(canvas, tile, quadrants[index], bitmapPaint);
+            }
+        }
+
+        Paint gridDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        gridDividerPaint.setColor(Color.argb(140, 10, 10, 15));
+        gridDividerPaint.setStrokeWidth(4f);
+        canvas.drawLine(HALF_SIZE, 0, HALF_SIZE, CANVAS_SIZE, gridDividerPaint);
+        canvas.drawLine(0, HALF_SIZE, CANVAS_SIZE, HALF_SIZE, gridDividerPaint);
+
+        Paint topScrim = new Paint(Paint.ANTI_ALIAS_FLAG);
+        topScrim.setShader(new LinearGradient(
+            0, 0, 0, 110,
+            Color.argb(170, 5, 6, 10), Color.TRANSPARENT,
+            Shader.TileMode.CLAMP
+        ));
+        canvas.drawRect(0, 0, CANVAS_SIZE, 110, topScrim);
+
+        drawBottomScrim(canvas);
+        drawHeader(canvas, badge != null ? badge : "LISTA");
+        drawTitleAndSubtitle(canvas, title, subtitle);
+        drawBorder(canvas);
+
+        return bitmap;
+    }
+
+    private static void drawCenterCropBitmap(Canvas canvas, Bitmap source, Rect dest, Paint paint) {
+        int srcWidth = source.getWidth();
+        int srcHeight = source.getHeight();
+        if (srcWidth <= 0 || srcHeight <= 0) return;
+
+        int size = Math.min(srcWidth, srcHeight);
+        int left = (srcWidth - size) / 2;
+        int top = (srcHeight - size) / 2;
+        Rect srcRect = new Rect(left, top, left + size, top + size);
+        canvas.drawBitmap(source, srcRect, dest, paint);
+    }
+
+    private static void drawCenterEmblem(Canvas canvas) {
+        Paint discPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        discPaint.setColor(Color.argb(32, 255, 255, 255));
+        discPaint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(HALF_SIZE, 200, 58f, discPaint);
+
+        Paint ringPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        ringPaint.setColor(Color.argb(75, 255, 255, 255));
+        ringPaint.setStyle(Paint.Style.STROKE);
+        ringPaint.setStrokeWidth(3f);
+        canvas.drawCircle(HALF_SIZE, 200, 58f, ringPaint);
+        canvas.drawCircle(HALF_SIZE, 200, 18f, ringPaint);
     }
 
     private static void drawDecorativeMotif(Canvas canvas, int hash) {
@@ -98,7 +189,7 @@ public final class AutoArtworkGenerator {
         Paint scrimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         scrimPaint.setShader(new LinearGradient(
             0, SCRIM_START_Y, 0, CANVAS_SIZE,
-            Color.TRANSPARENT, Color.argb(220, 10, 10, 15),
+            Color.TRANSPARENT, Color.argb(242, 6, 8, 14),
             Shader.TileMode.CLAMP
         ));
         canvas.drawRect(0, SCRIM_START_Y, CANVAS_SIZE, CANVAS_SIZE, scrimPaint);
@@ -106,17 +197,17 @@ public final class AutoArtworkGenerator {
 
     private static void drawHeader(Canvas canvas, String badge) {
         Paint brandPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        brandPaint.setColor(Color.argb(200, 255, 255, 255));
+        brandPaint.setColor(Color.argb(215, 255, 255, 255));
         brandPaint.setTextSize(16f);
         brandPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         canvas.drawText("AURORA AUTO", 40, 50, brandPaint);
 
         Paint badgeBg = new Paint(Paint.ANTI_ALIAS_FLAG);
-        badgeBg.setColor(Color.argb(45, 255, 255, 255));
+        badgeBg.setColor(Color.argb(65, 0, 0, 0));
         badgeBg.setStyle(Paint.Style.FILL);
 
         Paint badgeBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
-        badgeBorder.setColor(Color.argb(120, 255, 255, 255));
+        badgeBorder.setColor(Color.argb(150, 255, 255, 255));
         badgeBorder.setStyle(Paint.Style.STROKE);
         badgeBorder.setStrokeWidth(1.5f);
 
@@ -141,18 +232,18 @@ public final class AutoArtworkGenerator {
     private static void drawTitleAndSubtitle(Canvas canvas, String title, String subtitle) {
         Paint titlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         titlePaint.setColor(Color.WHITE);
-        titlePaint.setTextSize(38f);
+        titlePaint.setTextSize(42f);
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        shadowPaint.setColor(Color.argb(180, 0, 0, 0));
-        shadowPaint.setTextSize(38f);
+        shadowPaint.setColor(Color.argb(210, 0, 0, 0));
+        shadowPaint.setTextSize(42f);
         shadowPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         Paint subPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        subPaint.setColor(Color.argb(220, 210, 220, 235));
-        subPaint.setTextSize(20f);
-        subPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        subPaint.setColor(Color.argb(235, 226, 232, 240));
+        subPaint.setTextSize(22f);
+        subPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         String safeTitle = title != null ? title : "";
         String safeSub = subtitle != null ? subtitle : "";
@@ -171,17 +262,17 @@ public final class AutoArtworkGenerator {
             }
         }
 
-        int startY = (secondLine.length() > 0) ? 400 : 430;
+        int startY = (secondLine.length() > 0) ? 396 : 430;
 
         canvas.drawText(firstLine.toString(), 42, startY + 2, shadowPaint);
         canvas.drawText(firstLine.toString(), 40, startY, titlePaint);
 
         if (secondLine.length() > 0) {
-            canvas.drawText(secondLine.toString(), 42, startY + 44 + 2, shadowPaint);
-            canvas.drawText(secondLine.toString(), 40, startY + 44, titlePaint);
-            canvas.drawText(safeSub, 40, startY + 44 + 32, subPaint);
+            canvas.drawText(secondLine.toString(), 42, startY + 46 + 2, shadowPaint);
+            canvas.drawText(secondLine.toString(), 40, startY + 46, titlePaint);
+            canvas.drawText(safeSub, 40, startY + 46 + 34, subPaint);
         } else {
-            canvas.drawText(safeSub, 40, startY + 34, subPaint);
+            canvas.drawText(safeSub, 40, startY + 36, subPaint);
         }
     }
 

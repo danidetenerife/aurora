@@ -40,6 +40,8 @@ import { TvSoundProvider } from './TvSoundProvider';
 import { TvSyncSection } from './TvSyncSection';
 import { TvVideoPlayer } from './TvVideoPlayer';
 
+initSpatialNavigation();
+
 const PAGE_SIZE = 24;
 
 const TvMainContent: FC = () => {
@@ -321,7 +323,6 @@ const TvMainContent: FC = () => {
 };
 
 const TvShellContent: FC = () => {
-  initSpatialNavigation();
   const starting = useStartupStore((state) => state.isStartingUp);
   const searchOpen = useTvStore((state) => state.isSearchOpen);
   const showVideo = useTvStore((state) => state.showVideo);

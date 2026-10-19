@@ -381,9 +381,9 @@ export const TvAutoUpdater: FC = () => {
         <div
           role="status"
           data-testid="tv-update-downloading-pill"
-          className="pointer-events-none fixed top-[3.5vh] right-[4.5vw] z-[9999] flex animate-pulse items-center gap-3 rounded-full border border-emerald-500/60 bg-zinc-900 px-4 py-2.5 text-zinc-100 shadow-xl"
+          className="pointer-events-none fixed top-[3.5vh] right-[4.5vw] z-[9999] flex items-center gap-3 rounded-full border border-emerald-500/60 bg-zinc-900 px-4 py-2.5 text-zinc-100 shadow-xl"
         >
-          <Download className="h-4 w-4 animate-bounce text-emerald-400" />
+          <Download className="h-4 w-4 text-emerald-400" />
           <div className="flex flex-col text-left">
             <span className="text-xs font-bold tracking-wider text-emerald-400 uppercase">
               {t('updateAvailableTitle')}

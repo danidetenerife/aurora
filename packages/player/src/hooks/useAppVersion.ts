@@ -12,7 +12,7 @@ export const COMMIT_HASH =
   typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : '';
 
 export const useAppVersion = () => {
-  const [version, setVersion] = useState<string | null>('1.48.72');
+  const [version, setVersion] = useState<string | null>('1.48.73');
 
   useEffect(() => {
     if (isTauriEnvironment()) {

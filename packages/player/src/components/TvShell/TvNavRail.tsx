@@ -7,7 +7,7 @@ import {
   Radio,
   Search,
 } from 'lucide-react';
-import { FC, useState } from 'react';
+import { FC, memo, useState } from 'react';
 
 import { useTranslation } from '@aurora/i18n';
 import { TopBarLogo } from '@aurora/ui';
@@ -15,9 +15,11 @@ import { TopBarLogo } from '@aurora/ui';
 import { useTvStore } from '../../stores/tvStore';
 import { TvButton } from './TvButton';
 
-export const TvNavRail: FC = () => {
+export const TvNavRail: FC = memo(() => {
   const { t } = useTranslation('tv');
-  const { activeSection, setActiveSection, openSearch } = useTvStore();
+  const activeSection = useTvStore((state) => state.activeSection);
+  const setActiveSection = useTvStore((state) => state.setActiveSection);
+  const openSearch = useTvStore((state) => state.openSearch);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const items = [
@@ -106,4 +108,6 @@ export const TvNavRail: FC = () => {
       </div>
     </nav>
   );
-};
+});
+
+TvNavRail.displayName = 'TvNavRail';

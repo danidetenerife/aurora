@@ -227,4 +227,50 @@ export const ConnectedPlayerBarWrapper = {
       fireEvent.change(this.rangeInput, { target: { value: String(value) } });
     },
   },
+
+  mobileExpanded: {
+    get container() {
+      return screen.queryByTestId('mobile-expanded-player');
+    },
+    get ambientBg() {
+      return screen.queryByTestId('expanded-player-ambient-bg');
+    },
+    get drivingToggle() {
+      return screen.getByTestId('expanded-player-driving-toggle');
+    },
+    get drivingDislikeButton() {
+      return screen.queryByTestId('driving-dislike-button');
+    },
+    get drivingFavoriteButton() {
+      return screen.queryByTestId('driving-favorite-button');
+    },
+    get upNextCard() {
+      return screen.queryByTestId('expanded-player-up-next');
+    },
+    get artworkGestureZone() {
+      return screen.getByTestId('expanded-player-artwork-gesture-zone');
+    },
+    get heartBurst() {
+      return screen.queryByTestId('expanded-player-heart-burst');
+    },
+    async clickDrivingToggle() {
+      await user.click(this.drivingToggle);
+    },
+    async clickUpNext() {
+      if (this.upNextCard) {
+        await user.click(this.upNextCard);
+      }
+    },
+    swipeLeftArtwork() {
+      const startX = 220;
+      const endX = 80;
+      const fixedY = 200;
+      fireEvent.touchStart(this.artworkGestureZone, {
+        touches: [{ clientX: startX, clientY: fixedY }],
+      });
+      fireEvent.touchEnd(this.artworkGestureZone, {
+        changedTouches: [{ clientX: endX, clientY: fixedY }],
+      });
+    },
+  },
 };

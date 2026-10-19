@@ -27,14 +27,15 @@ export const TvCoverArtView: FC<TvCoverArtViewProps> = ({ track }) => {
       }}
     >
       {coverUrl && (
-        <div
-          className="absolute inset-0 scale-105 transform-gpu opacity-20 blur-md filter"
-          style={{
-            backgroundImage: `url(${coverUrl})`,
-            backgroundPosition: 'center',
-            backgroundSize: 'cover',
-          }}
-        />
+        <>
+          <div
+            className="absolute inset-0 scale-105 transform-gpu bg-cover bg-center opacity-15"
+            style={{
+              backgroundImage: `url(${coverUrl})`,
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
+        </>
       )}
 
       <div className="relative z-10 flex flex-col items-center gap-4 text-center">

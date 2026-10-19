@@ -10,7 +10,7 @@ import { errorMessage } from '../utils/errorMessage';
 import { reportError } from '../utils/logging';
 import { getSetting } from './settingsStore';
 
-const CURRENT_VERSION = '1.48.72';
+const CURRENT_VERSION = '1.48.73';
 const GITHUB_REPO = 'danidetenerife/aurora';
 const GITHUB_LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 const GITHUB_RELEASES_LIST_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=10`;
