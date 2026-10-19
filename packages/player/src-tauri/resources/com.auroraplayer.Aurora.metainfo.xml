@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.74" date="2026-10-19">
+      <description>
+        <p>Release 1.48.74: Corrección de reproducción en escritorio (Windows/macOS/Linux): añade soporte nativo de proxy y reescritura de manifiestos HLS (.m3u8) en el servidor local de streaming de Tauri para evitar bloqueos CORS y errores 403 Forbidden de YouTube; prioriza la extracción instantánea sin espera publicitaria de 5 segundos y añade recuperación automática ante enlaces caducados en la cola.</p>
+      </description>
+    </release>
+
     <release version="1.48.73" date="2026-10-19">
       <description>
         <p>Release 1.48.73: Google TV experience upgrade: enhanced recommendation accuracy learning from favorites, playlists, and history; strict anti-noise music video filtering rejecting parodies, reactions, loops, and gameplay; clean cover-art fallback with unmuted high-fidelity audio; lightweight TV UI eliminating GPU blur bottlenecks and D-pad input latency; and automatic GitHub Releases updates.</p>

@@ -12,13 +12,10 @@ export class AudioSourceFactory {
       return { url: candidate.id, protocol: 'http' };
     }
 
-    if (
+    const isHls =
       stream.protocol === 'hls' ||
       stream.url.includes('.m3u8') ||
-      stream.url.includes('manifest.googlevideo.com')
-    ) {
-      return { url: stream.url, protocol: 'hls' };
-    }
+      stream.url.includes('manifest.googlevideo.com');
 
     const shouldSkipProxy =
       stream.protocol === 'file' || stream.url.startsWith('http://127.0.0.1:');
@@ -28,7 +25,7 @@ export class AudioSourceFactory {
     const durationMs = stream.durationMs ?? candidate.durationMs;
     return {
       url: playbackUrl,
-      protocol: stream.protocol,
+      protocol: isHls ? 'hls' : stream.protocol,
       durationSeconds: durationMs ? durationMs / 1000 : undefined,
       ...(stream.codec ? { codec: stream.codec } : {}),
     };

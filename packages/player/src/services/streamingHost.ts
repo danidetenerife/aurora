@@ -27,7 +27,8 @@ export const isStreamExpired = (candidate: StreamCandidate): boolean => {
   if (
     candidate.stream?.url &&
     (candidate.stream.url.includes('dubbed-auto') ||
-      candidate.stream.url.includes('dubbed'))
+      candidate.stream.url.includes('dubbed') ||
+      candidate.stream.url.includes('c=TVHTML5'))
   ) {
     return true;
   }

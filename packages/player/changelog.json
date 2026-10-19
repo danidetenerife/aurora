@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-10-19T20:30",
+    "description": "Corrección de reproducción en escritorio (Windows/macOS/Linux): añade soporte nativo de proxy y reescritura de manifiestos HLS (.m3u8) en el servidor local de streaming de Tauri para evitar bloqueos CORS y errores 403 Forbidden de YouTube; prioriza la extracción instantánea sin espera publicitaria de 5 segundos y añade recuperación automática ante enlaces caducados en la cola.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      { "label": "Desktop", "color": "blue" },
+      { "label": "Playback", "color": "orange" },
+      { "label": "Audio", "color": "purple" }
+    ]
+  },
+  {
     "date": "2026-10-19T18:00",
     "description": "Google TV experience upgrade: enhanced recommendation accuracy learning from favorites, playlists, and history; strict anti-noise music video filtering rejecting parodies, reactions, loops, and gameplay; clean cover-art fallback with unmuted high-fidelity audio; lightweight TV UI eliminating GPU blur bottlenecks and D-pad input latency; and automatic GitHub Releases updates.",
     "type": "improvement",

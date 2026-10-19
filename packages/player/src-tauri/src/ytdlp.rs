@@ -205,7 +205,8 @@ pub async fn ytdlp_get_stream(
 
     let stdout = run_ytdlp(vec![
         "-f".to_string(),
-        "bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio".to_string(),
+        "234/233/bestaudio[protocol^=m3u8]/bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio"
+            .to_string(),
         "--dump-json".to_string(),
         "--no-playlist".to_string(),
         "--no-warnings".to_string(),

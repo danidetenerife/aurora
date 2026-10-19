@@ -1,7 +1,13 @@
+import { invoke } from '@tauri-apps/api/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { httpHost } from './httpHost';
+import { isTauriEnvironment } from './universalStore';
 import { ytdlpHost } from './ytdlpHost';
+
+vi.mock('@tauri-apps/api/core', () => ({
+  invoke: vi.fn(),
+}));
 
 vi.mock('./universalStore', () => ({
   isTauriEnvironment: vi.fn().mockReturnValue(false),
@@ -11,6 +17,7 @@ vi.mock('./universalStore', () => ({
 describe('ytdlpHost', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(isTauriEnvironment).mockReturnValue(false);
   });
 
   describe('getStream direct extraction', () => {
@@ -70,6 +77,31 @@ describe('ytdlpHost', () => {
       expect(requestedBody?.videoId).toBe('dQw4w9WgXcQ');
       expect(streamInfo.stream_url).toBe(
         'https://manifest.googlevideo.com/test.m3u8',
+      );
+    });
+
+    it('uses fast direct extraction on Tauri desktop and falls back to ytdlp_get_stream only on failure', async () => {
+      vi.mocked(isTauriEnvironment).mockReturnValue(true);
+      vi.spyOn(httpHost, 'fetch').mockRejectedValue(new Error('Blocked'));
+      vi.mocked(invoke).mockResolvedValue({
+        stream_url: 'https://manifest.googlevideo.com/fallback.m3u8',
+        duration: 210,
+        title: 'Fallback Song',
+        container: 'mp4',
+        codec: 'aac',
+        album: null,
+        artists: ['Artist'],
+        album_artists: [],
+        upload_date: null,
+      });
+
+      const streamInfo = await ytdlpHost.getStream('dQw4w9WgXcQ');
+
+      expect(invoke).toHaveBeenCalledWith('ytdlp_get_stream', {
+        url: 'dQw4w9WgXcQ',
+      });
+      expect(streamInfo.stream_url).toBe(
+        'https://manifest.googlevideo.com/fallback.m3u8',
       );
     });
   });

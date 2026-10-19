@@ -170,10 +170,6 @@ export const ytdlpHost: YtdlpHost = {
   },
 
   getStream: async (url: string): Promise<YtdlpStreamInfo> => {
-    if (isTauriEnvironment()) {
-      return invoke<YtdlpStreamInfo>('ytdlp_get_stream', { url });
-    }
-
     let videoId = url;
     const match = url.match(
       /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
@@ -185,6 +181,10 @@ export const ytdlpHost: YtdlpHost = {
     const directInfo = await extractAudioStreamDirect(videoId);
     if (directInfo) {
       return directInfo;
+    }
+
+    if (isTauriEnvironment()) {
+      return invoke<YtdlpStreamInfo>('ytdlp_get_stream', { url });
     }
 
     if (isCapacitorEnvironment()) {

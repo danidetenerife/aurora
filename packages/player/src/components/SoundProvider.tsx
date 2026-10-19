@@ -79,6 +79,7 @@ export const SoundProvider: FC<PropsWithChildren> = ({ children }) => {
         useQueueStore
           .getState()
           .updateItemState(currentItem.id, { status: 'error', error: message });
+        eventBus.emit('streamSourceInvalid', currentItem.track);
       }
     },
     [t],
