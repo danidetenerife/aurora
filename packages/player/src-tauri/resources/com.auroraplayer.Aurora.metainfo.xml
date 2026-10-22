@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.76" date="2026-10-22">
+      <description>
+        <p>Release 1.48.76: Blindaje antispam y anticovers en Google TV, listas y motor de aprendizaje: elimina por completo canciones amateur, covers de terceros, tributos, karaokes y compilaciones falsas de posicionamiento SEO (como 'Billboard Top 100 Hits' o 'Popular Songs & Best Music Hits') tanto en búsquedas y listas como en el historial de aprendizaje y la cola infinita; redirige las consultas de listas de éxitos (Billboard Hits, Today's Top Hits, Top 50 Global, Viva Latino, etc.) a listas editoriales oficiales de YouTube Music con temas 100% originales; bloquea en la cola y en las recomendaciones cualquier cover de una canción ya presente por otro artista; precarga todas las listas guardadas al iniciar para aprender de inmediato de tus artistas reales; y exige canales verificados, VEVO o sellos oficiales en el selector de videoclips.</p>
+      </description>
+    </release>
+
     <release version="1.48.75" date="2026-10-19">
       <description>
         <p>Release 1.48.75: Corrección de reproducción en escritorio (Windows/macOS/Linux): añade soporte nativo de proxy y reescritura de manifiestos HLS (.m3u8) en el servidor local de streaming de Tauri para evitar bloqueos CORS y errores 403 Forbidden de YouTube; prioriza la extracción instantánea sin espera publicitaria de 5 segundos y añade recuperación automática ante enlaces caducados en la cola.</p>

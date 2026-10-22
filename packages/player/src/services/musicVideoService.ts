@@ -92,10 +92,52 @@ const NOISE_TERMS = [
   'karaoke',
   'instrumental',
   'cover',
+  'covered by',
+  'cover by',
+  'acoustic cover',
+  'piano cover',
+  'guitar cover',
+  'drum cover',
+  'vocal cover',
+  'tribute',
+  'tributo',
+  'version acustica',
+  'mi version',
+  'casero',
+  'ensayo',
+  'imitacion',
+  'homenaje',
+  'cantando',
+  'interpretando',
+  'spanglish',
   '- topic',
   '(audio)',
   '[audio]',
 ];
+
+const NON_EXEMPT_NOISE_TERMS = new Set([
+  'covered by',
+  'cover by',
+  'acoustic cover',
+  'piano cover',
+  'guitar cover',
+  'drum cover',
+  'vocal cover',
+  'karaoke',
+  'tribute',
+  'tributo',
+  'parody',
+  'parodia',
+  'reaction',
+  'reacts',
+  'reacting',
+  'reaccion',
+  'reaccionando',
+  'homenaje',
+  'imitacion',
+  'casero',
+  'ensayo',
+]);
 
 const RECORD_LABELS = [
   'warner',
@@ -189,8 +231,9 @@ export const hasNoiseTerms = (
       continue;
     }
     const isExempted =
-      normalizedArtist.includes(normalizedTerm) ||
-      normalizedTitle.includes(normalizedTerm);
+      !NON_EXEMPT_NOISE_TERMS.has(term) &&
+      (normalizedArtist.includes(normalizedTerm) ||
+        normalizedTitle.includes(normalizedTerm));
     if (isExempted) {
       continue;
     }
@@ -237,32 +280,6 @@ export const scoreCandidate = (
     normalizedVChannel.includes(label),
   );
 
-  const artistInChannel =
-    Boolean(normalizedArtist) &&
-    (normalizedVChannel.includes(normalizedArtist) ||
-      (artistTokens.length > 0 &&
-        artistTokens.every((token) => normalizedVChannel.includes(token))));
-
-  const artistInTitle =
-    Boolean(normalizedArtist) &&
-    (normalizedVTitle.includes(normalizedArtist) ||
-      (artistTokens.length > 0 &&
-        artistTokens.every((token) => normalizedVTitle.includes(token))));
-
-  if (artistInChannel) {
-    artistScore = 35;
-  } else if (artistInTitle) {
-    artistScore = isLabelChannel ? 35 : 30;
-  } else if (
-    artistTokens.length > 0 &&
-    artistTokens.some(
-      (token) =>
-        normalizedVChannel.includes(token) || normalizedVTitle.includes(token),
-    )
-  ) {
-    artistScore = 15;
-  }
-
   let badgeScore = 0;
   const hasVerifiedBadge = (input.ownerBadges || []).some((badge) => {
     const style = badge.metadataBadgeRenderer?.style || '';
@@ -279,6 +296,42 @@ export const scoreCandidate = (
   const isVevo = normalizedVChannel.includes('vevo');
   if (hasVerifiedBadge || isVevo) {
     badgeScore = 20;
+  }
+
+  const artistInChannel =
+    Boolean(normalizedArtist) &&
+    (normalizedVChannel.includes(normalizedArtist) ||
+      (artistTokens.length > 0 &&
+        artistTokens.every((token) => normalizedVChannel.includes(token))));
+
+  const artistInTitle =
+    Boolean(normalizedArtist) &&
+    (normalizedVTitle.includes(normalizedArtist) ||
+      (artistTokens.length > 0 &&
+        artistTokens.every((token) => normalizedVTitle.includes(token))));
+
+  const isThirdPartySelfTitledUpload =
+    !artistInChannel &&
+    !isLabelChannel &&
+    !hasVerifiedBadge &&
+    !isVevo &&
+    ((normalizedVChannel.length >= 3 &&
+      normalizedVTitle.includes(normalizedVChannel)) ||
+      /\b(?:por|by|interpretado por|performed by)\b/i.test(input.vTitle));
+
+  if (artistInChannel) {
+    artistScore = 35;
+  } else if (artistInTitle && !isThirdPartySelfTitledUpload) {
+    artistScore = isLabelChannel ? 35 : 30;
+  } else if (
+    !isThirdPartySelfTitledUpload &&
+    artistTokens.length > 0 &&
+    artistTokens.some(
+      (token) =>
+        normalizedVChannel.includes(token) || normalizedVTitle.includes(token),
+    )
+  ) {
+    artistScore = 15;
   }
 
   let titleScore = 0;

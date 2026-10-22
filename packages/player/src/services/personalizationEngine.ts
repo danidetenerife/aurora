@@ -85,6 +85,47 @@ export const normalizeTrackSignature = (track: {
   return normalizedTitle ? `${primaryArtist}::${normalizedTitle}` : '';
 };
 
+const SPAM_OR_AMATEUR_ARTIST_REGEX =
+  /\b(?:billboard|top\s*\d+|top\s+hits|best\s+music\s+hits|popular\s+songs|party\s+hits|chart\s+hits|workout\s+hits|tiktok\s+hits|viral\s+hits|karaoke|tribute|tributo|cover|covers|lullaby|ringtone|backing\s+track|in\s+the\s+style|made\s+famous|hit\s+crew|hit\s+nation|sound\s+alike|various\s+artists)\b/i;
+
+const AMATEUR_OR_COVER_TITLE_REGEX =
+  /\b(?:cover|covered\s+by|cover\s+by|karaoke|tribute|tributo|parody|parodia|8[\s-]*bit|nightcore|sped\s+up|slowed|reverb|bass\s+boosted|backing\s+track|piano\s+version|guitar\s+version|instrumental\s+version|version\s+acustica|mi\s+version|homenaje|imitacion|casero|ensayo|ringtone|lullaby\s+rendition|in\s+the\s+style\s+of|originally\s+performed\s+by|made\s+famous\s+by|spanglish|salsa\s+version|cumbia\s+version|bachata\s+version|reggae\s+version|type\s+beat)\b/i;
+
+const SPAM_COMPILATION_ALBUM_REGEX =
+  /\b(?:playlist\s*20\d\d|remix\s+compilation|party\s+hits|costume\s+halloween|karaoke|tribute|cover\s+versions?|in\s+the\s+style\s+of|made\s+famous\s+by|lullaby\s+renditions?|top\s+\d+\s+global\s+top\s+hits)\b/i;
+
+export const isSpamOrAmateurArtistName = (name: string): boolean => {
+  const normalized = normalizeArtistKey(name);
+  if (!normalized) {
+    return false;
+  }
+  return (
+    SPAM_OR_AMATEUR_ARTIST_REGEX.test(normalized) ||
+    /\bacoustic$/.test(normalized)
+  );
+};
+
+export const isAmateurOrCoverTrack = (track: {
+  title?: string;
+  artists?: Array<{ name?: string }>;
+  album?: { title?: string };
+}): boolean => {
+  const normalizedTitle = normalizeArtistKey(track.title ?? '');
+  if (normalizedTitle && AMATEUR_OR_COVER_TITLE_REGEX.test(normalizedTitle)) {
+    return true;
+  }
+  const normalizedAlbum = normalizeArtistKey(track.album?.title ?? '');
+  if (normalizedAlbum && SPAM_COMPILATION_ALBUM_REGEX.test(normalizedAlbum)) {
+    return true;
+  }
+  for (const artistEntry of track.artists ?? []) {
+    if (artistEntry.name && isSpamOrAmateurArtistName(artistEntry.name)) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const getDaypart = (timestampMs: number): Daypart => {
   const hour = new Date(timestampMs).getHours();
   if (hour >= 5 && hour < 12) {
@@ -475,6 +516,9 @@ export class PersonalizationEngine {
     immediateSkipCount = 0,
     persistImmediately = true,
   ): Promise<void> {
+    if (playCount > 0 && skipCount === 0 && isAmateurOrCoverTrack(track)) {
+      return Promise.resolve();
+    }
     const primaryArtistKey = normalizeArtistKey(track.artists[0]?.name || '');
     if (skipCount > 0) {
       for (const artistEntry of track.artists ?? []) {
@@ -758,6 +802,7 @@ export class PersonalizationEngine {
       return (
         !canonical ||
         canonical === 'unknown' ||
+        isSpamOrAmateurArtistName(name) ||
         normalizedBlacklistedArtists.has(lower) ||
         normalizedBlacklistedArtists.has(canonical)
       );
@@ -800,7 +845,14 @@ export class PersonalizationEngine {
     const now = Date.now();
 
     for (const record of listens) {
-      if (!record.artist || record.artist === 'Unknown') {
+      if (
+        !record.artist ||
+        record.artist === 'Unknown' ||
+        isAmateurOrCoverTrack({
+          title: record.title,
+          artists: [{ name: record.artist }],
+        })
+      ) {
         continue;
       }
 
@@ -1082,6 +1134,14 @@ export class PersonalizationEngine {
     const rankedListens = listens
       .filter((record) => {
         if (record.playCount <= 0 || completionRate(record) <= 0.5) {
+          return false;
+        }
+        if (
+          isAmateurOrCoverTrack({
+            title: record.title,
+            artists: [{ name: record.artist }],
+          })
+        ) {
           return false;
         }
         if (blacklistedTracks.includes(record.trackId)) {
@@ -1489,6 +1549,7 @@ export class PersonalizationEngine {
 
     const seenIds = new Set<string>();
     const seenSignatures = new Set<string>();
+    const seenCleanTitles = new Set<string>();
     const artistTrackCount = new Map<string, number>();
 
     const familiarCandidates: Array<{ track: Track; score: number }> = [];
@@ -1516,19 +1577,27 @@ export class PersonalizationEngine {
     );
 
     for (const candidate of candidates) {
+      if (isAmateurOrCoverTrack(candidate.track)) {
+        continue;
+      }
       const trackId =
         candidate.track.source?.id ||
         `${candidate.track.artists?.[0]?.name}-${candidate.track.title}`;
       const signature = normalizeTrackSignature(candidate.track);
+      const cleanTitle = cleanTrackTitle(candidate.track.title ?? '');
       if (
         seenIds.has(trackId) ||
-        (signature.length > 0 && seenSignatures.has(signature))
+        (signature.length > 0 && seenSignatures.has(signature)) ||
+        (cleanTitle.length >= 3 && seenCleanTitles.has(cleanTitle))
       ) {
         continue;
       }
       seenIds.add(trackId);
       if (signature.length > 0) {
         seenSignatures.add(signature);
+      }
+      if (cleanTitle.length >= 3) {
+        seenCleanTitles.add(cleanTitle);
       }
 
       const candidateArtists = (candidate.track.artists ?? [])

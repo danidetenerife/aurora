@@ -23,7 +23,11 @@ import { pickArtwork, type Track } from '@aurora/model';
 import type { MetadataProvider } from '@aurora/plugin-sdk';
 
 import { useProviders } from '../../hooks/useProviders';
-import { getIntelligentAutoplayTracks } from '../../services/discoveryService';
+import {
+  getCleanTitleOnly,
+  getIntelligentAutoplayTracks,
+  isAmateurOrCoverTrack,
+} from '../../services/discoveryService';
 import {
   normalizeArtistKey,
   personalizationEngine,
@@ -473,7 +477,11 @@ export const TvDashboard: FC = () => {
 
       if (results.length > 0) {
         const seen = new Set<string>();
+        const seenTitles = new Set<string>();
         const unique = results.filter((track) => {
+          if (isAmateurOrCoverTrack?.(track)) {
+            return false;
+          }
           const trackId =
             track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
           if (blacklistedTracks.includes(trackId)) {
@@ -493,10 +501,19 @@ export const TvDashboard: FC = () => {
             return false;
           }
           const key = `${(track.artists?.[0]?.name ?? '').toLowerCase().trim()}-${(track.title ?? '').toLowerCase().trim()}`;
-          if (seen.has(key)) {
+          const normalizedTitle =
+            getCleanTitleOnly?.(track.title ?? '') ??
+            (track.title ?? '').toLowerCase().trim();
+          if (
+            seen.has(key) ||
+            (normalizedTitle.length >= 3 && seenTitles.has(normalizedTitle))
+          ) {
             return false;
           }
           seen.add(key);
+          if (normalizedTitle.length >= 3) {
+            seenTitles.add(normalizedTitle);
+          }
           return true;
         });
         setRecommendedTracks(unique);
@@ -507,7 +524,7 @@ export const TvDashboard: FC = () => {
         };
       }
     } catch {
-      // recommendations fetch failed gracefully
+      void 0;
     } finally {
       if (!signal?.aborted) {
         setLoading(false);
@@ -556,8 +573,11 @@ export const TvDashboard: FC = () => {
     }
     try {
       const res = await metadataProvider.search({ query, types: ['tracks'] });
-      if (res.tracks?.length) {
-        playTvTracks(res.tracks);
+      const authenticTracks = (res.tracks ?? []).filter(
+        (track) => !isAmateurOrCoverTrack?.(track),
+      );
+      if (authenticTracks.length) {
+        playTvTracks(authenticTracks);
       }
     } catch {
       useTvStore.getState().openSearch();

@@ -1,13 +1,46 @@
 [
   {
+    "date": "2026-10-22T21:45",
+    "description": "Blindaje antispam y anticovers en Google TV, listas y motor de aprendizaje: elimina por completo canciones amateur, covers de terceros, tributos, karaokes y compilaciones falsas de posicionamiento SEO (como 'Billboard Top 100 Hits' o 'Popular Songs & Best Music Hits') tanto en búsquedas y listas como en el historial de aprendizaje y la cola infinita; redirige las consultas de listas de éxitos (Billboard Hits, Today's Top Hits, Top 50 Global, Viva Latino, etc.) a listas editoriales oficiales de YouTube Music con temas 100% originales; bloquea en la cola y en las recomendaciones cualquier cover de una canción ya presente por otro artista; precarga todas las listas guardadas al iniciar para aprender de inmediato de tus artistas reales; y exige canales verificados, VEVO o sellos oficiales en el selector de videoclips.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      {
+        "label": "Google TV",
+        "color": "green"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Android",
+        "color": "purple"
+      }
+    ]
+  },
+  {
     "date": "2026-10-19T20:30",
     "description": "Corrección de reproducción en escritorio (Windows/macOS/Linux): añade soporte nativo de proxy y reescritura de manifiestos HLS (.m3u8) en el servidor local de streaming de Tauri para evitar bloqueos CORS y errores 403 Forbidden de YouTube; prioriza la extracción instantánea sin espera publicitaria de 5 segundos y añade recuperación automática ante enlaces caducados en la cola.",
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Playback", "color": "orange" },
-      { "label": "Audio", "color": "purple" }
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Audio",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -16,9 +49,18 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Google TV", "color": "green" },
-      { "label": "Performance", "color": "blue" },
-      { "label": "Audio", "color": "purple" }
+      {
+        "label": "Google TV",
+        "color": "green"
+      },
+      {
+        "label": "Performance",
+        "color": "blue"
+      },
+      {
+        "label": "Audio",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -27,9 +69,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Playback", "color": "orange" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -38,10 +89,22 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Playback", "color": "orange" },
-      { "label": "Sync", "color": "purple" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Sync",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -50,10 +113,22 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Sync", "color": "purple" },
-      { "label": "Playback", "color": "orange" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Sync",
+        "color": "purple"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -62,9 +137,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Playback", "color": "orange" },
-      { "label": "Google TV", "color": "red" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Google TV",
+        "color": "red"
+      }
     ]
   },
   {
@@ -73,10 +157,22 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Sync", "color": "purple" },
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Google TV", "color": "red" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Sync",
+        "color": "purple"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Google TV",
+        "color": "red"
+      }
     ]
   },
   {
@@ -85,9 +181,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Sync", "color": "purple" },
-      { "label": "Android", "color": "green" },
-      { "label": "Desktop", "color": "blue" }
+      {
+        "label": "Sync",
+        "color": "purple"
+      },
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -96,11 +201,26 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Android", "color": "green" },
-      { "label": "Google TV", "color": "red" },
-      { "label": "Playback", "color": "orange" },
-      { "label": "Sync", "color": "purple" }
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Google TV",
+        "color": "red"
+      },
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Sync",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -109,9 +229,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Playback", "color": "orange" },
-      { "label": "Desktop", "color": "blue" },
-      { "label": "Sync", "color": "purple" }
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Sync",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -120,10 +249,22 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Google TV", "color": "red" },
-      { "label": "Rendimiento", "color": "green" },
-      { "label": "Android", "color": "purple" },
-      { "label": "UI", "color": "blue" }
+      {
+        "label": "Google TV",
+        "color": "red"
+      },
+      {
+        "label": "Rendimiento",
+        "color": "green"
+      },
+      {
+        "label": "Android",
+        "color": "purple"
+      },
+      {
+        "label": "UI",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -132,10 +273,22 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Google TV", "color": "red" },
-      { "label": "Actualizaciones", "color": "purple" },
-      { "label": "Android", "color": "green" },
-      { "label": "UI", "color": "blue" }
+      {
+        "label": "Google TV",
+        "color": "red"
+      },
+      {
+        "label": "Actualizaciones",
+        "color": "purple"
+      },
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "UI",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -144,10 +297,22 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Google TV", "color": "red" },
-      { "label": "Android", "color": "green" },
-      { "label": "UI", "color": "blue" },
-      { "label": "YouTube Music", "color": "orange" }
+      {
+        "label": "Google TV",
+        "color": "red"
+      },
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "UI",
+        "color": "blue"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -156,11 +321,26 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Móvil", "color": "green" },
-      { "label": "Recomendaciones", "color": "blue" },
-      { "label": "Sincronización", "color": "purple" },
-      { "label": "Android", "color": "red" },
-      { "label": "UI", "color": "orange" }
+      {
+        "label": "Móvil",
+        "color": "green"
+      },
+      {
+        "label": "Recomendaciones",
+        "color": "blue"
+      },
+      {
+        "label": "Sincronización",
+        "color": "purple"
+      },
+      {
+        "label": "Android",
+        "color": "red"
+      },
+      {
+        "label": "UI",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -169,9 +349,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Reproductor", "color": "purple" },
-      { "label": "Escritorio", "color": "orange" },
-      { "label": "UI", "color": "blue" }
+      {
+        "label": "Reproductor",
+        "color": "purple"
+      },
+      {
+        "label": "Escritorio",
+        "color": "orange"
+      },
+      {
+        "label": "UI",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -180,10 +369,22 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Panel", "color": "blue" },
-      { "label": "Reproductor", "color": "purple" },
-      { "label": "Volumen", "color": "green" },
-      { "label": "Escritorio", "color": "orange" }
+      {
+        "label": "Panel",
+        "color": "blue"
+      },
+      {
+        "label": "Reproductor",
+        "color": "purple"
+      },
+      {
+        "label": "Volumen",
+        "color": "green"
+      },
+      {
+        "label": "Escritorio",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -192,11 +393,26 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Recomendaciones", "color": "blue" },
-      { "label": "Móvil", "color": "green" },
-      { "label": "Android Auto", "color": "red" },
-      { "label": "Escritorio", "color": "purple" },
-      { "label": "Rendimiento", "color": "orange" }
+      {
+        "label": "Recomendaciones",
+        "color": "blue"
+      },
+      {
+        "label": "Móvil",
+        "color": "green"
+      },
+      {
+        "label": "Android Auto",
+        "color": "red"
+      },
+      {
+        "label": "Escritorio",
+        "color": "purple"
+      },
+      {
+        "label": "Rendimiento",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -205,10 +421,22 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android Auto", "color": "green" },
-      { "label": "AAOS", "color": "blue" },
-      { "label": "Carátulas", "color": "purple" },
-      { "label": "Reproductor", "color": "red" }
+      {
+        "label": "Android Auto",
+        "color": "green"
+      },
+      {
+        "label": "AAOS",
+        "color": "blue"
+      },
+      {
+        "label": "Carátulas",
+        "color": "purple"
+      },
+      {
+        "label": "Reproductor",
+        "color": "red"
+      }
     ]
   },
   {
@@ -217,9 +445,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Escritorio", "color": "green" },
-      { "label": "Ajustes", "color": "purple" },
-      { "label": "Sincronización", "color": "blue" }
+      {
+        "label": "Escritorio",
+        "color": "green"
+      },
+      {
+        "label": "Ajustes",
+        "color": "purple"
+      },
+      {
+        "label": "Sincronización",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -228,10 +465,22 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Escritorio", "color": "green" },
-      { "label": "Carátulas", "color": "purple" },
-      { "label": "Favoritos", "color": "red" },
-      { "label": "Rendimiento", "color": "orange" }
+      {
+        "label": "Escritorio",
+        "color": "green"
+      },
+      {
+        "label": "Carátulas",
+        "color": "purple"
+      },
+      {
+        "label": "Favoritos",
+        "color": "red"
+      },
+      {
+        "label": "Rendimiento",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -240,10 +489,22 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Modo Coche", "color": "green" },
-      { "label": "Móvil", "color": "blue" },
-      { "label": "Batería", "color": "orange" },
-      { "label": "Podcasts", "color": "purple" }
+      {
+        "label": "Modo Coche",
+        "color": "green"
+      },
+      {
+        "label": "Móvil",
+        "color": "blue"
+      },
+      {
+        "label": "Batería",
+        "color": "orange"
+      },
+      {
+        "label": "Podcasts",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -252,9 +513,18 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Móvil", "color": "green" },
-      { "label": "Algoritmo", "color": "blue" },
-      { "label": "Batería", "color": "orange" }
+      {
+        "label": "Móvil",
+        "color": "green"
+      },
+      {
+        "label": "Algoritmo",
+        "color": "blue"
+      },
+      {
+        "label": "Batería",
+        "color": "orange"
+      }
     ]
   },
   {
@@ -263,9 +533,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Google TV", "color": "green" },
-      { "label": "Cola Infinita", "color": "blue" },
-      { "label": "Carátulas", "color": "purple" }
+      {
+        "label": "Google TV",
+        "color": "green"
+      },
+      {
+        "label": "Cola Infinita",
+        "color": "blue"
+      },
+      {
+        "label": "Carátulas",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -274,8 +553,14 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Google TV", "color": "green" },
-      { "label": "Videoclips", "color": "purple" }
+      {
+        "label": "Google TV",
+        "color": "green"
+      },
+      {
+        "label": "Videoclips",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -283,7 +568,12 @@
     "description": "Corrige los videoclips en Google TV: conserva las peticiones originales de YouTube y utiliza un único reproductor para audio y vídeo. El mando permite cerrar el videoclip o la búsqueda con Atrás y volver al menú sin perder la reproducción.",
     "type": "fix",
     "contributors": ["danidetenerife"],
-    "tags": [{ "label": "Google TV", "color": "green" }]
+    "tags": [
+      {
+        "label": "Google TV",
+        "color": "green"
+      }
+    ]
   },
   {
     "date": "2026-09-13T08:35",
@@ -291,9 +581,18 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Reproductor", "color": "green" },
-      { "label": "Modo Coche", "color": "blue" },
-      { "label": "Móvil", "color": "purple" }
+      {
+        "label": "Reproductor",
+        "color": "green"
+      },
+      {
+        "label": "Modo Coche",
+        "color": "blue"
+      },
+      {
+        "label": "Móvil",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -302,8 +601,14 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Favoritos", "color": "blue" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Favoritos",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -312,9 +617,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Rendimiento", "color": "blue" },
-      { "label": "Estabilidad", "color": "purple" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Rendimiento",
+        "color": "blue"
+      },
+      {
+        "label": "Estabilidad",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -323,8 +637,14 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android", "color": "green" },
-      { "label": "Accesibilidad", "color": "blue" }
+      {
+        "label": "Android",
+        "color": "green"
+      },
+      {
+        "label": "Accesibilidad",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -333,9 +653,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Streaming", "color": "green" },
-      { "label": "Audio", "color": "purple" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Streaming",
+        "color": "green"
+      },
+      {
+        "label": "Audio",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -344,9 +673,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Diseño", "color": "purple" },
-      { "label": "Accesibilidad", "color": "green" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Diseño",
+        "color": "purple"
+      },
+      {
+        "label": "Accesibilidad",
+        "color": "green"
+      }
     ]
   },
   {
@@ -355,9 +693,18 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Búsqueda", "color": "blue" },
-      { "label": "Interfaz", "color": "purple" },
-      { "label": "Navegación", "color": "green" }
+      {
+        "label": "Búsqueda",
+        "color": "blue"
+      },
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      },
+      {
+        "label": "Navegación",
+        "color": "green"
+      }
     ]
   },
   {
@@ -366,9 +713,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Streaming", "color": "green" },
-      { "label": "Audio", "color": "purple" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Streaming",
+        "color": "green"
+      },
+      {
+        "label": "Audio",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -377,9 +733,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Diseño", "color": "purple" },
-      { "label": "Streaming", "color": "green" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Diseño",
+        "color": "purple"
+      },
+      {
+        "label": "Streaming",
+        "color": "green"
+      }
     ]
   },
   {
@@ -388,9 +753,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Interfaz", "color": "purple" },
-      { "label": "YouTube Music", "color": "red" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "red"
+      }
     ]
   },
   {
@@ -399,10 +773,22 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "YouTube Music", "color": "red" },
-      { "label": "Diseño", "color": "purple" },
-      { "label": "Streaming", "color": "green" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "red"
+      },
+      {
+        "label": "Diseño",
+        "color": "purple"
+      },
+      {
+        "label": "Streaming",
+        "color": "green"
+      }
     ]
   },
   {
@@ -411,9 +797,18 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Interfaz", "color": "purple" },
-      { "label": "Accesibilidad", "color": "green" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      },
+      {
+        "label": "Accesibilidad",
+        "color": "green"
+      }
     ]
   },
   {
@@ -422,9 +817,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "Streaming", "color": "green" },
-      { "label": "Corrección crítica", "color": "red" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "Streaming",
+        "color": "green"
+      },
+      {
+        "label": "Corrección crítica",
+        "color": "red"
+      }
     ]
   },
   {
@@ -433,9 +837,18 @@
     "type": "feature",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Podcasts", "color": "blue" },
-      { "label": "YouTube Music", "color": "red" },
-      { "label": "Interfaz", "color": "purple" }
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "red"
+      },
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -444,9 +857,18 @@
     "type": "fix",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android Auto", "color": "green" },
-      { "label": "Corrección crítica", "color": "red" },
-      { "label": "Podcasts", "color": "blue" }
+      {
+        "label": "Android Auto",
+        "color": "green"
+      },
+      {
+        "label": "Corrección crítica",
+        "color": "red"
+      },
+      {
+        "label": "Podcasts",
+        "color": "blue"
+      }
     ]
   },
   {
@@ -455,9 +877,18 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Android Auto", "color": "green" },
-      { "label": "Búsqueda", "color": "blue" },
-      { "label": "Interfaz", "color": "purple" }
+      {
+        "label": "Android Auto",
+        "color": "green"
+      },
+      {
+        "label": "Búsqueda",
+        "color": "blue"
+      },
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      }
     ]
   },
   {
@@ -466,8 +897,14 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Playlists", "color": "purple" },
-      { "label": "Android", "color": "green" }
+      {
+        "label": "Playlists",
+        "color": "purple"
+      },
+      {
+        "label": "Android",
+        "color": "green"
+      }
     ]
   },
   {
@@ -476,8 +913,14 @@
     "type": "improvement",
     "contributors": ["danidetenerife"],
     "tags": [
-      { "label": "Interfaz", "color": "purple" },
-      { "label": "Búsqueda", "color": "blue" }
+      {
+        "label": "Interfaz",
+        "color": "purple"
+      },
+      {
+        "label": "Búsqueda",
+        "color": "blue"
+      }
     ]
   },
   {

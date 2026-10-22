@@ -22,6 +22,8 @@ const DEFAULT_COUNTRY = 'US';
 const SONG_SEARCH_PARAMS = 'EgWKAQIIAWoMEA4QChADEAQQCRAF';
 const ALBUM_SEARCH_PARAMS = 'EgWKAQIYAWoMEA4QChADEAQQCRAF';
 const ARTIST_SEARCH_PARAMS = 'EgWKAQIgAWoMEA4QChADEAQQCRAF';
+const FEATURED_PLAYLIST_SEARCH_PARAMS =
+  'EgeKAQQoADgBahIQCRAKEA4QBBADEAUQFRAQEBE=';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
@@ -29,6 +31,170 @@ const SECONDS_PER_HOUR = 3600;
 const DECIMAL_RADIX = 10;
 const FIRST_INDEX = 0;
 const SECOND_INDEX = 1;
+const MIN_SONG_DURATION_MS = 45_000;
+const MAX_SONG_DURATION_MS = 600_000;
+
+const EDITORIAL_PLAYLIST_MAP: Array<{ pattern: RegExp; browseId: string }> = [
+  {
+    pattern:
+      /\b(?:billboard|today'?s\s+top\s+hits|top\s+50\s+global|top\s+global\s+hits|trending\s+music)\b/i,
+    browseId: 'VLRDCLAK5uy_kmPRjHDECIcuVwnKsx2Ng7fyNgFKWNJFs',
+  },
+  {
+    pattern: /\b(?:pop\s+hits|top\s+pop\s+hits)\b/i,
+    browseId: 'VLRDCLAK5uy_nmS3YoxSwVVQk9lEQJ0UX4ZCjXsW_psU8',
+  },
+  {
+    pattern: /\b(?:reggaeton\s+hits|latino\s+urbano)\b/i,
+    browseId: 'VLRDCLAK5uy_kV0Nh-OIcnh8LppyiFE4lhhWZEvaPQEOY',
+  },
+  {
+    pattern: /\b(?:viva\s+latino)\b/i,
+    browseId: 'VLRDCLAK5uy_m-H5tH6XKlmMxXlwyUSgwCdGC1dCpaQsk',
+  },
+  {
+    pattern: /\b(?:classic\s+rock\s+hits|rock\s+classics)\b/i,
+    browseId: 'VLRDCLAK5uy_l0NNK9-Z-5g0Lkf-TpctvuwqSxLByMnN4',
+  },
+  {
+    pattern: /\b(?:electronic\s+dance\s+music)\b/i,
+    browseId: 'VLRDCLAK5uy_ntIE9b2pz2SvPq_Ky2l_M4pBK5Bsv1quM',
+  },
+  {
+    pattern: /\b(?:hip[\s-]*hop\s+r&b\s+hits)\b/i,
+    browseId: 'VLRDCLAK5uy_k1VVBVsS6pu1pVkYZK2B0EWic3i4j_TY4',
+  },
+];
+
+const normalizeSearchText = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const stripVersionQualifiers = (title: string): string =>
+  normalizeSearchText(
+    title
+      .replace(/\s*\([^)]*\)/g, ' ')
+      .replace(/\s*\[[^\]]*\]/g, ' ')
+      .replace(
+        /\s*-\s*(?:remaster(?:ed)?|live|acoustic|version|edit|mix|mono|stereo).*$/i,
+        ' ',
+      ),
+  );
+
+const AMATEUR_TITLE_REGEX =
+  /\b(?:cover|covered\s+by|cover\s+by|karaoke|tribute|tributo|parody|parodia|8\s*bit|nightcore|sped\s+up|slowed|reverb|bass\s+boosted|backing\s+track|piano\s+version|guitar\s+version|instrumental\s+version|version\s+acustica|mi\s+version|homenaje|imitacion|casero|ensayo|ringtone|lullaby\s+rendition|in\s+the\s+style\s+of|originally\s+performed\s+by|made\s+famous\s+by|spanglish|salsa\s+version|cumbia\s+version|bachata\s+version|reggae\s+version|type\s+beat)\b/i;
+
+const SPAM_ARTIST_REGEX =
+  /\b(?:billboard|top\s*\d+|top\s+hits|best\s+music\s+hits|popular\s+songs|party\s+hits|chart\s+hits|workout\s+hits|tiktok\s+hits|viral\s+hits|karaoke|tribute|cover|covers|lullaby|ringtone|backing\s+track|in\s+the\s+style|made\s+famous|hit\s+crew|hit\s+nation|sound\s+alike|various\s+artists)\b/i;
+
+const SPAM_ALBUM_REGEX =
+  /\b(?:playlist\s*20\d\d|remix\s+compilation|party\s+hits|costume\s+halloween|karaoke|tribute|cover\s+versions?|in\s+the\s+style\s+of|made\s+famous\s+by|lullaby\s+renditions?|top\s+\d+\s+global\s+top\s+hits)\b/i;
+
+export const isLowQualityOrAmateurSong = (
+  title: string,
+  artists: string[],
+  album?: string,
+  query?: string,
+): boolean => {
+  const normalizedTitle = normalizeSearchText(title);
+  const normalizedAlbum = album ? normalizeSearchText(album) : '';
+  const normalizedQuery = query ? normalizeSearchText(query) : '';
+
+  if (!normalizedTitle || normalizedTitle === 'unknown title') {
+    return true;
+  }
+
+  if (
+    AMATEUR_TITLE_REGEX.test(normalizedTitle) &&
+    (!normalizedQuery || !AMATEUR_TITLE_REGEX.test(normalizedQuery))
+  ) {
+    return true;
+  }
+
+  if (normalizedAlbum && SPAM_ALBUM_REGEX.test(normalizedAlbum)) {
+    return true;
+  }
+
+  const normalizedArtists = artists
+    .map((artist) => normalizeSearchText(artist))
+    .filter(Boolean);
+
+  if (
+    normalizedArtists.length === 0 ||
+    normalizedArtists.every((artist) => artist === 'unknown artist')
+  ) {
+    return true;
+  }
+
+  for (const artist of normalizedArtists) {
+    if (SPAM_ARTIST_REGEX.test(artist) || /\bacoustic$/.test(artist)) {
+      return true;
+    }
+  }
+
+  if (normalizedQuery) {
+    const coreTitle = stripVersionQualifiers(title);
+    if (coreTitle.length >= 3 && normalizedQuery.includes(coreTitle)) {
+      const remainder = normalizedQuery
+        .replace(coreTitle, ' ')
+        .replace(
+          /\b(?:radio|mix|hits|best|songs|top|official|audio|video|lyrics)\b/g,
+          ' ',
+        )
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      const remainderTokens = remainder
+        .split(' ')
+        .filter(
+          (token) =>
+            token.length >= 2 && !['the', 'and', 'feat', 'ft'].includes(token),
+        );
+
+      if (remainderTokens.length > 0) {
+        const artistMatchesRemainder = normalizedArtists.some(
+          (artist) =>
+            artist.includes(remainder) ||
+            remainder.includes(artist) ||
+            remainderTokens.some((token) => artist.includes(token)),
+        );
+        if (!artistMatchesRemainder) {
+          return true;
+        }
+      }
+    }
+
+    const queryWithoutGeneric = normalizedQuery
+      .replace(
+        /\b(?:radio|mix|hits|best|songs|top|official|audio|video|lyrics)\b/g,
+        ' ',
+      )
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (
+      queryWithoutGeneric.length >= 3 &&
+      title.includes(' - ') &&
+      normalizedTitle.includes(queryWithoutGeneric)
+    ) {
+      const artistMatchesQuery = normalizedArtists.some(
+        (artist) =>
+          artist.includes(queryWithoutGeneric) ||
+          queryWithoutGeneric.includes(artist),
+      );
+      if (!artistMatchesQuery) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
 
 export const parseDurationToMs = (
   durationString?: string,
@@ -171,6 +337,66 @@ export class YtMusicClient {
     return (await response.json()) as T;
   }
 
+  private async resolveOfficialPlaylistSongs(
+    query: string,
+    resultLimit: number,
+  ): Promise<YtMusicSong[]> {
+    const matchedEditorial = EDITORIAL_PLAYLIST_MAP.find((entry) =>
+      entry.pattern.test(query),
+    );
+    let targetBrowseId = matchedEditorial?.browseId;
+
+    if (!targetBrowseId) {
+      try {
+        const playlistSearch = await this.postRequest<InnerTubeSearchResponse>(
+          'search',
+          {
+            query,
+            params: FEATURED_PLAYLIST_SEARCH_PARAMS,
+          },
+        );
+        const sections =
+          playlistSearch.contents?.tabbedSearchResultsRenderer?.tabs?.[
+            FIRST_INDEX
+          ]?.tabRenderer?.content?.sectionListRenderer?.contents || [];
+        const shelf = sections.find(
+          (section) => section.musicShelfRenderer,
+        )?.musicShelfRenderer;
+        for (const entry of shelf?.contents || []) {
+          const item = entry.musicResponsiveListItemRenderer;
+          if (!item) {
+            continue;
+          }
+          const candidateBrowseId = extractBrowseId(item);
+          if (candidateBrowseId) {
+            targetBrowseId = candidateBrowseId;
+            break;
+          }
+        }
+      } catch {
+        targetBrowseId = undefined;
+      }
+    }
+
+    if (!targetBrowseId) {
+      return [];
+    }
+
+    try {
+      const playlist = await this.getPlaylist(targetBrowseId);
+      return playlist.tracks.slice(0, resultLimit).map((track) => ({
+        id: track.id,
+        title: track.title,
+        artists: track.artists,
+        album: track.album,
+        durationMs: track.durationMs,
+        thumbnail: track.thumbnail,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   async searchSongs(query: string, resultLimit = 20): Promise<YtMusicSong[]> {
     const response = await this.postRequest<InnerTubeSearchResponse>('search', {
       query,
@@ -184,13 +410,11 @@ export class YtMusicClient {
     const musicShelf = sections.find(
       (section) => section.musicShelfRenderer,
     )?.musicShelfRenderer;
-    if (!musicShelf || !musicShelf.contents) {
-      return [];
-    }
 
     const songs: YtMusicSong[] = [];
+    const seenCoreTitles = new Set<string>();
 
-    for (const entry of musicShelf.contents) {
+    for (const entry of musicShelf?.contents || []) {
       const item = entry.musicResponsiveListItemRenderer;
       if (!item) {
         continue;
@@ -213,6 +437,7 @@ export class YtMusicClient {
       const artists: string[] = [];
       let album: string | undefined;
       let durationText: string | undefined;
+      let isUserChannelUpload = false;
 
       for (const run of secondaryRuns) {
         const pageType =
@@ -220,7 +445,9 @@ export class YtMusicClient {
             ?.browseEndpointContextSupportedConfigs
             ?.browseEndpointContextMusicConfig?.pageType;
 
-        if (pageType === 'MUSIC_PAGE_TYPE_ARTIST') {
+        if (pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL') {
+          isUserChannelUpload = true;
+        } else if (pageType === 'MUSIC_PAGE_TYPE_ARTIST') {
           artists.push(run.text);
         } else if (pageType === 'MUSIC_PAGE_TYPE_ALBUM') {
           album = run.text;
@@ -229,9 +456,18 @@ export class YtMusicClient {
         }
       }
 
+      if (isUserChannelUpload) {
+        continue;
+      }
+
       if (artists.length === 0 && secondaryRuns.length > 0) {
         const firstRunText = secondaryRuns[FIRST_INDEX]?.text?.trim();
-        if (firstRunText && firstRunText !== '•') {
+        if (
+          firstRunText &&
+          firstRunText !== '•' &&
+          firstRunText.toLowerCase() !== 'song' &&
+          firstRunText.toLowerCase() !== 'video'
+        ) {
           artists.push(firstRunText);
         }
       }
@@ -244,14 +480,34 @@ export class YtMusicClient {
         return badgeStr.includes('LIVE');
       });
 
-      if (isLive || !durationMs || durationMs > 900000) {
+      if (
+        isLive ||
+        !durationMs ||
+        durationMs < MIN_SONG_DURATION_MS ||
+        durationMs > MAX_SONG_DURATION_MS
+      ) {
         continue;
+      }
+
+      const effectiveArtists =
+        artists.length > 0 ? artists : ['Unknown Artist'];
+
+      if (isLowQualityOrAmateurSong(title, effectiveArtists, album, query)) {
+        continue;
+      }
+
+      const coreTitle = stripVersionQualifiers(title);
+      if (coreTitle.length >= 3 && seenCoreTitles.has(coreTitle)) {
+        continue;
+      }
+      if (coreTitle.length >= 3) {
+        seenCoreTitles.add(coreTitle);
       }
 
       songs.push({
         id: videoId,
         title,
-        artists: artists.length > 0 ? artists : ['Unknown Artist'],
+        artists: effectiveArtists,
         album,
         durationMs,
         thumbnail,
@@ -259,6 +515,25 @@ export class YtMusicClient {
 
       if (songs.length >= resultLimit) {
         break;
+      }
+    }
+
+    const isChartOrEditorialQuery =
+      EDITORIAL_PLAYLIST_MAP.some((entry) => entry.pattern.test(query)) ||
+      /\b(?:billboard|top\s+\d+|top\s+hits|chart\s+hits|today'?s\s+hits)\b/i.test(
+        query,
+      );
+
+    if (
+      isChartOrEditorialQuery &&
+      songs.length < Math.min(resultLimit, 5)
+    ) {
+      const playlistSongs = await this.resolveOfficialPlaylistSongs(
+        query,
+        resultLimit,
+      );
+      if (playlistSongs.length > 0) {
+        return playlistSongs;
       }
     }
 
@@ -767,24 +1042,32 @@ export class YtMusicClient {
 
       const artists: string[] = [];
       let album: string | undefined;
+      let isUserChannelUpload = false;
 
       for (const run of artistRuns) {
         const text = run.text.trim();
-        if (
+        const pageType =
           run.navigationEndpoint?.browseEndpoint
             ?.browseEndpointContextSupportedConfigs
-            ?.browseEndpointContextMusicConfig?.pageType ===
-          'MUSIC_PAGE_TYPE_ALBUM'
-        ) {
+            ?.browseEndpointContextMusicConfig?.pageType;
+        if (pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL') {
+          isUserChannelUpload = true;
+        } else if (pageType === 'MUSIC_PAGE_TYPE_ALBUM') {
           album = text;
         } else if (
           text &&
           text !== '•' &&
           text.toLowerCase() !== 'song' &&
-          text.toLowerCase() !== 'video'
+          text.toLowerCase() !== 'video' &&
+          !/^\d+(?:\.\d+)?[kmb]?\s*views$/i.test(text) &&
+          !/^\d+:\d+(:\d+)?$/.test(text)
         ) {
           artists.push(text);
         }
+      }
+
+      if (isUserChannelUpload) {
+        continue;
       }
 
       const fixedRuns =
@@ -793,11 +1076,17 @@ export class YtMusicClient {
       const durationText = fixedRuns[FIRST_INDEX]?.text;
       const durationMs = parseDurationToMs(durationText);
       const thumbnail = extractThumbnailUrl(item);
+      const effectiveArtists =
+        artists.length > 0 ? artists : ['Unknown Artist'];
+
+      if (isLowQualityOrAmateurSong(title, effectiveArtists, album)) {
+        continue;
+      }
 
       tracks.push({
         id: videoId,
         title,
-        artists: artists.length > 0 ? artists : ['Unknown Artist'],
+        artists: effectiveArtists,
         album,
         durationMs,
         thumbnail,
@@ -999,7 +1288,18 @@ export class YtMusicClient {
                               videoId?: string;
                               title?: { runs?: Array<{ text: string }> };
                               longBylineText?: {
-                                runs?: Array<{ text: string }>;
+                                runs?: Array<{
+                                  text: string;
+                                  navigationEndpoint?: {
+                                    browseEndpoint?: {
+                                      browseEndpointContextSupportedConfigs?: {
+                                        browseEndpointContextMusicConfig?: {
+                                          pageType?: string;
+                                        };
+                                      };
+                                    };
+                                  };
+                                }>;
                               };
                               thumbnail?: {
                                 thumbnails?: Array<{ url: string }>;
@@ -1030,6 +1330,7 @@ export class YtMusicClient {
     const items = queueRenderer?.content?.playlistPanelRenderer?.contents || [];
 
     const recommendations: YtMusicSong[] = [];
+    const seenCoreTitles = new Set<string>();
 
     for (const item of items) {
       const renderer = item.playlistPanelVideoRenderer;
@@ -1040,16 +1341,58 @@ export class YtMusicClient {
       const title = renderer.title?.runs?.[FIRST_INDEX]?.text ?? 'Unknown Song';
       const artistRuns = renderer.longBylineText?.runs || [];
       const artists: string[] = [];
+      let album: string | undefined;
+      let isUserChannelUpload = false;
+
       for (const run of artistRuns) {
         const text = run.text.trim();
-        if (text && text !== '•') {
+        const pageType =
+          run.navigationEndpoint?.browseEndpoint
+            ?.browseEndpointContextSupportedConfigs
+            ?.browseEndpointContextMusicConfig?.pageType;
+        if (pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL') {
+          isUserChannelUpload = true;
+        } else if (pageType === 'MUSIC_PAGE_TYPE_ALBUM') {
+          album = text;
+        } else if (
+          text &&
+          text !== '•' &&
+          artists.length === 0 &&
+          !/^\d+(?:\.\d+)?[kmb]?\s*views$/i.test(text) &&
+          !/^\d+:\d+(:\d+)?$/.test(text)
+        ) {
           artists.push(text);
-          break;
         }
+      }
+
+      if (isUserChannelUpload) {
+        continue;
       }
 
       const durationText = renderer.lengthText?.runs?.[FIRST_INDEX]?.text;
       const durationMs = parseDurationToMs(durationText);
+      if (
+        durationMs !== undefined &&
+        (durationMs < MIN_SONG_DURATION_MS || durationMs > MAX_SONG_DURATION_MS)
+      ) {
+        continue;
+      }
+
+      const effectiveArtists =
+        artists.length > 0 ? artists : ['Unknown Artist'];
+
+      if (isLowQualityOrAmateurSong(title, effectiveArtists, album)) {
+        continue;
+      }
+
+      const coreTitle = stripVersionQualifiers(title);
+      if (coreTitle.length >= 3 && seenCoreTitles.has(coreTitle)) {
+        continue;
+      }
+      if (coreTitle.length >= 3) {
+        seenCoreTitles.add(coreTitle);
+      }
+
       const thumbnails = renderer.thumbnail?.thumbnails;
       const thumbnail =
         thumbnails && thumbnails.length > 0
@@ -1059,7 +1402,8 @@ export class YtMusicClient {
       recommendations.push({
         id: renderer.videoId,
         title,
-        artists: artists.length > 0 ? artists : ['Unknown Artist'],
+        artists: effectiveArtists,
+        album,
         durationMs,
         thumbnail,
       });

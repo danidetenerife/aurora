@@ -462,6 +462,14 @@ describe('musicVideoService', () => {
       expect(fullScore.titleScore).toBe(35);
       expect(fullScore.officialPhraseScore).toBe(35);
       expect(fullScore.totalScore).toBe(125);
+
+      const amateurCoverScore = scoreCandidate({
+        artist: 'The Weeknd',
+        cleanTitle: 'Blinding Lights',
+        vTitle: 'The Weeknd - Blinding Lights (por Pedrito de Cuenca)',
+        vChannel: 'Pedrito de Cuenca',
+      });
+      expect(amateurCoverScore.artistScore).toBe(0);
     });
   });
 });

@@ -287,4 +287,6 @@ export const usePlaylistStore = create<PlaylistStore>((set, get) => ({
 
 export const initializePlaylistStore = async (): Promise<void> => {
   await usePlaylistStore.getState().loadIndex();
+  const { index, loadPlaylist } = usePlaylistStore.getState();
+  await Promise.allSettled(index.map((entry) => loadPlaylist(entry.id)));
 };

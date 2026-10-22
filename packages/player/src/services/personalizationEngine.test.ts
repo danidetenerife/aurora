@@ -629,4 +629,43 @@ describe('personalization learning across devices', () => {
     });
     expect(mobile.isArtistSkippedInSession('Jam Band')).toBe(true);
   });
+
+  it('rejects amateur covers and SEO-spam chart artists from learning and recommendations', async () => {
+    const spamTrack: Track = {
+      title: 'Smells Like Teen Spirit',
+      source: { provider: 'youtube-music', id: 'spam-1' },
+      artists: [{ name: 'Billboard Top 100 Hits', roles: [] }],
+      durationMs: 240_000,
+    };
+    const coverTrack: Track = {
+      title: 'Blinding Lights (Acoustic Cover)',
+      source: { provider: 'youtube-music', id: 'cover-1' },
+      artists: [{ name: 'Pedrito de Cuenca', roles: [] }],
+      durationMs: 200_000,
+    };
+    const authenticTrack: Track = {
+      title: 'Blinding Lights',
+      source: { provider: 'youtube-music', id: 'auth-1' },
+      artists: [{ name: 'The Weeknd', roles: [] }],
+      durationMs: 200_000,
+    };
+
+    await mobile.recordPlay(spamTrack, true, 240_000);
+    await mobile.recordPlay(coverTrack, true, 200_000);
+    await mobile.recordPlay(authenticTrack, true, 200_000);
+
+    const topArtists = await mobile.getTopArtists();
+    expect(topArtists.map((artist) => artist.name)).toEqual(['The Weeknd']);
+
+    const ranked = mobile.scoreAndRankTracks(
+      [
+        { track: spamTrack, source: 'search' },
+        { track: coverTrack, source: 'search' },
+        { track: authenticTrack, source: 'topTracks' },
+      ],
+      topArtists,
+    );
+    expect(ranked).toHaveLength(1);
+    expect(ranked[0].artists[0].name).toBe('The Weeknd');
+  });
 });

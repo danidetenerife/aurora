@@ -19,22 +19,89 @@ const sessionTrackIds = new Set<string>();
 let isFetching = false;
 let activeFetchPromise: Promise<Track[]> | null = null;
 
-const getCanonicalTrackSignature = (track: Track): string => {
-  const primaryArtist = (track.artists?.[0]?.name ?? '')
+const normalizeDiscoveryText = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/\s+/g, ' ')
     .trim();
-  const normalizedTitle = (track.title ?? '')
+
+const SPAM_OR_AMATEUR_ARTIST_REGEX =
+  /\b(?:billboard|top\s*\d+|top\s+hits|best\s+music\s+hits|popular\s+songs|party\s+hits|chart\s+hits|workout\s+hits|tiktok\s+hits|viral\s+hits|karaoke|tribute|tributo|cover|covers|lullaby|ringtone|backing\s+track|in\s+the\s+style|made\s+famous|hit\s+crew|hit\s+nation|sound\s+alike|various\s+artists)\b/i;
+
+const AMATEUR_OR_COVER_TITLE_REGEX =
+  /\b(?:cover|covered\s+by|cover\s+by|karaoke|tribute|tributo|parody|parodia|8[\s-]*bit|nightcore|sped\s+up|slowed|reverb|bass\s+boosted|backing\s+track|piano\s+version|guitar\s+version|instrumental\s+version|version\s+acustica|mi\s+version|homenaje|imitacion|casero|ensayo|ringtone|lullaby\s+rendition|in\s+the\s+style\s+of|originally\s+performed\s+by|made\s+famous\s+by|spanglish|salsa\s+version|cumbia\s+version|bachata\s+version|reggae\s+version|type\s+beat)\b/i;
+
+const SPAM_COMPILATION_ALBUM_REGEX =
+  /\b(?:playlist\s*20\d\d|remix\s+compilation|party\s+hits|costume\s+halloween|karaoke|tribute|cover\s+versions?|in\s+the\s+style\s+of|made\s+famous\s+by|lullaby\s+renditions?|top\s+\d+\s+global\s+top\s+hits)\b/i;
+
+export const isAmateurOrCoverTrack = (track: {
+  title?: string;
+  artists?: Array<{ name?: string }>;
+  album?: { title?: string };
+}): boolean => {
+  const normalizedTitle = normalizeDiscoveryText(track.title ?? '');
+  if (normalizedTitle && AMATEUR_OR_COVER_TITLE_REGEX.test(normalizedTitle)) {
+    return true;
+  }
+  const normalizedAlbum = normalizeDiscoveryText(track.album?.title ?? '');
+  if (normalizedAlbum && SPAM_COMPILATION_ALBUM_REGEX.test(normalizedAlbum)) {
+    return true;
+  }
+  for (const artistEntry of track.artists ?? []) {
+    const normalizedArtist = normalizeDiscoveryText(artistEntry.name ?? '');
+    if (
+      normalizedArtist &&
+      (SPAM_OR_AMATEUR_ARTIST_REGEX.test(normalizedArtist) ||
+        /\bacoustic$/.test(normalizedArtist))
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const getCleanTitleOnly = (rawTitle?: string): string =>
+  (rawTitle ?? '')
     .toLowerCase()
     .replace(
-      /\s*[([](?:official\s*(?:music\s*)?(?:video|audio|lyric\s*video|visualizer)|lyric\s*video|visualizer|audio|video\s*oficial|hd|hq|4k|remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at\s*[^)\]]*)?)[)\]]/gi,
+      /\s*[([](?:official\s*(?:music\s*)?(?:video|audio|lyric\s*video|visualizer)|lyric\s*video|visualizer|audio|video\s*oficial|hd|hq|4k|remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at\s*[^)\]]*)?|acoustic|acustico|version|en\s+vivo|remix|edit|radio\s+edit|piano|guitar|instrumental)[)\]]/gi,
       '',
     )
     .replace(/\s*-\s*remaster(?:ed)?(?:\s*\d{4})?\b/gi, '')
     .replace(/\s*[([]?(?:feat\.?|ft\.?)\s+[^)\]]+[)\]]?/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
+
+const getCanonicalTrackSignature = (track: Track): string => {
+  const primaryArtist = (track.artists?.[0]?.name ?? '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+  const normalizedTitle = getCleanTitleOnly(track.title);
   return normalizedTitle ? `${primaryArtist}::${normalizedTitle}` : '';
+};
+
+const getCleanTitleKey = (track: Track): string => {
+  const normalizedTitle = getCleanTitleOnly(track.title);
+  return normalizedTitle.length >= 3 ? `title-only::${normalizedTitle}` : '';
+};
+
+const resolveProviderArtistId = (
+  providerId: string,
+  candidateId: string | undefined,
+  artistName: string,
+): string => {
+  if (
+    providerId.includes('youtube') &&
+    candidateId &&
+    !candidateId.startsWith('UC') &&
+    !candidateId.startsWith('FEmusic_')
+  ) {
+    return artistName;
+  }
+  return candidateId || artistName;
 };
 
 export const registerTrackInSet = (
@@ -53,6 +120,10 @@ export const registerTrackInSet = (
   if (signature) {
     targetSet.add(signature);
   }
+  const titleKey = getCleanTitleKey(track);
+  if (titleKey) {
+    targetSet.add(titleKey);
+  }
 };
 
 export const isTrackInSet = (track: Track, targetSet: Set<string>): boolean => {
@@ -66,6 +137,10 @@ export const isTrackInSet = (track: Track, targetSet: Set<string>): boolean => {
   }
   const signature = getCanonicalTrackSignature(track);
   if (signature && targetSet.has(signature)) {
+    return true;
+  }
+  const titleKey = getCleanTitleKey(track);
+  if (titleKey && targetSet.has(titleKey)) {
     return true;
   }
   return false;
@@ -134,7 +209,11 @@ export const getIntelligentAutoplayTracks = async (
       try {
         const resolved =
           await personalizationEngine.resolveArtistMetadata(artistName);
-        const artistId = resolved.spotifyUri || artistName;
+        const artistId = resolveProviderArtistId(
+          provider.id,
+          resolved.spotifyUri,
+          artistName,
+        );
 
         if (
           artistId &&
@@ -142,11 +221,15 @@ export const getIntelligentAutoplayTracks = async (
           provider.fetchArtistTopTracks
         ) {
           const related = await provider.fetchArtistRelatedArtists(artistId);
-          for (const relatedArtist of related.slice(0, 3)) {
-            const relatedId = relatedArtist.source?.id || relatedArtist.name;
+          for (const relatedArtist of (related ?? []).slice(0, 3)) {
+            const relatedId = resolveProviderArtistId(
+              provider.id,
+              relatedArtist.source?.id,
+              relatedArtist.name,
+            );
             if (relatedId) {
               const tracks = await provider.fetchArtistTopTracks(relatedId);
-              for (const trackRef of tracks.slice(0, 2)) {
+              for (const trackRef of (tracks ?? []).slice(0, 2)) {
                 candidates.push({
                   track: trackRefToTrack(trackRef),
                   source: 'related',
@@ -158,7 +241,7 @@ export const getIntelligentAutoplayTracks = async (
 
         if (artistId && provider.fetchArtistTopTracks) {
           const tracks = await provider.fetchArtistTopTracks(artistId);
-          for (const trackRef of tracks.slice(0, 3)) {
+          for (const trackRef of (tracks ?? []).slice(0, 3)) {
             candidates.push({
               track: trackRefToTrack(trackRef),
               source: 'topTracks',
@@ -166,24 +249,28 @@ export const getIntelligentAutoplayTracks = async (
           }
         }
       } catch {
-        // ignore
+        void 0;
       }
     }
 
     if (provider.fetchArtistTopTracks) {
       for (const topArtist of topArtists.slice(0, 3)) {
-        const artistId = topArtist.spotifyUri || topArtist.name;
+        const artistId = resolveProviderArtistId(
+          provider.id,
+          topArtist.spotifyUri,
+          topArtist.name,
+        );
         if (artistId) {
           try {
             const tracks = await provider.fetchArtistTopTracks(artistId);
-            for (const trackRef of tracks.slice(0, 3)) {
+            for (const trackRef of (tracks ?? []).slice(0, 3)) {
               candidates.push({
                 track: trackRefToTrack(trackRef),
                 source: 'topTracks',
               });
             }
           } catch {
-            // ignore
+            void 0;
           }
         }
       }
@@ -245,17 +332,44 @@ export const getIntelligentAutoplayTracks = async (
             }
           }
         } catch {
-          // ignore
+          void 0;
         }
       }
     }
 
+    const knownTitleToArtist = new Map<string, string>();
+    for (const refTrack of [...contextTracks, ...seedTracks]) {
+      const cleanRefTitle = getCleanTitleOnly(refTrack.title);
+      const refArtist = normalizeDiscoveryText(
+        refTrack.artists?.[0]?.name ?? '',
+      );
+      if (cleanRefTitle.length >= 3 && refArtist) {
+        knownTitleToArtist.set(cleanRefTitle, refArtist);
+      }
+    }
+
     const filtered = candidates.filter(({ track }) => {
+      if (isAmateurOrCoverTrack(track)) {
+        return false;
+      }
       if (
         isTrackInSet(track, sessionTrackIds) ||
         isTrackInSet(track, existingQueueIds)
       ) {
         return false;
+      }
+      const cleanCandidateTitle = getCleanTitleOnly(track.title);
+      const knownOriginalArtist =
+        cleanCandidateTitle.length >= 3
+          ? knownTitleToArtist.get(cleanCandidateTitle)
+          : undefined;
+      if (knownOriginalArtist) {
+        const candidateArtist = normalizeDiscoveryText(
+          track.artists?.[0]?.name ?? '',
+        );
+        if (candidateArtist && candidateArtist !== knownOriginalArtist) {
+          return false;
+        }
       }
       if (blacklist.tracks.includes(track.source?.id || '')) {
         return false;
@@ -372,6 +486,9 @@ export const ensureUpcomingTracks = async (
           ]);
 
           const filteredRaw = rawRecommendations.filter((trackItem) => {
+            if (isAmateurOrCoverTrack(trackItem)) {
+              return false;
+            }
             if (
               isTrackInSet(trackItem, sessionTrackIds) ||
               isTrackInSet(trackItem, existingQueueIds)

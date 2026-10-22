@@ -2,6 +2,7 @@ import type { Track } from '@aurora/model';
 
 import {
   getIntelligentAutoplayTracks,
+  isAmateurOrCoverTrack,
   isTrackInSet,
   registerTrackInSet,
   resetDiscoverySession,
@@ -240,6 +241,9 @@ export const replenishTvQueue = async (urgent = false): Promise<Track[]> => {
           );
 
           const filteredSearch = searchResults.filter((track) => {
+            if (isAmateurOrCoverTrack?.(track)) {
+              return false;
+            }
             const artistName = (track.artists?.[0]?.name ?? '')
               .toLowerCase()
               .trim();

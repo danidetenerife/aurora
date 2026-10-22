@@ -2,7 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { AuroraPluginAPI, YtdlpStreamInfo } from '@aurora/plugin-sdk';
 
-import { parseDurationToMs, YtMusicClient } from './client';
+import {
+  isLowQualityOrAmateurSong,
+  parseDurationToMs,
+  YtMusicClient,
+} from './client';
 import {
   createDashboardProvider,
   DASHBOARD_PROVIDER_ID,
@@ -41,6 +45,33 @@ describe('parseDurationToMs', () => {
     expect(parseDurationToMs(undefined)).toBeUndefined();
     expect(parseDurationToMs('invalid')).toBeUndefined();
     expect(parseDurationToMs('1:2:3:4')).toBeUndefined();
+  });
+
+  it('rejects amateur covers, karaoke, and SEO-spam chart artists', () => {
+    expect(
+      isLowQualityOrAmateurSong(
+        'Smells Like Teen Spirit',
+        ['Billboard Top 100 Hits'],
+        'Costume Halloween Party Hits',
+        'Billboard Hits',
+      ),
+    ).toBe(true);
+    expect(
+      isLowQualityOrAmateurSong(
+        'Blinding Lights',
+        ['Pedrito de Cuenca'],
+        undefined,
+        'Blinding Lights The Weeknd',
+      ),
+    ).toBe(true);
+    expect(
+      isLowQualityOrAmateurSong(
+        'Blinding Lights',
+        ['The Weeknd'],
+        'After Hours',
+        'Blinding Lights The Weeknd',
+      ),
+    ).toBe(false);
   });
 });
 
