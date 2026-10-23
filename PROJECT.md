@@ -29,7 +29,7 @@
 |---|------|-------|-------------|--------|
 | M1 | Strict Official Video & Anti-Subtitle Filtering | `musicVideoService.ts`, tests, `TvVideoPlayer.tsx` embed params | none | DONE |
 | M2 | Playback Synchronization & Anti-Premature Skip | `tvStore.ts`, `TvSoundProvider.tsx`, `TvVideoPlayer.tsx`, tests | M1 | DONE |
-| M3 | Quality Gates, Changelog & Release Delivery | `changelog.json`, quality gates, `build-and-publish.ps1` | M1, M2 | IN_PROGRESS |
+| M3 | Quality Gates, Changelog & Release Delivery | `changelog.json`, quality gates, `build-and-publish.ps1` | M1, M2 | DONE |
 
 ## Interface Contracts
 ### `musicVideoService.ts` ↔ `TvVideoPlayer.tsx`

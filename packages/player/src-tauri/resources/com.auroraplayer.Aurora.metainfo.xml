@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.78" date="2026-10-23">
+      <description>
+        <p>Release 1.48.78: Bloqueo total de videoclips de personas particulares en Google TV: exige que el canal con insignia de artista o verificado coincida exactamente con el artista de la canción (doesChannelMatchArtist), impidiendo que canales personales con nombres similares, falsas coincidencias parciales con sellos ('emi', 'rca') o músicos particulares ajenos al tema superen el filtro; amplía el rechazo de ruido a grabaciones en directo de público ('en vivo', 'live', 'concierto', 'fancam', 'coreografía', 'letra') y descarta en YouTube Music cualquier vídeo subido por usuarios particulares que muestre contador de visualizaciones en lugar de álbum oficial.</p>
+      </description>
+    </release>
+
     <release version="1.48.77" date="2026-10-23">
       <description>
         <p>Release 1.48.77: Filtrado estricto de videoclips oficiales en Google TV y corrección de salto prematuro de canciones: restringe la reproducción de videoclips exclusivamente a canales oficiales verificados (YouTube Verified Artist / insignia de artista oficial, canales VEVO y sellos discográficos reconocidos), bloqueando taxativamente subidas de terceros o canales de fans aunque incluyan 'Official Video' en el título; descarta vídeos con subtítulos incrustados o traducidos ('sub español', 'subtitulado', 'con letra', 'lyrics', 'lyric video', etc.), resubidas en baja resolución ('240p', '360p', '480p', 'reupload') y versiones cover/tributo, forzando cc_load_policy=0 y resolución HD en el reproductor embebido con transición limpia a carátula de audio cuando no exista videoclip verificado; y elimina el salto prematuro de pista en TvSoundProvider y TvVideoPlayer evitando que la finalización del flujo de audio en segundo plano corte el videoclip antes de que termine, supeditando el avance de cola únicamente a la finalización real del reproductor de YouTube.</p>

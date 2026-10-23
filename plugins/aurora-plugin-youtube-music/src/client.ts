@@ -445,7 +445,10 @@ export class YtMusicClient {
             ?.browseEndpointContextSupportedConfigs
             ?.browseEndpointContextMusicConfig?.pageType;
 
-        if (pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL') {
+        if (
+          pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL' ||
+          /\b(?:views|vistas|visualizaciones)\b/i.test(run.text)
+        ) {
           isUserChannelUpload = true;
         } else if (pageType === 'MUSIC_PAGE_TYPE_ARTIST') {
           artists.push(run.text);
@@ -1050,7 +1053,10 @@ export class YtMusicClient {
           run.navigationEndpoint?.browseEndpoint
             ?.browseEndpointContextSupportedConfigs
             ?.browseEndpointContextMusicConfig?.pageType;
-        if (pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL') {
+        if (
+          pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL' ||
+          /\b(?:views|vistas|visualizaciones)\b/i.test(text)
+        ) {
           isUserChannelUpload = true;
         } else if (pageType === 'MUSIC_PAGE_TYPE_ALBUM') {
           album = text;
@@ -1059,7 +1065,6 @@ export class YtMusicClient {
           text !== '•' &&
           text.toLowerCase() !== 'song' &&
           text.toLowerCase() !== 'video' &&
-          !/^\d+(?:\.\d+)?[kmb]?\s*views$/i.test(text) &&
           !/^\d+:\d+(:\d+)?$/.test(text)
         ) {
           artists.push(text);
@@ -1350,7 +1355,10 @@ export class YtMusicClient {
           run.navigationEndpoint?.browseEndpoint
             ?.browseEndpointContextSupportedConfigs
             ?.browseEndpointContextMusicConfig?.pageType;
-        if (pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL') {
+        if (
+          pageType === 'MUSIC_PAGE_TYPE_USER_CHANNEL' ||
+          /\b(?:views|vistas|visualizaciones)\b/i.test(text)
+        ) {
           isUserChannelUpload = true;
         } else if (pageType === 'MUSIC_PAGE_TYPE_ALBUM') {
           album = text;
@@ -1358,7 +1366,6 @@ export class YtMusicClient {
           text &&
           text !== '•' &&
           artists.length === 0 &&
-          !/^\d+(?:\.\d+)?[kmb]?\s*views$/i.test(text) &&
           !/^\d+:\d+(:\d+)?$/.test(text)
         ) {
           artists.push(text);

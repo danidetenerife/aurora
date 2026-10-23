@@ -777,6 +777,49 @@ describe('musicVideoService', () => {
           vChannel: '',
         }),
       ).toBe(false);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Shakira',
+          vChannel: 'Carlos Gomez',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+                icon: { iconType: 'OFFICIAL_ARTIST_BADGE' },
+              },
+            },
+          ],
+        }),
+      ).toBe(false);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Shakira',
+          vChannel: 'Emir Abdul Gani',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                style: 'BADGE_STYLE_TYPE_VERIFIED',
+              },
+            },
+          ],
+        }),
+      ).toBe(false);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Shakira',
+          vChannel: 'Shakira Snowy Wolf',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                style: 'BADGE_STYLE_TYPE_VERIFIED',
+              },
+            },
+          ],
+        }),
+      ).toBe(false);
     });
   });
 
