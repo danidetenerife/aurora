@@ -7,9 +7,13 @@ import {
   cleanTrackTitle,
   hasNoiseTerms,
   isNoiseMatch,
+  isOfficialChannel,
   MIN_CONFIDENCE_SCORE,
   musicVideoService,
+  NOISE_TERMS,
+  NON_EXEMPT_NOISE_TERMS,
   parseDurationToSeconds,
+  RECORD_LABELS,
   scoreCandidate,
 } from './musicVideoService';
 
@@ -119,6 +123,81 @@ describe('musicVideoService', () => {
           'Levitating',
         ),
       ).toBe(true);
+    });
+
+    it('contains required noise terms, non-exempt terms, and official record labels', () => {
+      const requiredNoiseTerms = [
+        'sub español',
+        'sub espanol',
+        'subtitulado',
+        'subtitulada',
+        'subtitulos',
+        'subtítulos',
+        'subtitulo',
+        'subtítulo',
+        'subtitles',
+        'subtitle',
+        'con letra',
+        'con letras',
+        'lyrics',
+        'lyric video',
+        'lyric',
+        'traducida',
+        'traducido',
+        'traducción',
+        'traduccion',
+        'subbed',
+        'cc',
+        '240p',
+        '360p',
+        '480p',
+        'reupload',
+        're upload',
+        'resubido',
+        'resubida',
+        'fan made',
+        'fanmade',
+        'no oficial',
+        'unofficial',
+        'covers',
+        'tributes',
+      ];
+      for (const term of requiredNoiseTerms) {
+        expect(NOISE_TERMS).toContain(term);
+        expect(NON_EXEMPT_NOISE_TERMS.has(term)).toBe(true);
+      }
+
+      const requiredLabels = [
+        'hybe',
+        'sm entertainment',
+        'smtown',
+        'yg entertainment',
+        'jyp',
+        'geffen',
+        'polydor',
+        'astralwerks',
+        'motown',
+        'emi',
+        'century media',
+        'nuclear blast',
+        'roadrunner',
+        'hopeless records',
+        'epitaph',
+        'rough trade',
+        'domino recording',
+        '4ad',
+        'xl recordings',
+        'warp records',
+        'ninja tune',
+        'pias',
+        'sony entertainment',
+        'universal music',
+        'warner music',
+        'warner records',
+      ];
+      for (const label of requiredLabels) {
+        expect(RECORD_LABELS).toContain(label);
+      }
     });
   });
 
@@ -470,6 +549,432 @@ describe('musicVideoService', () => {
         vChannel: 'Pedrito de Cuenca',
       });
       expect(amateurCoverScore.artistScore).toBe(0);
+    });
+  });
+
+  describe('strict official channel gating (R1)', () => {
+    const baseTrack: Track = {
+      title: 'Levitating',
+      artists: [{ name: 'Dua Lipa', roles: [] }],
+      source: { provider: 'test', id: 'track-lev' },
+      durationMs: 203000,
+    };
+
+    it('rejects unverified third-party channels with matching song/artist and "Official Video" in title', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'third-party-fake-official',
+            title: 'Dua Lipa - Levitating (Official Video)',
+            channelTitle: 'RandomMusicFan99',
+            durationText: '3:25',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('rejects generic verified channels that do not match the track artist or record labels', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'gamer-verified-channel',
+            title: 'Dua Lipa - Levitating (Official Music Video)',
+            channelTitle: 'GamerVloggerVerified',
+            durationText: '3:25',
+            ownerBadges: [
+              {
+                metadataBadgeRenderer: {
+                  style: 'BADGE_STYLE_TYPE_VERIFIED',
+                },
+              },
+            ],
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('accepts channels with Official Artist Badge (OFFICIAL_ARTIST_BADGE)', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'official-badge-vid',
+            title: 'Dua Lipa - Levitating (Official Music Video)',
+            channelTitle: 'Dua Lipa',
+            durationText: '3:25',
+            ownerBadges: [
+              {
+                metadataBadgeRenderer: {
+                  icon: { iconType: 'OFFICIAL_ARTIST_BADGE' },
+                },
+              },
+            ],
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).not.toBeNull();
+      expect(result?.videoId).toBe('official-badge-vid');
+    });
+
+    it('accepts channels with BADGE_STYLE_TYPE_VERIFIED_ARTIST', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'verified-artist-vid',
+            title: 'Dua Lipa - Levitating (Official Video)',
+            channelTitle: 'Dua Lipa',
+            durationText: '3:25',
+            ownerBadges: [
+              {
+                metadataBadgeRenderer: {
+                  style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+                },
+              },
+            ],
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).not.toBeNull();
+      expect(result?.videoId).toBe('verified-artist-vid');
+    });
+
+    it('accepts channels with VEVO suffix', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'vevo-official-vid',
+            title: 'Dua Lipa - Levitating (Official Video)',
+            channelTitle: 'DuaLipaVEVO',
+            durationText: '3:25',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).not.toBeNull();
+      expect(result?.videoId).toBe('vevo-official-vid');
+    });
+
+    it('accepts uploads from recognized major and indie record labels', async () => {
+      const labelsToTest = [
+        { labelName: 'Warner Records', videoId: 'wr-vid-1' },
+        { labelName: 'HYBE LABELS', videoId: 'hybe-vid-1' },
+        { labelName: 'SMTOWN', videoId: 'smtown-vid-1' },
+        { labelName: 'Nuclear Blast Records', videoId: 'nb-vid-1' },
+        { labelName: 'Century Media Records', videoId: 'cm-vid-1' },
+        { labelName: 'XL Recordings', videoId: 'xl-vid-1' },
+      ];
+
+      for (const { labelName, videoId } of labelsToTest) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId,
+              title: 'Dua Lipa - Levitating (Official Video)',
+              channelTitle: labelName,
+              durationText: '3:25',
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).not.toBeNull();
+        expect(result?.videoId).toBe(videoId);
+      }
+    });
+
+    it('evaluates isOfficialChannel helper correctly across badge, vevo, label, and unverified scenarios', () => {
+      expect(
+        isOfficialChannel({
+          artist: 'Dua Lipa',
+          vChannel: 'Dua Lipa',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                icon: { iconType: 'OFFICIAL_ARTIST_BADGE' },
+              },
+            },
+          ],
+        }),
+      ).toBe(true);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Dua Lipa',
+          vChannel: 'Dua Lipa',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+              },
+            },
+          ],
+        }),
+      ).toBe(true);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Dua Lipa',
+          vChannel: 'Dua Lipa',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                style: 'BADGE_STYLE_TYPE_VERIFIED',
+              },
+            },
+          ],
+        }),
+      ).toBe(true);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Dua Lipa',
+          vChannel: 'DuaLipaVEVO',
+        }),
+      ).toBe(true);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Twenty One Pilots',
+          vChannel: 'Fueled By Ramen',
+        }),
+      ).toBe(true);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Radiohead',
+          vChannel: 'RandomUser123',
+        }),
+      ).toBe(false);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Radiohead',
+          vChannel: 'GamerVerified',
+          ownerBadges: [
+            {
+              metadataBadgeRenderer: {
+                style: 'BADGE_STYLE_TYPE_VERIFIED',
+              },
+            },
+          ],
+        }),
+      ).toBe(false);
+
+      expect(
+        isOfficialChannel({
+          artist: 'Radiohead',
+          vChannel: '',
+        }),
+      ).toBe(false);
+    });
+  });
+
+  describe('anti-subtitle, translation, and lyric filtering (R1)', () => {
+    const baseTrack: Track = {
+      title: 'Levitating',
+      artists: [{ name: 'Dua Lipa', roles: [] }],
+      source: { provider: 'test', id: 'track-anti-sub' },
+      durationMs: 203000,
+    };
+
+    it('rejects videos with Spanish subtitle markers', async () => {
+      const subtitleTitles = [
+        'Dua Lipa - Levitating (Sub Español)',
+        'Dua Lipa - Levitating (Sub Espanol)',
+        'Dua Lipa - Levitating (Subtitulado)',
+        'Dua Lipa - Levitating (Subtitulada)',
+        'Dua Lipa - Levitating (Subtitulos)',
+        'Dua Lipa - Levitating (Subtítulos)',
+        'Dua Lipa - Levitating (Subtitulo)',
+        'Dua Lipa - Levitating (Subtítulo)',
+        'Dua Lipa - Levitating (Subtitles)',
+        'Dua Lipa - Levitating (Subtitle)',
+      ];
+
+      for (const title of subtitleTitles) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'sub-vid-reject',
+              title,
+              channelTitle: 'Dua Lipa',
+              durationText: '3:25',
+              ownerBadges: [
+                {
+                  metadataBadgeRenderer: {
+                    style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+                  },
+                },
+              ],
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
+    });
+
+    it('rejects videos with lyric and letra markers', async () => {
+      const lyricTitles = [
+        'Dua Lipa - Levitating [Lyrics]',
+        'Dua Lipa - Levitating (Official Lyric Video)',
+        'Dua Lipa - Levitating (Lyric)',
+        'Dua Lipa - Levitating (Con Letra)',
+        'Dua Lipa - Levitating (Con Letras)',
+      ];
+
+      for (const title of lyricTitles) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'lyric-vid-reject',
+              title,
+              channelTitle: 'Dua Lipa',
+              durationText: '3:25',
+              ownerBadges: [
+                {
+                  metadataBadgeRenderer: {
+                    icon: { iconType: 'OFFICIAL_ARTIST_BADGE' },
+                  },
+                },
+              ],
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
+    });
+
+    it('rejects videos with translation and closed-caption markers', async () => {
+      const translationTitles = [
+        'Dua Lipa - Levitating (Traducida)',
+        'Dua Lipa - Levitating (Traducido)',
+        'Dua Lipa - Levitating (Traducción)',
+        'Dua Lipa - Levitating (Traduccion)',
+        'Dua Lipa - Levitating (Subbed)',
+        'Dua Lipa - Levitating [cc]',
+        'Dua Lipa - Levitating (CC)',
+      ];
+
+      for (const title of translationTitles) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'translation-vid-reject',
+              title,
+              channelTitle: 'Dua Lipa',
+              durationText: '3:25',
+              ownerBadges: [
+                {
+                  metadataBadgeRenderer: {
+                    style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+                  },
+                },
+              ],
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
+    });
+  });
+
+  describe('low-resolution and fan upload filtering (R1)', () => {
+    const baseTrack: Track = {
+      title: 'Levitating',
+      artists: [{ name: 'Dua Lipa', roles: [] }],
+      source: { provider: 'test', id: 'track-lowres' },
+      durationMs: 203000,
+    };
+
+    it('rejects low-resolution tag uploads', async () => {
+      const lowResTitles = [
+        'Dua Lipa - Levitating [240p]',
+        'Dua Lipa - Levitating [360p]',
+        'Dua Lipa - Levitating [480p]',
+      ];
+
+      for (const title of lowResTitles) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'lowres-vid-reject',
+              title,
+              channelTitle: 'Dua Lipa',
+              durationText: '3:25',
+              ownerBadges: [
+                {
+                  metadataBadgeRenderer: {
+                    style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+                  },
+                },
+              ],
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
+    });
+
+    it('rejects fan reuploads and unauthorized uploads', async () => {
+      const fanTitles = [
+        'Dua Lipa - Levitating (Reupload)',
+        'Dua Lipa - Levitating (Re Upload)',
+        'Dua Lipa - Levitating (Resubido)',
+        'Dua Lipa - Levitating (Resubida)',
+        'Dua Lipa - Levitating (Fan Made)',
+        'Dua Lipa - Levitating (Fanmade)',
+        'Dua Lipa - Levitating (No Oficial)',
+        'Dua Lipa - Levitating (Unofficial)',
+        'Dua Lipa - Levitating (Covers)',
+        'Dua Lipa - Levitating (Tributes)',
+      ];
+
+      for (const title of fanTitles) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'fan-vid-reject',
+              title,
+              channelTitle: 'Dua Lipa',
+              durationText: '3:25',
+              ownerBadges: [
+                {
+                  metadataBadgeRenderer: {
+                    style: 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',
+                  },
+                },
+              ],
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
     });
   });
 });

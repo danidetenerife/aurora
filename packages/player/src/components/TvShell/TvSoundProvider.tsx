@@ -53,13 +53,15 @@ export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
   const status = useSoundStore((state) => state.status);
   const targetSeek = useSoundStore((state) => state.targetSeek);
   const isVideoPlaying = useTvStore((state) => state.isVideoPlaying);
+  const targetVideoId = useTvStore((state) => state.targetVideoId);
+  const isVideoActive = isVideoPlaying || Boolean(targetVideoId);
   const crossfadeMs = 0;
   const mediaSource = src;
   const preload: HTMLAudioElement['preload'] = 'auto';
   const crossOrigin = undefined;
   const [volume01] = useCoreSetting<number>('playback.volume');
   const [muted] = useCoreSetting<boolean>('playback.muted');
-  const volumePercent = isVideoPlaying
+  const volumePercent = isVideoActive
     ? 0
     : muted
       ? 0
@@ -83,6 +85,13 @@ export const TvSoundProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const handleEnd = useCallback(() => {
+    const { showVideo, isVideoPlaying, targetVideoId } = useTvStore.getState();
+    if (showVideo && (isVideoPlaying || Boolean(targetVideoId))) {
+      Logger.streaming.info(
+        'TvSoundProvider: Background audio ended while music video is active; deferring track advance to video player',
+      );
+      return;
+    }
     playbackManager.finishTrack();
   }, []);
 

@@ -173,5 +173,160 @@ describe('TvVideoPlayer', () => {
 
     expect(useTvStore.getState().isVideoPlaying).toBe(false);
     expect(useTvStore.getState().showVideo).toBe(false);
+    expect(useTvStore.getState().targetVideoId).toBe(null);
+  });
+
+  it('advances track when onStateChange info: 0 is received from active iframe', async () => {
+    vi.mocked(musicVideoService.findOfficialVideo).mockResolvedValueOnce({
+      videoId: 'officialVid123',
+      title: 'Radiohead - Paranoid Android (Official Video)',
+      channelTitle: 'Radiohead',
+      score: 125,
+    });
+
+    const mockTrack: Track = {
+      title: 'Paranoid Android',
+      artists: [{ name: 'Radiohead', roles: [] }],
+      source: { provider: 'test', id: 'rh-1' },
+    };
+
+    render(<TvVideoPlayer track={mockTrack} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTitle('Radiohead - Paranoid Android (Official Video)'),
+      ).toBeInTheDocument();
+    });
+
+    const iframe = screen.getByTitle(
+      'Radiohead - Paranoid Android (Official Video)',
+    ) as HTMLIFrameElement;
+    expect(useTvStore.getState().targetVideoId).toBe('officialVid123');
+
+    const messageEvent = new MessageEvent('message', {
+      data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+      source: iframe.contentWindow,
+    });
+    window.dispatchEvent(messageEvent);
+
+    await waitFor(() => {
+      expect(playbackManager.finishTrack).toHaveBeenCalledTimes(1);
+    });
+
+    expect(useTvStore.getState().isVideoPlaying).toBe(false);
+  });
+
+  it('guards against duplicate info: 0 messages from active iframe so finishTrack is only called once', async () => {
+    vi.mocked(musicVideoService.findOfficialVideo).mockResolvedValueOnce({
+      videoId: 'officialVid123',
+      title: 'Radiohead - Paranoid Android (Official Video)',
+      channelTitle: 'Radiohead',
+      score: 125,
+    });
+
+    const mockTrack: Track = {
+      title: 'Paranoid Android',
+      artists: [{ name: 'Radiohead', roles: [] }],
+      source: { provider: 'test', id: 'rh-1' },
+    };
+
+    render(<TvVideoPlayer track={mockTrack} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTitle('Radiohead - Paranoid Android (Official Video)'),
+      ).toBeInTheDocument();
+    });
+
+    const iframe = screen.getByTitle(
+      'Radiohead - Paranoid Android (Official Video)',
+    ) as HTMLIFrameElement;
+
+    const messageEvent1 = new MessageEvent('message', {
+      data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+      source: iframe.contentWindow,
+    });
+    const messageEvent2 = new MessageEvent('message', {
+      data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+      source: iframe.contentWindow,
+    });
+    const messageEvent3 = new MessageEvent('message', {
+      data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+      source: iframe.contentWindow,
+    });
+
+    window.dispatchEvent(messageEvent1);
+    window.dispatchEvent(messageEvent2);
+    window.dispatchEvent(messageEvent3);
+
+    await waitFor(() => {
+      expect(playbackManager.finishTrack).toHaveBeenCalledTimes(1);
+    });
+
+    expect(playbackManager.finishTrack).not.toHaveBeenCalledTimes(2);
+  });
+
+  it('ignores message events originating from invalid sources or window instead of iframe', async () => {
+    vi.mocked(musicVideoService.findOfficialVideo).mockResolvedValueOnce({
+      videoId: 'officialVid123',
+      title: 'Radiohead - Paranoid Android (Official Video)',
+      channelTitle: 'Radiohead',
+      score: 125,
+    });
+
+    const mockTrack: Track = {
+      title: 'Paranoid Android',
+      artists: [{ name: 'Radiohead', roles: [] }],
+      source: { provider: 'test', id: 'rh-1' },
+    };
+
+    render(<TvVideoPlayer track={mockTrack} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByTitle('Radiohead - Paranoid Android (Official Video)'),
+      ).toBeInTheDocument();
+    });
+
+    const eventFromWindow = new MessageEvent('message', {
+      data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+      source: window,
+    });
+    window.dispatchEvent(eventFromWindow);
+
+    const eventWithoutSource = new MessageEvent('message', {
+      data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+      source: null,
+    });
+    window.dispatchEvent(eventWithoutSource);
+
+    expect(playbackManager.finishTrack).not.toHaveBeenCalled();
+    expect(useTvStore.getState().isVideoPlaying).toBe(true);
+  });
+
+  it('synchronizes targetVideoId in useTvStore on resolution, and clears it on unmount', async () => {
+    vi.mocked(musicVideoService.findOfficialVideo).mockResolvedValueOnce({
+      videoId: 'syncVid777',
+      title: 'Radiohead - Paranoid Android (Official Video)',
+      channelTitle: 'Radiohead',
+      score: 125,
+    });
+
+    const mockTrack: Track = {
+      title: 'Paranoid Android',
+      artists: [{ name: 'Radiohead', roles: [] }],
+      source: { provider: 'test', id: 'rh-1' },
+    };
+
+    const { unmount } = render(<TvVideoPlayer track={mockTrack} />);
+
+    await waitFor(() => {
+      expect(useTvStore.getState().targetVideoId).toBe('syncVid777');
+    });
+
+    unmount();
+
+    expect(useTvStore.getState().targetVideoId).toBe(null);
+    expect(useTvStore.getState().isVideoPlaying).toBe(false);
   });
 });

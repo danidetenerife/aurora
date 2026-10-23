@@ -84,6 +84,12 @@
   </requires>
 
   <releases>
+    <release version="1.48.77" date="2026-10-23">
+      <description>
+        <p>Release 1.48.77: Filtrado estricto de videoclips oficiales en Google TV y corrección de salto prematuro de canciones: restringe la reproducción de videoclips exclusivamente a canales oficiales verificados (YouTube Verified Artist / insignia de artista oficial, canales VEVO y sellos discográficos reconocidos), bloqueando taxativamente subidas de terceros o canales de fans aunque incluyan 'Official Video' en el título; descarta vídeos con subtítulos incrustados o traducidos ('sub español', 'subtitulado', 'con letra', 'lyrics', 'lyric video', etc.), resubidas en baja resolución ('240p', '360p', '480p', 'reupload') y versiones cover/tributo, forzando cc_load_policy=0 y resolución HD en el reproductor embebido con transición limpia a carátula de audio cuando no exista videoclip verificado; y elimina el salto prematuro de pista en TvSoundProvider y TvVideoPlayer evitando que la finalización del flujo de audio en segundo plano corte el videoclip antes de que termine, supeditando el avance de cola únicamente a la finalización real del reproductor de YouTube.</p>
+      </description>
+    </release>
+
     <release version="1.48.76" date="2026-10-22">
       <description>
         <p>Release 1.48.76: Blindaje antispam y anticovers en Google TV, listas y motor de aprendizaje: elimina por completo canciones amateur, covers de terceros, tributos, karaokes y compilaciones falsas de posicionamiento SEO (como 'Billboard Top 100 Hits' o 'Popular Songs & Best Music Hits') tanto en búsquedas y listas como en el historial de aprendizaje y la cola infinita; redirige las consultas de listas de éxitos (Billboard Hits, Today's Top Hits, Top 50 Global, Viva Latino, etc.) a listas editoriales oficiales de YouTube Music con temas 100% originales; bloquea en la cola y en las recomendaciones cualquier cover de una canción ya presente por otro artista; precarga todas las listas guardadas al iniciar para aprender de inmediato de tus artistas reales; y exige canales verificados, VEVO o sellos oficiales en el selector de videoclips.</p>

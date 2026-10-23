@@ -972,4 +972,221 @@ describe('musicVideoService — Empirical Adversarial Challenge Suite', () => {
       );
     });
   });
+
+  describe('Adversarial Channel Verification Gating (R1)', () => {
+    const baseTrack: Track = {
+      title: 'Blinding Lights',
+      artists: [{ name: 'The Weeknd', roles: [] }],
+      source: { provider: 'test', id: 'track-emp-1' },
+      durationMs: 200000,
+    };
+
+    it('rejects deceptive channels that put "VEVO" or artist names in channel title without true VEVO or verification badges', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'fake-vevo-vid',
+            title: 'The Weeknd - Blinding Lights (Official Video)',
+            channelTitle: 'The Weeknd Fake VEVO Fanpage',
+            durationText: '3:20',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('rejects channels with unicode checkmarks or check symbols in text when ownerBadges are absent', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'unicode-check-vid',
+            title: 'The Weeknd - Blinding Lights (Official Music Video)',
+            channelTitle: 'The Weeknd ✔',
+            durationText: '3:20',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('rejects unverified uploads even when candidate video has 100% song and artist match and exact duration', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'perfect-match-unverified',
+            title: 'The Weeknd - Blinding Lights (Official Video)',
+            channelTitle: 'MusicLoversReuploadArchive',
+            durationText: '3:20',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('accepts authentic verified channels across diverse major and indie labels', async () => {
+      const indieLabels = [
+        { labelName: 'Geffen Records', videoId: 'geffen-vid' },
+        { labelName: 'Polydor Records', videoId: 'polydor-vid' },
+        { labelName: 'Astralwerks', videoId: 'astralwerks-vid' },
+        { labelName: 'Motown Records', videoId: 'motown-vid' },
+        { labelName: 'EMI Music', videoId: 'emi-vid' },
+        { labelName: 'Roadrunner Records', videoId: 'roadrunner-vid' },
+        { labelName: 'Hopeless Records', videoId: 'hopeless-vid' },
+        { labelName: 'Epitaph Records', videoId: 'epitaph-vid' },
+        { labelName: 'Rough Trade Records', videoId: 'roughtrade-vid' },
+        { labelName: 'Domino Recording Company', videoId: 'domino-vid' },
+        { labelName: '4AD', videoId: '4ad-vid' },
+        { labelName: 'Warp Records', videoId: 'warp-vid' },
+        { labelName: 'Ninja Tune', videoId: 'ninjatune-vid' },
+        { labelName: 'PIAS', videoId: 'pias-vid' },
+        { labelName: 'Sony Entertainment', videoId: 'sony-ent-vid' },
+        { labelName: 'Universal Music Group', videoId: 'umg-vid' },
+      ];
+
+      for (const { labelName, videoId } of indieLabels) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId,
+              title: 'The Weeknd - Blinding Lights (Official Video)',
+              channelTitle: labelName,
+              durationText: '3:20',
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).not.toBeNull();
+        expect(result?.videoId).toBe(videoId);
+      }
+    });
+  });
+
+  describe('Adversarial Subtitle and Noise Injections (R1)', () => {
+    const baseTrack: Track = {
+      title: 'Blinding Lights',
+      artists: [{ name: 'The Weeknd', roles: [] }],
+      source: { provider: 'test', id: 'track-emp-2' },
+      durationMs: 200000,
+    };
+
+    it('rejects complex composite subtitle titles like "(Official Video) [Sub Español + Lyrics]"', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'composite-sub-vid',
+            title:
+              'The Weeknd - Blinding Lights (Official Video) [Sub Español + Lyrics]',
+            channelTitle: 'TheWeekndVEVO',
+            durationText: '3:20',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('rejects translated and subtitled variations with bracket combinations like "[Traducida al Español] (CC)"', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'composite-trad-vid',
+            title: 'The Weeknd - Blinding Lights [Traducida al Español] (CC)',
+            channelTitle: 'TheWeekndVEVO',
+            durationText: '3:20',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+
+    it('rejects low resolution tags disguised inside official phrases like "Official Video [480p]" and "Video Oficial 240p"', async () => {
+      const lowResDisguised = [
+        'The Weeknd - Blinding Lights Official Video [480p]',
+        'The Weeknd - Blinding Lights Video Oficial 240p',
+        'The Weeknd - Blinding Lights [360p HQ] Official',
+      ];
+
+      for (const title of lowResDisguised) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'lowres-disguised-vid',
+              title,
+              channelTitle: 'TheWeekndVEVO',
+              durationText: '3:20',
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
+    });
+
+    it('rejects fan re-uploads disguised as official like "Official Video (Reupload 2024)" and "Resubido en HD"', async () => {
+      const fanDisguised = [
+        'The Weeknd - Blinding Lights Official Video (Reupload 2024)',
+        'The Weeknd - Blinding Lights (Resubido en HD)',
+        'The Weeknd - Blinding Lights (Fan Made Clip)',
+        'The Weeknd - Blinding Lights (No Oficial)',
+      ];
+
+      for (const title of fanDisguised) {
+        musicVideoService.clearCache();
+        vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+          createSearchResponse([
+            {
+              videoId: 'fan-disguised-vid',
+              title,
+              channelTitle: 'TheWeekndVEVO',
+              durationText: '3:20',
+            },
+          ]),
+        );
+
+        const result = await musicVideoService.findOfficialVideo(baseTrack);
+        expect(result).toBeNull();
+      }
+    });
+
+    it('cleanly returns null when all search results for a track are noise or unofficial', async () => {
+      vi.mocked(httpHost.fetch).mockResolvedValueOnce(
+        createSearchResponse([
+          {
+            videoId: 'noise-vid-1',
+            title: 'The Weeknd - Blinding Lights (Lyrics Video)',
+            channelTitle: 'TheWeekndVEVO',
+            durationText: '3:20',
+          },
+          {
+            videoId: 'noise-vid-2',
+            title: 'The Weeknd - Blinding Lights (Sub Español)',
+            channelTitle: 'TheWeekndVEVO',
+            durationText: '3:20',
+          },
+          {
+            videoId: 'noise-vid-3',
+            title: 'The Weeknd - Blinding Lights (Official Video)',
+            channelTitle: 'UnverifiedFan123',
+            durationText: '3:20',
+          },
+        ]),
+      );
+
+      const result = await musicVideoService.findOfficialVideo(baseTrack);
+      expect(result).toBeNull();
+    });
+  });
 });

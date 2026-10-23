@@ -36,9 +36,10 @@ export type CandidateScoreResult = {
   badgeScore: number;
   officialPhraseScore: number;
   totalScore: number;
+  isOfficialChannel?: boolean;
 };
 
-const NOISE_TERMS = [
+export const NOISE_TERMS = [
   'reaction',
   'reacts',
   'reacting',
@@ -99,8 +100,10 @@ const NOISE_TERMS = [
   'guitar cover',
   'drum cover',
   'vocal cover',
+  'covers',
   'tribute',
   'tributo',
+  'tributes',
   'version acustica',
   'mi version',
   'casero',
@@ -113,9 +116,41 @@ const NOISE_TERMS = [
   '- topic',
   '(audio)',
   '[audio]',
+  'sub español',
+  'sub espanol',
+  'subtitulado',
+  'subtitulada',
+  'subtitulos',
+  'subtítulos',
+  'subtitulo',
+  'subtítulo',
+  'subtitles',
+  'subtitle',
+  'con letra',
+  'con letras',
+  'lyrics',
+  'lyric video',
+  'lyric',
+  'traducida',
+  'traducido',
+  'traducción',
+  'traduccion',
+  'subbed',
+  'cc',
+  '240p',
+  '360p',
+  '480p',
+  'reupload',
+  're upload',
+  'resubido',
+  'resubida',
+  'fan made',
+  'fanmade',
+  'no oficial',
+  'unofficial',
 ];
 
-const NON_EXEMPT_NOISE_TERMS = new Set([
+export const NON_EXEMPT_NOISE_TERMS = new Set([
   'covered by',
   'cover by',
   'acoustic cover',
@@ -123,9 +158,11 @@ const NON_EXEMPT_NOISE_TERMS = new Set([
   'guitar cover',
   'drum cover',
   'vocal cover',
+  'covers',
   'karaoke',
   'tribute',
   'tributo',
+  'tributes',
   'parody',
   'parodia',
   'reaction',
@@ -137,13 +174,49 @@ const NON_EXEMPT_NOISE_TERMS = new Set([
   'imitacion',
   'casero',
   'ensayo',
+  'sub español',
+  'sub espanol',
+  'subtitulado',
+  'subtitulada',
+  'subtitulos',
+  'subtítulos',
+  'subtitulo',
+  'subtítulo',
+  'subtitles',
+  'subtitle',
+  'con letra',
+  'con letras',
+  'lyrics',
+  'lyric video',
+  'lyric',
+  'traducida',
+  'traducido',
+  'traducción',
+  'traduccion',
+  'subbed',
+  'cc',
+  '240p',
+  '360p',
+  '480p',
+  'reupload',
+  're upload',
+  'resubido',
+  'resubida',
+  'fan made',
+  'fanmade',
+  'no oficial',
+  'unofficial',
 ]);
 
-const RECORD_LABELS = [
+export const RECORD_LABELS = [
   'warner',
+  'warner music',
+  'warner records',
   'atlantic',
   'universal',
+  'universal music',
   'sony music',
+  'sony entertainment',
   'interscope',
   'columbia records',
   'rca',
@@ -160,6 +233,29 @@ const RECORD_LABELS = [
   'parlophone',
   'ultra music',
   'ultra records',
+  'hybe',
+  'bighit',
+  'sm entertainment',
+  'smtown',
+  'yg entertainment',
+  'jyp',
+  'geffen',
+  'polydor',
+  'astralwerks',
+  'motown',
+  'emi',
+  'century media',
+  'nuclear blast',
+  'roadrunner',
+  'hopeless records',
+  'epitaph',
+  'rough trade',
+  'domino recording',
+  '4ad',
+  'xl recordings',
+  'warp records',
+  'ninja tune',
+  'pias',
 ];
 
 export const parseDurationToSeconds = (text?: string): number | null => {
@@ -260,6 +356,113 @@ export const cleanTrackTitle = (title: string): string => {
   return cleaned || title.trim();
 };
 
+export type OfficialChannelCheckInput = {
+  artist: string;
+  vChannel: string;
+  ownerBadges?: Array<{
+    metadataBadgeRenderer?: {
+      style?: string;
+      icon?: { iconType?: string };
+      tooltip?: string;
+    };
+  }>;
+};
+
+export const isOfficialChannel = (
+  input: OfficialChannelCheckInput,
+): boolean => {
+  const normalizedArtist = normalizeText(input.artist);
+  const normalizedVChannel = normalizeText(input.vChannel);
+
+  if (!normalizedVChannel) {
+    return false;
+  }
+
+  const hasFanOrFakeTag =
+    /\b(?:fake|fan|fans|fanpage|fanclub|unofficial|parody|tribute|tributo|reupload|resubido)\b/i.test(
+      normalizedVChannel,
+    ) ||
+    normalizedVChannel.includes('no oficial') ||
+    normalizedVChannel.includes('fan made') ||
+    normalizedVChannel.includes('fanmade');
+
+  if (hasFanOrFakeTag) {
+    return false;
+  }
+
+  const artistTokens = normalizedArtist
+    .split(' ')
+    .filter(
+      (token) =>
+        token.length > 1 && !['the', 'and', 'feat', 'ft'].includes(token),
+    );
+
+  const isVevo =
+    normalizedVChannel === 'vevo' ||
+    normalizedVChannel.startsWith('vevo ') ||
+    (normalizedVChannel.endsWith('vevo') &&
+      (normalizedArtist.length === 0 ||
+        normalizedVChannel.includes(normalizedArtist) ||
+        (artistTokens.length > 0 &&
+          artistTokens.every((token) => normalizedVChannel.includes(token)))));
+
+  if (isVevo) {
+    return true;
+  }
+
+  const isRecordLabel = RECORD_LABELS.some((label) =>
+    normalizedVChannel.includes(normalizeText(label)),
+  );
+  if (isRecordLabel) {
+    return true;
+  }
+
+  const badges = input.ownerBadges || [];
+
+  const hasOfficialArtistBadge = badges.some((badge) => {
+    const style = badge.metadataBadgeRenderer?.style || '';
+    const iconType = badge.metadataBadgeRenderer?.icon?.iconType || '';
+    const tooltip = (badge.metadataBadgeRenderer?.tooltip || '').toLowerCase();
+    return (
+      style.includes('BADGE_STYLE_TYPE_VERIFIED_ARTIST') ||
+      iconType.includes('OFFICIAL_ARTIST_BADGE') ||
+      tooltip.includes('official artist') ||
+      tooltip.includes('artista oficial')
+    );
+  });
+  if (hasOfficialArtistBadge) {
+    return true;
+  }
+
+  const hasGenericVerifiedBadge = badges.some((badge) => {
+    const style = badge.metadataBadgeRenderer?.style || '';
+    const iconType = badge.metadataBadgeRenderer?.icon?.iconType || '';
+    const tooltip = (badge.metadataBadgeRenderer?.tooltip || '').toLowerCase();
+    return (
+      style.includes('BADGE_STYLE_TYPE_VERIFIED') ||
+      style.includes('VERIFIED') ||
+      iconType.includes('CHECK') ||
+      tooltip.includes('verified') ||
+      tooltip.includes('verificado') ||
+      tooltip.includes('oficial')
+    );
+  });
+
+  if (hasGenericVerifiedBadge) {
+    const artistInChannel =
+      Boolean(normalizedArtist) &&
+      (normalizedVChannel.includes(normalizedArtist) ||
+        (artistTokens.length > 0 &&
+          artistTokens.every((token) => normalizedVChannel.includes(token))));
+
+    if (artistInChannel || isRecordLabel) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export const scoreCandidate = (
   input: CandidateScoreInput,
 ): CandidateScoreResult => {
@@ -267,6 +470,12 @@ export const scoreCandidate = (
   const normalizedCleanTitle = normalizeText(input.cleanTitle);
   const normalizedVTitle = normalizeText(input.vTitle);
   const normalizedVChannel = normalizeText(input.vChannel);
+
+  const official = isOfficialChannel({
+    artist: input.artist,
+    vChannel: input.vChannel,
+    ownerBadges: input.ownerBadges,
+  });
 
   let artistScore = 0;
   const artistTokens = normalizedArtist
@@ -277,24 +486,11 @@ export const scoreCandidate = (
     );
 
   const isLabelChannel = RECORD_LABELS.some((label) =>
-    normalizedVChannel.includes(label),
+    normalizedVChannel.includes(normalizeText(label)),
   );
 
   let badgeScore = 0;
-  const hasVerifiedBadge = (input.ownerBadges || []).some((badge) => {
-    const style = badge.metadataBadgeRenderer?.style || '';
-    const iconType = badge.metadataBadgeRenderer?.icon?.iconType || '';
-    const tooltip = (badge.metadataBadgeRenderer?.tooltip || '').toLowerCase();
-    return (
-      style.includes('VERIFIED') ||
-      iconType.includes('OFFICIAL_ARTIST_BADGE') ||
-      iconType.includes('CHECK') ||
-      tooltip.includes('verified') ||
-      tooltip.includes('oficial')
-    );
-  });
-  const isVevo = normalizedVChannel.includes('vevo');
-  if (hasVerifiedBadge || isVevo) {
+  if (official) {
     badgeScore = 20;
   }
 
@@ -313,8 +509,7 @@ export const scoreCandidate = (
   const isThirdPartySelfTitledUpload =
     !artistInChannel &&
     !isLabelChannel &&
-    !hasVerifiedBadge &&
-    !isVevo &&
+    !official &&
     ((normalizedVChannel.length >= 3 &&
       normalizedVTitle.includes(normalizedVChannel)) ||
       /\b(?:por|by|interpretado por|performed by)\b/i.test(input.vTitle));
@@ -386,6 +581,7 @@ export const scoreCandidate = (
     badgeScore,
     officialPhraseScore,
     totalScore,
+    isOfficialChannel: official,
   };
 };
 
@@ -582,6 +778,16 @@ class MusicVideoService {
       }
 
       if (hasNoiseTerms(vTitle, vChannel, artist, cleanTitle)) {
+        continue;
+      }
+
+      if (
+        !isOfficialChannel({
+          artist,
+          vChannel,
+          ownerBadges: vr.ownerBadges,
+        })
+      ) {
         continue;
       }
 

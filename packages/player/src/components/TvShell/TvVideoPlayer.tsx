@@ -37,7 +37,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
   videoId: propVideoId,
   track,
 }) => {
-  const [targetVideoId, setTargetVideoId] = useState<string | null>(null);
+  const [targetVideoId, setLocalTargetVideoId] = useState<string | null>(null);
   const [resolvedVideoTitle, setResolvedVideoTitle] = useState<string | null>(
     null,
   );
@@ -46,11 +46,17 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
   const [showOverlay, setShowOverlay] = useState(true);
   const hideTimerRef = useRef<number | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const hasEndedRef = useRef<boolean>(false);
   const setShowVideo = useTvStore((state) => state.setShowVideo);
   const setIsVideoPlaying = useTvStore((state) => state.setIsVideoPlaying);
   const soundStatus = useSoundStore((state) => state.status);
   const isAudioPlaying = soundStatus === 'playing';
   const activeTrackKeyRef = useRef<string>('');
+
+  const setTargetVideoId = useCallback((id: string | null) => {
+    setLocalTargetVideoId(id);
+    useTvStore.getState().setTargetVideoId(id);
+  }, []);
 
   const nextItem = useQueueStore(
     (state) => state.items[state.currentIndex + 1],
@@ -97,6 +103,17 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         func: 'setOption',
         args: ['captions', 'reload', false],
       },
+      { event: 'command', func: 'setPlaybackQuality', args: ['hd1080'] },
+      {
+        event: 'command',
+        func: 'setPlaybackQualityRange',
+        args: ['hd1080', 'highres'],
+      },
+      {
+        event: 'command',
+        func: 'setOption',
+        args: ['playbackQuality', 'suggestedQuality', 'hd1080'],
+      },
     ];
     for (const command of commands) {
       try {
@@ -107,11 +124,12 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 
   const handleClose = useCallback(() => {
     setIsVideoPlaying(false);
+    setTargetVideoId(null);
     setShowVideo(false);
     setTimeout(() => {
       setFocus('tv-hero-video');
     }, 50);
-  }, [setIsVideoPlaying, setShowVideo]);
+  }, [setIsVideoPlaying, setShowVideo, setTargetVideoId]);
 
   const handleTogglePlay = useCallback(() => {
     playbackManager.toggle();
@@ -153,6 +171,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
       : propVideoId || '';
 
     activeTrackKeyRef.current = trackKey;
+    hasEndedRef.current = false;
     setLoading(true);
     setError(false);
     setTargetVideoId(null);
@@ -204,11 +223,13 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
           setResolvedVideoTitle(foundTitle);
           setLoading(false);
           setIsVideoPlaying(true);
+          hasEndedRef.current = false;
         }
       } catch (searchError) {
         if (!cancelled && activeTrackKeyRef.current === trackKey) {
           Logger.streaming.error(`Video search error: ${searchError}`);
           setError(true);
+          setTargetVideoId(null);
           setLoading(false);
         }
       }
@@ -217,8 +238,9 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     return () => {
       cancelled = true;
       setIsVideoPlaying(false);
+      useTvStore.getState().setTargetVideoId(null);
     };
-  }, [track, propVideoId, setIsVideoPlaying]);
+  }, [track, propVideoId, setIsVideoPlaying, setTargetVideoId]);
 
   useEffect(() => {
     resetOverlayTimer();
@@ -323,6 +345,11 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 
   useEffect(() => {
     const handleMessage = (messageEvent: MessageEvent) => {
+      const currentIframeWindow = iframeRef.current?.contentWindow;
+      if (!currentIframeWindow || messageEvent.source !== currentIframeWindow) {
+        return;
+      }
+
       try {
         const payload =
           typeof messageEvent.data === 'string'
@@ -335,6 +362,10 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
           } else if (payload.info === 2) {
             setIsVideoPlaying(false);
           } else if (payload.info === 0) {
+            if (hasEndedRef.current) {
+              return;
+            }
+            hasEndedRef.current = true;
             setIsVideoPlaying(false);
             void playNextInInfiniteQueue();
           }
@@ -344,6 +375,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
         } else if (payload?.event === 'onError') {
           setError(true);
           setIsVideoPlaying(false);
+          setTargetVideoId(null);
         }
       } catch {}
     };
@@ -352,7 +384,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [setIsVideoPlaying, disableSubtitles]);
+  }, [setIsVideoPlaying, disableSubtitles, setTargetVideoId]);
 
   useEffect(() => {
     const unsubscribe = useSoundStore.subscribe((state) => {
@@ -469,7 +501,7 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
     );
   }
 
-  const embedUrl = `https://www.youtube.com/embed/${targetVideoId}?autoplay=1&enablejsapi=1&playsinline=1&controls=0&rel=0&iv_load_policy=3&modestbranding=1`;
+  const embedUrl = `https://www.youtube.com/embed/${targetVideoId}?autoplay=1&enablejsapi=1&playsinline=1&controls=0&rel=0&iv_load_policy=3&modestbranding=1&cc_load_policy=0&vq=hd1080`;
 
   return (
     <div data-testid="tv-video-player" className="tv-video-container">
@@ -594,5 +626,5 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
 };
 
 export const useTvVideoId = (): string | null => {
-  return null;
+  return useTvStore((state) => state.targetVideoId);
 };

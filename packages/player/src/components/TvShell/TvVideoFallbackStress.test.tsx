@@ -61,13 +61,17 @@ vi.mock('@aurora/hifi', async () => {
   const actual = await vi.importActual<Record<string, unknown>>('@aurora/hifi');
   return {
     ...actual,
-    Sound: vi.fn((props: { volume?: number; showVideo?: boolean }) => (
-      <div
-        data-testid="mock-sound-engine"
-        data-volume={props.volume}
-        data-show-video={String(props.showVideo)}
-      />
-    )),
+    Sound: vi.fn(
+      (props: { volume?: number; showVideo?: boolean; onEnd?: () => void }) => (
+        <button
+          type="button"
+          data-testid="mock-sound-engine"
+          data-volume={props.volume}
+          data-show-video={String(props.showVideo)}
+          onClick={props.onEnd}
+        />
+      ),
+    ),
   };
 });
 
@@ -659,6 +663,138 @@ describe('TvVideoFallbackStress & Audio Coordination', () => {
       expect(useTvStore.getState().isVideoPlaying).toBe(false);
       sound = screen.getByTestId('mock-sound-engine');
       expect(sound).toHaveAttribute('data-volume', '85');
+    });
+  });
+
+  describe('Adversarial Challenge 5: Anti-Premature Skip & Playback Synchronization', () => {
+    it('defers track completion when background audio ends while showVideo and isVideoPlaying are active', async () => {
+      useTvStore.setState({
+        showVideo: true,
+        isVideoPlaying: true,
+        targetVideoId: 'video-123',
+      });
+
+      render(
+        <TvSoundProvider>
+          <div data-testid="tv-child">Child</div>
+        </TvSoundProvider>,
+      );
+
+      const sound = screen.getByTestId('mock-sound-engine');
+      await userEvent.click(sound);
+
+      expect(playbackManager.finishTrack).not.toHaveBeenCalled();
+    });
+
+    it('defers track completion when background audio ends while targetVideoId is active even if video is paused/loading', async () => {
+      useTvStore.setState({
+        showVideo: true,
+        isVideoPlaying: false,
+        targetVideoId: 'video-loading-456',
+      });
+
+      render(
+        <TvSoundProvider>
+          <div data-testid="tv-child">Child</div>
+        </TvSoundProvider>,
+      );
+
+      const sound = screen.getByTestId('mock-sound-engine');
+      await userEvent.click(sound);
+
+      expect(playbackManager.finishTrack).not.toHaveBeenCalled();
+    });
+
+    it('immediately finishes track when audio ends in cover art fallback (showVideo: true, targetVideoId: null, isVideoPlaying: false)', async () => {
+      useTvStore.setState({
+        showVideo: true,
+        isVideoPlaying: false,
+        targetVideoId: null,
+      });
+
+      render(
+        <TvSoundProvider>
+          <div data-testid="tv-child">Child</div>
+        </TvSoundProvider>,
+      );
+
+      const sound = screen.getByTestId('mock-sound-engine');
+      await userEvent.click(sound);
+
+      expect(playbackManager.finishTrack).toHaveBeenCalledTimes(1);
+    });
+
+    it('immediately finishes track when audio ends while browsing outside video player (showVideo: false)', async () => {
+      useTvStore.setState({
+        showVideo: false,
+        isVideoPlaying: false,
+        targetVideoId: null,
+      });
+
+      render(
+        <TvSoundProvider>
+          <div data-testid="tv-child">Child</div>
+        </TvSoundProvider>,
+      );
+
+      const sound = screen.getByTestId('mock-sound-engine');
+      await userEvent.click(sound);
+
+      expect(playbackManager.finishTrack).toHaveBeenCalledTimes(1);
+    });
+
+    it('fully synchronizes end-to-end: audio ending early does not advance track, while YouTube iframe ending advances exactly once', async () => {
+      const syncTrack: Track = {
+        title: 'Karma Police',
+        artists: [{ name: 'Radiohead', roles: [] }],
+        source: { provider: 'test', id: 'rh-kp' },
+      };
+
+      vi.mocked(musicVideoService.findOfficialVideo).mockResolvedValueOnce({
+        videoId: 'kpVideoOfficial',
+        title: 'Radiohead - Karma Police (Official Video)',
+        channelTitle: 'Radiohead',
+        score: 130,
+      });
+
+      render(
+        <TvSoundProvider>
+          <TvVideoPlayer track={syncTrack} />
+        </TvSoundProvider>,
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByTitle('Radiohead - Karma Police (Official Video)'),
+        ).toBeInTheDocument();
+      });
+
+      const sound = screen.getByTestId('mock-sound-engine');
+      const iframe = screen.getByTitle(
+        'Radiohead - Karma Police (Official Video)',
+      ) as HTMLIFrameElement;
+
+      expect(useTvStore.getState().targetVideoId).toBe('kpVideoOfficial');
+      expect(useTvStore.getState().isVideoPlaying).toBe(true);
+
+      await userEvent.click(sound);
+
+      expect(playbackManager.finishTrack).not.toHaveBeenCalled();
+
+      const endedMessage = new MessageEvent('message', {
+        data: JSON.stringify({ event: 'onStateChange', info: 0 }),
+        source: iframe.contentWindow,
+      });
+      window.dispatchEvent(endedMessage);
+
+      await waitFor(() => {
+        expect(playbackManager.finishTrack).toHaveBeenCalledTimes(1);
+      });
+
+      window.dispatchEvent(endedMessage);
+
+      expect(playbackManager.finishTrack).toHaveBeenCalledTimes(1);
+      expect(useTvStore.getState().isVideoPlaying).toBe(false);
     });
   });
 });
