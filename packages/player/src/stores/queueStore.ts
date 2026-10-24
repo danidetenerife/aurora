@@ -28,6 +28,7 @@ type QueueStore = Queue & {
   addAt: (tracks: Track[], index: number) => void;
   removeByIds: (ids: string[]) => void;
   removeByIndices: (indices: number[]) => void;
+  dislikeTrack: (track: Track) => void;
   clearQueue: () => void;
   reorder: (fromIndex: number, toIndex: number) => void;
   updateItemState: (id: string, updates: Partial<QueueItem>) => void;
@@ -48,6 +49,49 @@ const createQueueItem = (track: Track): QueueItem => ({
   status: 'idle',
   addedAtIso: new Date().toISOString(),
 });
+
+const normalizeQueueText = (value: string | undefined): string =>
+  (value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(
+      /\s*[([](?:official|lyric|audio|video|remaster|live|en\s+directo|en\s+vivo|hd|4k|hq|version|edit|mix|feat|ft|with|prod)[^)\]]*[)\]]/gi,
+      '',
+    )
+    .replace(
+      /\s+-\s+(?:remaster|live|en\s+directo|en\s+vivo|mono|stereo|single|radio\s+edit|version|acoustic|acustico|instrumental|bonus\s+track|deluxe).*$/i,
+      '',
+    )
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const isMatchingQueueTrack = (candidate: Track, target: Track): boolean => {
+  const candidateTitle = normalizeQueueText(candidate.title);
+  const targetTitle = normalizeQueueText(target.title);
+  const candidateArtist = normalizeQueueText(candidate.artists?.[0]?.name);
+  const targetArtist = normalizeQueueText(target.artists?.[0]?.name);
+
+  if (
+    candidateTitle &&
+    targetTitle &&
+    candidateTitle === targetTitle &&
+    candidateArtist === targetArtist
+  ) {
+    return true;
+  }
+
+  const candidateId = candidate.source?.id?.trim();
+  const targetId = target.source?.id?.trim();
+  if (candidateId && targetId && candidateId === targetId) {
+    if (!candidateTitle || !targetTitle || candidateTitle === targetTitle) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 const getDirectionalIndex = (
   state: Pick<QueueStore, 'items' | 'currentIndex'>,
@@ -263,6 +307,64 @@ export const useQueueStore = create<QueueStore>((set, get) => ({
     if (currentIndexRemoved || get().items.length === 0) {
       useSoundStore.getState().stop();
     }
+  }),
+
+  dislikeTrack: withPersistence((track: Track) => {
+    const state = get();
+    const matchingIndices: number[] = [];
+    state.items.forEach((item, index) => {
+      if (isMatchingQueueTrack(item.track, track)) {
+        matchingIndices.push(index);
+      }
+    });
+
+    if (matchingIndices.length === 0) {
+      return;
+    }
+
+    const currentDisliked = matchingIndices.includes(state.currentIndex);
+    if (currentDisliked) {
+      emitSkip();
+      useSoundStore.getState().stop();
+    }
+
+    const repeatMode = (getSetting('core.playback.repeat') as string) ?? 'off';
+    const shuffleEnabled =
+      (getSetting('core.playback.shuffle') as boolean) ?? false;
+
+    set(
+      produce((draft: QueueStore) => {
+        const indicesSet = new Set(matchingIndices);
+        const removedBeforeCurrent = matchingIndices.filter(
+          (idx) => idx < draft.currentIndex,
+        ).length;
+
+        draft.items = draft.items.filter((_, idx) => !indicesSet.has(idx));
+
+        if (draft.items.length === 0) {
+          draft.currentIndex = 0;
+          return;
+        }
+
+        if (currentDisliked && shuffleEnabled && draft.items.length > 1) {
+          draft.currentIndex = Math.floor(Math.random() * draft.items.length);
+          return;
+        }
+
+        const adjustedIndex = Math.max(
+          0,
+          draft.currentIndex - removedBeforeCurrent,
+        );
+        if (adjustedIndex >= draft.items.length) {
+          draft.currentIndex =
+            currentDisliked && repeatMode === 'all'
+              ? 0
+              : Math.max(0, draft.items.length - 1);
+        } else {
+          draft.currentIndex = adjustedIndex;
+        }
+      }),
+    );
   }),
 
   clearQueue: withPersistence(() => {

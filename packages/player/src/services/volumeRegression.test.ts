@@ -24,8 +24,8 @@ describe('Volume and Audio Settings Regression Tests', () => {
   });
 
   describe('Device-specific setting keys isolation', () => {
-    it('identifies all forms of volume and mute as device-specific', () => {
-      const volumeKeys = [
+    it('identifies all forms of volume, mute, shuffle, and repeat as device-specific', () => {
+      const deviceSpecificKeys = [
         'core.playback.volume',
         'playback.volume',
         'core.volume',
@@ -34,19 +34,24 @@ describe('Volume and Audio Settings Regression Tests', () => {
         'playback.muted',
         'core.muted',
         'muted',
+        'core.playback.shuffle',
+        'playback.shuffle',
+        'shuffle',
+        'core.playback.repeat',
+        'playback.repeat',
+        'repeat',
         'plugin.sample.volume',
         'plugin.sample.muted',
       ];
 
-      for (const key of volumeKeys) {
+      for (const key of deviceSpecificKeys) {
         expect(isDeviceSpecificSettingKey(key)).toBe(true);
       }
     });
 
     it('identifies syncable settings as not device-specific', () => {
       const syncableKeys = [
-        'core.playback.shuffle',
-        'core.playback.repeat',
+        'core.playback.discovery',
         'core.general.language',
         'plugin.lyrics.fontSize',
       ];
@@ -56,7 +61,7 @@ describe('Volume and Audio Settings Regression Tests', () => {
       }
     });
 
-    it('strips volume and mute completely when filtering syncable settings', () => {
+    it('strips volume, mute, shuffle, and repeat completely when filtering syncable settings', () => {
       const allSettings = {
         'core.playback.volume': 0.35,
         'playback.volume': 0.35,
@@ -65,7 +70,9 @@ describe('Volume and Audio Settings Regression Tests', () => {
         'playback.muted': true,
         muted: true,
         'core.playback.shuffle': true,
+        'playback.shuffle': true,
         'core.playback.repeat': 'all',
+        'playback.repeat': 'all',
         'core.general.language': 'en_US',
       };
 
@@ -77,19 +84,22 @@ describe('Volume and Audio Settings Regression Tests', () => {
       expect(filtered['core.playback.muted']).toBeUndefined();
       expect(filtered['playback.muted']).toBeUndefined();
       expect(filtered['muted']).toBeUndefined();
-      expect(filtered['core.playback.shuffle']).toBe(true);
-      expect(filtered['core.playback.repeat']).toBe('all');
+      expect(filtered['core.playback.shuffle']).toBeUndefined();
+      expect(filtered['playback.shuffle']).toBeUndefined();
+      expect(filtered['core.playback.repeat']).toBeUndefined();
+      expect(filtered['playback.repeat']).toBeUndefined();
       expect(filtered['core.general.language']).toBe('en_US');
     });
   });
 
   describe('Remote sync payload protection', () => {
-    it('never overwrites local desktop volume when importing a remote backup', async () => {
+    it('never overwrites local desktop volume, shuffle, or repeat when importing a remote backup', async () => {
       useSettingsStore.setState({
         values: {
           'core.playback.volume': 0.72,
           'core.playback.muted': false,
           'core.playback.shuffle': false,
+          'core.playback.repeat': 'off',
         },
       });
 
@@ -103,6 +113,9 @@ describe('Volume and Audio Settings Regression Tests', () => {
           'core.playback.muted': true,
           'playback.muted': true,
           'core.playback.shuffle': true,
+          'playback.shuffle': true,
+          'core.playback.repeat': 'all',
+          'playback.repeat': 'all',
         },
       };
 
@@ -113,7 +126,8 @@ describe('Volume and Audio Settings Regression Tests', () => {
       const stateValues = useSettingsStore.getState().values;
       expect(stateValues['core.playback.volume']).toBe(0.72);
       expect(stateValues['core.playback.muted']).toBe(false);
-      expect(stateValues['core.playback.shuffle']).toBe(true);
+      expect(stateValues['core.playback.shuffle']).toBe(false);
+      expect(stateValues['core.playback.repeat']).toBe('off');
     });
   });
 

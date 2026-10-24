@@ -63,7 +63,7 @@ export const ConnectedNowPlaying: FC<{
         },
       },
     });
-    useQueueStore.getState().goToNext();
+    useQueueStore.getState().dislikeTrack(track);
   };
 
   const actions = track && (

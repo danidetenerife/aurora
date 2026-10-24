@@ -68,10 +68,13 @@ export const cleanTrackTitle = (rawTitle: string): string =>
   rawTitle
     .toLowerCase()
     .replace(
-      /\s*[([](?:official\s*(?:music\s*)?(?:video|audio|lyric\s*video|visualizer)|lyric\s*video|visualizer|audio|video\s*oficial|hd|hq|4k|remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at\s*[^)\]]*)?)[)\]]/gi,
+      /\s*[([](?:official\s*(?:music\s*)?(?:video|audio|lyric\s*video|visualizer)|lyric\s*video|visualizer|audio|video\s*oficial|hd|hq|4k|remaster(?:ed)?(?:\s*\d{4})?|nueva\s+mezcla(?:\s*\d{4})?|en\s+directo|en\s+vivo|ac[uú]stico|live(?:\s*at\s*[^)\]]*)?)[)\]]/gi,
       '',
     )
-    .replace(/\s*-\s*remaster(?:ed)?(?:\s*\d{4})?\b/gi, '')
+    .replace(
+      /\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|nueva\s+mezcla(?:\s*\d{4})?|en\s+directo|en\s+vivo|ac[uú]stico)\b/gi,
+      '',
+    )
     .replace(/\s*[([]?(?:feat\.?|ft\.?)\s+[^)\]]+[)\]]?/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -83,6 +86,65 @@ export const normalizeTrackSignature = (track: {
   const primaryArtist = normalizeArtistKey(track.artists?.[0]?.name ?? '');
   const normalizedTitle = cleanTrackTitle(track.title ?? '');
   return normalizedTitle ? `${primaryArtist}::${normalizedTitle}` : '';
+};
+
+export const getTrackBlacklistKeys = (track: {
+  title?: string;
+  artists?: Array<{ name?: string }>;
+  source?: { id?: string };
+}): string[] => {
+  const keys: string[] = [];
+  const sourceId = track.source?.id?.trim();
+  if (sourceId) {
+    keys.push(sourceId);
+  }
+  const primaryArtist = track.artists?.[0]?.name?.trim();
+  const title = track.title?.trim();
+  if (primaryArtist && title) {
+    keys.push(`${primaryArtist}-${title}`);
+    keys.push(`${primaryArtist.toLowerCase()}-${title.toLowerCase()}`);
+  }
+  const signature = normalizeTrackSignature(track);
+  if (signature) {
+    keys.push(signature);
+  }
+  return Array.from(new Set(keys.filter(Boolean)));
+};
+
+export const isTrackBlacklistedByList = (
+  track: {
+    title?: string;
+    artists?: Array<{ name?: string }>;
+    source?: { id?: string };
+  },
+  blacklist: { tracks: string[]; artists: string[] },
+): boolean => {
+  const trackSet = new Set(
+    blacklist.tracks.flatMap((entry) => [entry, entry.toLowerCase().trim()]),
+  );
+  const candidateKeys = getTrackBlacklistKeys(track);
+  if (
+    candidateKeys.some(
+      (key) => trackSet.has(key) || trackSet.has(key.toLowerCase()),
+    )
+  ) {
+    return true;
+  }
+
+  const normalizedArtistBlacklist = new Set(
+    blacklist.artists.flatMap((artistItem) => [
+      artistItem.toLowerCase().trim(),
+      normalizeArtistKey(artistItem),
+    ]),
+  );
+
+  return (track.artists ?? []).some((artistEntry) => {
+    const rawName = artistEntry.name ?? '';
+    return (
+      normalizedArtistBlacklist.has(rawName.toLowerCase().trim()) ||
+      normalizedArtistBlacklist.has(normalizeArtistKey(rawName))
+    );
+  });
 };
 
 const SPAM_OR_AMATEUR_ARTIST_REGEX =
@@ -611,22 +673,96 @@ export class PersonalizationEngine {
 
   async getBlacklist(): Promise<{ tracks: string[]; artists: string[] }> {
     await this.pendingWrite;
-    const tracks =
+    const rawTracks =
       (await this.profileStore.get<string[]>('blacklistedTracks')) ?? [];
     const artists =
       (await this.profileStore.get<string[]>('blacklistedArtists')) ?? [];
-    return { tracks, artists };
+    const listens =
+      (await this.profileStore.get<UserListenRecord[]>('listens')) ?? [];
+    const rawTrackSet = new Set(rawTracks);
+    const expandedTracks = [...rawTracks];
+
+    for (const record of listens) {
+      if (rawTrackSet.has(record.trackId)) {
+        const extraKeys = getTrackBlacklistKeys({
+          title: record.title,
+          artists: [{ name: record.artist }],
+          source: record.source ?? { id: record.trackId },
+        });
+        for (const extraKey of extraKeys) {
+          if (!rawTrackSet.has(extraKey)) {
+            rawTrackSet.add(extraKey);
+            expandedTracks.push(extraKey);
+          }
+        }
+      }
+    }
+
+    return { tracks: expandedTracks, artists };
   }
 
-  async blacklistTrack(trackId: string): Promise<void> {
+  async blacklistTrack(
+    trackId: string,
+    trackMeta?: {
+      title?: string;
+      artists?: Array<{ name?: string }>;
+      source?: { id?: string };
+    },
+  ): Promise<void> {
+    if (this.session) {
+      const sessionTrackId =
+        this.session.track.source?.id ||
+        `${this.session.track.artists?.[0]?.name}-${this.session.track.title}`;
+      if (sessionTrackId === trackId) {
+        this.session = null;
+      }
+    }
+    const queueItems = useQueueStore.getState().items;
+    const currentQueueItem = useQueueStore.getState().getCurrentItem();
+    const matchedQueueTrack =
+      trackMeta ??
+      (currentQueueItem &&
+      (currentQueueItem.track.source?.id === trackId ||
+        `${currentQueueItem.track.artists?.[0]?.name}-${currentQueueItem.track.title}` ===
+          trackId)
+        ? currentQueueItem.track
+        : queueItems.find(
+            (item) =>
+              item.track.source?.id === trackId ||
+              `${item.track.artists?.[0]?.name}-${item.track.title}` ===
+                trackId,
+          )?.track);
+
     await this.pendingWrite;
     const current =
       (await this.profileStore.get<string[]>('blacklistedTracks')) ?? [];
-    if (!current.includes(trackId)) {
-      await this.profileStore.set('blacklistedTracks', [...current, trackId]);
-      await this.profileStore.save();
-      this.notify('local');
+    const keysToAdd = new Set<string>([trackId]);
+
+    if (matchedQueueTrack) {
+      for (const extraKey of getTrackBlacklistKeys(matchedQueueTrack)) {
+        keysToAdd.add(extraKey);
+      }
     }
+
+    const listens =
+      (await this.profileStore.get<UserListenRecord[]>('listens')) ?? [];
+    const matchedRecord = listens.find((record) => record.trackId === trackId);
+    if (matchedRecord) {
+      for (const extraKey of getTrackBlacklistKeys({
+        title: matchedRecord.title,
+        artists: [{ name: matchedRecord.artist }],
+        source: matchedRecord.source ?? { id: matchedRecord.trackId },
+      })) {
+        keysToAdd.add(extraKey);
+      }
+    }
+
+    const merged = Array.from(new Set([...current, ...keysToAdd]));
+    if (merged.length !== current.length) {
+      await this.profileStore.set('blacklistedTracks', merged);
+      await this.profileStore.save();
+    }
+    this.notify('local');
   }
 
   async blacklistArtist(artistName: string): Promise<void> {
@@ -656,9 +792,21 @@ export class PersonalizationEngine {
     await this.pendingWrite;
     const current =
       (await this.profileStore.get<string[]>('blacklistedTracks')) ?? [];
+    const keysToRemove = new Set<string>([trackId]);
+    const queueItems = useQueueStore.getState().items;
+    const matchedTrack = queueItems.find(
+      (item) =>
+        item.track.source?.id === trackId ||
+        `${item.track.artists?.[0]?.name}-${item.track.title}` === trackId,
+    )?.track;
+    if (matchedTrack) {
+      for (const extraKey of getTrackBlacklistKeys(matchedTrack)) {
+        keysToRemove.add(extraKey);
+      }
+    }
     await this.profileStore.set(
       'blacklistedTracks',
-      current.filter((id) => id !== trackId),
+      current.filter((id) => !keysToRemove.has(id)),
     );
     await this.profileStore.save();
     this.notify('local');
@@ -722,23 +870,19 @@ export class PersonalizationEngine {
   }
 
   async isBlacklisted(track: Track): Promise<boolean> {
-    const { tracks, artists } = await this.getBlacklist();
-    const trackId =
-      track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
-    if (tracks.includes(trackId)) {
-      return true;
-    }
-    const normalizedBlacklist = new Set(
-      artists.flatMap((artistItem) => [
-        artistItem.toLowerCase().trim(),
-        normalizeArtistKey(artistItem),
-      ]),
-    );
-    return (track.artists ?? []).some(
-      (artistEntry) =>
-        normalizedBlacklist.has(artistEntry.name.toLowerCase().trim()) ||
-        normalizedBlacklist.has(normalizeArtistKey(artistEntry.name)),
-    );
+    const blacklist = await this.getBlacklist();
+    return isTrackBlacklistedByList(track, blacklist);
+  }
+
+  isTrackBlacklistedByList(
+    track: {
+      title?: string;
+      artists?: Array<{ name?: string }>;
+      source?: { id?: string };
+    },
+    blacklist: { tracks: string[]; artists: string[] },
+  ): boolean {
+    return isTrackBlacklistedByList(track, blacklist);
   }
 
   async resolveArtistMetadata(
@@ -788,7 +932,8 @@ export class PersonalizationEngine {
     const listens = await this.getListenRecords();
     const favState = useFavoritesStore.getState();
     const playlistState = usePlaylistStore.getState();
-    const { artists: blacklistedArtists } = await this.getBlacklist();
+    const blacklist = await this.getBlacklist();
+    const { artists: blacklistedArtists } = blacklist;
     const normalizedBlacklistedArtists = new Set(
       blacklistedArtists.flatMap((artistItem) => [
         artistItem.toLowerCase().trim(),
@@ -851,7 +996,15 @@ export class PersonalizationEngine {
         isAmateurOrCoverTrack({
           title: record.title,
           artists: [{ name: record.artist }],
-        })
+        }) ||
+        isTrackBlacklistedByList(
+          {
+            title: record.title,
+            artists: [{ name: record.artist }],
+            source: record.source ?? { id: record.trackId },
+          },
+          blacklist,
+        )
       ) {
         continue;
       }
@@ -1121,8 +1274,8 @@ export class PersonalizationEngine {
 
   async getSeedTracks(limit = 10): Promise<Track[]> {
     const listens = await this.getListenRecords();
-    const { tracks: blacklistedTracks, artists: blacklistedArtists } =
-      await this.getBlacklist();
+    const blacklist = await this.getBlacklist();
+    const { artists: blacklistedArtists } = blacklist;
     const normalizedBlacklistedArtists = new Set(
       blacklistedArtists.flatMap((artistItem) => [
         artistItem.toLowerCase().trim(),
@@ -1144,7 +1297,16 @@ export class PersonalizationEngine {
         ) {
           return false;
         }
-        if (blacklistedTracks.includes(record.trackId)) {
+        if (
+          isTrackBlacklistedByList(
+            {
+              title: record.title,
+              artists: [{ name: record.artist }],
+              source: record.source ?? { id: record.trackId },
+            },
+            blacklist,
+          )
+        ) {
           return false;
         }
         const artistKey = normalizeArtistKey(record.artist);
@@ -1223,9 +1385,7 @@ export class PersonalizationEngine {
         break;
       }
       const ref = favEntry.ref;
-      const trackId =
-        ref.source?.id || `${ref.artists?.[0]?.name}-${ref.title}`;
-      if (blacklistedTracks.includes(trackId)) {
+      if (isTrackBlacklistedByList(ref, blacklist)) {
         continue;
       }
       if (
@@ -1285,10 +1445,7 @@ export class PersonalizationEngine {
         if (!candidateTrack) {
           continue;
         }
-        const trackId =
-          candidateTrack.source?.id ||
-          `${candidateTrack.artists?.[0]?.name}-${candidateTrack.title}`;
-        if (blacklistedTracks.includes(trackId)) {
+        if (isTrackBlacklistedByList(candidateTrack, blacklist)) {
           continue;
         }
         if (
@@ -1435,10 +1592,7 @@ export class PersonalizationEngine {
         if (!candidateTrack) {
           continue;
         }
-        const trackId =
-          candidateTrack.source?.id ||
-          `${candidateTrack.artists?.[0]?.name}-${candidateTrack.title}`;
-        if (blacklistedTracks.includes(trackId)) {
+        if (isTrackBlacklistedByList(candidateTrack, blacklist)) {
           continue;
         }
         if (
@@ -1608,6 +1762,7 @@ export class PersonalizationEngine {
         .filter(Boolean);
 
       if (
+        isTrackBlacklistedByList(candidate.track, blacklists) ||
         blacklists.tracks.includes(trackId) ||
         candidateArtists.some((artistKey) =>
           normalizedBlacklistedArtists.has(artistKey),

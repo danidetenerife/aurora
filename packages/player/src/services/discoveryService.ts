@@ -9,7 +9,10 @@ import { useSettingsStore } from '../stores/settingsStore';
 import { reportError } from '../utils/logging';
 import { discoveryHost } from './discoveryHost';
 import { eventBus } from './eventBus';
-import { personalizationEngine } from './personalizationEngine';
+import {
+  isTrackBlacklistedByList,
+  personalizationEngine,
+} from './personalizationEngine';
 import { providersHost } from './providersHost';
 
 const CONTEXT_SIZE = 10;
@@ -371,11 +374,7 @@ export const getIntelligentAutoplayTracks = async (
           return false;
         }
       }
-      if (blacklist.tracks.includes(track.source?.id || '')) {
-        return false;
-      }
-      const artist = (track.artists?.[0]?.name || '').toLowerCase().trim();
-      if (blacklist.artists.includes(artist)) {
+      if (isTrackBlacklistedByList(track, blacklist)) {
         return false;
       }
       return true;
@@ -495,13 +494,7 @@ export const ensureUpcomingTracks = async (
             ) {
               return false;
             }
-            if (blacklist.tracks.includes(trackItem.source?.id || '')) {
-              return false;
-            }
-            const artist = (trackItem.artists?.[0]?.name || '')
-              .toLowerCase()
-              .trim();
-            if (blacklist.artists.includes(artist)) {
+            if (isTrackBlacklistedByList(trackItem, blacklist)) {
               return false;
             }
             return true;

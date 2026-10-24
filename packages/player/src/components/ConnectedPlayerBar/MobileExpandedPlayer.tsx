@@ -160,7 +160,7 @@ export const MobileExpandedPlayer: FC = () => {
         },
       },
     });
-    goToNext();
+    useQueueStore.getState().dislikeTrack(track);
   };
 
   const handleSkipNext = () => {

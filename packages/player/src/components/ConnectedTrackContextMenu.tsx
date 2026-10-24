@@ -28,6 +28,7 @@ import { personalizationEngine } from '../services/personalizationEngine';
 import { isCapacitorEnvironment } from '../services/universalStore';
 import { useFavoritesStore } from '../stores/favoritesStore';
 import { useMobilePlayerStore } from '../stores/mobilePlayerStore';
+import { useQueueStore } from '../stores/queueStore';
 
 type ConnectedTrackContextMenuProps = {
   track: Track;
@@ -65,6 +66,7 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
     const trackId =
       track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
     void personalizationEngine.blacklistTrack(trackId);
+    useQueueStore.getState().dislikeTrack(track);
     toast.success(t('actions.trackBlacklisted'), {
       action: {
         label: tCommon('actions.undo'),
@@ -81,6 +83,7 @@ export const ConnectedTrackContextMenu: FC<ConnectedTrackContextMenuProps> = ({
       return;
     }
     void personalizationEngine.blacklistArtist(artistName);
+    useQueueStore.getState().dislikeTrack(track);
     toast.success(t('actions.artistBlacklisted'), {
       action: {
         label: tCommon('actions.undo'),

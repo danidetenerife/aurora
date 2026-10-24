@@ -138,6 +138,54 @@ describe('Podcasts view', () => {
     );
   });
 
+  it('renders top podcasts in Spain from the Spain Apple Podcasts chart', async () => {
+    vi.mocked(httpHost.fetch).mockImplementation(async (url) => {
+      if (String(url).includes('itunes.apple.com/es/rss/toppodcasts')) {
+        return {
+          status: 200,
+          headers: {},
+          body: JSON.stringify({
+            feed: {
+              entry: [
+                {
+                  id: { attributes: { 'im:id': '1146392357' } },
+                  'im:name': { label: 'El Partidazo de COPE' },
+                  'im:artist': { label: 'COPE' },
+                  'im:image': [
+                    {
+                      label:
+                        'https://is1-ssl.mzstatic.com/image/thumb/Podcasts/170x170bb.png',
+                    },
+                  ],
+                },
+                {
+                  id: { attributes: { 'im:id': '665143133' } },
+                  'im:name': { label: 'Nadie Sabe Nada' },
+                  'im:artist': { label: 'SER Podcast' },
+                  'im:image': [
+                    {
+                      label:
+                        'https://is1-ssl.mzstatic.com/image/thumb/Podcasts/170x170bb.png',
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+        };
+      }
+      return {
+        status: 200,
+        headers: {},
+        body: JSON.stringify({ contents: {} }),
+      };
+    });
+
+    await mountPodcasts();
+    expect(await screen.findByText('El Partidazo de COPE')).toBeInTheDocument();
+    expect(await screen.findByText('Nadie Sabe Nada')).toBeInTheDocument();
+  });
+
   it('renders empty state when no podcasts are returned', async () => {
     vi.mocked(httpHost.fetch).mockResolvedValue({
       status: 200,

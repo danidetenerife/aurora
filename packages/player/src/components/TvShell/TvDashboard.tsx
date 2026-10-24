@@ -298,7 +298,6 @@ export const TvDashboard: FC = () => {
         artists: [],
       };
       setBlacklist(blacklistData);
-      const blacklistedTracks = blacklistData.tracks;
       const normalizedBlacklistedArtists = new Set(
         blacklistData.artists.flatMap((artistItem) => [
           artistItem.toLowerCase().trim(),
@@ -400,7 +399,15 @@ export const TvDashboard: FC = () => {
             fav.ref?.source?.id ||
             `${fav.ref?.artists?.[0]?.name}-${fav.ref?.title}`;
           const artistName = fav.ref?.artists?.[0]?.name;
-          if (blacklistedTracks.includes(trackId)) {
+          if (
+            !fav.ref ||
+            (personalizationEngine.isTrackBlacklistedByList
+              ? personalizationEngine.isTrackBlacklistedByList(
+                  fav.ref,
+                  blacklistData,
+                )
+              : blacklistData.tracks.includes(trackId))
+          ) {
             continue;
           }
           if (
@@ -484,7 +491,14 @@ export const TvDashboard: FC = () => {
           }
           const trackId =
             track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
-          if (blacklistedTracks.includes(trackId)) {
+          if (
+            personalizationEngine.isTrackBlacklistedByList
+              ? personalizationEngine.isTrackBlacklistedByList(
+                  track,
+                  blacklistData,
+                )
+              : blacklistData.tracks.includes(trackId)
+          ) {
             return false;
           }
           if (
@@ -623,7 +637,11 @@ export const TvDashboard: FC = () => {
     }
     const trackId =
       track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
-    if (blacklist.tracks.includes(trackId)) {
+    if (
+      personalizationEngine.isTrackBlacklistedByList
+        ? personalizationEngine.isTrackBlacklistedByList(track, blacklist)
+        : blacklist.tracks.includes(trackId)
+    ) {
       return true;
     }
     return (track.artists ?? []).some(

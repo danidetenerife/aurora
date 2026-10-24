@@ -40,8 +40,6 @@ import { TvSoundProvider } from './TvSoundProvider';
 import { TvSyncSection } from './TvSyncSection';
 import { TvVideoPlayer } from './TvVideoPlayer';
 
-initSpatialNavigation();
-
 const PAGE_SIZE = 24;
 
 const TvMainContent: FC = () => {
@@ -402,8 +400,12 @@ const TvShellContent: FC = () => {
   );
 };
 
-export const TvShell: FC = () => (
-  <I18nextProvider i18n={tvI18n}>
-    <TvShellContent />
-  </I18nextProvider>
-);
+export const TvShell: FC = () => {
+  initSpatialNavigation();
+
+  return (
+    <I18nextProvider i18n={tvI18n}>
+      <TvShellContent />
+    </I18nextProvider>
+  );
+};

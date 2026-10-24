@@ -1,9 +1,9 @@
 import { render, RenderResult, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import App from '../../App';
 import { initializeSettingsStore } from '../../stores/settingsStore';
 import { useShortcutsStore } from '../../stores/shortcutsStore';
+import { KeyboardShortcuts } from './KeyboardShortcuts';
 
 const user = userEvent.setup();
 
@@ -11,11 +11,7 @@ export const KeyboardShortcutsWrapper = {
   async mount(): Promise<RenderResult> {
     useShortcutsStore.setState({ overrides: {} });
     await initializeSettingsStore();
-    const component = render(<App />);
-    await user.click(
-      await component.findByRole('button', { name: 'Preferences' }),
-    );
-    await user.click(await screen.findByTestId('settings-tab-shortcuts'));
+    const component = render(<KeyboardShortcuts />);
     await screen.findByRole('heading', {
       name: 'Key Shortcuts',
       level: 1,

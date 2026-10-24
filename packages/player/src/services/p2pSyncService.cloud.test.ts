@@ -83,13 +83,14 @@ describe('Cloud synchronization and Backup', () => {
     expect(config.password).toBe('secretPassword');
   });
 
-  it('excludes device-specific settings like volume from export payload', async () => {
+  it('excludes device-specific settings like volume, shuffle, and repeat from export payload', async () => {
     const { useSettingsStore } = await import('../stores/settingsStore');
     useSettingsStore.setState({
       values: {
         'core.playback.volume': 0.45,
         'core.playback.muted': true,
         'core.playback.shuffle': true,
+        'core.playback.repeat': 'all',
         'core.general.language': 'es_ES',
       },
     });
@@ -98,19 +99,21 @@ describe('Cloud synchronization and Backup', () => {
     const parsed = JSON.parse(jsonString);
 
     expect(parsed.settings).toBeDefined();
-    expect(parsed.settings['core.playback.shuffle']).toBe(true);
     expect(parsed.settings['core.general.language']).toBe('es_ES');
     expect(parsed.settings['core.playback.volume']).toBeUndefined();
     expect(parsed.settings['playback.volume']).toBeUndefined();
     expect(parsed.settings['core.playback.muted']).toBeUndefined();
+    expect(parsed.settings['core.playback.shuffle']).toBeUndefined();
+    expect(parsed.settings['core.playback.repeat']).toBeUndefined();
   });
 
-  it('does not overwrite local volume when applying remote sync payload containing volume', async () => {
+  it('does not overwrite local volume, shuffle, or repeat when applying remote sync payload', async () => {
     const { useSettingsStore } = await import('../stores/settingsStore');
     useSettingsStore.setState({
       values: {
         'core.playback.volume': 0.75,
         'core.playback.shuffle': false,
+        'core.playback.repeat': 'off',
       },
     });
 
@@ -121,6 +124,8 @@ describe('Cloud synchronization and Backup', () => {
         'core.playback.volume': 0.48,
         'playback.volume': 0.48,
         'core.playback.shuffle': true,
+        'core.playback.repeat': 'all',
+        'core.general.language': 'es_ES',
       },
     };
 
@@ -128,6 +133,8 @@ describe('Cloud synchronization and Backup', () => {
 
     const values = useSettingsStore.getState().values;
     expect(values['core.playback.volume']).toBe(0.75);
-    expect(values['core.playback.shuffle']).toBe(true);
+    expect(values['core.playback.shuffle']).toBe(false);
+    expect(values['core.playback.repeat']).toBe('off');
+    expect(values['core.general.language']).toBe('es_ES');
   });
 });

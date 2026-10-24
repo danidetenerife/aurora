@@ -152,6 +152,26 @@ describe('useQueueStore', () => {
     });
   });
 
+  describe('dislikeTrack', () => {
+    it('removes the disliked track and any duplicates from the queue and advances to the next track', () => {
+      useQueueStore
+        .getState()
+        .addToQueue([
+          createMockTrack('Bad Song'),
+          createMockTrack('Good Song'),
+          createMockTrack('Bad Song'),
+        ]);
+      useQueueStore.setState({ currentIndex: 0 });
+
+      useQueueStore.getState().dislikeTrack(createMockTrack('Bad Song'));
+
+      const state = useQueueStore.getState();
+      expect(state.items).toHaveLength(1);
+      expect(state.items[0].track.title).toBe('Good Song');
+      expect(state.currentIndex).toBe(0);
+    });
+  });
+
   describe('clearQueue', () => {
     it('removes all items and resets index', () => {
       useQueueStore

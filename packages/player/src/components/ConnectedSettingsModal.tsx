@@ -1,7 +1,6 @@
 import {
   BlocksIcon,
   ChevronLeft,
-  KeyboardIcon,
   LaptopIcon,
   ScrollTextIcon,
   Settings2Icon,
@@ -18,7 +17,6 @@ import {
   useSettingsModalStore,
   type SettingsTab,
 } from '../stores/settingsModalStore';
-import { KeyboardShortcuts } from '../views/KeyboardShortcuts/KeyboardShortcuts';
 import { Logs } from '../views/Logs/Logs';
 import { Plugins } from '../views/Plugins/Plugins';
 import { Settings } from '../views/Settings/Settings';
@@ -33,12 +31,6 @@ const SETTINGS_TABS = [
     icon: <Settings2Icon />,
     label: 'General',
     content: () => <Settings />,
-  },
-  {
-    id: 'shortcuts' as SettingsTab,
-    icon: <KeyboardIcon />,
-    label: 'Key Shortcuts',
-    content: () => <KeyboardShortcuts />,
   },
   {
     id: 'sync' as SettingsTab,

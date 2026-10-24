@@ -264,6 +264,23 @@ describe('personalization learning across devices', () => {
     );
     expect(ranked).toHaveLength(1);
     expect(ranked[0].title).toBe(TRACK.title);
+
+    const youtubeTrack: Track = {
+      title: 'La lluna, la pruna',
+      source: { provider: 'youtube', id: 'yt-lluna-123' },
+      artists: [{ name: 'SX3', roles: [] }],
+    };
+    await mobile.blacklistTrack('yt-lluna-123', youtubeTrack);
+
+    const spotifySameSong: Track = {
+      title: 'La lluna, la pruna (Remastered)',
+      source: {
+        provider: 'spotify',
+        id: 'spotify:track:7bAYPhIEFY46YatdHdDzqX',
+      },
+      artists: [{ name: 'SX3', roles: [] }],
+    };
+    expect(await mobile.isBlacklisted(spotifySameSong)).toBe(true);
   });
 
   it('learns featured collaborators and boosts multi-artist collaboration synergy', async () => {

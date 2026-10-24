@@ -27,6 +27,7 @@ import { isCapacitorEnvironment } from '../services/universalStore';
 import { useMobilePlayerStore } from '../stores/mobilePlayerStore';
 import { usePlaylistStore } from '../stores/playlistStore';
 import { useProvidersStore } from '../stores/providersStore';
+import { useQueueStore } from '../stores/queueStore';
 
 export const MobileTrackContextMenuSheet: FC = () => {
   const { t } = useTranslation('track');
@@ -93,6 +94,7 @@ export const MobileTrackContextMenuSheet: FC = () => {
     const trackId =
       track.source?.id || `${track.artists?.[0]?.name}-${track.title}`;
     void personalizationEngine.blacklistTrack(trackId);
+    useQueueStore.getState().dislikeTrack(track);
     toast.success(t('actions.trackBlacklisted'), {
       action: {
         label: tCommon('actions.undo'),

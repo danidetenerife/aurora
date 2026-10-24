@@ -17,6 +17,7 @@ import { MobileTrackPages } from '../../../components/MobileTrackPages';
 import { useProviders } from '../../../hooks/useProviders';
 import { discoveryHost } from '../../../services/discoveryHost';
 import {
+  isTrackBlacklistedByList,
   personalizationEngine,
   type ArtistScore,
   type GenreScore,
@@ -260,6 +261,28 @@ export const PersonalizedMixWidget: FC = () => {
   useEffect(
     () =>
       personalizationEngine.subscribe(() => {
+        void Promise.resolve(personalizationEngine.getBlacklist?.()).then(
+          (blacklist) => {
+            if (blacklist) {
+              setVisibleTracks((previousTracks) =>
+                previousTracks
+                  ? previousTracks.filter(
+                      (track) => !isTrackBlacklistedByList(track, blacklist),
+                    )
+                  : previousTracks,
+              );
+              queryClient.setQueriesData<Track[]>(
+                { queryKey: PERSONALIZED_MIX_QUERY_KEY },
+                (cachedTracks) =>
+                  cachedTracks
+                    ? cachedTracks.filter(
+                        (track) => !isTrackBlacklistedByList(track, blacklist),
+                      )
+                    : cachedTracks,
+              );
+            }
+          },
+        );
         void queryClient.invalidateQueries({
           queryKey: PERSONALIZED_MIX_QUERY_KEY,
           refetchType: 'none',

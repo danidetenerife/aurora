@@ -554,7 +554,7 @@ export const initMediaSessionService = (): void => {
               currentTrack.source?.id ||
               `${currentTrack.artists?.[0]?.name}-${currentTrack.title}`;
             void personalizationEngine.blacklistTrack(trackId);
-            useQueueStore.getState().goToNext();
+            useQueueStore.getState().dislikeTrack(currentTrack);
           }
           break;
         }

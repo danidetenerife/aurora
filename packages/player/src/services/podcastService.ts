@@ -160,22 +160,11 @@ const YTM_BASE_URL = 'https://music.youtube.com/youtubei/v1';
 const YTM_CLIENT_NAME = 'WEB_REMIX';
 const YTM_CLIENT_VERSION = '1.20240101.01.00';
 const YTM_PODCAST_PARAMS = 'EgWKAQJQAWoSEBEQEBAEEAMQBRAJEAoQFRAO';
-const getClientLocale = (): string => {
-  if (typeof navigator !== 'undefined' && navigator.language) {
-    return navigator.language.split('-')[0] || 'en';
-  }
-  return 'en';
-};
+const SPAIN_TOP_PODCASTS_URL =
+  'https://itunes.apple.com/es/rss/toppodcasts/limit=25/json';
+const getClientLocale = (): string => 'es';
 
-const getClientCountry = (): string => {
-  if (typeof navigator !== 'undefined' && navigator.language) {
-    const parts = navigator.language.split('-');
-    if (parts.length > 1) {
-      return parts[1].toUpperCase();
-    }
-  }
-  return 'US';
-};
+const getClientCountry = (): string => 'ES';
 
 const parseDurationToMillis = (text?: string): number | undefined => {
   if (!text) {
@@ -292,12 +281,69 @@ class PodcastService {
     }
   }
 
+  private async getSpainTopPodcasts(): Promise<PodcastSearchResult[]> {
+    try {
+      const response = await httpHost.fetch(SPAIN_TOP_PODCASTS_URL);
+
+      if (response.status !== 200) {
+        return [];
+      }
+
+      const payload = JSON.parse(response.body) as {
+        feed?: {
+          entry?: Array<{
+            id?: {
+              attributes?: {
+                'im:id'?: string;
+              };
+            };
+            'im:name'?: {
+              label?: string;
+            };
+            'im:artist'?: {
+              label?: string;
+            };
+            'im:image'?: Array<{
+              label?: string;
+            }>;
+          }>;
+        };
+      };
+
+      const entries = payload.feed?.entry ?? [];
+      const results: PodcastSearchResult[] = [];
+
+      for (const entry of entries) {
+        const id = entry.id?.attributes?.['im:id'];
+        const name = entry['im:name']?.label;
+        const publisher = entry['im:artist']?.label ?? 'Podcast';
+        const images = entry['im:image'];
+        const rawImage = images?.[images.length - 1]?.label;
+        const artwork = rawImage?.replace(/\/\d+x\d+bb\./, '/600x600bb.');
+
+        if (id && name) {
+          results.push({
+            id: String(id),
+            name,
+            publisher,
+            artwork,
+            source: 'itunes',
+          });
+        }
+      }
+
+      return results;
+    } catch {
+      return [];
+    }
+  }
+
   private async searchItunesPodcasts(
     query: string,
   ): Promise<PodcastSearchResult[]> {
     try {
       const response = await httpHost.fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=podcast&limit=${SEARCH_RESULT_LIMIT}`,
+        `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&country=ES&entity=podcast&limit=${SEARCH_RESULT_LIMIT}`,
       );
 
       if (response.status !== 200) {
@@ -329,8 +375,13 @@ class PodcastService {
   }
 
   async getFeaturedPodcasts(): Promise<PodcastSearchResult[]> {
+    const spainTopPodcasts = await this.getSpainTopPodcasts();
+    if (spainTopPodcasts.length > 0) {
+      return spainTopPodcasts;
+    }
+
     try {
-      const ytmResults = await this.searchYtmPodcasts('podcasts');
+      const ytmResults = await this.searchYtmPodcasts('podcast españa');
       if (ytmResults.length > 0) {
         return ytmResults;
       }
@@ -363,7 +414,7 @@ class PodcastService {
   ): Promise<PodcastDetail | null> {
     try {
       const lookupResponse = await httpHost.fetch(
-        `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode&limit=${EPISODE_LIMIT}`,
+        `https://itunes.apple.com/lookup?id=${collectionId}&country=ES&entity=podcastEpisode&limit=${EPISODE_LIMIT}`,
       );
 
       if (lookupResponse.status !== 200) {
@@ -595,6 +646,18 @@ class PodcastService {
     const cleanNumericId = podcastId.replace(/^itunes-/, '');
     if (/^\d+$/.test(cleanNumericId)) {
       const itunesDetail = await this.getItunesPodcastDetails(cleanNumericId);
+      if (itunesDetail && itunesDetail.episodes.length > 0) {
+        return itunesDetail;
+      }
+      if (itunesDetail?.title) {
+        const ytmFallback = await this.searchYtmPodcasts(itunesDetail.title);
+        if (ytmFallback.length > 0 && ytmFallback[0]?.id) {
+          const ytmDetail = await this.getYtmPodcastDetails(ytmFallback[0].id);
+          if (ytmDetail && ytmDetail.episodes.length > 0) {
+            return ytmDetail;
+          }
+        }
+      }
       if (itunesDetail) {
         return itunesDetail;
       }

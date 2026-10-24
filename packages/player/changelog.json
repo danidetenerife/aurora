@@ -1,5 +1,25 @@
 [
   {
+    "date": "2026-10-24T19:35",
+    "description": "Bloqueo definitivo con 'No me gusta', aislamiento de aleatorio/repetición, top de podcasts en España y desactivación de atajos de teclado en PC: elimina de inmediato de la cola y de 'Recomendado para ti' cualquier canción marcada como 'No me gusta' bloqueándola por ID y firma canónica (artista y título) en todos los proveedores; impide que la sincronización en segundo plano reactive automáticamente shuffle y repeat; muestra los podcasts más populares en España (Apple Podcasts ES / YouTube Music ES); y desactiva los atajos de teclado globales al escribir en el buscador de escritorio.",
+    "type": "fix",
+    "contributors": ["danidetenerife"],
+    "tags": [
+      {
+        "label": "Playback",
+        "color": "orange"
+      },
+      {
+        "label": "Desktop",
+        "color": "blue"
+      },
+      {
+        "label": "Android",
+        "color": "purple"
+      }
+    ]
+  },
+  {
     "date": "2026-10-23T14:15",
     "description": "Bloqueo total de videoclips de personas particulares en Google TV: exige que el canal con insignia de artista o verificado coincida exactamente con el artista de la canción (doesChannelMatchArtist), impidiendo que canales personales con nombres similares, falsas coincidencias parciales con sellos ('emi', 'rca') o músicos particulares ajenos al tema superen el filtro; amplía el rechazo de ruido a grabaciones en directo de público ('en vivo', 'live', 'concierto', 'fancam', 'coreografía', 'letra') y descarta en YouTube Music cualquier vídeo subido por usuarios particulares que muestre contador de visualizaciones en lugar de álbum oficial.",
     "type": "fix",

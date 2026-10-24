@@ -229,11 +229,6 @@ export const replenishTvQueue = async (urgent = false): Promise<Track[]> => {
       if (recommended.length < 5) {
         try {
           const blacklist = await personalizationEngine.getBlacklist();
-          const blacklistedArtists = new Set(
-            blacklist.artists.map((artist) => artist.toLowerCase().trim()),
-          );
-          const blacklistedTrackIds = new Set(blacklist.tracks);
-
           const queries = await buildPersonalizedQueries(currentTrack);
           const searchResults = await searchForFreshTracks(
             queries,
@@ -248,11 +243,18 @@ export const replenishTvQueue = async (urgent = false): Promise<Track[]> => {
               .toLowerCase()
               .trim();
             const trackSourceId = track.source?.id ?? '';
-
-            if (blacklistedArtists.has(artistName)) {
-              return false;
-            }
-            if (trackSourceId && blacklistedTrackIds.has(trackSourceId)) {
+            if (
+              personalizationEngine.isTrackBlacklistedByList
+                ? personalizationEngine.isTrackBlacklistedByList(
+                    track,
+                    blacklist,
+                  )
+                : blacklist.artists
+                    .map((artist) => artist.toLowerCase().trim())
+                    .includes(artistName) ||
+                  (Boolean(trackSourceId) &&
+                    blacklist.tracks.includes(trackSourceId))
+            ) {
               return false;
             }
             if (isTrackInSet(track, existingKeys)) {

@@ -9,7 +9,17 @@ const PORT = Number(process.env.AURORA_SYNC_PORT || 4122);
 const MAX_BODY_BYTES = 50 * 1024 * 1024;
 const DEVICE_SPECIFIC_SETTINGS_KEYS = new Set([
   'core.playback.volume',
+  'playback.volume',
+  'volume',
   'core.playback.muted',
+  'playback.muted',
+  'muted',
+  'core.playback.shuffle',
+  'playback.shuffle',
+  'shuffle',
+  'core.playback.repeat',
+  'playback.repeat',
+  'repeat',
   'core.carMode.autoBluetooth',
   'core.carMode.keepScreenAwake',
 ]);

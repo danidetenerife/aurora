@@ -45,7 +45,6 @@ import {
   isCapacitorEnvironment,
   isTauriEnvironment,
 } from '../services/universalStore';
-import { GlobalShortcuts } from '../shortcuts';
 import { useAccountModalStore } from '../stores/accountModalStore';
 import { useLayoutStore } from '../stores/layoutStore';
 import { useMobilePlayerStore } from '../stores/mobilePlayerStore';
@@ -147,7 +146,6 @@ const DesktopMobileRootComponent = () => {
       data-native-mobile={isCapacitorEnvironment() || undefined}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <GlobalShortcuts />
       <div className="aurora-header shrink-0 pt-7 sm:pt-0">
         {isTauri && <ConnectedTitleBar />}
         {isTauri && <FlatpakWarningBanner />}

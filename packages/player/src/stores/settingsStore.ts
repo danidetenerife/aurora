@@ -43,6 +43,10 @@ export const useSettingsStore = create<State>((set, get) => ({
     for (const [key, entryValue] of storeEntries) {
       loadedValues[String(key)] = entryValue as SettingValue;
     }
+    loadedValues['core.playback.shuffle'] = false;
+    loadedValues['playback.shuffle'] = false;
+    loadedValues['core.playback.repeat'] = 'off';
+    loadedValues['playback.repeat'] = 'off';
     set({ values: loadedValues, loaded: true });
   },
   register: (definitions, source) => {

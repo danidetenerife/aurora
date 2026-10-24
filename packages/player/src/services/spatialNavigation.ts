@@ -18,11 +18,11 @@ export const initSpatialNavigation = (): void => {
   });
 
   setKeyMap({
-    left: [37, 21, 'ArrowLeft', 'Left'],
-    up: [38, 19, 'ArrowUp', 'Up'],
-    right: [39, 22, 'ArrowRight', 'Right'],
-    down: [40, 20, 'ArrowDown', 'Down'],
-    enter: [13, 23, 'Enter', 'Select', 'Ok', ' '],
+    left: [37, 'ArrowLeft', 'Left'],
+    up: [38, 'ArrowUp', 'Up'],
+    right: [39, 'ArrowRight', 'Right'],
+    down: [40, 'ArrowDown', 'Down'],
+    enter: [13, 'Enter', 'Select', 'Ok', ' '],
   });
 
   if (typeof window !== 'undefined') {
@@ -47,38 +47,36 @@ export const initSpatialNavigation = (): void => {
     });
 
     window.addEventListener('keydown', (event: KeyboardEvent) => {
+      const target = (event.target ??
+        document.activeElement) as HTMLElement | null;
       if (
-        event.key === 'MediaPlayPause' ||
-        event.code === 'MediaPlayPause' ||
-        event.keyCode === 85
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable)
       ) {
+        return;
+      }
+
+      if (event.key === 'MediaPlayPause' || event.code === 'MediaPlayPause') {
         event.preventDefault();
         playbackManager.toggle();
-      } else if (
-        event.key === 'MediaPlay' ||
-        event.code === 'MediaPlay' ||
-        event.keyCode === 126
-      ) {
+      } else if (event.key === 'MediaPlay' || event.code === 'MediaPlay') {
         event.preventDefault();
         playbackManager.play();
-      } else if (
-        event.key === 'MediaPause' ||
-        event.code === 'MediaPause' ||
-        event.keyCode === 127
-      ) {
+      } else if (event.key === 'MediaPause' || event.code === 'MediaPause') {
         event.preventDefault();
         playbackManager.pause();
       } else if (
         event.key === 'MediaTrackNext' ||
-        event.code === 'MediaTrackNext' ||
-        event.keyCode === 87
+        event.code === 'MediaTrackNext'
       ) {
         event.preventDefault();
         useQueueStore.getState().goToNext();
       } else if (
         event.key === 'MediaTrackPrevious' ||
-        event.code === 'MediaTrackPrevious' ||
-        event.keyCode === 88
+        event.code === 'MediaTrackPrevious'
       ) {
         event.preventDefault();
         useQueueStore.getState().goToPrevious();

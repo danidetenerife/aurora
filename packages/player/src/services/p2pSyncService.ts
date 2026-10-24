@@ -40,10 +40,16 @@ export const isDeviceSpecificSettingKey = (key: string): boolean => {
     normalized.startsWith('updates.') ||
     normalized === 'playback.volume' ||
     normalized === 'playback.muted' ||
+    normalized === 'playback.shuffle' ||
+    normalized === 'playback.repeat' ||
     normalized === 'volume' ||
     normalized === 'muted' ||
+    normalized === 'shuffle' ||
+    normalized === 'repeat' ||
     normalized.endsWith('.volume') ||
-    normalized.endsWith('.muted')
+    normalized.endsWith('.muted') ||
+    normalized.endsWith('.shuffle') ||
+    normalized.endsWith('.repeat')
   );
 };
 
@@ -1243,20 +1249,12 @@ export class P2PSyncService {
       const hostMatch = workingUrl.match(/^https?:\/\/([^:/]+)/);
       const host = hostMatch ? hostMatch[1] : '192.168.0.12';
       const pcSettings = await safeFetchJson<{
-        shuffle?: boolean;
-        repeat?: string;
         discovery?: boolean;
         language?: string;
       }>(`http://${host}:4120/api/settings`, 2000);
 
       if (pcSettings) {
         const settingsStore = useSettingsStore.getState();
-        if (pcSettings.shuffle !== undefined) {
-          settingsStore.setValue('core.playback.shuffle', pcSettings.shuffle);
-        }
-        if (pcSettings.repeat !== undefined) {
-          settingsStore.setValue('core.playback.repeat', pcSettings.repeat);
-        }
         if (pcSettings.discovery !== undefined) {
           settingsStore.setValue(
             'core.playback.discovery',

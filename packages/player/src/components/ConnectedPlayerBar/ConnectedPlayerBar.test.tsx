@@ -150,7 +150,10 @@ describe('ConnectedNowPlaying', () => {
     await Wrapper.nowPlaying.dislikeButton.click();
 
     expect(blacklistTrackSpy).toHaveBeenCalledWith('t1');
-    expect(useQueueStore.getState().currentIndex).toBe(1);
+    expect(useQueueStore.getState().items.map((item) => item.id)).toEqual([
+      'item-2',
+    ]);
+    expect(useQueueStore.getState().getCurrentItem()?.id).toBe('item-2');
   });
 });
 

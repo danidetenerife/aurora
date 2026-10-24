@@ -160,9 +160,16 @@ export const TvVideoPlayer: FC<TvVideoPlayerProps> = ({
       if (artistName) {
         void personalizationEngine.blacklistArtist(artistName);
       }
+      const { items, currentIndex } = useQueueStore.getState();
+      if (currentIndex >= items.length - 2) {
+        void replenishTvQueue();
+      }
+      useQueueStore.getState().dislikeTrack(track);
+      resetOverlayTimer();
+      return;
     }
     handleNext();
-  }, [track, handleNext]);
+  }, [track, handleNext, resetOverlayTimer]);
 
   useEffect(() => {
     let cancelled = false;
